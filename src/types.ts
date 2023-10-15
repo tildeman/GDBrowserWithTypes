@@ -68,11 +68,11 @@ export interface ServerInfo {
 	/**
 	 * A list of parameter substitutions, because some servers rename/obfuscate them.
 	 */
-	substitutions?: { [substitution: string]: string };
+	substitutions?: Record<string, string>;
 	/**
 	 * A list of endpoint substitutions, because some servers use renamed or older versions.
 	 */
-	overrides?: { [override: string]: string };
+	overrides?: Record<string, string>;
 	/**
 	 * Not sure what this is supposed to do. Maybe to indicate that the server is down?
 	 */
@@ -80,7 +80,7 @@ export interface ServerInfo {
 	/**
 	 * Not sure what this is supposed to do. Probably some additional supplied arguments,
 	 */
-	extraParams?: { [param: string]: string }
+	extraParams?: Record<string, string>
 }
 
 /**
@@ -125,17 +125,15 @@ export interface ExportBundle {
 		 * @param substitute Use GDPS substitutions in `settings.js`
 		 * @returns An object containing the forms and headers for a request
 		 */
-		gdParams: (obj?: {
-			[configEntry: string]: string | number | undefined;
-			}, substitute?: boolean) => {
-				form: {
-					[configEntry: string]: string | undefined;
-				};
-				headers: {
-					'x-forwarded-for': string;
-					'x-real-ip': string;
-				} | {};
+		gdParams: (obj?: Record<string, string | number | undefined>, substitute?: boolean) => {
+			form: {
+				[configEntry: string]: string | number | undefined;
 			};
+			headers: {
+				'x-forwarded-for': string;
+				'x-real-ip': string;
+			} | {};
+		};
 		/** 
 		 * Wrapper for a request to a Geometry Dash server
 		 * @param target The request endpoint of the server (`getGJLevels22` for retrieving level data in Geometry Dash 2.2)
@@ -146,7 +144,7 @@ export interface ExportBundle {
 		gdRequest: (target: string, params: Record<string, any> | undefined, cb: (err?: boolean | Error | {
 			serverError: boolean;
 			response: string;
-			}, resp?: AxiosResponse, body?: string) => any) => void;
+		}, resp?: AxiosResponse, body?: string) => any) => void;
 	}
 	sendError: (errorCode?: number) => void;
 }
@@ -239,21 +237,15 @@ export interface AppRoutines {
 	/**
 	 * A dictionary of cached account information
 	 */
-	accountCache: {
-		[key: string]: any;
-	};
+	accountCache: Record<string, any>;
 	/**
 	 * Track the last time the application returned a success
 	 */
-	lastSuccess: {
-		[key: string]: number;
-	};
+	lastSuccess: Record<string, number>;
 	/**
 	 * Track GDPSes and see if they're functional
 	 */
-	actuallyWorked: {
-		[key: string]: boolean;
-	};
+	actuallyWorked: Record<string, boolean>;
 	/**
 	 * The ID of the Geometry Dash account used by GDBrowser to interact with servers
 	 */
@@ -265,7 +257,7 @@ export interface AppRoutines {
 	/**
 	 * A middleware lookup table 
 	 */
-	run: { [index: string]: any }
+	run: Record<string, any>
 	/**
 	 * The Google Sheets API key (used for accurate leaderboards)
 	 */
@@ -292,9 +284,7 @@ export interface AppRoutines {
 	 * @param splitter The delimiter (for RobTop's API requests)
 	 * @returns A configuration object
 	 */
-	parseResponse: (responseBody: string, splitter?: string) => {
-		[index: number]: string;
-	};
+	parseResponse: (responseBody: string, splitter?: string) => Record<number, string>;
 	/**
 	 * Check if a server is still working.
 	 * @param id The ID of the (private) server

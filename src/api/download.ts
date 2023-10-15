@@ -34,7 +34,7 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 		let authorData = body?.split("#")[3] || "";  // daily/weekly only, most likely
 
 		let levelInfo = appRoutines.parseResponse(body || "");
-		let level = new DownloadedLevel(levelInfo as any, reqBundle.server as any, true); // TODO: Change the type requirements
+		let level = new DownloadedLevel(levelInfo, reqBundle.server, true, {});
 		if (!level.id) return rejectLevel();
 
 		let foundID = appRoutines.accountCache[reqBundle.id][Object.keys(appRoutines.accountCache[reqBundle.id]).find(x => appRoutines.accountCache[reqBundle.id][x][1] == level.playerID) || ""];

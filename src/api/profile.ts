@@ -21,7 +21,7 @@ export default async function(app: Express, req: Request, res: Response, api, ge
 	let accountMode = !req.query.hasOwnProperty("player") && Number(req.params.id);
 	let foundID = appRoutines.userCache(reqBundle.id, username, "", "");
 	let skipRequest = accountMode || (foundID && +foundID[0]) || probablyID;
-	let searchResult: { [index: number]: string; };
+	let searchResult: Record<number, string>;
 
 	// if you're searching by account id, an intentional error is caused to skip the first request to the gd servers. see i pulled a sneaky on ya. (fuck callbacks man)
 	reqBundle.gdRequest(skipRequest ? "" : 'getGJUsers20', skipRequest ? {} : { str: username, page: 0 }, function (err1, res1, b1) {   
@@ -31,8 +31,8 @@ export default async function(app: Express, req: Request, res: Response, api, ge
 		}
 		else if (!reqBundle.isGDPS) searchResult = appRoutines.parseResponse(b1.split("|")[0])[16];
 		else {  // GDPS's return multiple users, GD no longer does this
-			let userResults = b1.split("|").map(x => appRoutines.parseResponse(x));
-			searchResult = userResults.find(x => x[1].toLowerCase() == username.toLowerCase() || x[2] == username) || {};
+			let userResults = b1.split("|").map(variable => appRoutines.parseResponse(variable));
+			searchResult = userResults.find(variable => variable[1].toLowerCase() == username.toLowerCase() || variable[2] == username) || {};
 			if (searchResult) searchResult = searchResult[16];
 		}
 
@@ -52,16 +52,16 @@ export default async function(app: Express, req: Request, res: Response, api, ge
 
 			if (!foundID) appRoutines.userCache(reqBundle.id, account[16], account[2], account[1]);
 
-			let userData = new Player(account as any); // TODO: Do something about this
+			let userData = new Player(account); // TODO: Do something about this
 
 			if (api) return res.send(userData);
 
 			else fs.readFile('./html/profile.html', 'utf8', function(err, data) {
 				let html = data;
 				let variables = Object.keys(userData);
-				variables.forEach(x => {
-					let regex = new RegExp(`\\[\\[${x.toUpperCase()}\\]\\]`, "g");
-					html = html.replace(regex, appRoutines.clean(userData[x]));
+				variables.forEach(variable => {
+					let regex = new RegExp(`\\[\\[${variable.toUpperCase()}\\]\\]`, "g");
+					html = html.replace(regex, appRoutines.clean(userData[variable]));
 				});
 				return res.send(html);
 			});

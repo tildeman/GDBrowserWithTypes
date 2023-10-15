@@ -1,0 +1,24 @@
+doctype html
+html(lang="en")
+	head
+		title Geometry Dash Browser!
+		meta(charset="UTF-8")
+		link(rel="icon", href="/assets/difficulties/auto.png")
+		link(href="/assets/css/api.css", type="text/css", rel="stylesheet")
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.js")
+		link(href="https://fonts.googleapis.com/css?family=Roboto:300,400,600,700,800&display=swap", rel="stylesheet")
+		meta(id="meta-title", property="og:title", content="GDBrowser API")
+		meta(id="meta-desc", property="og:description", content="It's basically the Geometry Dash API, but not terrible!")
+		meta(id="meta-image", name="og:image", itemprop="image", content="/assets/difficulties/auto.png")
+		meta(name="twitter:card", content="summary")
+		meta(name="viewport", content="width=device-width, initial-scale=1.0")
+	body(style={ "background-color": "#3979b8" })
+		#intro.anchor
+		main
+			.main-block
+				h1 Hi there!
+				p Please don't use this API.
+				p It's slow, unreliable, stressful on my servers, and will likely be removed in the future.
+				p I'm hoping to get this site whitelisted for CORs so that the website will be 100% client side. Probably just wishful thinking but hopefully it can happen in 2.2. In the meantime, check out <a href="https://github.com/Wyliemaster/gddocs/tree/client/docs/endpoints" target="_blank">gddocs</a> to learn how to send requests directly to Rob's servers!
+				p - Colon :
+		script(type="text/javascript", src="/page_scripts/api.js")

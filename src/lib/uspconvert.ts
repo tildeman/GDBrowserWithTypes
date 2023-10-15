@@ -9,10 +9,10 @@ import { URLSearchParams } from "url";
  * @param params The request data as an object
  * @returns The request data as `URLSearchParams`
  */
-export function convertUSP(params: { [configEntry: string]: string | undefined }) {
+export function convertUSP(params: Record<string, string | undefined>) {
 	const ret = new URLSearchParams();
 	for (const key in params) {
-		ret.append(key, params[key] || "");
+		ret.append(key, params[key]?.toString() || "");
 	}
 	return ret;
 }

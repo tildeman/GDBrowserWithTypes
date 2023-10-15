@@ -606,7 +606,7 @@ class IconPart {
 	 * @param glow The glow status of the icon
 	 * @param misc Additional settings
 	 */
-	constructor(form: string, id: number, colors: IconColor, glow: boolean, misc: { [setting: string]: any } = {}) {
+	constructor(form: string, id: number, colors: IconColor, glow: boolean, misc: Record<string, any> = {}) {
 		if (colors["1"] == 0 && !misc.skipGlow) glow = true; // add glow if p1 is black
 
 		let iconPath = `${form}_${padZero(id)}`;

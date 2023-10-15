@@ -1,0 +1,191 @@
+doctype html
+html(lang="en")
+	head
+		title Level Search
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/coin.png")
+		meta(id="meta-title", property="og:title", content="Level Search")
+		meta(id="meta-desc", property="og:description", content="Browse all of Geometry Dash's online features, right from this handy little website! Levels, profiles, leaderboards, comments, and more!")
+		meta(id="meta-image", name="og:image", content="https://gdbrowser.com/assets/coin.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body.levelBG(onbeforeunload="saveUrl()")
+		#everything
+			#filters.popup
+				#filterStuff.brownBox.bounce.center.supercenter(style={ width: "101vh", height: "50%", padding: "0.3% 0 3.5% 1%" })
+					img.gdButton(src="/assets/close.png", style={ width: "9%", position: "absolute", top: "-8.5%", left: "-5.5vh" }, onclick="$('#filters').hide()")
+					h1(style={ "margin-bottom": "4%" }) Advanced Options
+					div
+						h1
+							input#box-featured(type="checkbox", url="&featured")
+							label.gdcheckbox.gdButton(for="box-featured")
+							| Featured
+					div
+						h1
+							input#box-epic(type="checkbox", url="&epic")
+							label.gdcheckbox.gdButton(for="box-epic")
+							| Epic
+					div(style={ "margin-bottom": "6%" })
+						h1
+							input#box-nostar(type="checkbox", url="&noStar")
+							label.gdcheckbox.gdButton(for="box-nostar")
+							| No Star
+					div
+						h1
+							input#box-original(type="checkbox", url="&original")
+							label.gdcheckbox.gdButton(for="box-original")
+							| Original
+					div
+						h1
+							input#box-2player(type="checkbox", url="&twoPlayer")
+							label.gdcheckbox.gdButton(for="box-2player")
+							| 2-Player
+					div(style={ "margin-bottom": "5%" })
+						h1
+							input#box-coins(type="checkbox", url="&coins")
+							label.gdcheckbox.gdButton(for="box-coins")
+							| Coins
+					h1.smallerer.lessSpaced Song
+					img#normalSong.gdButton.inline.gray(style={ "margin-right": "0.5%", height: "8%" }, src="/assets/song-normal.png")
+					img#customSong.gdButton.inline(style={ "margin-left": "0.5%", height: "8%" }, src="/assets/song-custom.png")
+					br
+					input#songID(type="number", placeholder="Custom Song ID", style={ height: "15%", width: "70%", "text-align": "center", "margin-top": "2%" })
+					#songSelect(style={ width: "100%", display: "none", "margin-top": "3%", "text-align": "center" })
+						img#songDown.gdButton.inline.valign.songChange(style={ width: "4%" }, jump="-1", src="/assets/whitearrow-left.png")
+						h1#songName.inline.valign.smallerer.center(style={ "min-width": "60%" })
+						img#songUp.gdButton.inline.valign.songChange(style={ width: "4%" }, jump="1", src="/assets/whitearrow-right.png")
+
+			#customlist.popup
+				.brownBox.bounce.center.supercenter(style={ width: "100vh", height: "56%", padding: "0.3% 0 3.5% 1%" })
+					img.gdButton(src="/assets/close.png", style={ width: "9%", position: "absolute", top: "-8.5%", left: "-5.5vh" }, onclick="$('#customlist').hide()")
+					h1 Custom List
+					br
+					p#listInfo(style={ "margin-top": "1%", "margin-bottom": "1.5%"})
+						| Paste a
+						|
+						cy comma-separated
+						|
+						| list of
+						|
+						ca Level IDs
+						|
+						| to create a custom list!
+					textarea#listLevels(placeholder="18025697, 23189196, 27786218, 27728679, 25706351", style={ "margin-bottom": "2%", "font-size": "2.5vh" })
+					.inline(style={ width: "60%" })
+						h1.smaller.lessSpaced List Name
+						input#listName(type="text", placeholder="Custom List", style={ "font-size": "4vh", height: "13%", width: "90%", "text-align": "center"}, maxlength="32")
+					.inline(style={ width: "40%", "margin-bottom": "3%" })
+						h1.smaller.lessSpaced Page Size
+						input#pageSize(type="number", value="10", style={ "font-size": "4vh", height: "13%", width: "45%", "text-align": "center"})
+					a#listLink
+						img#createList.disabled.gdButton(src="/assets/btn-submit.png", type="submit", style={ height: "12.5%", "margin-left": "1%" })
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%" })
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%", transform: "scaleX(-1)", "pointer-events": "none" })
+
+			.transparentBox.center(style={ width: "115vh", height: "9%", margin: "1.5% auto 1% auto", "padding-bottom": "0.2%" })
+				input#levelName(type="text", placeholder="Enter a level, user, or ID", maxlength="20")
+				img#searchBtn.valign.gdButton.levelSearch(search="0", src="/assets/search.png", style={ width: "20%", "margin-left": "1%", "margin-bottom": "2.2%"})
+				img#userSearch.valign.gdButton(src="/assets/search-user.png", style={ width: "9.6%", "margin-left": "1%", "margin-bottom": "2.2%"})
+
+			.center
+				h1.smaller Quick Search
+
+			.transparentBox.center(style={ width: "115vh", height: "35%", margin: "0.5% auto 1% auto", "padding-top": "1.1%" })
+				img.valign.gdButton.spaced.levelSearch(src="/assets/btn-top.png", search="mostdownloaded", style={ height: "27%" })
+				span(style={ "margin-right": "3%"})
+				img.valign.gdButton.spaced.levelSearch(src="/assets/btn-liked.png", search="mostliked", style={ height: "27%" })
+				br
+				img.valign.gdButton.spaced.levelSearch(src="/assets/btn-trending.png", search="trending", style={ height: "27%" })
+				img.valign.gdButton.spaced.levelSearch(src="/assets/btn-recent.png", search="recent", style={ height: "27%", "margin-left": "2%", "margin-right": "2%" })
+				img.valign.gdButton.spaced.levelSearch(src="/assets/btn-magic.png", search="magic", style={ height: "27%" })
+				br
+				img.valign.gdButton.spaced.levelSearch(src="/assets/btn-awarded.png", search="awarded", style={ height: "27%" })
+				img.valign.gdButton.spaced.levelSearch(src="/assets/btn-featured.png", search="featured", style={ height: "27%", "margin-left": "2%", "margin-right": "2%" })
+				img#followedSearch.valign.gdButton.spaced.levelSearch(src="/assets/btn-followed.png", search="followed", style={ height: "27%" })
+
+			.center
+				h1.smaller Filters
+
+			#difficulties.transparentBox.center(style={ width: "115vh", height: "12%", margin: "0.5% auto 1% auto", "padding-top": "0.5%", "padding-bottom": "0.5%" })
+				.diffDiv.gdButton(diff="-1")
+					img(src="/assets/difficulties/unrated.png")
+					h3.mini N/A
+				.diffDiv.gdButton(diff="1")
+					img(src="/assets/difficulties/easy.png")
+					h3.mini Easy
+				.diffDiv.gdButton(diff="2")
+					img(src="/assets/difficulties/normal.png")
+					h3.mini Normal
+				.diffDiv.gdButton(diff="3")
+					img(src="/assets/difficulties/hard.png")
+					h3.mini Hard
+				.diffDiv.gdButton(diff="4")
+					img(src="/assets/difficulties/harder.png")
+					h3.mini Harder
+				.diffDiv.gdButton(diff="5")
+					img(src="/assets/difficulties/insane.png")
+					h3.mini Insane
+
+				#demonBtn.diffDiv.gdButton(diff="-2")
+					img(src="/assets/difficulties/demon.png", style={ width: "85%" })
+					h3.mini Demon
+
+				.diffDiv.gdButton(diff="-3")
+					img(src="/assets/difficulties/auto.png")
+					h3.mini Auto
+
+			#demons.transparentBox(style={ display: "none", width: "115vh", height: "12%", margin: "0.5% auto 1% auto", "padding-top": "0.5%", "padding-bottom": "0.5%" })
+				.diffDiv.gdButton.demonDiff(diff="1", style={ "margin-left": "3.5%" })
+					img(src="/assets/difficulties/demon-easy.png", style={ width: "calc(75% * 240 / 220)" })
+					h3.mini.center Easy
+				.diffDiv.gdButton.demonDiff(diff="2")
+					img(src="/assets/difficulties/demon-medium.png", style={ width: "calc(75% * 240 / 215)" })
+					h3.mini.center Medium
+				.diffDiv.gdButton.demonDiff(diff="3")
+					img(src="/assets/difficulties/demon-hard.png", style={ width: "calc(75% * 240 / 220)" })
+					h3.mini.center Hard
+				.diffDiv.gdButton.demonDiff(diff="4")
+					img(src="/assets/difficulties/demon-insane.png", style={ width: "calc(75% * 240 / 210)" })
+					h3.mini.center Insane
+				.diffDiv.gdButton.demonDiff(diff="5")
+					img(src="/assets/difficulties/demon-extreme.png", style={ width: "calc(75% * 240 / 204)" })
+					h3.mini.center Extreme
+
+				.diffDiv.gdButton.goBack(diff="-2", style={ "margin-left": "3.2%", filter: "none" })
+					img(src="/assets/difficulties/demon.png", style={ width: "calc(75% * 240 / 220)" })
+					h3.mini Demon
+
+				a#demonList(style={ display: "none" }, href="./search/*?type=demonlist")
+					.gdButton.diffDiv(style={ filter: "none" })
+						img(src="/assets/trophy2.png", style={ width: "calc(75% * 112 / 94)" })
+						h3.yellow.mini.center List
+
+			.transparentBox.center(style={ width: "115vh", height: "6%", margin: "0.5% auto 1% auto", "padding-top": "0.5%", "padding-bottom": "0.5%" })
+				.lengthDiv(len="0")
+					h1.gdButton.smaller Tiny
+				.lengthDiv(len="1")
+					h1.gdButton.smaller Short
+				.lengthDiv(len="2")
+					h1.gdButton.smaller Medium
+				.lengthDiv(len="3")
+					h1.gdButton.smaller Long
+				.lengthDiv(len="4")
+					h1.gdButton.smaller XL
+				#starCheck.lengthDiv(style={ height: "90%" })
+					img.gdButton(src="/assets/star.png", style={ height: "90%", "vertical-align": "bottom" })
+
+			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+
+			div(style={ position: "absolute", top: "2%", right: "1.5%", width: "10%", "text-align": "right" })
+				img.gdButton(src="/assets/close.png", style={ width: "60%", "margin-bottom": "12%" }, onclick="clearFilters()")
+				img#showFilters.gdButton(src="/assets/plus.png", style={ width: "60%", "margin-bottom": "12%" }, onclick="$('#filters').show()")
+				img.gdButton(src="/assets/listbutton.png", style={ width: "60%" }, onclick="$('#customlist').show()")
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="text/javascript", src="/page_scripts/filters.js")

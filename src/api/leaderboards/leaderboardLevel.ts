@@ -47,27 +47,27 @@ export default async function(app: Express, req: Request, res: Response) {
 
 	reqBundle.gdRequest('getGJLevelScores211', params, function(err, resp, body) { 
 		if (err) return res.status(500).send({error: true, lastWorked: appRoutines.timeSince(reqBundle.id)});
-		let scores = body?.split('|').map(x => appRoutines.parseResponse(x)).filter(x => x[1]) || [];
+		let scores = body?.split('|').map(rawScorePlayerEntry => appRoutines.parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
 		if (!scores.length) return res.status(500).send([]);
 		else appRoutines.trackSuccess(reqBundle.id);
 
-		scores.forEach(x => {
+		scores.forEach(playerEntry => {
 			const score: LeaderboardEntry = {
-				rank: +x[6],
-				username: x[1],
-				percent: +x[3],
-				coins: +x[13],
-				playerID: x[2],
-				accountID: x[16],
-				date: x[42] + reqBundle.timestampSuffix,
+				rank: +playerEntry[6],
+				username: playerEntry[1],
+				percent: +playerEntry[3],
+				coins: +playerEntry[13],
+				playerID: playerEntry[2],
+				accountID: playerEntry[16],
+				date: playerEntry[42] + reqBundle.timestampSuffix,
 				icon: {
-					form: ['icon', 'ship', 'ball', 'ufo', 'wave', 'robot', 'spider'][+x[14]],
-					icon: +x[9],
-					col1: +x[10],
-					col2: +x[11],
-					glow: +x[15] > 1,
-					col1RGB: colors[x[10]] || colors["0"],
-					col2RGB: colors[x[11]] || colors["3"]
+					form: ['icon', 'ship', 'ball', 'ufo', 'wave', 'robot', 'spider'][+playerEntry[14]],
+					icon: +playerEntry[9],
+					col1: +playerEntry[10],
+					col2: +playerEntry[11],
+					glow: +playerEntry[15] > 1,
+					col1RGB: colors[playerEntry[10]] || colors["0"],
+					col2RGB: colors[playerEntry[11]] || colors["3"]
 				}
 			};
 			appRoutines.userCache(reqBundle.id, score.accountID, score.playerID, score.username);

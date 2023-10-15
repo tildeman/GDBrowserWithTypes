@@ -1,5 +1,6 @@
 import achievementTypes from './misc/achievementTypes.json' assert { type: "json" };
 import achievements from './misc/achievements.json' assert { type: "json" };
+import { fetchTemplate, fetchTemplateHTML } from './lib/template_handle.js';
 import sampleIcons from './misc/sampleIcons.json' assert {type: "json" };
 import secrets from "./misc/secretStuff.json" assert { type: "json" };
 import { AppRoutines, ExportBundle, ServerInfo } from "./types.js";
@@ -7,7 +8,6 @@ import serverListRaw from "./servers.json" assert { type: "json" };
 import express, { NextFunction, Request, Response } from 'express';
 import rateLimit, { AugmentedRequest } from "express-rate-limit";
 import music from './misc/music.json' assert { type: "json" };
-import { fetchTemplate } from './lib/template_handle.js';
 import { convertUSP } from './lib/uspconvert.js';
 import request, { AxiosResponse } from 'axios'; // `request` is trash
 import compression from 'compression';
@@ -84,9 +84,9 @@ const RL2 = rateLimit({
 
 let assetPage = fs.readFileSync('./html/assets.html', 'utf8');
 
-const appAccountCache: { [key: string]: any } = {};
-const appLastSuccess: { [key: string]: number } = {};
-const appActuallyWorked: { [key: string]: boolean } = {};
+const appAccountCache: Record<string, any> = {};
+const appLastSuccess: Record<string, number> = {};
+const appActuallyWorked: Record<string, boolean> = {};
 
 appServers.forEach(x => {
 	appAccountCache[x.id || "gd"] = {};
@@ -118,7 +118,7 @@ app.use(async function(req, res, next) {
 	}
 
 	// literally just for convenience
-	const reqOffline = (+(req.query.online || 0) > 0)? false : reqServer.offline;
+	const reqOffline = (+(req.query.online || 0) > 0) ? false : (reqServer.offline || false);
 	const reqEndpoint = reqServer.endpoint;
 	const reqOnePointNine = reqServer.onePointNine;
 	const reqTimestampSuffix = reqServer.timestampSuffix || "";
@@ -127,7 +127,7 @@ app.use(async function(req, res, next) {
 
 	if (reqIsGDPS) res.set("gdps", (reqOnePointNine ? "1.9/" : "") + reqId);
 
-	const reqGdParams = function(obj: { [configEntry: string]: string | undefined } = {}, substitute = true) {
+	const reqGdParams = function(obj: Record<string, string | number | undefined> = {}, substitute = true) {
 		Object.keys(appConfig.params).forEach(x => { if (!obj[x]) obj[x] = appConfig.params[x] });
 		Object.keys(reqServer.extraParams || {}).forEach(x => { if (!obj[x]) obj[x] = reqServer.extraParams?.x });
 		let ip = req.headers['x-real-ip']?.toString() || req.headers['x-forwarded-for']?.toString() || "";
@@ -214,7 +214,7 @@ function appUserCache(id: string, accountID: string, playerID: string, name: str
 	return cacheStuff;
 }
 
-const run: { [name: string]: any } = {};
+const run: Record<string, any> = {};
 // TODO: Do use your brain
 let apiFiles: string[] = [];
 for (let d of directories) {
@@ -259,7 +259,7 @@ function appParseResponse(responseBody: string, splitter = ":") {
 	if (responseBody.startsWith("\nWarning:")) responseBody = responseBody.split("\n").slice(2).join("\n").trim(); // GDPS'es are wild
 	if (responseBody.startsWith("<br />")) responseBody = responseBody.split("<br />").slice(2).join("<br />").trim(); // Seriously screw this
 	let response = responseBody.split('#')[0].split(splitter);
-	let res: { [index: number]: string } = {};
+	let res: Record<number, string> = {};
 	for (let i = 0; i < response.length; i += 2) {
 		res[response[i]] = response[i + 1];
 	};
@@ -267,7 +267,7 @@ function appParseResponse(responseBody: string, splitter = ":") {
 }
 
 //xss bad
-function appClean(text: string | undefined) {
+function appClean(text: string | number | undefined) {
 	return (text ? text.toString() : "")
 		.replace(/&/g, "&#38;")
 		.replace(/</g, "&#60;")
@@ -305,8 +305,9 @@ app.use('/assets', express.static('assets', {maxAge: "7d"}));
 app.use('/assets/css', express.static('assets/css'));
 
 app.use('/iconkit', express.static('iconkit'));
-app.get("/global.js", fetchTemplate("misc/global.js"));
-app.get("/dragscroll.js", fetchTemplate("misc/dragscroll.js"));
+app.get("/global.js", fetchTemplateHTML("misc/global.js"));
+app.get("/dragscroll.js", fetchTemplateHTML("misc/dragscroll.js"));
+app.use("/page_scripts", express.static("page_scripts"))
 
 app.get("/assets/:dir*?", function(req, res) {
 	let main = (req.params["dir*"] || "").toLowerCase();
@@ -356,74 +357,72 @@ app.post("/analyzeLevel", function(req, res) { run.analyze(app, req, res) });
 
 // HTML
 
+/**
+ * Entries that are disabled for 1.9 servers.
+ * 2.0 servers don't have customized settings, but it should be similar enough.
+ */
 let onePointNineDisabled = ['daily', 'weekly', 'gauntlets', 'messages'];
+/**
+ * Entries that are disabled for servers that block level downloads.
+ * 
+ * RobTop is known to do so for the main GDBrowser website.
+ */
 let downloadDisabled = ['daily', 'weekly'];
+/**
+ * For GDPS servers, do not display these.
+ */
 let gdpsHide = ['achievements', 'messages'];
 
+app.set("view engine", "pug");
+app.set("views", "./templates");
+
 app.get("/", function(req, res) {
-	let bundle: ExportBundle = res.locals.stuff; // Trust me, it's an ExportBundle
-	let reqBundle = bundle.req;
+	const { req: reqBundle }: ExportBundle = res.locals.stuff;
+
 	if (req.query.hasOwnProperty("offline") || (reqBundle.offline && !req.query.hasOwnProperty("home"))) {
 		res.status(200).sendFile("html/offline.html");
 	}
 	else {
-		fs.readFile('./html/home.html', 'utf8', function (err, data) {
-			let html = data;
-			if (reqBundle.isGDPS) {
-				html = html.replace('"levelBG"', '"levelBG purpleBG"')
-				.replace(/Geometry Dash Browser!/g, reqBundle.server.name + " Browser!")
-				.replace("/assets/gdlogo", `/assets/gdps/${reqBundle.id}_logo`)
-				.replace("coin.png\" itemprop", `gdps/${reqBundle.id}_icon.png" itemprop`)
-				.replace(/coin\.png/g, `${reqBundle.server.onePointNine ? "blue" : "silver"}coin.png`);
-				gdpsHide.forEach(x => {
-					html = html.replace(`menu-${x}`, 'changeDaWorld');
-				});
-			}
-			if (reqBundle.onePointNine) onePointNineDisabled.forEach(x => {
-				html = html.replace(`menu-${x}`, 'menuDisabled');
+		try {
+			res.render("home", {
+				isGDPS: reqBundle.isGDPS,
+				isOnePointNine: reqBundle.onePointNine || false,
+				serverName: reqBundle.server.name,
+				serverID: reqBundle.id,
+				serverDisabled: reqBundle.server.disabled || [],
+				onePointNineDisabled,
+				isDownloadDisabled: reqBundle.server.downloadsDisabled || false,
+				downloadDisabled
 			});
-			if (reqBundle.server.disabled) reqBundle.server.disabled.forEach(x => {
-				html = html.replace(`menu-${x}`, 'menuDisabled');
-			});
-			// Here used to be an OS check. Removed because why not.
-			if (reqBundle.server.downloadsDisabled) {
-				downloadDisabled.forEach(x => {
-					html = html.replace(`menu-${x}`, 'menuDisabled');
-				});
-				html = html.replace('id="dl" style="display: none', 'style="display: block')
-					.replace('No active <span id="noLevel">daily</span> level!', '[Blocked by RobTop]');
-			}
-			if (html.includes('menuDisabled" src="../assets/category-weekly')) { // if weekly disabled, replace with featured
-				html = html.replace('block" id="menu_weekly', 'none" id="menu_weekly')
-					.replace('none" id="menu_featured', 'block" id="menu_featured');
-			}
-			return res.status(200).send(html);
-		});
+		}
+		catch (err) {
+			console.log(err.message);
+		}
 	}
 });
 
-app.get("/achievements", fetchTemplate("html/achievements.html"));
-app.get("/analyze/:id", fetchTemplate("html/analyze.html"));
-app.get("/api", fetchTemplate("html/api.html"));
-app.get("/boomlings", fetchTemplate("html/boomlings.html"));
-app.get("/comments/:id", fetchTemplate("html/comments.html"));
-app.get("/demon/:id", fetchTemplate("html/demon.html"));
-app.get("/gauntlets", fetchTemplate("html/gauntlets.html"));
-app.get("/gdps", fetchTemplate("html/gdps.html"));
-app.get("/iconkit", fetchTemplate("html/iconkit.html"));
-app.get("/leaderboard", fetchTemplate("html/leaderboard.html"));
-app.get("/leaderboard/:text", fetchTemplate("html/levelboard.html"));
-app.get("/mappacks", fetchTemplate("html/mappacks.html"));
-app.get("/messages", fetchTemplate("html/messages.html"));
-app.get("/search", fetchTemplate("html/filters.html"));
-app.get("/search/:text", fetchTemplate("html/search.html"));
+app.get("/achievements", fetchTemplateHTML("html/achievements.html"));
+app.get("/analyze/:id", fetchTemplateHTML("html/analyze.html"));
+app.get("/api", fetchTemplate("api"));
+app.get("/boomlings", fetchTemplateHTML("html/boomlings.html"));
+app.get("/comments/:id", fetchTemplateHTML("html/comments.html"));
+app.get("/demon/:id", fetchTemplateHTML("html/demon.html"));
+app.get("/gauntlets", fetchTemplateHTML("html/gauntlets.html"));
+app.get("/gdps", fetchTemplateHTML("html/gdps.html"));
+app.get("/iconkit", fetchTemplateHTML("html/iconkit.html"));
+app.get("/leaderboard", fetchTemplateHTML("html/leaderboard.html"));
+app.get("/leaderboard/:text", fetchTemplateHTML("html/levelboard.html"));
+app.get("/mappacks", fetchTemplateHTML("html/mappacks.html"));
+app.get("/messages", fetchTemplateHTML("html/messages.html"));
+app.get("/search", fetchTemplate("filters"));
+app.get("/search/:text", fetchTemplateHTML("html/search.html"));
 
 // API
 
 app.get("/api/analyze/:id", RL, function(req, res) { run.level(app, req, res, true, true) });
 app.get("/api/boomlings", function(req, res) { run.boomlings(app, req, res) });
 app.get("/api/comments/:id", RL2, function(req, res) { run.comments(app, req, res) });
-app.get("/api/credits", function(req, res) { res.status(200).send(import('./misc/credits.json', { assert: { type: "json" } })) });
+app.get("/api/credits", async function(req, res) { res.status(200).send(await import('./misc/credits.json', { assert: { type: "json" } })) });
 app.get("/api/gauntlets", function(req, res) { run.gauntlets(app, req, res) });
 app.get("/api/leaderboard", function(req, res) { run[req.query.hasOwnProperty("accurate") ? "accurate" : "scores"](app, req, res) });
 app.get("/api/leaderboardLevel/:id", RL2, function(req, res) { run.leaderboardLevel(app, req, res) });
@@ -461,7 +460,7 @@ app.get("/api/music", function(req, res) { res.status(200).send(music) });
 app.get("/api/gdps", function(req, res) {res.status(200).send(req.query.hasOwnProperty("current") ? appSafeServers.find(x => res.locals.stuff.req.server.id == x.id) : appSafeServers) });
 
 // important icon stuff
-let sacredTexts: { [text: string]: any } = {};
+let sacredTexts: Record<string, any> = {};
 
 let sacredTextFiles = fs.readdirSync('./iconkit/sacredtexts');
 for (let x of sacredTextFiles) {
@@ -498,7 +497,7 @@ app.get('/api/icons', function(req, res) {
 });
 
 // important icon kit stuff
-let iconKitFiles: { [icon: string]: string[] } = {}
+let iconKitFiles: Record<string, string[]> = {}
 let extraDataDir = fs.readdirSync('./iconkit/extradata');
 for (let x of extraDataDir) {
 	iconKitFiles[x.split(".")[0]] = await import("./iconkit/extradata/" + x, { assert: { type: "json" } });

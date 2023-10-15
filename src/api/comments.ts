@@ -67,10 +67,10 @@ export default async function(app: Express, req: Request, res: Response) {
 		if (err) return sendError();
 
 		const split_bars = body?.split('|') || [];
-		const split_colons = split_bars.map(x => x.split(':'));
-		let comments = split_colons.map(x => x.map(x => appRoutines.parseResponse(x, "~")));
-		if (req.query.type == "profile") comments = comments.filter(x => x[0][2]);
-		else comments = comments.filter(x => x[0] && x[0][2]);
+		const split_colons = split_bars.map(commentInfo => commentInfo.split(':'));
+		let comments = split_colons.map(commentInfo => commentInfo.map(commentInfo => appRoutines.parseResponse(commentInfo, "~")));
+		if (req.query.type == "profile") comments = comments.filter(commentInfo => commentInfo[0][2]);
+		else comments = comments.filter(commentInfo => commentInfo[0] && commentInfo[0][2]);
 		if (!comments.length) return res.status(204).send([]);
 
 		let pages = (body || "").split('#')[1].split(":");
@@ -78,18 +78,18 @@ export default async function(app: Express, req: Request, res: Response) {
 
 		let commentArray: ICommentContent[] = [];
 
-		comments.forEach((c, i) => {
+		comments.forEach((commentValue, commentIndex) => {
 
-			var x = c[0]; //comment info
-			var y = c[1]; //account info
+			var commentInfo = commentValue[0]; //comment info
+			var accountInfo = commentValue[1]; //account info
 
-			if (!x[2]) return;
+			if (!commentInfo[2]) return;
 
 			let comment: ICommentContent = {
-				content: Buffer.from(x[2], 'base64').toString(),
-				ID: x[6],
-				likes: +x[4],
-				date: (x[9] || "?") + reqBundle.timestampSuffix
+				content: Buffer.from(commentInfo[2], 'base64').toString(),
+				ID: commentInfo[6],
+				likes: +commentInfo[4],
+				date: (commentInfo[9] || "?") + reqBundle.timestampSuffix
 			};
 			if (comment.content.endsWith("⍟") || comment.content.endsWith("☆")) {
 				comment.content = comment.content.slice(0, -1);
@@ -97,21 +97,20 @@ export default async function(app: Express, req: Request, res: Response) {
 			}
 			
 			if (req.query.type != "profile") {
-				// TODO: Remove "as any" binding
-				let commentUser = new Player(y as any);
+				let commentUser = new Player(accountInfo);
 				// TODO: Make a cleaner data transfer
 				Object.keys(commentUser).forEach(k => {
 					comment[k] = commentUser[k];
 				})
-				comment.levelID = x[1] || req.params.id;
-				comment.playerID = x[3] || "0";
-				comment.color = (comment.playerID == "16" ? "50,255,255" : x[12] || "255,255,255");
-				if (+x[10] > 0) comment.percent = +x[10];
-				comment.moderator = +x[11] || 0;
+				comment.levelID = commentInfo[1] || req.params.id;
+				comment.playerID = commentInfo[3] || "0";
+				comment.color = (comment.playerID == "16" ? "50,255,255" : commentInfo[12] || "255,255,255");
+				if (+commentInfo[10] > 0) comment.percent = +commentInfo[10];
+				comment.moderator = +commentInfo[11] || 0;
 				appRoutines.userCache(reqBundle.id, comment.accountID || "", comment.playerID, comment.username || "");
 			}
 
-			if (i == 0 && req.query.type != "commentHistory") {
+			if (commentIndex == 0 && req.query.type != "commentHistory") {
 				comment.results = +pages[0];
 				comment.pages = lastPage;
 				comment.range = `${+pages[1] + 1} to ${Math.min(+pages[0], +pages[1] + +pages[2])}`;

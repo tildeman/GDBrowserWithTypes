@@ -25,6 +25,45 @@ interface SearchFilters {
     count?: number;
 }
 
+// SARY NEVER CLEAR
+
+/**
+ * Auxiliary interface for Pointercrate's level entries
+ */
+interface ListDemon {
+	name: string;
+	position?: number;
+	id: number;
+	publisher: {
+		id: number;
+		name: string;
+		banned: boolean;
+	};
+	verifier: {
+		id: number;
+		name: string;
+		banned: boolean;
+	};
+	level_id?: number;
+	video?: string;
+}
+
+/**
+ * Find a level in Pointercrate's level list using the ID
+ * @param needle The level ID to search
+ * @param haystack The level list (Pointercrate's format) in use
+ * @returns The position of the level in the list, or -1 if not existent
+ */
+// TODO: Since both the regular and augmented arrays are regular, optimize this to O(n) complexity
+function idInDemon(needle: number, haystack: ListDemon[]) {
+	let index = 0;
+	for (const value of haystack) {
+		if (value.level_id == needle) return index;
+		index++;
+	}
+	return -1;
+}
+
 export default async function(app: Express, req: Request, res: Response) {
 	const {req: reqBundle, sendError}: ExportBundle = res.locals.stuff;
 	const appRoutines: AppRoutines = app.locals.stuff;
@@ -38,28 +77,27 @@ export default async function(app: Express, req: Request, res: Response) {
 		if (!reqBundle.server.demonList) return sendError(400);
 		let dList = demonList[reqBundle.id];
 		if (!dList || !dList.list.length || dList.lastUpdated + 600000 < Date.now()) {  // 10 minute cache
-			return request.get(url1).then(async function(resp1: AxiosResponse){
-				return request.get(url2).then(async function(resp2: AxiosResponse) {
-					const list1 = resp1.data;
-					const list2 = resp2.data;
-					demonList[reqBundle.id] = {
-						list: JSON.parse(list1).concat(JSON.parse(list2)).map((x: { level_id: any }) => String(x.level_id)),
-						lastUpdated: Date.now()
-					};
-				}).catch(function(err2: any) {
-					return sendError();
-				});
-			}).catch(function(err1: any) {
+			try {
+				const list1: ListDemon[] = (await request.get(url1)).data;
+				const list2: ListDemon[] = (await request.get(url2)).data;
+				demonList[reqBundle.id] = {
+					list: list1.concat(list2).filter((demonListItem) => demonListItem.level_id).map((demonListItem) => (demonListItem.level_id?.toString() || "")),
+					augmentedList: list1.concat(list2),
+					lastUpdated: Date.now(),
+				};
+			}
+			catch(err: any) {
+				console.warn(err.message);
 				return sendError();
-			});
+			}
 		}
 	}
 
 	let amount = 10;
 	let count = reqBundle.isGDPS ? 10 : +(req.query.count || 0);
 	if (count && count > 0) {
-	  if (count > 500) amount = 500;
-	  else amount = count;
+		if (count > 500) amount = 500;
+		else amount = count;
 	}
 	
 	let filters: SearchFilters = {
@@ -120,14 +158,15 @@ export default async function(app: Express, req: Request, res: Response) {
 	if (req.query.hasOwnProperty("creators")) filters.type = 12;
 
 	let listSize = 10;
-	if (demonMode || req.query.gauntlet || req.query.type == "saved" || ["mappack", "list", "saved"].some(x => req.query.hasOwnProperty(x))) {
+	if (demonMode || req.query.gauntlet || req.query.type == "saved" || ["mappack", "list", "saved"].some(levelData => req.query.hasOwnProperty(levelData))) {
 		filters.type = 10;
-		filters.str = demonMode ? demonList[reqBundle.id].list : filters.str!.split(",");
-		listSize = filters.str!.length;
-		filters.str = filters.str!.slice((filters.page || 0) * amount, (filters.page || 0) * amount + amount);
-		if (!filters.str.length) return sendError(400);
+		// never handle filters.str dynamically
+		let filtersStrArr: string[] = demonMode ? demonList[reqBundle.id].list : filters.str!.split(",");
+		listSize = filtersStrArr!.length;
+		filtersStrArr = filtersStrArr!.slice((filters.page || 0) * amount, (filters.page || 0) * amount + amount);
+		if (!filtersStrArr.length) return sendError(400);
 		// TODO: Make a "map" for strings
-		// filters.str = filters.str.map(x => String(Number(x) + +(req.query.len || 0))).join()
+		filters.str = filtersStrArr.map(levelData => String(Number(levelData) + +(req.query.len || 0))).join()
 		filters.page = 0
 	}
 
@@ -142,40 +181,39 @@ export default async function(app: Express, req: Request, res: Response) {
 		let songList = {};
 		let authors = splitBody[1].split('|');
 		let songString = splitBody[2];
-		let songs = songString.split('~:~').map(x => appRoutines.parseResponse(`~${x}~`, '~|~'));
-		songs.forEach(x => {
-			songList[x['~1']] = x['2'];
+		let songs = songString.split('~:~').map(songResponse => appRoutines.parseResponse(`~${songResponse}~`, '~|~'));
+		songs.forEach(songEntry => {
+			songList[songEntry['~1']] = songEntry['2'];
 		});
 
-		authors.forEach(x => {
-			if (x.startsWith('~')) return;
-			let arr = x.split(':');
+		authors.forEach(authorResponse => {
+			if (authorResponse.startsWith('~')) sendError();
+			let arr = authorResponse.split(':');
 			authorList[arr[0]] = [arr[1], arr[2]];
 		});
 
-		let levelArray = preRes.map(x => appRoutines.parseResponse(x)).filter(x => x[1]);
+		let levelArray = preRes.map(levelResponse => appRoutines.parseResponse(levelResponse)).filter(levelResponse => levelResponse[1]);
 		let parsedLevels: SearchQueryLevel[] = [];
 
-		levelArray.forEach((x, y) => {
+		levelArray.forEach((levelData, levelIndex) => {
 
-			let songSearch = songs.find(y => y['~1'] == x[35]) || [];
+			let songSearch = songs.find(songItem => songItem['~1'] == levelData[35]) || [];
 
-			// TODO: Check if songSearch is a songInfo
-			let level = new SearchQueryLevel(x as any, reqBundle.server as any, null).getSongInfo(songSearch as any);
-			if (!level.id) return;
-			level.author = authorList[x[6]] ? authorList[x[6]][0] : "-";
-			level.accountID = authorList[x[6]] ? authorList[x[6]][1] : "0";
+			let level = new SearchQueryLevel(levelData, reqBundle.server, null, {}).getSongInfo(songSearch);
+			if (!level.id) sendError();
+			level.author = authorList[levelData[6]] ? authorList[levelData[6]][0] : "-";
+			level.accountID = authorList[levelData[6]] ? authorList[levelData[6]][1] : "0";
 
 			if (demonMode) {
-				if (!y) level.demonList = reqBundle.server.demonList;
-				level.demonPosition = demonList[reqBundle.id].list.indexOf(level.id) + 1;
+				if (!levelIndex) level.demonList = reqBundle.server.demonList;
+				level.demonPosition = idInDemon(+level.id, demonList[reqBundle.id].augmentedList) + 1;
 			}
 
 			if (reqBundle.isGDPS) level.gdps = (reqBundle.onePointNine ? "1.9/" : "") + reqBundle.server.id;
 			if (level.author != "-" && appRoutines.config.cacheAccountIDs) appRoutines.userCache(reqBundle.id, level.accountID.toString(), level.playerID.toString(), level.author);
 
 			//this is broken if you're not on page 0, blame robtop
-			if (filters.page == 0 && y == 0 && splitBody[3]) {
+			if (filters.page == 0 && levelIndex == 0 && splitBody[3]) {
 				let pages = splitBody[3].split(":");
 
 				if (filters.gauntlet) {  // gauntlet page stuff
@@ -192,7 +230,7 @@ export default async function(app: Express, req: Request, res: Response) {
 				}
 			}
 
-			parsedLevels[y] = level;
+			parsedLevels[levelIndex] = level;
 		})
 
 		if (filters.type == 10) parsedLevels = parsedLevels.slice(+(filters.page || 0) * amount, (+(filters.page || 0) + 1) * amount);

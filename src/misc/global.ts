@@ -83,7 +83,7 @@ interface IconData {
 }
 
 $('body').append(`
-	<div data-nosnippet id="tooSmall" class="brownbox center supercenter" style="display: none; width: 80%">
+	<div data-nosnippet id="tooSmall" class="brownBox center supercenter" style="display: none; width: 80%">
 	<h1>Yikes!</h1>
 	<p>Your <cg>screen</cg> isn't <ca>wide</ca> enough to <cy>display</cy> this <cg>page</cg>.<br>
 	Please <cy>rotate</cy> your <cg>device</cg> <ca>horizontally</ca> or <cy>resize</cy> your <cg>window</cg> to be <ca>longer</ca>.

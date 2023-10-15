@@ -271,7 +271,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
     background-repeat: no-repeat;
     background-size: contain;
     padding-right: 20%;
-    height: 10%;
+    height: 5vh;
 }
 
 input[type=checkbox]:checked + label.gdcheckbox {
@@ -327,7 +327,8 @@ input:focus, textarea:focus {
 }
 
 input[type='number'] {
-    -moz-appearance:textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
 }
 
 input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {

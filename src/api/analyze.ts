@@ -152,9 +152,9 @@ function sortObj(obj: {}, sortBy?: string) {
  * @param valid_only Use only keys in the name array
  * @returns An object containing the specified names
  */
-function parse_obj(obj: string, splitter: string, name_arr: (string | null)[] | {}, valid_only?: boolean): { [key: string]: string } {
+function parse_obj(obj: string, splitter: string, name_arr: (string | null)[] | {}, valid_only?: boolean): Record<string, string> {
 	const s_obj = obj.split(splitter);
-	let robtop_obj: { [key: string]: string } = {};
+	let robtop_obj: Record<string, string> = {};
 
 	// semi-useless optimization depending on where at node js you"re at
 	for (let i = 0, obj_l = s_obj.length; i < obj_l; i += 2) {
@@ -207,8 +207,8 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	let level_coins: LevelObject[] = [];
 	let level_text: LevelObject[] = [];
 
-	let orb_array: { [color: string]: number } = {};
-	let trigger_array: { [type: string]: number } = {};
+	let orb_array: Record<string, number> = {};
+	let trigger_array: Record<string, number> = {};
 
 	let last = 0;
 	let obj: LevelObject;
@@ -323,7 +323,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	const responseTriggers = trigger_array;
 	responseTriggers.total = Object.values(trigger_array).reduce((a, x) => a + x, 0);
 	
-	let responseTriggerGroups: { [group: string]: number } = {};
+	let responseTriggerGroups: Record<string, number> = {};
 	const responseBlocks = sortObj(blockCounts);
 	const responseMisc = sortObj(miscCounts, "0");
 	

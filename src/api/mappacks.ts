@@ -19,14 +19,14 @@ export default async function(app: Express, req: Request, res: Response) {
 		return res.send(cached.data); // 1.5 hour cache
 	}
 	let params = { count: 250, page: 0 };
-	let packs: { [index: number]: string }[] = [];
+	let packs: Record<number, string>[] = [];
 
 	function mapPackLoop() {
 		reqBundle.gdRequest('getGJMapPacks21', params, function (err, resp, body) {
 
 			if (err) return sendError();
 
-			let newPacks = body?.split('#')[0].split('|').map(x => appRoutines.parseResponse(x)).filter(x => x[2]) || [];
+			let newPacks = body?.split('#')[0].split('|').map(mapPackResponse => appRoutines.parseResponse(mapPackResponse)).filter(mapPackResponse => mapPackResponse[2]) || [];
 			packs = packs.concat(newPacks);
 
 			// not all GDPS'es support the count param, which means recursion time!!!
@@ -35,15 +35,15 @@ export default async function(app: Express, req: Request, res: Response) {
 				return mapPackLoop();
 			}
 			
-			let mappacks = packs.map(x => ({    // "packs.map()" laugh now please
-				id: +x[1],
-				name: x[2],
-				levels: x[3].split(","),
-				stars: +x[4],
-				coins: +x[5],
-				difficulty: difficulties[+x[6]] || "unrated",
-				barColor: x[7],
-				textColor: x[8]
+			let mappacks = packs.map(mapPackEntry => ({ // "packs.map()" laugh now please
+				id: +mapPackEntry[1],
+				name: mapPackEntry[2],
+				levels: mapPackEntry[3].split(","),
+				stars: +mapPackEntry[4],
+				coins: +mapPackEntry[5],
+				difficulty: difficulties[+mapPackEntry[6]] || "unrated",
+				barColor: mapPackEntry[7],
+				textColor: mapPackEntry[8]
 			}));
 
 			if (appRoutines.config.cacheMapPacks) cache[reqBundle.id] = {

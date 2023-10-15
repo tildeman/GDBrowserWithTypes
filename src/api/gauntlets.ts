@@ -23,8 +23,12 @@ export default async function(app: Express, req: Request, res: Response) {
 	reqBundle.gdRequest('getGJGauntlets21', {}, function (err, resp, body) {
 
 		if (err) return sendError();
-		let gauntlets = body?.split('#')[0].split('|').map(x => appRoutines.parseResponse(x)).filter(x => x[3]) || [];
-		let gauntletList = gauntlets.map(x => ({ id: +x[1], name: gauntletNames[+x[1] - 1] || "Unknown", levels: x[3].split(",") }));
+		let gauntlets = body?.split('#')[0].split('|').map(gauntletResponse => appRoutines.parseResponse(gauntletResponse)).filter(gauntletResponse => gauntletResponse[3]) || [];
+		let gauntletList = gauntlets.map(gauntletItem => ({
+			id: +gauntletItem[1],
+			name: gauntletNames[+gauntletItem[1] - 1] || "Unknown",
+			levels: gauntletItem[3].split(",")
+		}));
 
 		if (appRoutines.config.cacheGauntlets) cache[reqBundle.id] = {
 			data: gauntletList,

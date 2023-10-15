@@ -1,0 +1,147 @@
+mixin mainButton(id, link, dir, name)
+	td
+		a(tabindex="1", href=dir)
+			img.menuButton(class=(isOnePointNine && onePointNineDisabled.includes(id)) || (serverDisabled.includes(id)) || (isDownloadDisabled && downloadDisabled.includes(id)) ? "menuDisabled" : "menu-" + id, src="/assets/category-" + link + ".png", title=name)
+
+doctype html
+html(lang="en")
+	head
+		title Geometry Dash Browser!
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		if isGDPS
+			link(rel="icon", href="/assets/" + (isOnePointNine ? "blue": "silver") + "coin.png")
+		else
+			link(rel="icon", href="/assets/coin.png")
+		meta(id="meta-title", property="og:title", content="Geometry Dash Browser!")
+		meta(id="meta-desc", property="og:description", content="Browse all of Geometry Dash's online features, right from this handy little website! Levels, profiles, leaderboards, comments, and more!")
+		if isGDPS
+			meta(id="meta-image", name="og:image", content="/assets/gdps/" + serverID + "_icon.png", itemprop="image")
+		else
+			meta(id="meta-image", name="og:image", content="/assets/coin.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body(onbeforeunload="saveUrl()", class=isGDPS ? "levelBG purpleBG" : "levelBG")
+		#everything
+			#credits.popup
+
+			div(style={ position: "absolute", bottom: "0%", left: "0%", width: "100%", "pointer-events": "none"})
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%" })
+
+			div(style={ position: "absolute", top: "0%", left: "0%", width: "100%", "pointer-events": "none"})
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%", transform: "scaleY(-1)" })
+
+			div(style={ position: "absolute", top: "1.7%", right: "2%", width: "10%", "text-align": "right"})
+				img#creditsButton.gdButton(src="/assets/credits.png", width="60%", onclick="loadCredits()")
+
+			// TODO: This is kludgy
+			div(class=(isOnePointNine && onePointNineDisabled.includes("achievements")) || (serverDisabled.includes("achievements")) || (isDownloadDisabled && downloadDisabled.includes("achievements")) ? "menuDisabled" : "menu-achievements", style={ position: "absolute", top: "5.5%", left: "3%", width: "12%"})
+				a(href="/achievements")
+					img.gdButton(src="/assets/achievements.png", style={ width: "40%" })
+
+			div(class=(isOnePointNine && onePointNineDisabled.includes("messages")) || (serverDisabled.includes("messages")) || (isDownloadDisabled && downloadDisabled.includes("messages")) ? "menuDisabled" : "menu-messages", style={ position: "absolute", top: "-1.7%", left: "11%", width: "10%", "text-align": "left"})
+				a(href="/messages")
+					img.iconRope(src="/assets/messagerope.png", style={ width: "40%" })
+
+			div(style={ position: "absolute", top: "-1.5%", right: "10%", width: "10%", "text-align": "right" })
+				a(href="/iconkit")
+					img.iconRope(src="/assets/iconrope.png", width="40%")
+
+			if (isDownloadDisabled)
+				#dl(style={ position: "absolute", top: "15%", right: "0.5%", "text-align": "center", width: "17%" })
+					h1.smaller(style={ "margin-bottom": "1%" }) Note
+					p(style={ "font-size": "2.2vh", "margin-top": "1.2%" })
+						ca Level downloading
+						|
+						| has been
+						|
+						cr blocked
+						|
+						| by RobTop.
+						|
+						cy Level analysis, daily levels, and downloading extra info
+						|
+						| will
+						|
+						cg not work
+						|
+						| until he chooses to unblock downloads. These features still work
+						|
+						ca
+							a.underline(target="_blank", href="https://github.com/GDColon/GDBrowser") locally
+						|
+						| and on
+						|
+						ca
+							a.underline(href="../gdps") private servers
+
+			#menuButtons.supercenter.center(style={ bottom: "5%" })
+				table
+					tr.menuButtonList
+						+mainButton("saved", "saved", "./search/*?type=saved", "Saved Levels")
+						+mainButton("daily", "daily", "./daily", "Daily Level")
+						if (isOnePointNine && onePointNineDisabled.includes("weekly")) || (serverDisabled.includes("weekly")) || (isDownloadDisabled && downloadDisabled.includes("weekly"))
+							td#menu_featured
+								a(tabindex="1", href="./search/*?type=featured")
+									img.menuButton(class="menu-featured", src="/assets/category-featured.png", title="Featured")
+						else
+							td#menu_weekly
+								a(tabindex="1", href="./weekly")
+									img.menuButton(class="menu-weekly", src="/assets/category-weekly.png", title="Weekly Demon")
+						+mainButton("gauntlets", "gauntlets", "./gauntlets", "Gauntlets")
+					tr.menuButtonList
+						+mainButton("leaderboard", "scores", "./leaderboard", "Scores")
+						+mainButton("hof", "hof", "./search/*?type=hof", "Hall Of Fame")
+						+mainButton("mappacks", "packs", "./mappacks", "Map Packs")
+						+mainButton("search", "search", "./search", "Search")
+
+				p(style={ "margin-bottom": "2%" })
+					| Website created by
+					|
+					a.menuLink(href="https://twitter.com/TheRealGDColon", title="Colon") Colon
+					|
+					| :
+					br
+					| Pretty much everything other than that belongs to
+					|
+					a.menuLink(href="http://robtopgames.com", title="RobTop Games") RobTop Games
+					| .
+
+				p(style={ "margin-top": "0" })
+					a.menuLink(href="https://gdcolon.com/tools", title="GD Tools") GD Tools
+					| &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+					a.menuLink(href="https://gdcolon.com", title="API") More Projects
+					| &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+					a.menuLink(href="https://github.com/GDColon/GDBrowser", title="GitHub") GitHub
+					| &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+					a.menuLink(href="https://store.steampowered.com/app/322170/Geometry_Dash/", title="Buy Geometry Dash!") Buy Geometry Dash!
+
+			div(style={ position: "absolute", bottom: "17%", right: "7%", width: "9%", "pointer-events": "none", "text-align": "right"})
+				img(src="/assets/privateservers.png", style={ width: "85%" })
+
+			div(style={ position: "absolute", bottom: "2.5%", right: "1.5%", width: "18%", "text-align": "right" })
+				a(href="/gdps", title="GD Private Servers")
+					img.gdButton(src="/assets/basement.png", style={ width: "40%" })
+
+			.center(width="100%", style={ "margin-top": "2%", height: "100%" })
+				img(src=isGDPS ? ("/assets/gdps/" + serverID + "_logo.png") : "/assets/gdlogo.png", style={ height: "11.5%" })
+				br
+				img#browserlogo(src="/assets/browser.png", style={ height: "7%", margin: "0.5% 0% 0% 30%" })
+
+			#noDaily(style={ display: "none" })
+				.copied.center.noClick(style={ position: "absolute", top: "29%", left: "50%", transform: "translate(-50%, -50%)", width: "90vh", "background-color": "rgba(0, 0, 0, 0.7)" })
+					if (isDownloadDisabled)
+						h1.smaller.noSelect
+							| [Blocked by RobTop]
+					else
+						h1.smaller.noSelect
+							| No active
+							|
+							span#noLevel daily
+							|
+							| level!
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
+		script(type="text/javascript", src="/iconkit/icon.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="text/javascript", src="/page_scripts/home.js")

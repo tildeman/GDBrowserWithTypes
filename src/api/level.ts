@@ -4,7 +4,6 @@ import { Level, SearchQueryLevel } from '../classes/Level.js';
 import { Express, Request, Response } from "express";
 import { AppRoutines, ExportBundle } from "../types.js";
 
-// module.exports = async (app: Express, req, Request, res: Express.Response, api, analyze) => {
 export default async function(app: Express, req: Request, res: Response, api: boolean, analyze: boolean) {
 	const {req: reqBundle, sendError}: ExportBundle = res.locals.stuff;
 	const appRoutines: AppRoutines = app.locals.stuff;
@@ -24,7 +23,7 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 
 	if (analyze || req.query.hasOwnProperty("download")) return appRoutines.run.download(app, req, res, api, levelID, analyze);
 
-	reqBundle.gdRequest('getGJLevels21', { str: levelID, type: 0 }, function (err, resp, body) {
+	reqBundle.gdRequest('getGJLevels21', { str: levelID, type: 0 }, async function (err, resp, body) {
 		if (err || body?.startsWith("##")) return rejectLevel();
 		body = body || "";
 
@@ -34,8 +33,7 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 		let song = appRoutines.parseResponse(songStr, '~|~');
 
 		let levelInfo = appRoutines.parseResponse(preRes.find(x => x.startsWith(`1:${levelID}`)) || preRes[0]);
-		// TODO: Use a better type
-		let level = new SearchQueryLevel(levelInfo as any, reqBundle.server as any, false, [undefined, author[1] || "", +author[2] || 0]).getSongInfo(song as any);
+		let level = new SearchQueryLevel(levelInfo, reqBundle.server, false, ["", author[1] || "", (+author[2] || 0).toString()]).getSongInfo(song);
 		if (!level.id) return rejectLevel();
 
 		if (reqBundle.isGDPS) level.gdps = (reqBundle.onePointNine ? "1.9/" : "") + reqBundle.server.id;
@@ -51,6 +49,8 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 				level.songName = filteredSong || level.songName;
 				let variables = Object.keys(level);
 				variables.forEach(x => {
+					console.log(x);
+					console.log(appRoutines.clean(level[x]));
 					let regex = new RegExp(`\\[\\[${x.toUpperCase()}\\]\\]`, "g");
 					html = html.replace(regex, appRoutines.clean(level[x]));
 				})
@@ -63,14 +63,12 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 		}
 
 		if (reqBundle.server.demonList && level.difficulty == "Extreme Demon") {
-			request.get(reqBundle.server.demonList + 'api/v2/demons/?name=' + level.name.trim()).then(function(resp) {
-				let demonList = resp.data;
-				let demon = JSON.parse(demonList);
+			try {
+				const demon = (await request.get(reqBundle.server.demonList + 'api/v2/demons/?name=' + level.name.trim())).data;
 				if (demon[0] && demon[0].position) level.demonList = demon[0].position;
-			}).finally(function() {
-				return sendLevel();
-			});
+			}
+			catch (err) {}
 		}
-		else return sendLevel();
+		return sendLevel();
 	});
 }

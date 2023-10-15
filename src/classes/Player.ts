@@ -5,18 +5,7 @@ import colors_raw from '../iconkit/sacredtexts/colors.json' assert { type: "json
  */
 type ColorRGB = { r: number, g: number, b: number };
 
-const colors: { [ id: string ]: ColorRGB } = colors_raw;
-
-// Placeholder array
-type PlayerAccount = [
-	unknown, string, string, string, string, unknown, string, unknown,
-	string, string, string, string, unknown, string, string, string,
-	string, string, string, string, string | undefined, string, string,
-	string, string, string, string, unknown, string, unknown, string,
-	unknown, unknown, unknown, unknown, unknown, unknown, unknown, unknown,
-	unknown, unknown, unknown, unknown, string, string | undefined,
-	string | undefined, string, unknown, string, string, string
-];
+const colors: Record<string , ColorRGB> = colors_raw;
 
 /**
  * Class for a Geometry Dash Player
@@ -176,7 +165,7 @@ export class Player {
 	/**
 	 * @param account The player account object
 	 */
-	constructor(account: PlayerAccount) {
+	constructor(account: Record<number, string>) {
 		this.username = account[1] || "-";
 		this.playerID = account[2];
 		this.accountID = account[16];
