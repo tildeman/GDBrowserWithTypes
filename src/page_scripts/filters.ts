@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Site-specific script for the search page
+ */
+
 let filters: string[] = [];
 let demons = [];
 let demonMode = false;
@@ -21,7 +25,6 @@ $('#userSearch').click(function() {
 });
 
 $('.levelSearch').click(function() {
-
 	let url = "./search/" + (encodeURIComponent(($('#levelName').val() || "").toString()) || "*") + "?type=" + $(this).attr('search');
 	if ($(this).attr('search') == "featured") return window.location.href = url;
 
@@ -72,7 +75,7 @@ $('.levelSearch').click(function() {
  */
 function getDiffFilters() {
 	return $('.diffDiv.selectedFilter').map(function() {
-		return $(this).attr('diff')
+		return $(this).attr('diff');
 	}).toArray();
 }
 
@@ -272,11 +275,14 @@ Fetch(`../api/music`).then((music: any) => {
 	$(document).on('click', '.songChange', function () { 
 		officialSong += Number($(this).attr('jump'));
 		if (officialSong < 1) officialSong = 1;
-		$('#songName').html(`${officialSong}: ${music[officialSong] ? music[officialSong][0] : officialSong == 69 ? "Nice" : "Unknown"}`);
+		// There was once a check here
+		// If the song ID is `69`, say `Nice` instead of `Unknown`
+		// Removed for obvious reasons
+		$('#songName').html(`${officialSong}: ${music[officialSong] ? music[officialSong][0] : "Unknown"}`);
 		savedFilters.song = officialSong;
 		savedFilters.defaultSong = true;
 		checkExtraFilters();
-	})
+	});
 
 	if (hadDefaultSong) {
 		checkExtraFilters();

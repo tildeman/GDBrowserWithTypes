@@ -43,7 +43,7 @@ export interface ServerInfo {
 	timestampSuffix?: string;
 	/**
 	 * The URL of the server's Demon List API, if it has one (e.g. `http://pointercrate.com/`.
-	 * Make sure it ends with a slash!
+	 * Make sure it ends with a slash!)
 	 */
 	demonList?: string;
 	/**

@@ -75,15 +75,16 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 					function sendLevel() {
 						if (api) return res.send(level);
 
-						else return fs.readFile('./html/level.html', 'utf8', function (err, data) {
-							let html = data.toString();
-							let variables = Object.keys(level);
-							variables.forEach(x => {
-								let regex = new RegExp(`\\[\\[${x.toUpperCase()}\\]\\]`, "g");
-								html = html.replace(regex, appRoutines.clean(level[x]));
-							})
-							return res.send(html);
-						})
+						// else return fs.readFile('./html/level.html', 'utf8', function (err, data) {
+						// 	let html = data.toString();
+						// 	let variables = Object.keys(level);
+						// 	variables.forEach(x => {
+						// 		let regex = new RegExp(`\\[\\[${x.toUpperCase()}\\]\\]`, "g");
+						// 		html = html.replace(regex, appRoutines.clean(level[x]));
+						// 	})
+						// 	return res.send(html);
+						// })
+						res.render("level", { level })
 					}
 
 					if (levelID < 0) {

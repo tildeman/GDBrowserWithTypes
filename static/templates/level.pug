@@ -1,0 +1,268 @@
+- var coinColor = level.verifiedCoins ? "silvercoin" : "browncoin"
+doctype html
+html(lang="en")
+	head
+		title= level.name + "(" + level.id + ")"
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/difficulties/" + level.difficultyFace + ".png")
+		meta(id="meta-title", property="og:title", content=level.name + " by " + level.author)
+		meta(id="meta-desc", property="og:description", content=`ID: ${level.id} | Stars: ${level.stars} | Difficulty: ${level.difficulty} | Downloads: ${level.downloads} | Likes: ${level.likes} | Length: ${level.length} | Song: ${level.songName} (${level.songID})`)
+		meta(id="meta-image", name="og:image", content="https://gdbrowser.com/assets/difficulties/" + level.difficultyFace + ".png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+
+	body.levelBG(onbeforeunload="saveUrl()")
+		#dataBlock(data-id=level.id, data-dailynumber=(level.dailyNumber || 0), data-nextdaily=(level.nextDaily || 0), data-songid=level.songID)
+		#everything
+			#infoDiv.popup
+				.fancybox.bounce.center.supercenter
+					h2.smaller.center(style={ "font-size": "5.5vh" }) Level Info
+					p#levelInfo.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh" })
+						span.pre(style={ color: "lime" })= level.name
+						br
+						| ID:
+						|
+						cy= level.id
+						if level.copiedID != "0"
+							br
+							| Original:
+							|
+							a.youCanClickThis(href=level.copiedID)
+								ca= level.copiedID
+						if level.uploaded
+							br
+							| Low Detail:
+							|
+							co= level.ldm ? "Yes" : "No"
+							br
+							| Password:
+							|
+							co= level.password == "0" || !level.password ? "No copy" : (level.password == "1" ? "Free copy" : level.password)
+							if level.uploaded != "0"
+								br
+								| Uploaded:
+								|
+								co= level.uploaded
+							if level.updated != "0"
+								br
+								| Updated:
+								|
+								co= level.updated
+							if level.editorTime
+								br
+								| Editor Time:
+								|
+								span(style={ color: "lightgreen" })= level.editorTime
+							if level.totalEditorTime
+								br
+								| Editor Time (+copies):
+								|
+								span(style={ color: "lightgreen" })= level.totalEditorTime
+							br
+							| Extra string:
+							|
+							span(style={ color: "lightgreen" })= (level.extraString || "").length + " chars"
+							br
+							| Version:
+							|
+							cy= level.version
+							br
+							| GD Version:
+							|
+							cy= level.gameVersion
+							if level.objects != 0
+								br
+								| Objects:
+								|
+								cy= level.objects == 65535 ? "65535+" : level.objects
+							if level.starsRequested != 0
+								br
+								| Stars Requested:
+								|
+								cy= level.starsRequested
+						else if (!isDownloadDisabled)
+							br
+							a#additional.youCanClickThis(href="/" + level.id + "?download")
+								ca Download additional info
+						else
+							br
+							a#additional.downloadsDisabled
+								ca Download additional info
+
+					img.gdButton.center.closeWindow(src="/assets/ok.png", style={ width: "20%" })
+
+			#saveDiv.popup
+				.fancybox.bounce.center.supercenter
+					h2.smaller.center(style={ "font-size": "5.5vh" }) Saved!
+					p.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh" })
+						cy.pre= level.name
+						|
+						| has been added to your
+						|
+						a.youCanClickThis2(style={ color: "lime" }, href="/search/levels?type=saved") saved levels
+						|
+						| list.
+					img.gdButton.center(src="/assets/ok.png", style={ width: "20%" }, onclick="savedLevel()")
+
+			#deleteDiv.popup
+				.fancybox.bounce.center.supercenter(style={ width: "60vh", height: "28%" })
+					h2.smaller.center(style={ "font-size": "5.5vh" }) Delete Level
+					p.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh" })
+						| Are you sure you want to
+						|
+						cr delete
+						|
+						| this level from your
+						|
+						a.youCanClickThis2(style={ color: "lime" }, href="/search/levels?type=saved") saved levels
+						|
+						| list?
+					img.gdButton.center.closeWindow(src="/assets/btn-no.png", style={ height: "25%" })
+					img.gdButton.center.sideSpaceB(src="/assets/btn-yes.png", style={ height: "25%" }, onclick="deleteLevel()")
+
+			#analyzeDisabled.popup
+				.fancybox.bounce.center.supercenter
+					h2.smaller.center(style={ "font-size": "5.5vh" }) Level Analysis
+					p.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh" })
+						cy Level Analysis
+						|
+						| is currently
+						|
+						cr blocked
+						|
+						| by
+						|
+						ca RobTop
+						| . We don't know when or if it will be re-enabled.
+						br
+						a.youCanClickThis(style={ color: "aqua" }, href="./analyze/" + level.id) (click to try anyways)
+					img.gdButton.center(src="/assets/ok.png", style={ width: "20%" }, onclick="$('.popup').hide()")
+
+			// Here used to be a form to like/dislike levels. Not sure why it was commented out
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%" })
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%", transform: "scaleX(-1)" })
+
+			.center(style={ width: "70%", margin: "1% auto" })
+				h1.pre(style={ transform: "scale(1.2)" })= level.name
+
+			.center(style={ position: "absolute", top: "9%", left: "0", right: "0", height: "5%" })
+				if level.accountID
+					h2#authorName.pre.inline.slightlySmaller.normalCursor.gdButton
+						a#authorLink.linkButton(href="/u/" + level.accountID)= "By " + level.author
+				else
+					h2#authorName.pre.inline.slightlySmaller.normalCursor.gdButton.green.unregistered
+						a#authorLink.linkButton(href="/search/" + level.playerID + "?user")= "By " + level.author
+				h2.inline.slightlySmaller.normalCursor.sideSpaceC
+					if level.copiedID > 0
+						img#copiedBadge.inline.valign(style={ height: "3vh", "margin-left": "2vh", cursor: "help" }, src="../assets/copied.png", title="Level is a copy or a collaboration")
+					if level.large
+						img#largeBadge.inline.valign(style={ height: "3vh", "margin-left": "2vh", cursor: "help" }, src="../assets/large.png", title="Contains more than 40,000 objects")
+					if level.twoPlayer
+						img#2pBadge.inline.valign(style={ height: "3vh", "margin-left": "2vh", cursor: "help" }, src="../assets/twoPlayer.png", title="Two player level")
+				br
+				if level.dailyNumber
+					img#dailyIcon.inline.spaced.dailyLevel(src="../assets/crown-" + (level.weekly ? "weekly" : "daily") + ".png", style={ height: "90%", "margin-right": "0.5%", "margin-top": "0.4%", "vertical-align": "middle" })
+					h1.inline.smallerer.spaced.dailyLevel(style={ margin: "0" })
+						= "#" + (level.dailyNumber || 0)
+						span.h3Size#dailyTime(style={ "font-size": "2.5vh", "vertical-align": "middle" })
+
+			.center.valign(style={ position: "absolute", top: "10.5%", left: "27%", transform: "scale(0.8)", height: "100%", width: "20%" })
+				img.spaced(src="../assets/difficulties/" + level.difficultyFace + ".png", style={ height: "15%", "margin-bottom": "0%" })
+				h1#difficultytext.smaller(style={ transform: "scale(0.9)" })= level.difficulty
+				if level.stars != 0
+					h1#difficultytext.smaller.inline.stars(style={ transform: "scale(0.9)" })= level.stars
+					img.inline.stars(src="../assets/star.png", style={ height: "4%", transform: "translateY(-12%)" })
+					br.stars
+				if level.demonList
+					h1#difficultytext.smaller.inline.demonList(style={ transform: "scale(0.9)" })= level.demonList
+					img.inline.demonList(src="../assets/demon.png", style={ height: "4.5%", transform: "translateY(-7%)", "margin-left": "1.5%" })
+				else if level.diamonds != 0
+					h1#difficultytext.smaller.inline.diamonds(style={ transform: "scale(0.9)" })= level.diamonds
+					img.inline.diamonds(src="../assets/diamond.png", style={ height: "4%", transform: "translateY(-12%)" })
+				#coins(style={ "margin-top": "3%" })
+					if (level.coins)
+						if (level.coins > 0)
+							img(src="../assets/" + coinColor + ".png", style={ height: "5vh" })
+						if (level.coins > 1)
+							img.squeeze(src="../assets/" + coinColor + ".png", style={ height: "5vh" })
+						if (level.coins > 2)
+							img.squeeze(src="../assets/" + coinColor + ".png", style={ height: "5vh" })
+
+			// Another div, another styling hellhole
+			div(style={ position: "absolute", top: "20%", right: "0", height: "38%", width: "40%", "line-height": "8.5vh" })
+				img.valign.inline.spaced(src="/assets/download.png", style={ height: "15%", "margin-right": "2%" })
+				h1.valign.inline.smaller.spaced= level.downloads
+				br
+				img#likeImg.valign.inline.spaced(src="/assets/like.png", style={ height: "15%", "margin-right": "2%" })
+				h1.valign.inline.smaller.spaced= level.likes
+				br
+				img.valign.inline.spaced(src="/assets/time.png", style={ height: "15%", "margin-right": "2%" })
+				h1.valign.inline.smaller.spaced= level.length
+				br
+				if level.orbs != 0
+					img.valign.inline.spaced(src="/assets/orbs.png", style={ height: "15%", "margin-right": "2%" })
+					h1.valign.inline.smaller.spaced= level.orbs
+					br
+
+			.transparentBox.center(style={ position: "absolute", bottom: "32%", left: "0", right: "0", width: "75vh", "margin-left": "auto", "margin-right": "auto" })
+				p.pre(style={ padding: "0 5%", "white-space": "normal" })= level.description
+
+			#songBox.brownBox(style={ position: "absolute", bottom: "4%", left: "0", right: "0", width: "85vh", height: "20%", "margin-left": "auto", "margin-right": "auto" })
+				div(style={ "margin-left": "0.5%" })
+					h1#songname.pre.slightlySmaller= level.songName
+					h2.pre.smaller
+						= "By: " + level.songAuthor + "\xa0"
+						img#scout.help.artistIcon.valign(title="Artist is scouted", style={ display: "none", "margin-left": "1.5%", filter: "hue-rotate(-55deg)", width: "5%" }, src="/assets/check.png")
+						img#whitelist.help.artistIcon.valign(title="Artist is whitelisted", style={ display: "none", "margin-left": "1.5%", filter: "hue-rotate(-55deg)", width: "5%" }, src="/assets/check.png")
+						a.songLink(href="https://" + level.songAuthor + ".newgrounds.com", target="_blank")
+							img#moreSongs.gdButton.valign(src="/assets/more.png", style={ width: "12%" })
+					if (!level.songID.toString().startsWith("Level") && !level.gdps)
+						img#checksong.gdButton.valign(style={ width: "16%", "margin-top": "1%" }, title="Check song verification", src="../assets/btn-check.png")
+					h3#songLoading(style={ display: "none", "margin-top": "0.5%" }) Loading...
+					h3#songAllowed(style={ display: "none", "margin-top": "0.5%", color: "lime" }) Song is allowed for use
+					h3#songNotAllowed(style={ display: "none", "margin-top": "0.5%", color: "red" }) Song is not allowed for use
+					h3#artistInfo(style={ display: "none", "margin-top": "0.5%" })
+				if (!level.songID.toString().startsWith("Level") && level.songAuthor != "Unknown")
+					a.songLink(href="https://www.newgrounds.com/audio/listen/" + level.songID, target="_blank")
+						img#playSong.gdButton.sideButton(title="Play Song", src="/assets/playsong.png", style={ position: "absolute", right: "1%", top: "50%", width: "11%", height: "auto" })
+
+			.center(style={ position: "absolute", bottom: "5%", left: "0", right: "0" })
+				if (level.songID.toString().startsWith("Level"))
+					h1#songInfo(style={ transform: "scale(0.5)" })= level.songID
+				else
+					h1#songInfo(style={ transform: "scale(0.5)" })= "SongID: " + level.songID + " \xa0\xa0 Size: " + level.songSize
+
+			.center.noClick(style={ position: "absolute", top: "24%", right: "0", "min-width": "100%" })
+				img#playButton.gdButton.yesClick(src="/assets/play.png", style={ height: "24vh" })
+
+			.levelButtons(style={ position: "absolute", top: "46%", right: "3.5%", transform: "translateY(-50%)", height: "75%" })
+				img#saveButton.gdButton.sideButton(title="Save level", src="/assets/plus.png", onclick="$('#saveDiv').show(); saveLevel()")
+				br
+				img#infoButton.gdButton.sideButton(title="Level Info", src="/assets/info.png", onclick="$('#infoDiv').show()")
+				br
+				// There used to be a like button here, but it got disabled for "evil" reasons
+				a#analyzeLink(href="./analyze/" + level.id)
+					img#analyzeBtn.gdButton.sideButton(title="Analyze Level", src="/assets/edit.png")
+					br
+				a(href="./comments/" + level.id)
+					img.gdButton.sideButton(title="View Comments", src="/assets/comment.png")
+					br
+				if (!level.gdps)
+					a(href="./leaderboard/" + level.id)
+						img#leaderboardBtn.gdButton.sideButton(title="View Leaderboard", src="/assets/leaderboard.png")
+						br
+
+			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+
+			#copied(style={ display: "none" })
+				.copied.center.noClick(style={ position: "absolute", top: "36%", left: "50%", width: "90vh", transform: "translate(-50%,-50%)" })
+					h1#copiedText.smaller.noSelect ID copied to clipboard
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="text/javascript", src="/page_scripts/level.js")
