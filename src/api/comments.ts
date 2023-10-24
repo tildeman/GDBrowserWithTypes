@@ -3,7 +3,7 @@ import { AppRoutines, ExportBundle } from "../types.js";
 import { Player } from "../classes/Player.js";
 
 /**
- * Interface for comment parameters
+ * Interface for comment parameters.
  */
 interface ICommentParams {
 	userID: string;
@@ -15,7 +15,7 @@ interface ICommentParams {
 }
 
 /**
- * Interface for GD comments
+ * Interface for GD comments.
  */
 interface ICommentContent {
     content: string;
@@ -38,7 +38,7 @@ interface ICommentContent {
 }
 
 export default async function(app: Express, req: Request, res: Response) {
-	const {req: reqBundle, sendError}: ExportBundle = res.locals.stuff;
+	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) return sendError();

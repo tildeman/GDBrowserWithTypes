@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Site-specific script for the level info page
+ */
+
 const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for liking a level <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/like.js">here</a>.';
 $('#message').html(messageText);
 const levelID: string = $('#dataBlock').data('id');

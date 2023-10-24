@@ -1,0 +1,215 @@
+- var trophySrc = "/assets/trophies/0.png"
+- if (+(player.rank) < 2) 
+	- trophySrc = "/assets/trophies/1.png"
+- else if (+(player.rank) <= 10) 
+	- trophySrc = "/assets/trophies/2.png"
+- else if (+(player.rank) <= 50)
+	- trophySrc = "/assets/trophies/3.png"
+- else if (+(player.rank) <= 100)
+	- trophySrc = "/assets/trophies/4.png"
+- else if (+(player.rank) <= 200)
+	- trophySrc = "/assets/trophies/5.png"
+- else if (+(player.rank) <= 500)
+	- trophySrc = "/assets/trophies/6.png"
+- else if (+(player.rank) <= 1000)
+	- trophySrc = "/assets/trophies/7.png"
+
+- var msgButtonSrc = "/assets/messages.png"
+- if (player.messages == "friends")
+	- msgButtonSrc = "/assets/messages-yellow.png"
+- else if (player.messages == "off")
+	- msgButtonSrc = "/assets/messages-grey.png"
+
+- var commentButtonSrc = "/assets/comments.png"
+- if (player.commentHistory == "friends")
+	- commentButtonSrc = "/assets/comments-yellow.png"
+- else if (player.commentHistory == "off")
+	- commentButtonSrc = "/assets/comments-grey.png"
+
+doctype html
+html(lang="en")
+	head
+		title#tabTitle= player.username + "'s Profile"
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		// TODO: Use a proper image for the HTTP reference
+		link(rel="icon", href="")
+		meta(id="meta-title", property="og:title", content=player.username + "'s profile")
+		meta(id="meta-desc", property="og:description", content=`Stars: ${player.stars} | Diamonds: ${player.diamonds} | Coins: ${player.coins} | User Coins: ${player.userCoins} | Demons: ${player.demons} | CP: ${player.cp}`)
+		// TODO: Nothing better to say than "fix this"
+		meta(id="meta-image", name="og:image", content="/coin.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body.levelBG(onbeforeunload="saveUrl()")
+		#dataBlock(data-accountid=player.accountID, data-username=player.username, data-moderator=(player.moderator || 0))
+		#everything
+			#leavePost.popup
+				.brownBox.bounce.center.supercenter(style={ height: "68%", width: "110vh" })
+					p#charcount(style={ position: "absolute", right: "1vh", "margin-top": "0", "text-align": "left" }) 180
+					h1.smaller.center(style={ "font-size": "5.5vh" }) Post Update
+					textarea#content(placeholder="Insert comment", maxlength="180", style={ margin: "2% 0" })
+					form(action="nothing lol")
+						h3.center(style={ "margin-top": "2%" }) GD Password
+						input#password(type="password", maxlength="50", style={ height: "8vh", width: "90%", "text-align": "center", "margin-top": "0.5%" })
+					div(style={ "min-height": "20%", "max-height": "20%" })
+						p#message(style={ padding: "0 10%", "margin-top": "2%" })
+					img.postButton.gdButton.center(src="/assets/btn-cancel.png", style={ "margin-right": "1%", height: "11%" }, onclick="$('#leavePost').hide(); $('textarea').val('')")
+					img#submitComment.postButton.gdButton.center(src="/assets/btn-submit.png", style={ "margin-left": "1%", height: "11%" }, type="submit")
+			
+			#likeComment.popup
+				.brownBox.bounce.center.supercenter(style={ height: "75%", width: "110vh" })
+					h1.smaller.center(style={ "font-size": "5.5vh" }) Vote
+					p#charcount(style={ position: "absolute", right: "1vh", "margin-top": "0", "text-align": "left" }) 180
+					img#likebtn.inline.gdButton.likeButton(src="/assets/smashLike.png")
+					img#dislikebtn.inline.gdButton.likeButto.youAreNotTheOne(src="/assets/smashDislike.png")
+					form(action="nothing lol")
+						h3.center GD Username
+						input#like-username(type="text", name="gdbrowser", maxlength="50", style={ height: "8vh", width: "90%", "text-align": "center", "margin-top": "0.5%" })
+						h3.center(style={ "margin-top": "2%" }) GD Password
+						input#like-password(type="password", maxlength="50", style={ height: "8vh", width: "90%", "text-align": "center", "margin-top": "0.5%" })
+					div(style={ "min-height": "18%", "max-height": "18%" })
+						p#likeMessage(style={ padding: "0 10%", "margin-top": "2.5%" })
+					img.postButton.gdButton.center(src="/assets/btn-cancel.png", style={ "margin-right": "1%", height: "10%" }, onclick="$('#likeComment').hide(); $('#likebtn').trigger('click');")
+					img#submitVote.postButton.gdButton.center(src="/assets/btn-submit.png", style={ "margin-left": "1%", height: "10%" }, type="submit")
+
+			#settingsDiv.popup
+				.fancybox.bounce.center.supercenter
+					h2.smaller.center(style={ "font-size": "5.5vh" }) User Info
+					p#userInfo.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh" })
+						| Friend Requests:
+						|
+						if player.friendRequests
+							cg Enabled
+						else
+							cr Disabled
+						br
+						| Private Messages:
+						|
+						if player.messages == "all"
+							cg Public
+						else if player.messages == "friends"
+							cy Friends Only
+						else
+							cr Disabled
+						br
+						| Comment History:
+						|
+						if player.commentHistory == "all"
+							cg Public
+						else if player.commentHistory == "friends"
+							cy Friends Only
+							br(style={ "line-height": "69%" })
+							a.youCanClickThis2(target="_blank", style={ color: "lime" }, href="/messages?sendTo=" + player.username) Send message
+							br
+							| (if friended)
+						else
+							cr Disabled
+					img.gdButton.center(src="/assets/ok.png", style={ width: "20%" }, onclick="$('#settingsDiv').hide()")
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%" })
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%", transform: "scaleX(-1)" })
+
+			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+
+			.brownBox.center.supercenter(style={ width: "135vh", height: "82%", "margin-top": "-0.7%" })
+				if player.rank
+					#globalrank0(style={ position: "absolute", left: "0.3%", top: "1.5%", width: "18%", "text-align": "left" })
+						p(style={ margin: "0" })
+							img.inline.valign.help.profileTrophy(src=trophySrc, style={ width: "22%" }, title="Global Rank")
+							= player.rank
+
+				h1.veryBig.inline(style={ width: "inherit" })
+					if (player.moderator == 1)
+						img#modBadge1.inline.valign(style={ display: "none", height: "7%", cursor: "help" }, src="/assets/mod.png", title=player.username + " is a moderator!")
+					else if (player.moderator == 2)
+						img#modBadge2.inline.valign(style={ display: "none", height: "7%", cursor: "help" }, src="/assets/mod-elder.png", title=player.username + " is an elder moderator!")
+					else if (player.moderator >= 3)
+						img#modBadge3.inline.valign(style={ display: "none", height: "7%", cursor: "help" }, src="/assets/mod-extra.png", title=player.username + " is a custom moderator! (tier " + player.moderator + ")")
+					span(style={ "margin-left": "1%" })= player.username
+
+				hr.profilePostHide(style={ "margin-bottom": "2%" })
+				h3#collectibles.profilePostHide
+					// TODO: convert this into a routine
+					span#stars(class=player.stars >= 100000 ? "yellow" : "")= player.stars
+					img.help.valign(src="/assets/star.png", title="Stars")
+					span#diamonds(class=player.diamonds >= 65535 ? "blue" : "")= player.diamonds
+					img.help.valign(src="/assets/diamond.png", title="Diamonds")
+					span#coins(class=player.coins >= 149 ? "yellow" : "")= player.coins
+					img.help.valign(src="/assets/coin.png", title="Secret Coins")
+					span#usercoins(class=player.userCoins >= 10000 ? "brightblue" : "")= player.userCoins
+					img.help.valign(src="/assets/silvercoin.png", title="User Coins")
+					span#demons(class=player.demons >= 65535 ? "brightred" : "")= player.demons
+					img.help.valign(src="/assets/demon.png", title="Demons")
+					if player.cp
+						span#creatorpoints
+							span#cp(class=player.cp >= 100 ? "yellow" : "")= player.cp
+							img.help.valign(src="/assets/cp.png", title="Creator Points")
+
+				#iconsDiv.lightBox.center.profilePostHide(style={ margin: "2% auto", width: "105vh" })
+					gdicon#mainIcon(iconID=player.icon, iconForm="icon", col1=player.col1, col2=player.col2, glow=player.glow)
+					gdicon(iconID=player.ship, iconForm="ship", col1=player.col1, col2=player.col2, glow=player.glow)
+					gdicon(iconID=player.ball, iconForm="ball", col1=player.col1, col2=player.col2, glow=player.glow)
+					gdicon(iconID=player.ufo, iconForm="ufo", col1=player.col1, col2=player.col2, glow=player.glow)
+					gdicon(iconID=player.wave, iconForm="wave", col1=player.col1, col2=player.col2, glow=player.glow)
+					gdicon(iconID=player.robot, iconForm="robot", col1=player.col1, col2=player.col2, glow=player.glow)
+					gdicon(iconID=player.spider, iconForm="spider", col1=player.col1, col2=player.col2, glow=player.glow)
+					img#deatheffect(src="/assets/deatheffects/" + player.deathEffect + ".png", title="Death Effect " + player.deathEffect)
+
+				#statusDiv.lightBox.center.dragscroll(normalHeight="36vh", compactHeight="69vh", style={ margin: "2% auto", width: "105vh", height: "36vh", "background-color": "#BE6F3F" })
+
+				.center.profilePostHide(style={ margin: "1.5% auto 2.5% auto" })
+					a#msgA(target="_blank", href=(player.messages == "all") ? "/messages?sendTo=" + player.username : null)
+						img#msgButton.sideSpace.gdButton(src=msgButtonSrc, style={ height: "8vh" }, onclick=(player.messages == "all") ? null : "$('#settingsDiv').show()")
+					img#friendButton.sideSpace.gdButton(src=player.friendRequests ? "/assets/friends.png" : "/assets/friends-grey.png", style={ height: "8vh" }, onclick="$('#settingsDiv').show()")
+
+				.profilePostHide(style={ position: "absolute", bottom: "0", left: "12%" })
+					p(style={ "text-align": "left", "font-size": "2.2vh", color: "rgba(0, 0, 0, 0.5)" })
+						| Account ID:
+						|
+						= player.accountID
+						br
+						| Player ID:
+						|
+						= player.playerID
+
+				img#followOff.gdButton.profilePostHide(src="/assets/follow-off.png", style={ position: "absolute", left: "4.5%", bottom: "1%", width: "6%" })
+				img#followOn.gdButton.profilePostHide(src="/assets/follow-on.png", style={ position: "absolute", left: "4.5%", bottom: "1%", width: "6%", display: "none" })
+
+				a#commentA(href=(player.commentHistory == "all") ? "/comments/" + player.username : null)
+					img#commentButton.gdButton(src=commentButtonSrc, style={ position: "absolute", right: "0.5%", bottom: "50%", width: "6%" }, onclick=(player.commentHistory == "all") ? null : "$('#settingsDiv').show()")
+
+				img#compactMode.gdButton(src="/assets/expanded-off.png", style={ position: "absolute", left: "2%", bottom: "45%", width: "6%" })
+
+				a(href="/search/" + player.username + "?user")
+					img.gdButton(src="/assets/levels.png", style={ position: "absolute", right: "0.5%", bottom: "1%", width: "6%" })
+
+				div(style={ position: "absolute", right: "0.5%", top: "0", width: "6%" })
+					if player.youtube
+						a#youtube(target="_blank", href="https://youtube.com/channel/" + player.youtube)
+							img.gdButton.socialButton(src="/assets/youtube.png")
+					if player.twitter
+						a#twitter(target="_blank", href="https://twitter.com/" + player.twitter)
+							// TODO: Use the X logo
+							img.gdButton.socialButton(src="/assets/twitter.png")
+					if player.twitch
+						a#twitch(target="_blank", href="https://twitch.tv/" + player.twitch)
+							img.gdButton.socialButton(src="/assets/twitch.png")
+
+				.supercenter(style={ left: "5%", top: "65%", height: "10%" })
+					img#pageDown.gdButton(style={ display: "none", height: "95%" }, src="/assets/arrow-left.png", onclick="page -= 1; appendComments()")
+
+				.supercenter(style={ left: "95%", top: "65%", height: "10%" })
+					img#pageUp.gdButton(style={ height: "95%" }, src="/assets/arrow-right.png", onclick="page += 1; appendComments()")
+
+				#postButton(style={ position: "absolute", bottom: "0", left: "0", width: "14%", "text-align": "left", transform: "translate(-35%, 40%)" })
+					img.gdButton(src="/assets/comment.png", style={ width: "60%" }, onclick="$('#content').trigger('input'); $('#leavePost').show();")
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
+		script(type="text/javascript", src="/iconkit/icon.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="text/javascript", src="/dragscroll.js")
+		script(type="module", src="/page_scripts/profile.js")

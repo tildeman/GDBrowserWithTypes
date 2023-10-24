@@ -3,7 +3,7 @@ import { Express, Request, Response } from "express";
 import { AppRoutines, ExportBundle } from "../../types.js";
 
 /**
- * An entry for the in-game leaderboard
+ * An entry for the in-game leaderboard.
  */
 interface LeaderboardEntry {
 	username: string;
@@ -26,7 +26,7 @@ interface LeaderboardEntry {
 
 
 export default async function(app: Express, req: Request, res: Response) {
-	const {req: reqBundle, sendError}: ExportBundle = res.locals.stuff;
+	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) return sendError();

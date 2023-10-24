@@ -5,7 +5,7 @@ import { Express, Request, Response } from "express";
 import { AppRoutines, ExportBundle } from "../types.js";
 
 export default async function(app: Express, req: Request, res: Response, api: boolean, analyze: boolean) {
-	const {req: reqBundle, sendError}: ExportBundle = res.locals.stuff;
+	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 	const appRoutines: AppRoutines = app.locals.stuff;
 
 	function rejectLevel() {
@@ -42,22 +42,6 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 		function sendLevel() {
 
 			if (api) return res.send(level);
-
-			// else return fs.readFile('./html/level.html', 'utf8', function (err, data) {
-			// 	let html = data;
-			// 	let filteredSong = level.songName.replace(/[^ -~]/g, "");  // strip off unsupported characters
-			// 	level.songName = filteredSong || level.songName;
-			// 	let variables = Object.keys(level);
-			// 	variables.forEach(x => {
-			// 		let regex = new RegExp(`\\[\\[${x.toUpperCase()}\\]\\]`, "g");
-			// 		html = html.replace(regex, appRoutines.clean(level[x]));
-			// 	})
-			// 	if (reqBundle.server.downloadsDisabled) {
-			// 		html = html.replace('id="additional" class="', 'id="additional" class="downloadDisabled ')
-			// 			.replace('analyzeBtn"', 'analyzeBtn" style="filter: opacity(30%)"');
-			// 	}
-			// return res.send(html);
-			// });
 
 			const filteredSong = level.songName.replace(/[^ -~]/g, "");  // strip off unsupported characters
 			level.songName = filteredSong || level.songName;

@@ -305,7 +305,7 @@ input:focus, textarea:focus {
 }
 
 #iconsDiv img {
-    height: 9%;
+    height: 7vh;
     margin: 1% 1%;
     vertical-align: middle;
 }
@@ -856,8 +856,9 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 #collectibles img {
-    transform: translate(-20%, -7%);
-    height: 6.5%;
+    transform: translate(0, -7%);
+    height: 5vh;
+    padding: 0 1vh;
 }
 
 .leaderboardStats {
@@ -892,8 +893,8 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 #collectibles img:first-child, #collectibles img:last-child {
-    transform: translate(-20%, -10%);
-    height: 5.5%;
+    transform: translate(0, -10%);
+    height: 5vh;
 }
 
 #msgList {

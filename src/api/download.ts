@@ -2,10 +2,9 @@ import { Express, Request, Response } from "express";
 import { AppRoutines, ExportBundle } from "../types.js";
 import { DownloadedLevel, Level } from '../classes/Level.js';
 import request from 'axios';
-import fs from 'fs';
 
 export default async function(app: Express, req: Request, res: Response, api: boolean, ID: string, analyze: boolean) {
-	const {req: reqBundle, sendError}: ExportBundle = res.locals.stuff;
+	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 	const appRoutines: AppRoutines = app.locals.stuff;
 
 	function rejectLevel() {
@@ -53,12 +52,12 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 				else if (!err && b2 != '-1') {
 					let account = appRoutines.parseResponse(b2 || "");
 					level.author = account[1] || "-";
-					level.accountID = +gdSearchResult[16];
+					level.accountID = gdSearchResult[16];
 				}
 
 				else {
 					level.author = "-";
-					level.accountID = 0;
+					level.accountID = "0";
 				}
 
 				if (level.author != "-") appRoutines.userCache(reqBundle.id, level.accountID.toString(), level.playerID.toString(), level.author);
@@ -72,18 +71,13 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 
 					if (analyze) return appRoutines.run.analyze(app, req, res, level);
 
+					/**
+					 * If this is called as an API call, send the raw response.
+					 * Else send the user-friendly interface.
+					 * @returns An Express response, or void
+					 */
 					function sendLevel() {
 						if (api) return res.send(level);
-
-						// else return fs.readFile('./html/level.html', 'utf8', function (err, data) {
-						// 	let html = data.toString();
-						// 	let variables = Object.keys(level);
-						// 	variables.forEach(x => {
-						// 		let regex = new RegExp(`\\[\\[${x.toUpperCase()}\\]\\]`, "g");
-						// 		html = html.replace(regex, appRoutines.clean(level[x]));
-						// 	})
-						// 	return res.send(html);
-						// })
 						res.render("level", { level })
 					}
 

@@ -40,7 +40,7 @@ let caches = [
 
 // module.exports = async (app, req, res, post) => {
 export default async function(app: Express, req: Request, res: Response, api: boolean, ID: string, analyze: boolean) {
-	const {req: reqBundle, sendError}: ExportBundle = res.locals.stuff;
+	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 	const appRoutines: AppRoutines = app.locals.stuff;
 
 	// Annotation: 418 actually means "I'm a teapot" in the Hypertext Coffee Protocol, which is a 1998 April Fools RFC (?).

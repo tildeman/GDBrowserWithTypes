@@ -3,7 +3,7 @@ import { AppRoutines, ExportBundle } from "../../types.js";
 import { sha1 } from "../../lib/sha.js";
 import { XOR } from "../../lib/xor.js";
 
-let rateLimit = {};
+let rateLimit: Record<string, number> = {};
 let cooldown = 15000;  // GD has a secret rate limit and doesn't return -1 when a comment is rejected, so this keeps track
 
 /**
@@ -75,6 +75,6 @@ export default async function(app: Express, req: Request, res: Response) {
 		res.send(`Comment posted to level ${params.levelID} with ID ${body}`);
 		appRoutines.trackSuccess(reqBundle.id);
 		rateLimit[req.body.username] = Date.now();
-		setTimeout(() => {delete rateLimit[req.body.username]; }, cooldown);
+		setTimeout(() => { delete rateLimit[req.body.username]; }, cooldown);
 	});
 }

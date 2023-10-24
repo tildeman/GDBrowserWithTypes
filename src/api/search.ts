@@ -2,6 +2,7 @@ import request, { AxiosResponse } from 'axios';
 import { Express, Request, Response } from "express";
 import { AppRoutines, ExportBundle } from "../types.js";
 import { SearchQueryLevel } from '../classes/Level.js';
+
 let demonList = {};
 
 interface SearchFilters {
@@ -28,7 +29,7 @@ interface SearchFilters {
 // SARY NEVER CLEAR
 
 /**
- * Auxiliary interface for Pointercrate's level entries
+ * Auxiliary interface for Pointercrate's level entries.
  */
 interface ListDemon {
 	name: string;
@@ -49,10 +50,10 @@ interface ListDemon {
 }
 
 /**
- * Find a level in Pointercrate's level list using the ID
- * @param needle The level ID to search
- * @param haystack The level list (Pointercrate's format) in use
- * @returns The position of the level in the list, or -1 if not existent
+ * Find a level in Pointercrate's level list using the ID.
+ * @param needle The level ID to search.
+ * @param haystack The level list (Pointercrate's format) in use.
+ * @returns The position of the level in the list, or -1 if not existent.
  */
 // TODO: Since both the regular and augmented arrays are regular, optimize this to O(n) complexity
 function idInDemon(needle: number, haystack: ListDemon[]) {
@@ -65,12 +66,13 @@ function idInDemon(needle: number, haystack: ListDemon[]) {
 }
 
 export default async function(app: Express, req: Request, res: Response) {
-	const {req: reqBundle, sendError}: ExportBundle = res.locals.stuff;
+	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) return res.status(500).send(req.query.hasOwnProperty("err") ? "err" : "-1");
 
 	let demonMode = req.query.hasOwnProperty("demonlist") || req.query.hasOwnProperty("demonList") || req.query.type == "demonlist" || req.query.type == "demonList";
+	// TODO: this is quite dependent on the structure of the demonlist.
 	let url1 = reqBundle.server.demonList + 'api/v2/demons/listed/?limit=100';
 	let url2 = reqBundle.server.demonList + 'api/v2/demons/listed/?limit=100&after=100';
 	if (demonMode) {
@@ -103,13 +105,8 @@ export default async function(app: Express, req: Request, res: Response) {
 	let filters: SearchFilters = {
 		str: req.params.text,
 
-		diff: req.query.diff?.toString(),
-		demonFilter: req.query.demonFilter?.toString() || "",
 		page: +(req.query.page || 0),
 		gauntlet: +(req.query.gauntlet || 0),
-		len: req.query.length?.toString() || "",
-		song: req.query.songID?.toString() || "",
-		followed: req.query.creators?.toString() || "",
 
 		featured: req.query.hasOwnProperty("featured") ? 1 : 0,
 		originalOnly: req.query.hasOwnProperty("original") ? 1 : 0,
@@ -123,10 +120,12 @@ export default async function(app: Express, req: Request, res: Response) {
 		type: +(req.query.type || 0),
 		count: amount,
 	}
-	for (const entry in filters) {
-		if (!filters[entry]) delete filters[entry];
-	}
-	if (!filters.type) filters.type = 0;
+	if (req.query.diff) filters.diff = req.query.diff.toString();
+	if (req.query.demonFilter) filters.diff = req.query.demonFilter.toString();
+	if (req.query.len) filters.diff = req.query.len.toString();
+	if (req.query.song) filters.diff = req.query.song.toString();
+	if (req.query.followed) filters.diff = req.query.followed.toString();
+
 
 	if (req.query.type) {
 		let filterCheck = req.query.type.toString().toLowerCase();

@@ -315,7 +315,7 @@ app.get("/assets/:dir*?", function(req, res) {
 
 	if (dir.includes('.') || !req.path.endsWith("/")) {
 		// As a JS/TS developer I am morally responsible that I make my code look good for everyone
-		// and not unintentionally write bad code and not willing to open-source it
+		// and not "unintentionally write bad code and not be willing to open-source it"
 		if (!req.params[0]) main = "";
 		if (req.params["dir*"] == "deatheffects" || req.params["dir*"] == "trails") {
 			return res.status(200).sendFile("assets/deatheffects/0.png");
@@ -396,7 +396,7 @@ app.get("/", function(req, res) {
 			});
 		}
 		catch (err) {
-			console.log(err.message);
+			console.warn(err.message);
 		}
 	}
 });
@@ -415,7 +415,7 @@ app.get("/leaderboard/:text", fetchTemplateHTML("html/levelboard.html"));
 app.get("/mappacks", fetchTemplateHTML("html/mappacks.html"));
 app.get("/messages", fetchTemplateHTML("html/messages.html"));
 app.get("/search", fetchTemplate("filters"));
-app.get("/search/:text", fetchTemplateHTML("html/search.html"));
+app.get("/search/:text", fetchTemplate("search"));
 
 // API
 
@@ -521,7 +521,7 @@ app.get('/icon/:text', function(req, res) {
 	let fileExists = iconKitFiles.previewIcons.includes(iconPath);
 	if (fileExists) return res.status(200).sendFile(`./iconkit/premade/${iconPath}`, { root: __dirname });
 	else return res.status(200).sendFile(`./iconkit/premade/${iconForm}_01.png`, { root: __dirname });
-})
+});
 
 app.get('*', function(req, res) {
 	if (req.path.startsWith('/api') || req.path.startsWith("/iconkit")) {
@@ -534,9 +534,13 @@ app.use(function (err: Error | undefined, req: Request, res: Response, next: Nex
 	if (err && err.message == "Response timeout") {
 		res.status(504).send('Internal server error! (Timed out)');
 	}
-})
+});
 
-process.on('uncaughtException', (e) => { console.log(e) });
-process.on('unhandledRejection', (e, p) => { console.log(e) });
+process.on('uncaughtException', (err) => {
+	console.log(err);
+});
+process.on('unhandledRejection', (err, p) => {
+	console.log(err);
+});
 
 app.listen(appConfig.port, () => console.log(`Site online! (port ${appConfig.port})`));

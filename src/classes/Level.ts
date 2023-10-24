@@ -2,105 +2,117 @@ import { XOR } from "../lib/xor.js";
 import music from "../misc/music.json" assert { type: "json" };
 import { ServerInfo } from "../types.js";
 
+/**
+ * The amount of orbs given to the player by the star rating.
+ */
 let orbs = [0, 0, 50, 75, 125, 175, 225, 275, 350, 425, 500];
+/**
+ * The length value of the level.
+ */
 let length = ['Tiny', 'Short', 'Medium', 'Long', 'XL'];
+/**
+ * The difficulty "face rating" of the level.
+ */
 let difficulty = { 0: 'Unrated', 10: 'Easy', 20: 'Normal', 30: 'Hard', 40: 'Harder', 50: 'Insane' };
+/**
+ * The sub-ratings for demons.
+ */
 let demonTypes = { 3: "Easy", 4: "Medium", 5: "Insane", 6: "Extreme" };
 
 // Placeholder array
 
 export interface LevelObject {
 	/**
-	 * Name of the level (e.g.: isolation my ver)
+	 * Name of the level. (e.g.: isolation my ver)
 	 */
 	name: any;
 	/**
-	 * ID of the level (e.g.: 91209839)
+	 * ID of the level. (e.g.: 91209839)
 	 */
 	id: any;
 	/**
-	 * The level's description, decoded from base64
+	 * The level's description, decoded from base64.
 	 */
 	description: string;
 	/**
-	 * The publisher of the level (e.g.: newvietnam)
+	 * The publisher of the level. (e.g.: newvietnam)
 	 */
 	author: string;
 	/**
-	 * The player ID of the publisher
+	 * The player ID of the publisher.
 	 */
-	playerID: number;
+	playerID: string;
 	/**
-	 * The account ID of the publisher, if present
+	 * The account ID of the publisher, if present.
 	 */
-	accountID: number;
+	accountID: string;
 	/**
-	 * The difficulty of the level
+	 * The difficulty of the level.
 	 */
 	difficulty: string;
 	/**
-	 * The amount of downloads the level has
+	 * The amount of downloads the level has.
 	 */
 	downloads: number;
 	/**
-	 * The amount of likes the level has
+	 * The amount of likes the level has.
 	 */
 	likes: number;
 	/**
-	 * Whether the level is disliked (?)
+	 * Whether the level is disliked. (?)
 	 */
 	disliked: boolean;
 	/**
-	 * The length of the level in English
+	 * The length of the level in English.
 	 */
 	length: string;
 	/**
-	 * The amount of stars awarded to the player upon completion
+	 * The amount of stars awarded to the player upon completion.
 	 */
 	stars: number;
 	/**
-	 * The amount of orbs available for the level
+	 * The amount of orbs available for the level.
 	 */
 	orbs: number;
 	/**
-	 * The amount of diamonds available for the level (for Daily/Weekly levels, gauntlets, lists, paths, etc.)
+	 * The amount of diamonds available for the level (for Daily/Weekly levels, gauntlets, lists, paths, etc.).
 	 */
 	diamonds: number;
 	/**
-	 * `true` if the level is on the Featured tab, `false otherwise`
+	 * `true` if the level is on the Featured tab, `false otherwise`.
 	 */
 	featured: boolean;
 	/**
-	 * `true` if the level is on the Hall of Fame tab, `false otherwise`
+	 * `true` if the level is on the Hall of Fame tab, `false otherwise`.
 	 */
 	epic: boolean;
 	/**
-	 * The update where the game is published
+	 * The update where the game is published.
 	 */
 	gameVersion: string;
 	/**
-	 * The first time the level is uploaded
+	 * The first time the level is uploaded.
 	 */
 	uploaded?: string;
 	/**
-	 * The last time the level is updated
+	 * The last time the level is updated.
 	 */
 	updated?: string;
 	/**
-	 * The amount of time spent in the editor for the level
+	 * The amount of time spent in the editor for the level.
 	 */
 	editorTime?: number;
 	/**
 	 * The amount of time spent in the editor for the level
-	 * (including copies)
+	 * (including copies).
 	 */
 	totalEditorTime?: number;
 	/**
-	 * The password to copy the level, if present
+	 * The password to copy the level, if present.
 	 */
 	password?: string;
 	/**
-	 * The amount of times the level has been updated
+	 * The amount of times the level has been updated.
 	 */
 	version: number;
 	/**
@@ -108,96 +120,96 @@ export interface LevelObject {
 	 */
 	copiedID: string;
 	/**
-	 * If the level uses two independent inputs
+	 * If the level uses two independent inputs.
 	 */
 	twoPlayer: boolean;
 	/**
-	 * The song of an official level
+	 * The song of an official level.
 	 */
 	officialSong?: number;
 	/**
-	 * The song ID on https://newgrounds.com/
+	 * The song ID on https://newgrounds.com/.
 	 */
 	customSong?: number;
 	/**
-	 * The number of coins in a level
+	 * The number of coins in a level.
 	 */
 	coins: number;
 	/**
-	 * Whether the coins are verified or not
+	 * Whether the coins are verified or not.
 	 */
 	verifiedCoins: boolean;
 	/**
 	 * The amount of stars requested
-	 * (usually 10 for recent tab challenges)
+	 * (usually 10 for recent tab challenges).
 	 */
 	starsRequested: number;
 	/**
-	 * If the level has a low-detail mode
+	 * If the level has a low-detail mode.
 	 */
 	ldm: boolean;
 	/**
-	 * If the level is a weekly
+	 * If the level is a weekly.
 	 */
 	weekly?: boolean;
 	/**
-	 * The daily number of the level
+	 * The daily number of the level.
 	 */
 	dailyNumber?: number;
 	/**
-	 * The next daily level (if present)
+	 * The next daily level (if present).
 	 */
 	nextDaily: number | null;
 	/**
-	 * The next daily level's release (if present)
+	 * The next daily level's release (if present).
 	 */
 	nextDailyTimestamp: number | null;
 	/**
 	 * The amount of objects in a level.
-	 * Capped to 65536 for online levels
+	 * Capped to 65536 for online levels.
 	 */
 	objects: number;
 	/**
-	 * If the level has more than 40000 objects
+	 * If the level has more than 40000 objects.
 	 */
 	large: boolean;
 	/**
-	 * The amount of creator points the level gives to its publisher
+	 * The amount of creator points the level gives to its publisher.
 	 */
 	cp: number;
 	/**
-	 * The difficulty "face" rating
+	 * The difficulty "face" rating.
 	 */
 	difficultyFace: string;
 	/**
-	 * The song name used by the level
+	 * The song name used by the level.
 	 */
 	songName: string;
 	/**
-	 * The publisher of the song
+	 * The publisher of the song.
 	 */
 	songAuthor: string;
 	/**
-	 * The amount of disk space that the song takes up
+	 * The amount of disk space that the song takes up.
 	 */
 	songSize: string;
 	/**
-	 * The song ID on https://newgrounds.com/
+	 * The song ID on https://newgrounds.com/.
 	 */
 	songID: string;
 	/**
-	 * The song's download link. Can be somewhere other than https://audio.ngfiles.com/
+	 * The song's download link. Can be somewhere other than https://audio.ngfiles.com/.
 	 */
 	songLink: string;
 }
 
 /**
- * Class for a Geometry Dash level
+ * Class for a Geometry Dash level.
  */
 export class Level implements LevelObject {
 	// Glob of whatever
 	name: string; id: string; description: string; author: string;
-	playerID: number; accountID: number; difficulty: string;
+	playerID: string; accountID: string; difficulty: string;
 	downloads: number; likes: number; disliked: boolean;
 	length: string; stars: number; orbs: number; diamonds: number;
 	featured: boolean; epic: boolean; gameVersion: string;
@@ -212,18 +224,24 @@ export class Level implements LevelObject {
 	songName: any; songAuthor: any; songSize: string;
 	songID: any; songLink: string;
 
+	/**
+	 * @param levelInfo The level information, parsed from RobTop's colon-based data format.
+	 * @param server The server object. Used for custom timestamp suffixes.
+	 * @param download Not sure what it's used for.
+	 * @param author The author information, parsed from RobTop's colon-based data format.
+	 */
 	constructor(levelInfo: Record<number, string>, server: ServerInfo, download: boolean | null, author: Record<number, string>) {
 		this.name = levelInfo[2] || "-";
 		this.id = levelInfo[1] || "0";
 		this.description = Buffer.from((levelInfo[3] || ""), "base64").toString() || "(No description provided)";
 		this.author = author[1] || "-";
-		this.playerID = +levelInfo[6] || 0;
-		this.accountID = +author[2] || 0;
+		this.playerID = levelInfo[6] || "0";
+		this.accountID = author[2] || "0";
 		this.difficulty = difficulty[levelInfo[9]] || "Unrated";
 		this.downloads = +levelInfo[10] || 0;
 		this.likes = +levelInfo[14] || 0;
 		this.disliked = +levelInfo[14] < 0;
-		this.length = length[levelInfo[15]] || "XL";;
+		this.length = length[levelInfo[15]] || "XL";
 		this.stars = +levelInfo[18] || 0;
 		this.orbs = orbs[levelInfo[18]] || 0;
 		this.diamonds = !levelInfo[18] || (+levelInfo[18]) < 2 ? 0 : +levelInfo[18] + 2;
@@ -245,7 +263,11 @@ export class Level implements LevelObject {
 		this.starsRequested = +levelInfo[39] || 0;
 		this.ldm = +levelInfo[40] > 0;
 		if (+levelInfo[41] > 100000) this.weekly = true;
-		if (+levelInfo[41]) { this.dailyNumber = (+levelInfo[41] > 100000 ? +levelInfo[41] - 100000 : +levelInfo[41]); this.nextDaily = null; this.nextDailyTimestamp = null };
+		if (+levelInfo[41]) {
+			this.dailyNumber = +levelInfo[41] > 100000 ? +levelInfo[41] - 100000 : +levelInfo[41];
+			this.nextDaily = null;
+			this.nextDailyTimestamp = null;
+		};
 		this.objects = +levelInfo[45] || 0;
 		this.large = +levelInfo[45] > 40000;
 		this.cp = Number(Number(this.stars > 0) + Number(this.featured) + Number(this.epic));
@@ -295,41 +317,47 @@ export class Level implements LevelObject {
 	}
 }
 
+/**
+ * Class for a Geometry Dash level query item in search results.
+ */
 export class SearchQueryLevel extends Level {
 	/**
 	 * The URL of the server's Demon List API, if it has one (e.g. `http://pointercrate.com/`. Make sure it ends with a slash!
 	 */
 	demonList?: string;
 	/**
-	 * The position of the level on the Demon list
+	 * The position of the level on the Demon list.
 	 */
 	demonPosition?: number;
 	/**
-	 * If the Geometry Dash server is a private server (that is, not maintained by RobTop)
+	 * If the Geometry Dash server is a private server (that is, not maintained by RobTop).
 	 */
 	gdps?: string;
 	/**
-	 * The number of items returned by the search on a page
+	 * The number of items returned by the search on a page.
 	 */
 	results?: number;
 	/**
 	 * The total number of pages of the search.
-	 * This value is sometimes set to 9999
+	 * This value is sometimes set to 9999.
 	 */
 	pages?: number;
 }
 
+/**
+ * Class for a Geometry Dash level with additional properties only available through downloading.
+ */
 export class DownloadedLevel extends Level {
 	/**
-	 * The level data
+	 * The level data.
 	 */
 	data: string;
 	/**
-	 * The extra string that comes with the level. Its use is still unknown
+	 * The extra string that comes with the level. Its use is still unknown.
 	 */
 	extraString?: string;
 	/**
-	 * If the Geometry Dash server is a private server (that is, not maintained by RobTop)
+	 * If the Geometry Dash server is a private server (that is, not maintained by RobTop).
 	 */
 	gdps?: string;
 	/**
@@ -337,7 +365,7 @@ export class DownloadedLevel extends Level {
 	 */
 	demonList?: string;
 	/**
-	 * The position of the level on the Demon list
+	 * The position of the level on the Demon list.
 	 */
 	demonPosition?: number;
 }

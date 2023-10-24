@@ -5,8 +5,19 @@ type NeverEndingNever = NeverEndingNever[];
 declare const agPsd: any; // TODO: add proper typedefs
 declare const Ease: any;
 const WHITE = 0xffffff;
-const colorNames = { "1": "Color 1", "2": "Color 2", "g": "Glow", "w": "White", "u": "UFO Dome" };
-const formNames = { "player": "icon", "player_ball": "ball", "bird": "ufo", "dart": "wave" };
+const colorNames = {
+	1: "Color 1",
+	2: "Color 2",
+	g: "Glow",
+	w: "White",
+	u: "UFO Dome"
+};
+const formNames = {
+	"player": "icon",
+	"player_ball": "ball",
+	"bird": "ufo",
+	"dart": "wave"
+};
 const loader: any = PIXI.Loader.shared;
 
 const loadedNewIcons = {};
@@ -33,7 +44,7 @@ function positionPart(part, partIndex, layer, formName, isNew: boolean, isGlow?:
 	layer.zIndex = part.z;
 
 	if (!isGlow) {
-		let tintInfo = iconData?.robotAnimations.info[formName].tints;
+		let tintInfo = iconData!.robotAnimations.info[formName].tints;
 		let foundTint = tintInfo[partIndex];
 		if (foundTint > 0) {
 			// TODO: fix this deprecated usage
@@ -109,6 +120,9 @@ function parseIconForm(form: string) {
  * @returns The return value of the callback
  */
 function loadIconLayers(form, id, cb) {
+	console.log(form);
+	console.log(id);
+	console.log(cb);
 	let iconStr = `${form}_${padZero(validateIconID(id, form))}`;
 	let texturesToLoad = Object.keys(iconData?.gameSheet || {}).filter(x => x.startsWith(iconStr + "_"));
 

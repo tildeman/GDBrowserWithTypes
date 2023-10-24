@@ -5,45 +5,48 @@ import colors_raw from '../iconkit/sacredtexts/colors.json' assert { type: "json
  */
 type ColorRGB = { r: number, g: number, b: number };
 
+/**
+ * An object of colors.
+ */
 const colors: Record<string , ColorRGB> = colors_raw;
 
 /**
- * Class for a Geometry Dash Player
+ * Class for a Geometry Dash Player.
  */
 export class Player {
 	/**
-	 * The username of the player
+	 * The username of the player.
 	 */
 	username: string;
 	/**
-	 * The player ID of the player
+	 * The player ID of the player.
 	 */
 	playerID: string;
 	/**
-	 * The account ID of the player, if present
+	 * The account ID of the player, if present.
 	 */
 	accountID: string;
 	/**
-	 * Where the player is placed on the global leaderboard
+	 * Where the player is placed on the global leaderboard.
 	 */
 	rank: number;
 	/**
-	 * The number of stars a player has
+	 * The number of stars a player has.
 	 * Caps at 16777216.
 	 */
 	stars: number;
 	/**
-	 * The number of diamonds a player has
+	 * The number of diamonds a player has.
 	 * Caps at 65535.
 	 */
 	diamonds: number;
 	/**
-	 * The number of secret coins a player has
+	 * The number of secret coins a player has.
 	 * Caps at 65535.
 	 */
 	coins: number;
 	/**
-	 * The number of user coins a player has
+	 * The number of user coins a player has.
 	 * Caps at 149.
 	 */
 	userCoins: number;
@@ -53,27 +56,27 @@ export class Player {
 	 */
 	demons: number;
 	/**
-	 * The number of creator points a player has
+	 * The number of creator points a player has.
 	 */
 	cp: number;
 	/**
-	 * The default icon of the player
+	 * The default icon of the player.
 	 */
 	icon: number | {
 		/**
-		 * The gamemode of the default icon
+		 * The gamemode of the default icon.
 		 */
 		form: string
 		/**
-		 * The icon ID (e.g.: Ship `22` yields the ghost ship)
+		 * The icon ID (e.g.: Ship `22` yields the ghost ship).
 		 */
 		icon: number,
 		/**
-		 * The primary color of the icon
+		 * The primary color of the icon.
 		 */
 		col1: number,
 		/**
-		 * The secondary color of the icon
+		 * The secondary color of the icon.
 		 */
 		col2: number,
 		/**
@@ -84,11 +87,11 @@ export class Player {
 		glow: boolean
 	};
 	/**
-	 * The primary color of the icon
+	 * The primary color of the icon.
 	 */
 	col1?: number;
 	/**
-	 * The secondary color of the icon
+	 * The secondary color of the icon.
 	 */
 	col2?: number;
 	/**
@@ -98,72 +101,72 @@ export class Player {
 	 */
 	glow?: boolean;
 	/**
-	 * The RGB value of the first color
+	 * The RGB value of the first color.
 	 */
 	col1RGB?: ColorRGB;
 	/**
-	 * The RGB value of the second color
+	 * The RGB value of the second color.
 	 */
 	col2RGB?: ColorRGB;
 	/**
-	 * Whether friend requests are enabled
+	 * Whether friend requests are enabled.
 	 */
 	friendRequests: boolean;
 	/**
-	 * Controls who can send the message
+	 * Controls who can send the message.
 	 */
 	messages: string;
 	/**
-	 * Controls who can view the comment history
+	 * Controls who can view the comment history.
 	 */
 	commentHistory: string;
 	/**
-	 * Whether the user has moderator/elder moderator status
+	 * Whether the user has moderator/elder moderator status.
 	 */
 	moderator: number;
 	/**
-	 * The YouTube ID, vanity name or handle of the user, if present
+	 * The YouTube ID, vanity name or handle of the user, if present.
 	 */
 	youtube: string | null;
 	/**
-	 * The X handle of the user, if present
+	 * The X handle of the user, if present.
 	 */
 	twitter: string | null;
 	/**
-	 * The Twitch ID or vanity name of the user, if present
+	 * The Twitch ID or vanity name of the user, if present.
 	 */
 	twitch: string | null;
 	/**
-	 * The ship ID of the player
+	 * The ship ID of the player.
 	 */
 	ship: number;
 	/**
-	 * The ball ID of the player
+	 * The ball ID of the player.
 	 */
 	ball: number;
 	/**
-	 * The UFO (bird) ID of the player
+	 * The UFO (bird) ID of the player.
 	*/
 	ufo: number;
 	/**
-	 * The wave (dart) ID of the player
+	 * The wave (dart) ID of the player.
 	*/
 	wave: number;
 	/**
-	 * The robot ID of the player
+	 * The robot ID of the player.
 	*/
 	robot: number;
 	/**
-	 * The spider ID of the player
+	 * The spider ID of the player.
 	*/
 	spider: number;
 	/**
-	 * The death effect of the player
+	 * The death effect of the player.
 	*/
 	deathEffect: number;
 	
 	/**
-	 * @param account The player account object
+	 * @param account The player account object.
 	 */
 	constructor(account: Record<number, string>) {
 		this.username = account[1] || "-";
@@ -187,11 +190,11 @@ export class Player {
 				glow: +account[15] > 1 || account[28] == "1"
 			};
 			
-			this.col1 = undefined;
-			this.col2 = undefined;
-			this.glow = undefined;
-			this.col1RGB = undefined; 
-			this.col2RGB = undefined;
+			delete this.col1;
+			delete this.col2;
+			delete this.glow;
+			delete this.col1RGB;
+			delete this.col2RGB;
 		}
 
 		else {
@@ -218,5 +221,3 @@ export class Player {
 		this.col2RGB = colors[account[11]] || colors["3"];
 	}
 }
-
-// module.exports = Player;

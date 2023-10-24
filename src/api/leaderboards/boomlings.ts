@@ -3,7 +3,7 @@ import { AppRoutines, ExportBundle } from "../../types.js";
 import request from "axios";
 
 /**
- * An object for a user in Boomlings, RobTop's discontinued game
+ * An object for a user in Boomlings, RobTop's discontinued game.
  */
 interface BoomlingsUser {
     rank: number;

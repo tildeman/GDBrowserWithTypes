@@ -1,5 +1,5 @@
 /**
- * @fileoverview Spaghetti code for level analysis
+ * @fileoverview Spaghetti code for level analysis.
  */
 
 import zlib from "zlib";
@@ -12,7 +12,7 @@ import { Express, Request, Response } from "express";
 import { DownloadedLevel } from "../classes/Level.js";
 
 /**
- * Raw information for a level object
+ * Raw information for a level object.
  */
 interface LevelObject {
 	id: string;
@@ -35,15 +35,15 @@ interface LevelObject {
 }
 
 /**
- * The object returned as results of analyses
+ * The object returned as results of analyses.
  */
 interface AnalysisResult {
     level: {
         name: any;
         id: any;
         author: string;
-        playerID: number;
-        accountID: number;
+        playerID: string;
+        accountID: string;
         large: boolean;
     };
     objects: number;
@@ -90,7 +90,7 @@ interface ColorObject {
 }
 
 /**
- * The response returned by parsing the level headers, with only the important bits
+ * The response returned by parsing the level headers, with only the important bits.
  */
 interface RelevantHeaderResponse {
 	settings: any; // TODO: Make a better entry for settings
@@ -98,12 +98,12 @@ interface RelevantHeaderResponse {
 }
 
 /**
- * Analyze a level (Auxiliary Express middleware)
- * @param app The Express app (nothing relevant)
- * @param req The client request (nothing relevant)
- * @param res The server response (to send the level details/error)
- * @param level The level data as a string
- * @returns A Promise that resolves to `void`
+ * Analyze a level (Auxiliary Express middleware).
+ * @param app The Express app (nothing relevant).
+ * @param req The client request (nothing relevant).
+ * @param res The server response (to send the level details/error).
+ * @param level The level data as a string.
+ * @returns A Promise that resolves to `void`.
  */
 export default async function(app: Express, req: Request, res: Response, level?: DownloadedLevel) {
 	if (!level) {

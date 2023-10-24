@@ -4,7 +4,7 @@ import { Express, Request, Response } from "express";
 import { AppRoutines, ExportBundle } from "../types.js";
 
 export default async function(app: Express, req: Request, res: Response, api, getLevels) {
-	const {req: reqBundle, sendError}: ExportBundle = res.locals.stuff;
+	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) {
@@ -40,7 +40,7 @@ export default async function(app: Express, req: Request, res: Response, api, ge
 			req.params.text = foundID ? foundID[1] : appRoutines.parseResponse(b1 || "")[2];
 			return appRoutines.run.search(app, req, res);
 		}
-
+		
 		reqBundle.gdRequest('getGJUserInfo20', { targetAccountID: searchResult }, function (err2, res2, body) {
 			let account = appRoutines.parseResponse(body || "");
 			let dumbGDPSError = reqBundle.isGDPS && (!account[16] || account[1].toLowerCase() == "undefined");
@@ -49,23 +49,16 @@ export default async function(app: Express, req: Request, res: Response, api, ge
 				if (!api) return res.redirect('/search/' + req.params.id);
 				else return sendError();
 			}
-
+			
 			if (!foundID) appRoutines.userCache(reqBundle.id, account[16], account[2], account[1]);
-
-			let userData = new Player(account); // TODO: Do something about this
+			
+			let userData = new Player(account);
 
 			if (api) return res.send(userData);
 
-			else fs.readFile('./html/profile.html', 'utf8', function(err, data) {
-				let html = data;
-				let variables = Object.keys(userData);
-				variables.forEach(variable => {
-					let regex = new RegExp(`\\[\\[${variable.toUpperCase()}\\]\\]`, "g");
-					html = html.replace(regex, appRoutines.clean(userData[variable]));
-				});
-				return res.send(html);
+			res.render("profile", {
+				player: userData
 			});
-	
 		});
 	});
 }

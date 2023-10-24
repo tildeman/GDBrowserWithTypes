@@ -8,23 +8,23 @@ type Color3B = {
 
 interface IconColor {
 	/**
-	 * Primary color
+	 * Primary color.
 	 */
     "1": number;
 	/**
-	 * Secondary color
+	 * Secondary color.
 	 */
     "2": number;
 	/**
-	 * Glow outline
+	 * Glow outline.
 	 */
     g: number;
 	/**
-	 * Values that (should be) always white
+	 * Values that (should be) always white.
 	 */
     w: number;
 	/**
-	 * UFO dome color
+	 * UFO dome color.
 	 */
     u: number;
 }
@@ -82,6 +82,7 @@ interface IconData {
 	newIcons: string[];
 }
 
+// Warning to be displayed when the viewport is vertical
 $('body').append(`
 	<div data-nosnippet id="tooSmall" class="brownBox center supercenter" style="display: none; width: 80%">
 	<h1>Yikes!</h1>
@@ -90,7 +91,7 @@ $('body').append(`
 	</p>
 	<p style="font-size: 1.8vh">Did I color too many words? I think I colored too many words.</p>
 	</div>
-`)
+`);
 
 // TODO: fix this deprecated usage
 $(window).resize(function () {
@@ -105,34 +106,46 @@ $(window).resize(function () {
 	}
 });
 
+/**
+ * Save the previous URL into the session storage.
+ */
 function saveUrl() {
-		if (window.location.href.endsWith('?download')) return;
+	if (window.location.href.endsWith('?download')) return;
 	sessionStorage.setItem('prevUrl', window.location.href);
 }
 
+/**
+ * Go back a page.
+ */
 function backButton() {
 	if (window.history.length > 1 && document.referrer.startsWith(window.location.origin)){
-			if (window.location.href.endsWith('?download') && sessionStorage.getItem('prevUrl') === window.location.href.replace('?download', '')) window.history.go(-2);
-			else window.history.back()
+			if (window.location.href.endsWith('?download') && sessionStorage.getItem('prevUrl') === window.location.href.replace('?download', '')) {
+				window.history.go(-2);
+			}
+			else window.history.back();
 		}
-	else window.location.href = "../../../../../"
+	else window.location.href = "/";
 }
 
-let gdps: string | null = null
-let onePointNine = false
+let gdps: string | null = null;
+let onePointNine = false;
 
-function Fetch(link: RequestInfo | URL) {
-	return new Promise<null>(function (res, rej) {
-		fetch(link).then(resp => {
-			if (!resp.ok) return rej(resp);
-			gdps = resp.headers.get('gdps');
-			if (gdps && gdps.startsWith('1.9/')) {
-				onePointNine = true;
-				gdps = gdps.slice(4);
-			}
-			resp.json().then(res).catch(rej);
-		}).catch(rej)
-	})
+/**
+ * Wrapper function for the Fetch API to check for 1.9 features.
+ * @param link The URL to fetch data from.
+ * @returns The JSON data.
+ */
+async function Fetch(link: RequestInfo | URL) {
+	const resp = await fetch(link);
+	if (!resp.ok) throw Error("Malformed response");
+	gdps = resp.headers.get('gdps');
+	// TODO: Use a better check method for 1.9 servers
+	if (gdps && gdps.startsWith('1.9/')) {
+		onePointNine = true;
+		gdps = gdps.slice(4);
+	}
+	const returnValue = await resp.json();
+	return returnValue;
 }
 
 let allowEsc = true;
@@ -148,10 +161,10 @@ $(document).keydown(function(k) {
 	}
 });
 
-let iconData: null | IconData = null
-let iconCanvas: HTMLCanvasElement | null = null
-let iconRenderer: PIXI.Application | null = null
-let overrideLoader = false
+let iconData: null | IconData = null;
+let iconCanvas: HTMLCanvasElement | null = null;
+let iconRenderer: PIXI.Application | null = null;
+let overrideLoader = false;
 let renderedIcons: {
 	[cacheID: string]: {
 		name: string,
@@ -162,8 +175,8 @@ let renderedIcons: {
 // very shitty code :) i suck at this stuff
 
 /**
- * Render the selected icon
- * @returns A promise that resolves to void
+ * Render the selected icon.
+ * @returns A promise that resolves to void.
  */
 async function renderIcons() {
 	if (overrideLoader) return;
@@ -199,7 +212,7 @@ function buildIcon(elements: JQuery<HTMLElement>, current: number) {
 	}
 
 	loadIconLayers(iconConfig.form, iconConfig.id, function(a, b, c: boolean) {
-		if (c) iconConfig.new = true
+		if (c) iconConfig.new = true;
 		if (!iconData) {
 			iconData = {
 				forms: {},
@@ -217,24 +230,24 @@ function buildIcon(elements: JQuery<HTMLElement>, current: number) {
 			if (!iconData) {
 				return;
 			}
-			let dataURL = icon.toDataURL()
-			let titleStr = `${Object.values(iconData.forms).find(x => x.form == icon.form)?.name} ${icon.id}`
-			if (cacheID) renderedIcons[cacheID] = {name: titleStr, data: dataURL}
-			finishIcon(currentIcon, titleStr, dataURL)
+			let dataURL = icon.toDataURL();
+			let titleStr = `${Object.values(iconData.forms).find(x => x.form == icon.form)?.name} ${icon.id}`;
+			if (cacheID) renderedIcons[cacheID] = {name: titleStr, data: dataURL};
+			finishIcon(currentIcon, titleStr, dataURL);
 			if (overrideLoader) {
-				overrideLoader = false
-				renderIcons()
+				overrideLoader = false;
+				renderIcons();
 			}
-			else buildIcon(elements, current + 1)
-		})
-	})
+			else buildIcon(elements, current + 1);
+		});
+	});
 }
 
 /**
- * Finish the icon render
- * @param currentIcon The icon to be displayed
- * @param name The name of the icon
- * @param data The icon image in Base64 format
+ * Finish the icon render.
+ * @param currentIcon The icon to be displayed.
+ * @param name The name of the icon.
+ * @param data The icon image in Base64 format.
  */
 function finishIcon(currentIcon, name, data) {
 	currentIcon.append(`<img title="${name}" style="${currentIcon.attr("imgStyle") || ""}" src="${data}">`)
@@ -256,7 +269,7 @@ const inaccessibleLinkSelector = "*:not(a) > img.gdButton, .leaderboardTab, .gdc
 
 document.querySelectorAll(inaccessibleLinkSelector).forEach(elem => {
   elem.setAttribute('tabindex', "0");
-})
+});
 
 document.getElementById('backButton')?.setAttribute('tabindex', "1"); // Prioritize back button, first element to be focused
 
@@ -268,13 +281,13 @@ window.addEventListener("keydown", e => {
   if (!active) return;
   const isUnsupportedLink = active.hasAttribute('tabindex'); // Only click on links that aren't already natively supported to prevent double clicking
   if(isUnsupportedLink) (active as HTMLAnchorElement).click();
-})
+});
 
 // stolen from stackoverflow
 /**
- * Check if an element is within the (vertical) viewport
+ * Check if an element is within the (vertical) viewport.
  * @param that The jQuery selection.
- * @returns A boolean indicating the visibility of the element in the viewport
+ * @returns A boolean indicating the visibility of the element in the viewport.
  */
 function isInViewport(that: JQueryStatic) {
 	let elementTop = $(that).offset()?.top || 0;
