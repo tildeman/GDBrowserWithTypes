@@ -1,5 +1,5 @@
 /**
- * @fileoverview Site-specific script for the API page
+ * @fileoverview Site-specific script for the API page.
  */
 
 $('.subdiv').each(function() {

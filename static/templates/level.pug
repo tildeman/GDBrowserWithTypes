@@ -197,7 +197,7 @@ html(lang="en")
 				img.valign.inline.spaced(src="/assets/download.png", style={ height: "15%", "margin-right": "2%" })
 				h1.valign.inline.smaller.spaced= level.downloads
 				br
-				img#likeImg.valign.inline.spaced(src="/assets/like.png", style={ height: "15%", "margin-right": "2%" })
+				img#likeImg.valign.inline.spaced(src=(level.likes >= 0) ? "/assets/like.png" : "/assets/dislike.png", style={ height: "15%", "margin-right": "2%" })
 				h1.valign.inline.smaller.spaced= level.likes
 				br
 				img.valign.inline.spaced(src="/assets/time.png", style={ height: "15%", "margin-right": "2%" })

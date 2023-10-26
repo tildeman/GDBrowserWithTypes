@@ -1,5 +1,5 @@
 /**
- * @fileoverview Site-specific script for the search results page
+ * @fileoverview Site-specific script for the search results page.
  */
 
 import { SearchQueryLevel } from "../classes/Level";
@@ -37,8 +37,8 @@ let searchFilters = `/api/search/${type == 'saved' ? JSON.parse(localStorage.get
 
 /**
  * Sanitize potentially dangerous code.
- * @param text The text to replace characters
- * @returns The sanitized text that is safe to display
+ * @param text The text to replace characters.
+ * @returns The sanitized text that is safe to display.
  */
 function clean(text: string | number | undefined) {
 	return (text || "").toString()

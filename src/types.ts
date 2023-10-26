@@ -1,36 +1,37 @@
 /**
- * @fileoverview Common types to be used by GDBrowser's typing system
+ * @fileoverview Common types to be used by GDBrowser's typing system.
  */
 
 import { AxiosResponse } from "axios";
 
 /**
- * An object for private servers defined in `servers.json`
+ * An object for private servers defined in `servers.json`.
  */
 export interface ServerInfo {
 	/**
-	 * The display name of the server
+	 * The display name of the server.
 	 */
 	name: string;
 	/**
-	 * The server's website URL (unrelated to the actual endpoint)
+	 * The server's website URL (unrelated to the actual endpoint).
 	 */
 	link: string;
 	/**
-	 * The creator(s) of the server
+	 * The creator(s) of the server.
 	 */
 	author: string;
 	/**
-	 * The URL to open when clicking on the creator's name
+	 * The URL to open when clicking on the creator's name.
 	 */
 	authorLink: string;
 	/**
-	 * An ID for the server, also used as the subdomain (e.g. `something` would become `something.gdbrowser.com`)
+	 * An ID for the server, also used as the subdomain
+	 * (e.g. `something` would become `something.gdbrowser.com`).
 	 */
 	id: string;
 	/**
 	 * The actual endpoint to ~~spam~~ send requests to
-	 * (e.g. `http://boomlings.com/database/` - make sure it ends with a slash!)
+	 * (e.g. `http://boomlings.com/database/` - make sure it ends with a slash!).
 	 */
 	endpoint: string;
 	/**
@@ -42,8 +43,8 @@ export interface ServerInfo {
 	 */
 	timestampSuffix?: string;
 	/**
-	 * The URL of the server's Demon List API, if it has one (e.g. `http://pointercrate.com/`.
-	 * Make sure it ends with a slash!)
+	 * The URL of the server's Demon List API, if it has one
+	 * (e.g. `http://pointercrate.com/`. Make sure it ends with a slash!).
 	 */
 	demonList?: string;
 	/**
@@ -62,7 +63,7 @@ export interface ServerInfo {
 	 */
 	onePointNine?: boolean;
 	/**
-	 * Enables the lost but not forgotten Weekly Leaderboard, for servers that still milk it
+	 * Enables the lost but not forgotten Weekly Leaderboard, for servers that still milk it.
 	 */
 	weeklyLeaderboard?: boolean;
 	/**
@@ -78,52 +79,52 @@ export interface ServerInfo {
 	 */
 	offline?: boolean;
 	/**
-	 * Not sure what this is supposed to do. Probably some additional supplied arguments,
+	 * Not sure what this is supposed to do. Probably some additional supplied arguments.
 	 */
 	extraParams?: Record<string, string>
 }
 
 /**
- * The typical variables to be used within GDBrowser (a lot)
+ * The typical variables to be used within GDBrowser (a lot).
  */
 export interface ExportBundle {
 	/**
-	 * The locals for the request object
+	 * The locals for the request object.
 	 */
 	req: {
 		/**
-		 * The server for the request
+		 * The server for the request.
 		 */
 		server: ServerInfo;
 		/**
-		 * Whether the server is offline or not
+		 * Whether the server is offline or not.
 		 */
 		offline?: boolean;
 		/**
-		 * The endpoint of the (private) server
+		 * The endpoint of the (private) server.
 		 */
 		endpoint: string;
 		/**
-		 * Whether the server is 1.9 or not
+		 * Whether the server is 1.9 or not.
 		 */
 		onePointNine?: boolean;
 		/**
-		 * A string to append at the end of timestamps (" ago")
+		 * A string to append at the end of timestamps (" ago").
 		 */
 		timestampSuffix: string;
 		/**
-		 * The unique server ID. Default servers always use the empty ID ("")
+		 * The unique server ID. Default servers always use the empty ID ("").
 		 */
 		id: string;
 		/**
-		 * Whether the server is a private server (not operated by RobTop)
+		 * Whether the server is a private server (not operated by RobTop).
 		 */
 		isGDPS: boolean;
 		/**
-		 * Build headers and parameters to be sent to an online server
-		 * @param obj An object containing extra configurations
-		 * @param substitute Use GDPS substitutions in `settings.js`
-		 * @returns An object containing the forms and headers for a request
+		 * Build headers and parameters to be sent to an online server.
+		 * @param obj An object containing extra configurations.
+		 * @param substitute Use GDPS substitutions in `settings.js`.
+		 * @returns An object containing the forms and headers for a request.
 		 */
 		gdParams: (obj?: Record<string, string | number | undefined>, substitute?: boolean) => {
 			form: {
@@ -135,10 +136,10 @@ export interface ExportBundle {
 			} | {};
 		};
 		/** 
-		 * Wrapper for a request to a Geometry Dash server
-		 * @param target The request endpoint of the server (`getGJLevels22` for retrieving level data in Geometry Dash 2.2)
-		 * @param params Additional parameters to be sent. Optional
-		 * @param cb Callback to the request. This is reminiscent of the now deprecated JS module `request`
+		 * Wrapper for a request to a Geometry Dash server.
+		 * @param target The request endpoint of the server (`getGJLevels22` for retrieving level data in Geometry Dash 2.2).
+		 * @param params Additional parameters to be sent. Optional.
+		 * @param cb Callback to the request. This is reminiscent of the now deprecated JS module `request`.
 		 * @returns This function does not return.
 		 */
 		gdRequest: (target: string, params: Record<string, any> | undefined, cb: (err?: boolean | Error | {
@@ -155,20 +156,20 @@ export interface ExportBundle {
 type SafeServers = Omit<ServerInfo, "endpoint" | "substitutions" | "overrides" | "disabled">;
 
 /**
- * App-wide routines & functions
+ * App-wide routines & functions.
  */
 export interface AppRoutines {
 	/**
-	 * The configuration data
+	 * The configuration data.
 	 */
 	config: {
 		/**
-		 * The port to connect to
+		 * The port to connect to.
 		 */
 		port: number;
 		/**
 		 * Extra parameters.
-		 * Always send this stuff to the servers
+		 * Always send this stuff to the servers.
 		 */
 		params: {
 			/**
@@ -230,71 +231,71 @@ export interface AppRoutines {
 	 */
 	safeServers: SafeServers[];
 	/**
-	 * The main endpoint (the one without a custom ID)
-	 * `https://www.boomlings.com/database/` unless changed in fork
+	 * The main endpoint (the one without a custom ID).
+	 * `https://www.boomlings.com/database/` unless changed in fork.
 	 */
 	mainEndpoint: string;
 	/**
-	 * A dictionary of cached account information
+	 * A dictionary of cached account information.
 	 */
 	accountCache: Record<string, any>;
 	/**
-	 * Track the last time the application returned a success
+	 * Track the last time the application returned a success.
 	 */
 	lastSuccess: Record<string, number>;
 	/**
-	 * Track GDPSes and see if they're functional
+	 * Track GDPSes and see if they're functional.
 	 */
 	actuallyWorked: Record<string, boolean>;
 	/**
-	 * The ID of the Geometry Dash account used by GDBrowser to interact with servers
+	 * The ID of the Geometry Dash account used by GDBrowser to interact with servers.
 	 */
 	id: string | number;
 	/**
-	 * The GJP hash of the Geometry Dash account used by GDBrowser to interact with servers
+	 * The GJP hash of the Geometry Dash account used by GDBrowser to interact with servers.
 	 */
 	gjp: string | number;
 	/**
-	 * A middleware lookup table 
+	 * A middleware lookup table.
 	 */
 	run: Record<string, any>
 	/**
-	 * The Google Sheets API key (used for accurate leaderboards)
+	 * The Google Sheets API key (used for accurate leaderboards).
 	 */
 	sheetsKey?: string;
 	/**
-	 * Cache users
-	 * @param id The ID of something (I'm not sure what)
-	 * @param accountID The associated account ID of the GD user
-	 * @param playerID The player ID of the GD user
-	 * @param name The user's name on the GD servers
-	 * @returns A string array of cached data
+	 * Cache users.
+	 * @param id The ID of something (I'm not sure what).
+	 * @param accountID The associated account ID of the GD user.
+	 * @param playerID The player ID of the GD user.
+	 * @param name The user's name on the GD servers.
+	 * @returns A string array of cached data.
 	 */
 	userCache: (id: string, accountID: string, playerID: string, name: string) => [string, string, string] | undefined;
 	/**
 	 * Calculate the time difference from now.
-	 * @param id The ID of something (I'm not sure what)
-	 * @param time The Unix timestamp
-	 * @returns A string-formatted date containing the amount of minutes and seconds passed
+	 * @param id The ID of something (I'm not sure what).
+	 * @param time The Unix timestamp.
+	 * @returns A string-formatted date containing the amount of minutes and seconds passed.
 	 */
 	timeSince: (id: string, time?: number) => string;
 	/**
-	 * Parse the response returned by GDBrowser's internal API
-	 * @param responseBody The body of the API response
-	 * @param splitter The delimiter (for RobTop's API requests)
-	 * @returns A configuration object
+	 * Parse the response returned by GDBrowser's internal API.
+	 * @param responseBody The body of the API response.
+	 * @param splitter The delimiter (for RobTop's API requests).
+	 * @returns A configuration object.
 	 */
 	parseResponse: (responseBody: string, splitter?: string) => Record<number, string>;
 	/**
 	 * Check if a server is still working.
-	 * @param id The ID of the (private) server
+	 * @param id The ID of the (private) server.
 	 * @returns This function does not return.
 	 */
 	trackSuccess: (id: string) => void;
 	/**
 	 * Sanitize potentially dangerous code.
-	 * @param text The text to replace characters
-	 * @returns The sanitized text that is safe to display
+	 * @param text The text to replace characters.
+	 * @returns The sanitized text that is safe to display.
 	 */
 	clean: (text: string | number | undefined) => string;
 }

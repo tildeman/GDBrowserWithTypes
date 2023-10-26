@@ -1,5 +1,5 @@
 /**
- * @fileoverview Site-specific script for the search page
+ * @fileoverview Site-specific script for the search page.
  */
 
 let filters: string[] = [];
@@ -9,12 +9,12 @@ let customSong = true;
 let officialSong = 1;
 
 /**
- * Remove duplicate entries in an array
- * @param array The array to remove duplicates
- * @returns The array with all duplicates removed
+ * Remove duplicate entries in an array.
+ * @param array The array to remove duplicates.
+ * @returns The array with all duplicates removed.
  */
-function undupe(array) {
-  if (!Array.isArray(array)) return array;
+function undupe<T>(array: T[]) {
+  if (!Array.isArray(array)) return [];
   else return array.filter((x, y) => array.indexOf(x) == y);
 }
 
@@ -70,8 +70,8 @@ $('.levelSearch').click(function() {
 });
 
 /**
- * Get selected difficulty filters
- * @returns The requested difficulty filter
+ * Get selected difficulty filters.
+ * @returns The requested difficulty filter.
  */
 function getDiffFilters() {
 	return $('.diffDiv.selectedFilter').map(function() {
@@ -80,7 +80,8 @@ function getDiffFilters() {
 }
 
 /**
- * Shows the demon sub-difficulties selection panel, and hides the non-demon difficulties
+ * Shows the demon sub-difficulties selection panel,
+ * and hides the non-demon difficulties.
  */
 function showDemonDiffs() {
 	$('#difficulties').hide();
@@ -89,7 +90,8 @@ function showDemonDiffs() {
 }
 
 /**
- * Shows the non-demon difficulties selection panel, and hides the demon sub-difficulties
+ * Shows the non-demon difficulties selection panel,
+ * and hides the demon sub-difficulties.
  */
 function hideDemonDiffs() {
 	$('#difficulties').show();
@@ -207,14 +209,14 @@ $('#songID').on('input change blur', function() {
 });
 
 /**
- * Retrieve all the current filters, and then put it into LocalStorage
+ * Retrieve all the current filters, and then put it into LocalStorage.
  */
 function saveFilters() {
 	localStorage.filters = JSON.stringify(savedFilters);
 }
 
 /**
- * Clear all the current filters (songs, difficulties, name, etc.)
+ * Clear all the current filters (songs, difficulties, name, etc.).
  */
 function clearFilters() {
 	$('.selectedFilter').removeClass('selectedFilter');
@@ -230,7 +232,7 @@ function clearFilters() {
 }
 
 /**
- * Check for additional (advanced) options
+ * Check for additional (advanced) options, and turns the plus button blue
  */
 function checkExtraFilters() {
 	let hasExtra = savedFilters.checked.length || savedFilters.defaultSong || savedFilters.song > 0;
@@ -291,8 +293,8 @@ Fetch(`../api/music`).then((music: any) => {
 
 	$(document).keydown(function(k) {
 		if (customSong) return;
-		if (k.which == 37) $('#songDown').trigger('click');   // left
-		if (k.which == 39) $('#songUp').trigger('click');     // right
+		if (k.which == 37) $('#songDown').trigger('click'); // left
+		if (k.which == 39) $('#songUp').trigger('click');   // right
 	});
 
 	if (onePointNine) {

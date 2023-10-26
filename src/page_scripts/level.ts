@@ -1,5 +1,5 @@
 /**
- * @fileoverview Site-specific script for the level info page
+ * @fileoverview Site-specific script for the level info page.
  */
 
 const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for liking a level <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/like.js">here</a>.';
@@ -10,7 +10,7 @@ const levelNextDaily: string = $('#dataBlock').data('nextdaily');
 const levelSongID: string = $('#dataBlock').data('songid');
 
 /**
- * Format a duration in RobTop's favorite format
+ * Format a duration in Colon's favorite format
  * @param secs The total number of seconds
  * @param timeUp If set to `true`, return "Time's up!" if the number of seconds is 0
  * @returns The formatted time string
@@ -33,11 +33,11 @@ let copyMessages = [
 	"ID copied to clipboard", "ID copied x[C]!", "ID copied again!",
 	"ID copied once more!", "ID clipboard to copied!", "ID copied yet again!",
 	"As you wish", "Copy that!", "This one actually works", "You can't play levels, son",
-	"Keep it coming", "Click again, I dare you", "C-C-C-C-COPIED!",
-	"Get a life", "...", "bruh moment", "Etched into thy's memory!", "h",
-	"I feel physical pain", "Play it in GD!", "[[ID]]", "go away",
-	"Every copy costs 2 cents!", "Un-copied!", "Copied++", "C O P I E D",
-	"help me please", "Open GD to play the level!", "pretend you're playing it", "Anotha one!"
+	"Keep it coming", "Click again, I dare you", "C-C-C-C-COPIED!", "Get a life", "...",
+	"bruh moment", "Etched into thy's memory!", "h", "I feel physical pain",
+	"Play it in GD!", "[[ID]]", "go away", "Every copy costs 2 cents!", "Un-copied!",
+	"Copied++", "C O P I E D", "help me please", "Open GD to play the level!",
+	"pretend you're playing it", "Anotha one!"
 ];
 
 let copies = 0;
@@ -81,7 +81,7 @@ if ($("#additional").hasClass('downloadDisabled')) {
 	$('#analyzeLink').removeAttr('href');
 	$('#analyzeBtn').click(function() {
 		$('#analyzeDisabled').show();
-	})
+	});
 }
 
 if (window.location.pathname == "/weekly") {
@@ -106,7 +106,7 @@ if (savedLevels.includes(levelID)) {
 }
 
 /**
- * Push this level into the saved levels list
+ * Push this level into the saved levels list.
  */
 function saveLevel() {
   savedLevels.push(levelID);
@@ -122,7 +122,7 @@ function savedLevel() {
 }
 
 /**
- * Delete this level from the saved levels list
+ * Delete this level from the saved levels list.
  */
 function deleteLevel() {
 	savedLevels = savedLevels.filter(function(el) {
@@ -139,8 +139,8 @@ $('#checkSong').click(function() {
 	fetch(`../api/song/${ levelSongID }`).then(res => res.json()).then(info => {
 		$('#songLoading').hide();
 		$(info && info != -1 ? '#songAllowed' : '#songNotAllowed').show().addClass('songStatus');
-	})
-})
+	});
+});
 
 $('.artistIcon').hover(function() {
 	let title = $(this).attr('title');

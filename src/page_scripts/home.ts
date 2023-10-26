@@ -1,5 +1,5 @@
 /**
- * @fileoverview Site-specific script for the home page
+ * @fileoverview Site-specific script for the home page.
  */
 
 let page = 1;
@@ -26,7 +26,7 @@ function loadCredits() {
 	$('#credits').show();
 	if (page == lastPage) $('#closeCredits').css('height', '52%');
 	else $('#closeCredits').css('height', xButtonPos);
-	$('.creditsIcon:not(".creditLoaded"):visible').each(async function() {		// only load icons when necessary 
+	$('.creditsIcon:not(".creditLoaded"):visible').each(async function() { // only load icons when necessary 
 		$(this).addClass('creditLoaded');
 		let profile: any = await Fetch(`./api/profile/${$(this).attr('ign')}?forceGD=1`).catch(e => {}) || {};
 		$(this).append(`<gdicon cacheID=${profile.playerID} iconID=${profile.icon} col1="${profile.col1}" col2="${profile.col2}" glow="${profile.glow}"></gdicon>`);

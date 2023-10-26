@@ -1,5 +1,5 @@
 /**
- * @fileoverview Site-specific script for the user profile profilePage
+ * @fileoverview Site-specific script for the user profile page.
  */
 
 const accountID: string = $('#dataBlock').data('accountid');
@@ -9,8 +9,8 @@ const accountModerator: string = $('#dataBlock').data('moderator');
 // TODO: Avoid defining duplicates of `clean`
 /**
  * Sanitize potentially dangerous code.
- * @param text The text to replace characters
- * @returns The sanitized text that is safe to display
+ * @param text The text to replace characters.
+ * @returns The sanitized text that is safe to display.
  */
 function clean(text: string | number | undefined) {
 	return (text || "").toString()
@@ -22,9 +22,10 @@ function clean(text: string | number | undefined) {
 		.replace(/'/g, "&#39;");
 }
 
+// TODO: Use URI paramters instead
 // remove ID from URL
 if (window.location.pathname.endsWith(".")) {
-	window.history.pushState({}, "", window.location.origin + `/u/[[USERNAME]]`);
+	window.history.pushState({}, "", window.location.origin + `/u/${accountUsername}`);
 }
 
 // icons! (god this code sucks)
@@ -62,13 +63,12 @@ $('#followOn').click(function() {
 
 /**
  * Add comment items to the container box.
- * @returns void
  */
 function appendComments() {
 	if (loadingComments) return;
 	else loadingComments = true;
 
-	$('#statusDiv').html(`<div class="supercenter" id="loading" style="height: 12%; top: 62%;"><img class="spin noSelect" src="../assets/loading.png" height="105%"></div>`)
+	$('#statusDiv').html(`<div class="supercenter" id="loading" style="height: 12%; top: 62%;"><img class="spin noSelect" src="../assets/loading.png" style="height: 105%;"></div>`)
 
 	if (profilePage == 0) $('#pageDown').hide()
 	else $('#pageDown').show()
@@ -166,7 +166,7 @@ $('#dislikebtn').click(function() {
 	$('#likebtn').addClass('youAreNotTheOne');
 	$('#dislikebtn').removeClass('youAreNotTheOne');
 	like = false;
-})
+});
 
 $(document).on('click', '.likeComment', function(cmnt) {
 	commentID = +($(this).attr('commentID') || "") || 0;
@@ -178,7 +178,7 @@ $(document).on('click', '.likeComment', function(cmnt) {
 	likeImg = $(this).find('img');
 	likeCount = $(this).parent().find('h3:not(.gold)');
 	$('#likeComment').show();
-})
+});
 
 $('#submitVote').click(function() {
 	if (likedComments.includes(commentID)) {

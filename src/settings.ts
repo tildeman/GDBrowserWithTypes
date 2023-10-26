@@ -3,12 +3,12 @@
 
 export default {
     /**
-     * Port to host website on
+     * Port to host website on.
      */
     port: 2000,
 
     /**
-     * Always send this stuff to the servers
+     * Always send this stuff to the servers.
      */
     params: {
         secret: 'Wmfd2893gb7',

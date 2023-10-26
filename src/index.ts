@@ -19,7 +19,7 @@ import fs from "node:fs";
 // TODO: Enforce strict mode for everything
 
 /**
- * The Express app that does all the stuff
+ * The Express app that does all the stuff.
  */
 const app = express(); 
 
@@ -29,28 +29,28 @@ const app = express();
 const serverList: ServerInfo[] = serverListRaw;
 
 /**
- * Servers that are pinned to the top. Sorted by whatever comes first
+ * Servers that are pinned to the top. Sorted by whatever comes first.
  */
-let pinnedServers = serverList.filter(x => x.pinned);
+const pinnedServers = serverList.filter(x => x.pinned);
 
 /**
- * Servers that are not pinned to the top. Sorted alphabetically
+ * Servers that are not pinned to the top. Sorted alphabetically.
  */
-let notPinnedServers = serverList.filter(x => !x.pinned).sort((a, b) => a.name.localeCompare(b.name));
+const notPinnedServers = serverList.filter(x => !x.pinned).sort((a, b) => a.name.localeCompare(b.name));
 
 const appServers = pinnedServers.concat(notPinnedServers);
 const appSafeServers = appServers.map(({ endpoint, substitutions, overrides, disabled, ...rest }) => rest);
 
 /**
- * Message to display upon rate limit
+ * Message to display upon rate limit.
  */
-let rlMessage = "Rate limited ¯\\_(ツ)_/¯<br><br>Please do not spam my servers with a crazy amount of requests. It slows things down on my end and stresses RobTop's servers just as much." +
+const rlMessage = "Rate limited ¯\\_(ツ)_/¯<br><br>Please do not spam my servers with a crazy amount of requests. It slows things down on my end and stresses RobTop's servers just as much." +
 " If you really want to send a zillion requests for whatever reason, please download the GDBrowser repository locally - or even just send the request directly to the GD servers.<br><br>" +
 "This kind of spam usually leads to GDBrowser getting IP banned by RobTop, and every time that happens I have to start making the rate limit even stricter. Please don't be the reason for that.<br><br>";
 
 /**
- * Helper function for creating custom identifiers for GDBrowser
- * @param req The request alongside additional properties
+ * Helper function for creating custom identifiers for GDBrowser.
+ * @param req The request alongside additional properties.
  * @returns The "X-REAL-IP" or "X-FORWARDED-FOR" headers that Robtop recommends.
  */
 function keyGeneratorHelper(req: AugmentedRequest): string | Promise<string> { 
@@ -71,7 +71,7 @@ const RL = rateLimit({
 });
 
 /**
- * Rate limit for comments, leaderboards, profiles, search queries. etc.
+ * Rate limit for comments, leaderboards, profiles, search queries, etc.
  */
 const RL2 = rateLimit({
 	windowMs: appConfig.rateLimiting ? 2 * 60 * 1000 : 0,
@@ -103,7 +103,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(timeout('20s'));
 
 app.use(async function(req, res, next) {
-	let subdomain_level = 1;
+	const subdomain_level = 1;
 	let subdomains = req.subdomains.map(x => x.toLowerCase());
 	if (subdomains.length < subdomain_level) subdomains = [""];
 	const reqServer = appServers.find(x => subdomains.includes(x.id.toLowerCase()));
@@ -130,8 +130,8 @@ app.use(async function(req, res, next) {
 	const reqGdParams = function(obj: Record<string, string | number | undefined> = {}, substitute = true) {
 		Object.keys(appConfig.params).forEach(x => { if (!obj[x]) obj[x] = appConfig.params[x] });
 		Object.keys(reqServer.extraParams || {}).forEach(x => { if (!obj[x]) obj[x] = reqServer.extraParams?.x });
-		let ip = req.headers['x-real-ip']?.toString() || req.headers['x-forwarded-for']?.toString() || "";
-		let params = {
+		const ip = req.headers['x-real-ip']?.toString() || req.headers['x-forwarded-for']?.toString() || "";
+		const params = {
 			form: obj,
 			headers: appConfig.ipForwarding && ip ? {
 				'x-forwarded-for': ip,
@@ -153,9 +153,11 @@ app.use(async function(req, res, next) {
 	const reqGdRequest = function(target: string, params: Record<string, any> = {}, cb: (err?: boolean | Error | { serverError: boolean, response: string }, resp?: AxiosResponse, body?: string) => any): void {
 		if (!target) return cb(true);
 		target = reqServer.overrides ? (reqServer.overrides[target] || target) : target;
-		let parameters = params.headers ? params : reqGdParams(params);
+		const parameters = params.headers ? params : reqGdParams(params);
 		let endpoint = reqEndpoint;
-		if (params.forceGD || (params.form && params.form.forceGD)) endpoint = "http://www.boomlings.com/database/";
+		if (params.forceGD || (params.form && params.form.forceGD)) {
+			endpoint = "http://www.boomlings.com/database/";
+		}
 		// Funnily enough, `request` is the axios library.
 		request.post(endpoint + target + '.php', convertUSP(parameters.form), { headers: parameters.headers })
 			.then(function(res: AxiosResponse) {
@@ -190,7 +192,7 @@ app.use(async function(req, res, next) {
 	next();
 })
 
-let directories = [""];
+const directories = [""];
 fs.readdirSync('./api').filter(x => !x.includes(".")).forEach(x => directories.push(x));
 
 function trackSuccess(id: string) {
@@ -217,9 +219,9 @@ function appUserCache(id: string, accountID: string, playerID: string, name: str
 const run: Record<string, any> = {};
 // TODO: Do use your brain
 let apiFiles: string[] = [];
-for (let d of directories) {
+for (const d of directories) {
 	apiFiles = fs.readdirSync('./api/' + d);
-	for (let x of apiFiles) {
+	for (const x of apiFiles) {
 		if (x.includes('.')) {
 			run[x.split('.')[0]] = (await import('./api/' + d + "/" + x)).default;
 		}
@@ -258,8 +260,8 @@ function appParseResponse(responseBody: string, splitter = ":") {
 	if (!responseBody || responseBody == "-1") return {};
 	if (responseBody.startsWith("\nWarning:")) responseBody = responseBody.split("\n").slice(2).join("\n").trim(); // GDPS'es are wild
 	if (responseBody.startsWith("<br />")) responseBody = responseBody.split("<br />").slice(2).join("<br />").trim(); // Seriously screw this
-	let response = responseBody.split('#')[0].split(splitter);
-	let res: Record<number, string> = {};
+	const response = responseBody.split('#')[0].split(splitter);
+	const res: Record<number, string> = {};
 	for (let i = 0; i < response.length; i += 2) {
 		res[response[i]] = response[i + 1];
 	};
@@ -311,7 +313,7 @@ app.use("/page_scripts", express.static("page_scripts"))
 
 app.get("/assets/:dir*?", function(req, res) {
 	let main = (req.params["dir*"] || "").toLowerCase();
-	let dir = main + (req.params[0] || "").toLowerCase();
+	const dir = main + (req.params[0] || "").toLowerCase();
 
 	if (dir.includes('.') || !req.path.endsWith("/")) {
 		// As a JS/TS developer I am morally responsible that I make my code look good for everyone
@@ -329,16 +331,13 @@ app.get("/assets/:dir*?", function(req, res) {
 		return res.status(404).send(`<p style="font-size: 20px; font-family: aller, helvetica, arial">Looks like this file doesn't exist ¯\\_(ツ)_/¯<br><a href='/assets/${main}'>View directory listing for <b>/assets/${main}</b></a></p>`);
 	}
 
-	let path = `./assets/${dir}`;
-	let files: string[] = [];
-	if (fs.existsSync(path)) {
-		files = fs.readdirSync(path);
-	}
+	const path = `./assets/${dir}`;
+	const files: string[] = fs.existsSync(path)? fs.readdirSync(path): [];
 
 	assetPage = fs.readFileSync('./html/assets.html', 'utf8');
-	let assetData = JSON.stringify({files: files.filter(x => x.includes('.')), directories: files.filter(x => !x.includes('.'))});
+	const assetData = JSON.stringify({files: files.filter(x => x.includes('.')), directories: files.filter(x => !x.includes('.'))});
 	res.status(200).send(assetPage.replace('{NAME}', dir || "assets").replace('{DATA}', assetData));
-})
+});
 
 
 // POST REQUESTS
@@ -361,17 +360,17 @@ app.post("/analyzeLevel", function(req, res) { run.analyze(app, req, res) });
  * Entries that are disabled for 1.9 servers.
  * 2.0 servers don't have customized settings, but it should be similar enough.
  */
-let onePointNineDisabled = ['daily', 'weekly', 'gauntlets', 'messages'];
+const onePointNineDisabled = ['daily', 'weekly', 'gauntlets', 'messages'];
 /**
  * Entries that are disabled for servers that block level downloads.
  * 
  * RobTop is known to do so for the main GDBrowser website.
  */
-let downloadDisabled = ['daily', 'weekly'];
+const downloadDisabled = ['daily', 'weekly'];
 /**
  * For GDPS servers, do not display these.
  */
-let gdpsHide = ['achievements', 'messages'];
+const gdpsHide = ['achievements', 'messages'];
 
 app.set("view engine", "pug");
 app.set("views", "./templates");
@@ -409,7 +408,7 @@ app.get("/comments/:id", fetchTemplateHTML("html/comments.html"));
 app.get("/demon/:id", fetchTemplateHTML("html/demon.html"));
 app.get("/gauntlets", fetchTemplateHTML("html/gauntlets.html"));
 app.get("/gdps", fetchTemplateHTML("html/gdps.html"));
-app.get("/iconkit", fetchTemplateHTML("html/iconkit.html"));
+app.get("/iconkit", fetchTemplate("iconkit"));
 app.get("/leaderboard", fetchTemplateHTML("html/leaderboard.html"));
 app.get("/leaderboard/:text", fetchTemplateHTML("html/levelboard.html"));
 app.get("/mappacks", fetchTemplateHTML("html/mappacks.html"));
@@ -422,7 +421,7 @@ app.get("/search/:text", fetchTemplate("search"));
 app.get("/api/analyze/:id", RL, function(req, res) { run.level(app, req, res, true, true) });
 app.get("/api/boomlings", function(req, res) { run.boomlings(app, req, res) });
 app.get("/api/comments/:id", RL2, function(req, res) { run.comments(app, req, res) });
-app.get("/api/credits", async function(req, res) { res.status(200).send(await import('./misc/credits.json', { assert: { type: "json" } })) });
+app.get("/api/credits", async function(req, res) { res.status(200).send((await import('./misc/credits.json', { assert: { type: "json" } })).default) });
 app.get("/api/gauntlets", function(req, res) { run.gauntlets(app, req, res) });
 app.get("/api/leaderboard", function(req, res) { run[req.query.hasOwnProperty("accurate") ? "accurate" : "scores"](app, req, res) });
 app.get("/api/leaderboardLevel/:id", RL2, function(req, res) { run.leaderboardLevel(app, req, res) });
@@ -460,28 +459,28 @@ app.get("/api/music", function(req, res) { res.status(200).send(music) });
 app.get("/api/gdps", function(req, res) {res.status(200).send(req.query.hasOwnProperty("current") ? appSafeServers.find(x => res.locals.stuff.req.server.id == x.id) : appSafeServers) });
 
 // important icon stuff
-let sacredTexts: Record<string, any> = {};
+const sacredTexts: Record<string, any> = {};
 
-let sacredTextFiles = fs.readdirSync('./iconkit/sacredtexts');
+const sacredTextFiles = fs.readdirSync('./iconkit/sacredtexts');
 for (let x of sacredTextFiles) {
-	sacredTexts[x.split(".")[0]] = await import("./iconkit/sacredtexts/" + x, { assert: { type: "json" } });
+	sacredTexts[x.split(".")[0]] = (await import("./iconkit/sacredtexts/" + x, { assert: { type: "json" } })).default;
 }
 
-let previewIcons = fs.readdirSync('./iconkit/premade');
-let newPreviewIcons = fs.readdirSync('./iconkit/newpremade');
+const previewIcons = fs.readdirSync('./iconkit/premade');
+const newPreviewIcons = fs.readdirSync('./iconkit/newpremade');
 
-let previewCounts = {};
+const previewCounts = {};
 previewIcons.forEach(x => {
 	if (x.endsWith("_0.png")) return;
-	let iconType = sacredTexts.forms[x.split("_")[0]]?.form || "";
+	const iconType = sacredTexts.forms[x.split("_")[0]]?.form || "";
 	if (!previewCounts[iconType]) previewCounts[iconType] = 1;
 	else previewCounts[iconType]++;
 });
 sacredTexts.iconCounts = previewCounts;
 
-let newIcons = fs.readdirSync('./iconkit/newicons');
+const newIcons = fs.readdirSync('./iconkit/newicons');
 sacredTexts.newIcons = [];
-let newIconCounts = {};
+const newIconCounts = {};
 newIcons.forEach(x => {
 	if (x.endsWith(".plist")) {
 		sacredTexts.newIcons.push(x.split("-")[0]);
@@ -489,7 +488,7 @@ newIcons.forEach(x => {
 		if (!newIconCounts[formName]) newIconCounts[formName] = 1;
 		else newIconCounts[formName]++;
 	}
-})
+});
 sacredTexts.newIconCounts = newIconCounts
 
 app.get('/api/icons', function(req, res) { 
@@ -497,10 +496,10 @@ app.get('/api/icons', function(req, res) {
 });
 
 // important icon kit stuff
-let iconKitFiles: Record<string, string[]> = {}
-let extraDataDir = fs.readdirSync('./iconkit/extradata');
-for (let x of extraDataDir) {
-	iconKitFiles[x.split(".")[0]] = await import("./iconkit/extradata/" + x, { assert: { type: "json" } });
+const iconKitFiles: Record<string, string[]> = {}
+const extraDataDir = fs.readdirSync('./iconkit/extradata');
+for (const x of extraDataDir) {
+	iconKitFiles[x.split(".")[0]] = (await import("./iconkit/extradata/" + x, { assert: { type: "json" } })).default;
 }
 
 iconKitFiles.previewIcons = previewIcons;
@@ -508,17 +507,17 @@ iconKitFiles.newPreviewIcons = newPreviewIcons;
 
 app.get('/api/iconkit', function(req, res) {
 	const {req: reqBundle}: ExportBundle = res.locals.stuff;
-	let sample = [JSON.stringify(sampleIcons[Math.floor(Math.random() * sampleIcons.length)].slice(1))];
-	let iconserver = reqBundle.isGDPS ? reqBundle.server.name : undefined;
+	const sample = [JSON.stringify(sampleIcons[Math.floor(Math.random() * sampleIcons.length)].slice(1))];
+	const iconserver = reqBundle.isGDPS ? reqBundle.server.name : undefined;
 	res.status(200).send(Object.assign(iconKitFiles, {sample, server: iconserver, noCopy: reqBundle.onePointNine || reqBundle.offline}));
 });
 
 app.get('/icon/:text', function(req, res) {
-	let iconID = Number(req.query.icon || 1);
+	const iconID = Number(req.query.icon || 1);
 	// TODO: Why is it flattening `req.query.form` into a string?
-	let iconForm = sacredTexts.forms[req.query.form?.toString() || ""] ? req.query.form : "icon";
-	let iconPath = `${iconForm}_${iconID}.png`;
-	let fileExists = iconKitFiles.previewIcons.includes(iconPath);
+	const iconForm = sacredTexts.forms[req.query.form?.toString() || ""] ? req.query.form : "icon";
+	const iconPath = `${iconForm}_${iconID}.png`;
+	const fileExists = iconKitFiles.previewIcons.includes(iconPath);
 	if (fileExists) return res.status(200).sendFile(`./iconkit/premade/${iconPath}`, { root: __dirname });
 	else return res.status(200).sendFile(`./iconkit/premade/${iconForm}_01.png`, { root: __dirname });
 });

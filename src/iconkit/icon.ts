@@ -1,10 +1,15 @@
 /// <reference path="pixi_minimal_headers.d.ts"/>
 
-type NeverEndingNever = NeverEndingNever[];
-
 declare const agPsd: any; // TODO: add proper typedefs
 declare const Ease: any;
+
+/**
+ * The color value for white.
+ */
 const WHITE = 0xffffff;
+/**
+ * The color names, used in annotation.
+ */
 const colorNames = {
 	1: "Color 1",
 	2: "Color 2",
@@ -12,12 +17,16 @@ const colorNames = {
 	w: "White",
 	u: "UFO Dome"
 };
+/**
+ * The former names of some gamemodes.
+ */
 const formNames = {
-	"player": "icon",
-	"player_ball": "ball",
-	"bird": "ufo",
-	"dart": "wave"
+	player: "icon",
+	player_ball: "ball",
+	bird: "ufo",
+	dart: "wave"
 };
+// TODO: use a better typedef
 const loader: any = PIXI.Loader.shared;
 
 const loadedNewIcons = {};
@@ -25,15 +34,19 @@ const loadedNewIcons = {};
 let positionMultiplier = 4;
 
 /**
- * Position parts of the icon as needed
- * @param part The part of the icon
- * @param partIndex The index of the part
- * @param layer The layer of the icon
- * @param formName The form of the icon (cube, ship, etc.)
- * @param isNew Whether the icon is in 2.2
- * @param isGlow Whether glow is enabled
+ * Position parts of the icon as needed.
+ * @param part The part of the icon.
+ * @param partIndex The index of the part.
+ * @param layer The layer of the icon.
+ * @param formName The form of the icon (cube, ship, etc.).
+ * @param isNew Whether the icon is in 2.2.
+ * @param isGlow Whether glow is enabled.
  */
-function positionPart(part, partIndex, layer, formName, isNew: boolean, isGlow?: boolean) {
+function positionPart(part: PartForSpecialIcons, partIndex: number, layer, formName: string, isNew: boolean, isGlow?: boolean) {
+	console.log(part);
+	console.log(partIndex);
+	console.log(layer);
+	console.log(formName);
 	layer.position.x += (part.pos[0] * positionMultiplier * (isNew ? 0.5 : 1));
 	layer.position.y -= (part.pos[1] * positionMultiplier * (isNew ? 0.5 : 1));
 	layer.scale.x = part.scale[0];
@@ -57,10 +70,10 @@ function positionPart(part, partIndex, layer, formName, isNew: boolean, isGlow?:
 }
 
 /**
- * Return a valid number with a given value
- * @param val The value to be converted to a number (if possible)
- * @param defaultVal The fallback if the value cannot be converted into a number
- * @returns The value cast to a number, or the fallback if not possible
+ * Return a valid number with a given value.
+ * @param val The value to be converted to a number (if possible).
+ * @param defaultVal The fallback if the value cannot be converted into a number.
+ * @returns The value cast to a number, or the fallback if not possible.
  */
 function validNum(val: any, defaultVal: number | null) {
 	let colVal = +val;
@@ -79,23 +92,23 @@ function getGlowColor(colors: { g?: number } | [number, number, number]) {
 }
 
 /**
- * Validate the icon ID
- * @param id The ID to be validated
- * @param form The form of the player
- * The validated ID
+ * Validate the icon ID.
+ * @param id The ID to be validated.
+ * @param form The form of the player.
+ * The validated ID.
  */
 function validateIconID(id: number, form: string) {
-	let realID = Math.min(iconData?.newIconCounts[form], Math.abs(validNum(id, 1)));
+	let realID = Math.min(iconData!.newIconCounts[form], Math.abs(validNum(id, 1)));
 	if (realID == 0 && !["player", "player_ball"].includes(form)) realID = 1;
 	return realID;
 }
 
 /**
- * Parse the icon color
- * @param col The color as a string or a number
- * @returns The converted color in number format
+ * Parse the icon color.
+ * @param col The color as a string or a number.
+ * @returns The converted color in number format.
  */
-function parseIconColor(col: string | number) {
+function parseIconColor(col: string | number | null) {
 	if (!col) return WHITE;
 	else if (typeof col == "string" && col.length >= 6) return parseInt(col, 16);
 	let rgb = iconData?.colors[col];
@@ -103,9 +116,9 @@ function parseIconColor(col: string | number) {
 }
 
 /**
- * Parse the icon form
- * @param form The form to be parsed
- * The detected form, or `player` if none is found
+ * Parse the icon form.
+ * @param form The form to be parsed.
+ * The detected form, or `player` if none is found.
  */
 function parseIconForm(form: string) {
 	let foundForm = iconData?.forms[form];
@@ -113,16 +126,13 @@ function parseIconForm(form: string) {
 }
 
 /**
- * Load icon layers
- * @param form The form of the player
- * @param id The ID of the player
- * @param cb The callback once the icons are loaded
- * @returns The return value of the callback
+ * Load icon layers.
+ * @param form The form of the player.
+ * @param id The ID of the player.
+ * @param cb The callback once the icons are loaded.
+ * @returns The return value of the callback.
  */
-function loadIconLayers(form, id, cb) {
-	console.log(form);
-	console.log(id);
-	console.log(cb);
+function loadIconLayers(form: string, id: number, cb) {
 	let iconStr = `${form}_${padZero(validateIconID(id, form))}`;
 	let texturesToLoad = Object.keys(iconData?.gameSheet || {}).filter(x => x.startsWith(iconStr + "_"));
 
@@ -138,10 +148,10 @@ function loadIconLayers(form, id, cb) {
 
 // 2.2 icon spritesheets
 /**
- * Load 2.2 icons
- * @param iconStr The icon name to load
- * @param cb The callback once the icons are loaded
- * @returns This function does not return
+ * Load 2.2 icons.
+ * @param iconStr The icon name to load.
+ * @param cb The callback once the icons are loaded.
+ * @returns This function does not return.
  */
 function loadNewIcon(iconStr: string, cb) {
 	fetch(`/iconkit/newicons/${iconStr}-hd.plist`).then(pl => pl.text()).then(plist => {
@@ -176,7 +186,10 @@ function parseNewPlist(data: string) {
 		let frameName = iconFrames[i].innerHTML;
 		let frameData = iconFrames[i + 1].children;
 		let isRotated = false;
-		iconData!.gameSheet[frameName] = {};
+		iconData!.gameSheet[frameName] = {
+			spriteOffset: [0, 0],
+			spriteSize: [0, 0]
+		};
 		positionData[frameName] = {};
 
 		for (let n=0; n < frameData.length; n += 2) {
@@ -204,18 +217,18 @@ function parseNewPlist(data: string) {
 }
 
 /**
- * Parse an array while stripping anything other than digits, commas and hyphens
- * @param data The list representation with commas/hyphens
- * @returns An array of parsed numbers
+ * Parse an array while stripping anything other than digits, commas and hyphens.
+ * @param data The list representation with commas/hyphens.
+ * @returns An array of parsed numbers.
  */
 function parseWeirdArray(data: string): number[] {
 	return data.replace(/[^0-9,-]/g, "").split(",").map(x => +x);
 }
 
 /**
- * Pad a number with 0 until the number has two or more digits
- * @param num The number to pad
- * @returns The padded number
+ * Pad a number with 0 until the number has two or more digits.
+ * @param num The number to pad.
+ * @returns The padded number.
  */
 function padZero(num: number) {
 	let numStr = num.toString();
@@ -224,16 +237,16 @@ function padZero(num: number) {
 }
 
 /**
- * Convert an RGB value to number format
- * @param rgb An object containing red, green and blue
- * @returns The RGB value as a number instead
+ * Convert an RGB value to number format.
+ * @param rgb An object containing red, green and blue.
+ * @returns The RGB value as a number instead.
  */
 function rgbToDecimal(rgb: Color3B): number {
 	return (rgb.r << 16) + (rgb.g << 8) + rgb.b;
 }
 
 /**
- * Class for an icon in render
+ * Class for an icon in render.
  */
 class Icon {
 	app: any;
@@ -256,23 +269,23 @@ class Icon {
 	};
 
 	/**
-	 * @param data The icon configuration
-	 * @param cb The callback once the icon is loaded
+	 * @param data The icon configuration.
+	 * @param cb The callback once the icon is loaded.
 	 */
-	constructor(data: IconConfiguration, cb: (iconHandle: Icon) => any) {
+	constructor(data: IconConfiguration, cb?: (iconHandle: Icon) => any) {
 		this.app = data.app;
 		this.sprite = new PIXI.Container();
 		this.form = data.form || "player";
 		this.id = validateIconID(data.id, this.form);
 		this.new = !!data.new;
 		this.colors = {
-			"1": validNum(data.col1, 0xafafaf),    // primary
-			"2": validNum(data.col2, WHITE),       // secondary
-			"g": validNum(data.colG, validNum(+(data.colg || 0), null)), // glow
-			"w": validNum(data.colW, validNum(+(data.colw || 0), WHITE)), // white
-			"u": validNum(data.colU, validNum(+(data.colu || 0), WHITE)), // ufo
+			1: validNum(data.col1, 0xafafaf),    // primary
+			2: validNum(data.col2, WHITE),       // secondary
+			g: validNum(data.colG, validNum(data.colg, null)), // glow
+			w: validNum(data.colW, validNum(data.colw, WHITE)), // white
+			u: validNum(data.colU, validNum(data.colu, WHITE)), // ufo
 		};
-				
+
 		this.glow = !!data.glow;
 		this.layers = [];
 		this.glowLayers = [];
@@ -292,9 +305,9 @@ class Icon {
 
 		// spider + robot
 		else {
-			let idlePosition = this.getAnimation(data.animation, data.animationForm).frames[0];
+			let idlePosition = this.getAnimation(data.animation || "", data.animationForm).frames[0];
 			idlePosition.forEach((x, y) => {
-				x.name = iconData?.robotAnimations.info[this.form].names[y];
+				x.name = iconData?.robotAnimations.info[this.form].names[y] || "";
 				let part = new IconPart(this.form, this.id, this.colors, false, { part: x, skipGlow: true, new: this.new });
 				positionPart(x, y, part.sprite, this.form, this.new);
 	
@@ -312,7 +325,7 @@ class Icon {
 			this.sprite.addChildAt(fullGlow, 0);
 			if (typeof Ease !== "undefined") this.ease = new Ease.Ease();
 			this.animationSpeed = Math.abs(Number(data.animationSpeed) || 1);
-			if (data.animation) this.setAnimation(data.animation, data.animationForm);
+			if (data.animation) this.setAnimation(data.animation, data.animationForm || "");
 		}
 
 		if (this.new) this.sprite.scale.set(2);
@@ -324,8 +337,8 @@ class Icon {
 	}
 
 	/**
-	 * Get all the icon layers
-	 * @returns A list of all the icon layers
+	 * Get all the icon layers.
+	 * @returns A list of all the icon layers.
 	 */
 	getAllLayers() {
 		let allLayers: IconLayer[] = [];
@@ -334,10 +347,10 @@ class Icon {
 	}
 
 	/**
-	 * Set the color of an icon layer
-	 * @param colorType The color type (primary, secondary, etc.)
-	 * @param newColor The new color as a decimal value
-	 * @param extra Optional settings that come with setting the color
+	 * Set the color of an icon layer.
+	 * @param colorType The color type (primary, secondary, etc.).
+	 * @param newColor The new color as a decimal value.
+	 * @param extra Optional settings that come with setting the color.
 	 */
 	setColor(colorType: string, newColor: number, extra: ExtraSettings = {}) {
 		let colorStr = String(colorType).toLowerCase();
@@ -355,24 +368,24 @@ class Icon {
 	}
 
 	/**
-	 * Get the name of the form
-	 * @returns The name of the form
+	 * Get the name of the form.
+	 * @returns The name of the form.
 	 */
 	formName() {
 		return formNames[this.form] || this.form;
 	}
 
 	/**
-	 * Check if the glow is enabled
-	 * @returns The glow status of the player
+	 * Check if the glow is enabled.
+	 * @returns The glow status of the player.
 	 */
 	isGlowing() {
 		return this.glowLayers[0].sprite.visible;
 	}
 
 	/**
-	 * Set the glow status
-	 * @toggle The toggle status of the glow
+	 * Set the glow status.
+	 * @toggle The toggle status of the glow.
 	 */
 	setGlow(toggle: boolean) {
 		this.glow = !!toggle;
@@ -380,20 +393,20 @@ class Icon {
 	}
 
 	/**
-	 * Get the current animation form of the robot
-	 * @param name The name of the robot
-	 * @param animForm The animation form of the robot
-	 * @returns The current animation form of the robot
+	 * Get the current animation form of the robot.
+	 * @param name The name of the robot.
+	 * @param animForm The animation form of the robot.
+	 * @returns The current animation form of the robot.
 	 */
 	getAnimation(name: string, animForm?: string) {
-		let animationList = iconData?.robotAnimations.animations[animForm || this.form];
+		let animationList = iconData!.robotAnimations.animations[animForm || this.form];
 		return animationList[name || "idle"] || animationList["idle"];
 	}
 
 	/**
-	 * Set the current animation form of the robot
-	 * @param data The name of the robot
-	 * @param animForm The animation form of the robot
+	 * Set the current animation form of the robot.
+	 * @param data The name of the robot.
+	 * @param animForm The animation form of the robot.
 	 */
 	setAnimation(data: string, animForm: string) {
 		let animData = this.getAnimation(data, animForm) || this.getAnimation("idle");
@@ -404,9 +417,9 @@ class Icon {
 	}
 
 	/**
-	 * Run the icon's associated animation
-	 * @param animData The name of the icon
-	 * @param animName The name of the animation
+	 * Run the icon's associated animation.
+	 * @param animData The name of the icon.
+	 * @param animName The name of the animation.
 	 * @param duration The duration of the animation. Optional.
 	 */
 	runAnimation(animData: any, animName: string, duration?: number) {
@@ -449,7 +462,7 @@ class Icon {
 
 	/**
 	 * Find actual icon size by reading pixel data
-	 * (otherwise there's whitespace and shit)
+	 * (otherwise there's whitespace and shit).
 	 */
 	autocrop() {
 		if (this.new) this.sprite.scale.set(1)
@@ -492,7 +505,7 @@ class Icon {
 	}
 
 	/**
-	 * Revert the crop (by re-adding whitespace and shit)
+	 * Revert the crop (by re-adding whitespace and shit).
 	 */
 	revertCrop() {
 		this.app.renderer.resize(...this.preCrop.canvas);
@@ -501,9 +514,9 @@ class Icon {
 	}
 
 	/**
-	 * Convert the icon image to base64
-	 * @param dataType The data type of the image
-	 * @returns The base64-encoded image
+	 * Convert the icon image to base64.
+	 * @param dataType The data type of the image.
+	 * @returns The base64-encoded image.
 	 */
 	toDataURL(dataType="image/png") {
 		this.autocrop();
@@ -514,7 +527,7 @@ class Icon {
 	}
 
 	/**
-	 * Export the icon image as PNG
+	 * Export the icon image as PNG.
 	 */
 	pngExport() {
 		let b64data = this.toDataURL();
@@ -527,7 +540,7 @@ class Icon {
 	}
 
 	/**
-	 * Copy the icon image to the clipboard
+	 * Copy the icon image to the clipboard.
 	 */
 	copyToClipboard() {
 		this.autocrop();
@@ -540,7 +553,7 @@ class Icon {
 	}
 
 	/**
-	 * Export the image as a layered Photoshop document
+	 * Export the image as a layered Photoshop document.
 	 */
 	psdExport() {
 		if (typeof agPsd === "undefined") throw new Error("ag-psd not imported!");
@@ -606,7 +619,7 @@ class Icon {
 }
 
 /**
- * Class for a part of the icon
+ * Class for a part of the icon.
  */
 class IconPart {
 	sprite: PIXI.Container;
@@ -614,11 +627,11 @@ class IconPart {
 	part: any;
 
 	/**
-	 * @param form The form of the icon
-	 * @param id The ID of the icon
-	 * @param colors The colors the icon has
-	 * @param glow The glow status of the icon
-	 * @param misc Additional settings
+	 * @param form The form of the icon.
+	 * @param id The ID of the icon.
+	 * @param colors The colors the icon has.
+	 * @param glow The glow status of the icon.
+	 * @param misc Additional settings.
 	 */
 	constructor(form: string, id: number, colors: IconColor, glow: boolean, misc: Record<string, any> = {}) {
 		if (colors["1"] == 0 && !misc.skipGlow) glow = true; // add glow if p1 is black
@@ -661,7 +674,7 @@ class IconPart {
 }
 
 /**
- * Class for a single layer of an icon
+ * Class for a single layer of an icon.
  */
 class IconLayer {
 	offsets: any;
@@ -673,10 +686,10 @@ class IconLayer {
 
 	/**
 	 * 
-	 * @param path The path of the icon layer
-	 * @param color The color of the icon layer, as a string or a number
-	 * @param colorType The color type of the icon layer
-	 * @param isNew If the icon is released in 2.2
+	 * @param path The path of the icon layer.
+	 * @param color The color of the icon layer, as a string or a number.
+	 * @param colorType The color type of the icon layer.
+	 * @param isNew If the icon is released in 2.2.
 	 */
 	constructor(path: string, color: string | number, colorType: string, isNew: boolean) {
 		let loadedTexture = isNew ? loadedNewIcons[path] : loader.resources[path];
@@ -700,8 +713,8 @@ class IconLayer {
 	}
 
 	/**
-	 * Set the color of the layer
-	 * @param color The color as a string or a number
+	 * Set the color of the layer.
+	 * @param color The color as a string or a number.
 	 */
 	setColor(color: string | number) {
 		this.color = validNum(color, WHITE);

@@ -10,11 +10,11 @@ interface IconColor {
 	/**
 	 * Primary color.
 	 */
-    "1": number;
+    1: number;
 	/**
 	 * Secondary color.
 	 */
-    "2": number;
+    2: number;
 	/**
 	 * Glow outline.
 	 */
@@ -53,8 +53,21 @@ interface IconConfiguration {
 	new?: boolean;
 	noUFODome?: boolean;
 	animationSpeed?: number;
-	animation: string;
-	animationForm: string;
+	animation?: string;
+	animationForm?: string;
+}
+
+/**
+ * For robots and spiders, this determines the position of the icon parts
+ */
+interface PartForSpecialIcons {
+	part: number;
+	pos: [number, number];
+	scale: [number, number];
+	rotation: number;
+	flipped: [boolean, boolean];
+	z: number;
+	name: string;
 }
 
 interface ExtraSettings {
@@ -63,23 +76,150 @@ interface ExtraSettings {
 	ignoreGlow?: boolean;
 }
 
+interface AnimationObject {
+	/**
+	 * Information about the animation.
+	 */
+	info: {
+		/**
+		 * How long the animation should last.
+		 */
+		duration: number;
+		/**
+		 * If the animation ends, should it replay from the beginning?
+		 */
+		loop: boolean;
+	};
+	/**
+	 * The frame data for the animation.
+	 */
+	frames: PartForSpecialIcons[][];
+}
+
+/**
+ * Data for all the icons and their properties.
+ */
 interface IconData {
-	forms: {
-		[formItem: string]: {
-			form: string;
-			name: string;
-		};
-	};
+	/**
+	 * The (internal) form names of each icon.
+	 */
+	forms: Record<string, {
+		/**
+		 * The index of the form.
+		 * Either -1 or more than 20.
+		 */
+		index: number;
+		/**
+		 * The internal name of the form (dart).
+		 */
+		form: string;
+		/**
+		 * The user-visible name of the form (wave).
+		 */
+		name: string;
+		/**
+		 * Whether this form contains extra animations.
+		 */
+		spicy: boolean;
+	}>;
+	/**
+	 * Animations for "spicy" forms.
+	 */
 	robotAnimations: {
-		info: any;
-		animations: any;
+		/**
+		 * Information about each part of the animation.
+		 */
+		info: Record<string, {
+			/**
+			 * The name of the part.
+			 */
+			names: string[];
+			/**
+			 * A tint value.
+			 * Its use is unknown.
+			 */
+			tints: number[];
+		}>;
+		/**
+		 * The actual keyframes that define the animation.
+		 */
+		animations: Record<string, Record<string, AnimationObject>>;
 	};
-	colors: number[];
-	newIconCounts: any;
-	gameSheet: {
-		[frameName: string]: {}
-	};
+	/**
+	 * A list of colors in RGB format.
+	 */
+	colors: Color3B[];
+	/**
+	 * The number of 2.2 icons for each gamemode.
+	 * The trailer says around 800.
+	 */
+	newIconCounts: Record<string, number>;
+	/**
+	 * The position of icon parts in the game sheet.
+	 */
+	gameSheet: Record<string, {
+		/**
+		 * The offset x and y values for the icon part.
+		 */
+		spriteOffset: [number, number];
+		/**
+		 * The size of the icon part.
+		 */
+		spriteSize: [number, number];
+	}>;
+	/**
+	 * A list of all the new icons.
+	 */
 	newIcons: string[];
+}
+
+interface ExtraData {
+	colorOrder: number[];
+	hardcodedUnlocks: {
+		form: string;
+		id: number;
+		type?: string;
+		keys?: number;
+		chests?: number;
+		unlock?: string;
+		gauntlet?: string;
+	}[];
+	iconCredits: {
+		name: string;
+		form: string;
+		id: number;
+	}[];
+	shops: {
+		icon: number;
+		type: string;
+		price: number;
+		shop: number;
+	}[];
+	previewIcons: string[];
+	newPreviewIcons: string[];
+}
+
+interface IconKitAPIResponse extends ExtraData {
+	sample: string[];
+	server?: string;
+	noCopy?: boolean;
+}
+
+interface AchievementItem {
+	id: string;
+	game: string;
+	name: string;
+	rewardType: string;
+	rewardID: number;
+	description: string;
+	achievedDescription: string;
+	trueID: string;
+}
+
+interface AchievementAPIResponse {
+	achievements: AchievementItem[];
+	types: Record<string, [string, string[]]>;
+	colors: Record<number, Color3B>;
 }
 
 // Warning to be displayed when the viewport is vertical
@@ -180,9 +320,9 @@ let renderedIcons: {
  */
 async function renderIcons() {
 	if (overrideLoader) return;
-	let iconsToRender = $('gdicon:not([rendered], [dontload])');
+	const iconsToRender = $('gdicon:not([rendered], [dontload])');
 	if (iconsToRender.length < 1) return;
-	if (!iconData) iconData = await Fetch("../api/icons");
+	if (!iconData) iconData = await Fetch("/api/icons");
 	if (!iconCanvas) iconCanvas = document.createElement('canvas');
 	if (!iconRenderer) iconRenderer = new PIXI.Application({ view: iconCanvas, width: 300, height: 300, backgroundAlpha: 0});
 	if (loader.loading) return overrideLoader = true;
@@ -191,37 +331,37 @@ async function renderIcons() {
 
 function buildIcon(elements: JQuery<HTMLElement>, current: number) {
 	if (current >= elements.length) return
-	let currentIcon = elements.eq(current)
+	const currentIcon = elements.eq(current)
 
-	let cacheID = currentIcon.attr('cacheID')
-	let foundCache = renderedIcons[cacheID || ""]
+	const cacheID = currentIcon.attr('cacheID')
+	const foundCache = renderedIcons[cacheID || ""]
 	if (foundCache) {
 		finishIcon(currentIcon, foundCache.name, foundCache.data)
 		return buildIcon(elements, current + 1)
 	}
 
-	let iconConfig: IconConfiguration = {
+	const iconConfig: IconConfiguration = {
 		id: +(currentIcon.attr('iconID') || "0"),
 		form: parseIconForm(currentIcon.attr('iconForm') || ""),
 		col1: parseIconColor(currentIcon.attr('col1') || ""),
 		col2: parseIconColor(currentIcon.attr('col2') || ""),
 		glow: currentIcon.attr('glow') == "true",
-		app: iconRenderer,
-		animation: "",
-		animationForm: ""
+		app: iconRenderer
 	}
+	console.log(currentIcon);
+	console.log(iconConfig);
 
-	loadIconLayers(iconConfig.form, iconConfig.id, function(a, b, c: boolean) {
+	loadIconLayers(iconConfig.form, iconConfig.id, function(a: unknown, b: unknown, c: boolean) {
 		if (c) iconConfig.new = true;
 		if (!iconData) {
 			iconData = {
 				forms: {},
 				robotAnimations: {
-					info: null,
-					animations: null
+					info: {},
+					animations: {}
 				},
 				colors: [],
-				newIconCounts: null,
+				newIconCounts: {},
 				gameSheet: {},
 				newIcons: []
 			};
