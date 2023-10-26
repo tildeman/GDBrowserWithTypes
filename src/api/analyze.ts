@@ -7,9 +7,20 @@ import blocks from "../misc/analysis/blocks.json" assert { type: "json" };
 import colorStuff from "../misc/analysis/colorProperties.json" assert { type: "json" };
 import init from "../misc/analysis/initialProperties.json" assert { type: "json" };
 import properties from "../misc/analysis/objectProperties.json" assert { type: "json" };
-import ids from "../misc/analysis/objects.json" assert { type: "json" };
+import rawIds from "../misc/analysis/objects.json" assert { type: "json" };
 import { Express, Request, Response } from "express";
 import { DownloadedLevel } from "../classes/Level.js";
+
+interface ObjectMap {
+	portals: Record<string, string>;
+	coins: Record<string, string>;
+	orbs: Record<string, string>;
+	triggers: Record<string, string>;
+	misc: Record<string, [string, ...number[]]>
+}
+
+// Dirty workaround. Avoid at all costs.
+const ids: ObjectMap = rawIds as any;
 
 /**
  * Raw information for a level object.
@@ -24,7 +35,7 @@ interface LevelObject {
 	triggerGroups?: string;
 	highDetail?: number;
 	/**
-	 * X-coordinate of the object
+	 * X-coordinate of the object.
 	 */
 	x?: number;
 	touchTriggered?: boolean;
@@ -35,43 +46,66 @@ interface LevelObject {
 }
 
 /**
- * The object returned as results of analyses.
+ * The configuration at the start of the level.
  */
-interface AnalysisResult {
-    level: {
-        name: any;
-        id: any;
-        author: string;
-        playerID: string;
-        accountID: string;
-        large: boolean;
-    };
-    objects: number;
-    highDetail: number;
-    portals: string;
-    coins: number[];
-    coinsVerified: boolean;
-	orbs: {
-		[color: string]: number;
-	};
-	triggers: {
-		[color: string]: number;
-	};
-	triggerGroups: {
-		[group: string]: number;
-	};
-	invisibleGroup: number | undefined;
-	text: string[][];
-	settings: {};
-	colors: never[];
-	dataLength: number;
-    data: string;
-	blocks: {};
-	misc: {};
+interface LevelSettings {
+	songOffset: number;
+	fadeIn: boolean;
+	fadeOut: boolean;
+	background: number;
+	ground: number;
+	alternateLine: boolean;
+	font: number;
+	gamemode: string;
+	startMini: boolean;
+	startDual: boolean;
+	speed: string;
+	twoPlayer: false;
 }
 
 /**
- * Object color data
+ * The object returned as results of analyses.
+ */
+interface AnalysisResult {
+	level: {
+		name: string;
+		id: string;
+		author: string;
+		playerID: string;
+		accountID: string;
+		large: boolean;
+	};
+	objects: number;
+	highDetail: number;
+	portals: string;
+	coins: number[];
+	coinsVerified: boolean;
+	orbs: Record<string, number>;
+	triggers: Record<string, number>;
+	triggerGroups: Record<string, number>;
+	invisibleGroup?: number;
+	text: string[][];
+	settings: LevelSettings;
+	colors: ColorObject[];
+	dataLength: number;
+	data: string;
+	blocks: Record<string, number>; // Can be more specific; see `blocks.json`
+	misc: Record<string, [number, string]>;
+}
+
+/**
+ * Copied HSV values.
+ */
+interface CopiedHSV {
+	h?: number;
+	s?: number;
+	v?: number;
+	"s-checked"?: boolean | number;
+	"v-checked"?: boolean | number;
+}
+
+/**
+ * Object color data.
  */
 interface ColorObject {
 	channel: string,
@@ -79,14 +113,11 @@ interface ColorObject {
 	opacity: number,
 	blending?: boolean | string,
 	copiedChannel?: number,
-	copiedHSV?: string | {
-		"s-checked"?: boolean | number,
-		"v-checked"?: boolean | number
-	}
+	copiedHSV?: string | CopiedHSV;
 	copyOpacity?: boolean | number,
-	r?: string,
-	g?: string,
-	b?: string
+	r: number, // TODO: Check if they're actually numbers
+	g: number,
+	b: number
 }
 
 /**
@@ -132,27 +163,29 @@ export default async function(app: Express, req: Request, res: Response, level?:
 }
 
 /**
- * Sort an object
- * @param obj The object to be sorted
- * @param sortBy How to sort the object
- * @returns The sorted object
+ * Sort an object.
+ * @param obj The object to be sorted.
+ * @param sortBy How to sort the object.
+ * @returns The sorted object.
  */
 function sortObj(obj: {}, sortBy?: string) {
 	var sorted = {};
-	var keys = !sortBy ? Object.keys(obj).sort((a,b) => obj[b] - obj[a]) : Object.keys(obj).sort((a,b) => obj[b][sortBy] - obj[a][sortBy]);
-	keys.forEach(x => {sorted[x] = obj[x]});
+	var keys = !sortBy ? Object.keys(obj).sort((a, b) => obj[b] - obj[a]) : Object.keys(obj).sort((a, b) => obj[b][sortBy] - obj[a][sortBy]);
+	keys.forEach(x => {
+		sorted[x] = obj[x];
+	});
 	return sorted;
 }
 
 /**
- * Parse an object and return another object only containing keys in name_arr
- * @param obj The level object to parse
- * @param splitter The delimiter to use
- * @param name_arr An array of names to collect
- * @param valid_only Use only keys in the name array
- * @returns An object containing the specified names
+ * Parse an object and return another object only containing values in name_arr.
+ * @param obj The level object to parse.
+ * @param splitter The delimiter to use.
+ * @param name_arr A mapping of names to collect.
+ * @param valid_only Use only keys in the name array.
+ * @returns An object containing the specified names.
  */
-function parse_obj(obj: string, splitter: string, name_arr: (string | null)[] | {}, valid_only?: boolean): Record<string, string> {
+function parse_obj(obj: string, splitter: string, name_arr: (string | null)[] | Record<string, unknown>, valid_only?: boolean): Record<string, string> {
 	const s_obj = obj.split(splitter);
 	let robtop_obj: Record<string, string> = {};
 
@@ -161,7 +194,8 @@ function parse_obj(obj: string, splitter: string, name_arr: (string | null)[] | 
 		let k_name = s_obj[i];
 		if (s_obj[i] in name_arr) {
 			if (!valid_only) {
-				k_name = name_arr[s_obj[i]];
+				// Everything can be flattened into a string
+				k_name = String(name_arr[s_obj[i]]);
 			}
 			robtop_obj[k_name] = s_obj[i + 1];
 		}
@@ -170,23 +204,23 @@ function parse_obj(obj: string, splitter: string, name_arr: (string | null)[] | 
 }
 
 /**
- * Read the level data, and then infer some details about the level
- * @param level The level object containg the data
- * @param rawData The raw level string
- * @returns An object containing some important level details
+ * Read the level data, and then infer some details about the level.
+ * @param level The level object containg the data.
+ * @param rawData The raw level string.
+ * @returns An object containing some important level details.
  */
 function analyze_level(level: DownloadedLevel, rawData: string) {
-	let blockCounts = {};
-	let miscCounts = {};
+	let blockCounts: Record<string, number> = {};
+	let miscCounts: Record<string, [number, string]> = {};
 	let triggerGroups: string[] = [];
 	let highDetail = 0;
 	let alphaTriggers: LevelObject[] = [];
 
-	let misc_objects = {};
-	let block_ids = {};
+	let misc_objects: Record<number, string> = {};
+	let block_ids: Record<string, string> = {};
 
 	for (const [name, object_ids] of Object.entries(ids.misc)) {
-		const copied_ids = object_ids.slice(1);
+		const copied_ids = object_ids.slice(1) as number[];
 		// funny enough, shift effects the original id list
 		copied_ids.forEach((object_id) => {
 			misc_objects[object_id] = name;
@@ -215,7 +249,23 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 
 	const obj_length = data.length;
 	for (let i = 0; i < obj_length; ++i) {
-		obj = parse_obj(data[i], ",", properties) as any;
+		const raw_obj = parse_obj(data[i], ",", properties);
+		obj = {
+			id: raw_obj.id || "",
+			portal: raw_obj.portal,
+			coin: raw_obj.coin,
+			orb: raw_obj.orb,
+			trigger: raw_obj.trigger,
+			message: raw_obj.message,
+			triggerGroups: raw_obj.triggerGroups,
+			highDetail: Number(raw_obj) || undefined,
+			x: Number(raw_obj.x) || undefined,
+			touchTriggered: raw_obj.touchTriggered ? true : false,
+			spawnTriggered: raw_obj.spawnTriggered ? true : false,
+			opacity: Number(raw_obj.opacity) || undefined,
+			duration: Number(raw_obj.duration) || undefined,
+			targetGroupID: raw_obj.targetGroupID
+		}
 
 		let id = obj.id;
 
@@ -343,8 +393,8 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 		return (a.x || 0) - (b.x || 0);
 	}).map(x => [Buffer.from(x.message || "", "base64").toString(), Math.round((x.x || 0) / last * 99) + "%"]);
 	
-	const headerResponse = parse_header(header || "") as { settings: {}, colors: [] };
-	const responseSettings = headerResponse.settings;
+	const headerResponse = parse_header(header || "") as { settings: LevelSettings, colors: ColorObject[] };
+	const responseSettings: LevelSettings = headerResponse.settings;
 	const responseColors = headerResponse.colors;
 
 	const responseDataLength = rawData.length;
@@ -374,9 +424,9 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 }
 
 /**
- * Parse the level header
- * @param header The header string of mostly useless stuff
- * @returns An object containing relevant settings and colors
+ * Parse the level header.
+ * @param header The header string of mostly useless stuff.
+ * @returns An object containing relevant settings and colors.
  */
 function parse_header(header: string) {
 	let response: RelevantHeaderResponse = {
@@ -408,12 +458,12 @@ function parse_header(header: string) {
 				// these literally are keys set the value, and to convert this to the color list we have to do this fun messy thing that shouldn"t exist
 				// since i wrote the 1.9 color before this, a lot of explaination will be there instead
 				const colorInfo = name.split("-");
-				const color = colorInfo[2]; // r,g,b
+				const color = colorInfo[2]; // r, g, b
 				const channel = colorInfo[1];
 
 				if (color == "r") {
 					// first we create the color object
-					response.colors.push({"channel": channel, "opacity": 1});
+					response.colors.push({ channel: channel, opacity: 1, r: 0, g: 0, b: 0 });
 				}
 				// from here we touch the color object
 				let currentChannel = response.colors.find(k => k.channel == channel);
@@ -490,7 +540,7 @@ function parse_header(header: string) {
 				});
 				// we assume this is only going to be run once so... some stuff can go here
 				colorList2 = colorList2.filter(x => typeof x == "object");
-				if (!colorList2.find(x => x.channel == "Obj")) colorList2.push({r: "255", g: "255", b: "255", channel: "Obj", opacity: 1});
+				if (!colorList2.find(x => x.channel == "Obj")) colorList2.push({r: 255, g: 255, b: 255, channel: "Obj", opacity: 1});
 
 				const specialSort = ["BG", "G", "G2", "Line", "Obj", "3DL"]
 				let specialColors = colorList2.filter(x =>  isNaN(+x.channel)).sort(function(a, b) {

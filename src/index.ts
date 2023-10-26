@@ -401,7 +401,7 @@ app.get("/", function(req, res) {
 });
 
 app.get("/achievements", fetchTemplateHTML("html/achievements.html"));
-app.get("/analyze/:id", fetchTemplateHTML("html/analyze.html"));
+app.get("/analyze/:id", fetchTemplate("analyze"));
 app.get("/api", fetchTemplate("api"));
 app.get("/boomlings", fetchTemplateHTML("html/boomlings.html"));
 app.get("/comments/:id", fetchTemplateHTML("html/comments.html"));

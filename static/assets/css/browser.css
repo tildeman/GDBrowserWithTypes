@@ -1071,8 +1071,8 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 .aColor div {
-    width: 60%;
-    height: 9%;
+    width: 9vh;
+    height: 9vh;
     border-radius: 1vh;
     display: inherit;
 }
@@ -1177,7 +1177,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 .portalImage {
-    height: 65%;
+    height: 16vh;
     vertical-align: top;
     margin-bottom: 1%;
 }
@@ -1191,7 +1191,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 .speedPortal {
-    height: 57%;
+    height: 14vh;
     transform: translateY(-6%)
 }
 
