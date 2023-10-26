@@ -102,7 +102,7 @@ $(window).on('load', function() {
 let savedLevels: string[] = JSON.parse(localStorage.getItem('saved') || '[]');
 let deleteMode = false;
 if (savedLevels.includes(levelID)) {
-	$('#saveButton').attr('src', '../assets/delete.png').attr('onclick', '$("#deleteDiv").show()');
+	$('#saveButton').attr('src', '/assets/delete.png').attr('onclick', '$("#deleteDiv").show()');
 }
 
 /**
@@ -117,7 +117,7 @@ function saveLevel() {
  * If the level is saved, modify the button to delete the level from the saved list instead
  */
 function savedLevel() {
-	$('#saveButton').attr('src', '../assets/delete.png').attr('onclick', '$("#deleteDiv").show()');
+	$('#saveButton').attr('src', '/assets/delete.png').attr('onclick', '$("#deleteDiv").show()');
 	$('.popup').hide();
 }
 
@@ -129,7 +129,7 @@ function deleteLevel() {
 		return el != levelID;
 	});
 	localStorage.setItem('saved', JSON.stringify(savedLevels));
-	$('#saveButton').attr('src', '../assets/plus.png').attr('onclick', '$("#saveDiv").show(); saveLevel()');
+	$('#saveButton').attr('src', '/assets/plus.png').attr('onclick', '$("#saveDiv").show(); saveLevel()');
 	$('.popup').hide();
 }
 

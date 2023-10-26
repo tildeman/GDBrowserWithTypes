@@ -236,7 +236,7 @@ function clearFilters() {
  */
 function checkExtraFilters() {
 	let hasExtra = savedFilters.checked.length || savedFilters.defaultSong || savedFilters.song > 0;
-	$('#showFilters').attr('src', `../assets/plus${hasExtra ? "_blue" : ""}.png`);
+	$('#showFilters').attr('src', `/assets/plus${hasExtra ? "_blue" : ""}.png`);
 }
 
 let savedFilters = JSON.parse(localStorage.filters || "{}");

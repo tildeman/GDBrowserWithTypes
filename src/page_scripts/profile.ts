@@ -68,7 +68,7 @@ function appendComments() {
 	if (loadingComments) return;
 	else loadingComments = true;
 
-	$('#statusDiv').html(`<div class="supercenter" id="loading" style="height: 12%; top: 62%;"><img class="spin noSelect" src="../assets/loading.png" style="height: 105%;"></div>`)
+	$('#statusDiv').html(`<div class="supercenter" id="loading" style="height: 12%; top: 62%;"><img class="spin noSelect" src="/assets/loading.png" style="height: 105%;"></div>`)
 
 	if (profilePage == 0) $('#pageDown').hide()
 	else $('#pageDown').show()
@@ -92,7 +92,7 @@ function appendComments() {
 					</div>
 					<p class="commentDate">${x.date}</p>
 					<div class="commentLikes">
-						<img id="likeImg" class="likeComment gdButton inline" commentID="${x.ID}" ${x.likes < 0 ? "style='transform: translateY(25%)'" : ""} src="../assets/${x.likes < 0 ? "dis" : ""}like.png" style="margin-right: 0.4%; height: 4vh">
+						<img id="likeImg" class="likeComment gdButton inline" commentID="${x.ID}" ${x.likes < 0 ? "style='transform: translateY(25%)'" : ""} src="/assets/${x.likes < 0 ? "dis" : ""}like.png" style="margin-right: 0.4%; height: 4vh">
 						<h3 class="inline">${x.likes}</h3><br>
 					</div>
 				</div>`);
@@ -212,8 +212,8 @@ $('#submitVote').click(function() {
 			.done(x => {
 				let newCount = parseInt(likeCount.text()) + (like ? 1 : -1);
 				likeCount.text(newCount);
-				if (newCount < 0) likeImg.attr('src', '../assets/dislike.png').css('transform', compactMode ? 'translateY(15%)' : 'translateY(25%)');
-				else likeImg.attr('src', '../assets/like.png').removeAttr('style');
+				if (newCount < 0) likeImg.attr('src', '/assets/dislike.png').css('transform', compactMode ? 'translateY(15%)' : 'translateY(25%)');
+				else likeImg.attr('src', '/assets/like.png').removeAttr('style');
 				$('#likeComment').hide();
 				$('#likebtn').trigger('click');
 				$('.postbutton').show();
@@ -237,14 +237,14 @@ $('#compactMode').click(function() {
 		$('.profilePostHide').hide();
 		$('.statusIcon').show();
 		$('#statusDiv').css('height', $('#statusDiv').attr('compactHeight') || "");
-		$(this).attr('src', "../assets/expanded-on.png");
+		$(this).attr('src', "/assets/expanded-on.png");
 	}
 
 	else {
 		$('.profilePostHide').show();
 		$('.statusIcon').hide();
 		$('#statusDiv').css('height', $('#statusDiv').attr('normalHeight') || "0");
-		$(this).attr('src', "../assets/expanded-off.png");
+		$(this).attr('src', "/assets/expanded-off.png");
 	}
 });
 

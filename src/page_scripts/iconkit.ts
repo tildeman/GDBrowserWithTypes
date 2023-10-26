@@ -250,10 +250,10 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 
 		forms.forEach(form => {
 			let spoil = ["swing", "jetpack"].includes(form);
-			$("#iconTabs").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""} title="${iconStuff.forms[form].name}" class="blankButton iconTabButton"><img src="../assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
-			$("#copyForms").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""}  title="${iconStuff.forms[form].name}" class="blankButton copyForm"><img src="../assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
+			$("#iconTabs").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""} title="${iconStuff.forms[form].name}" class="blankButton iconTabButton"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
+			$("#copyForms").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""}  title="${iconStuff.forms[form].name}" class="blankButton copyForm"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
 		})
-		$("#iconTabs").append(`<button title="Glow" class="blankButton glowToggle" id="glowbtn"><img id="glow" src="../assets/iconkitbuttons/streak_off.png" style="width: 50px"></button>`)
+		$("#iconTabs").append(`<button title="Glow" class="blankButton glowToggle" id="glowbtn"><img id="glow" src="/assets/iconkitbuttons/streak_off.png" style="width: 50px"></button>`)
 
 		forms.forEach(form => {
 			$("#iconKitParent").append(`<div id="${form}s" class="iconContainer"></div>`);
@@ -428,7 +428,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			enableGlow = randInt(0, 2) == 1 ? 1 : 0;   // 1 in 3 chance of glow
 			generateIcon();
 
-			$('#glow').attr('src', '../assets/iconkitbuttons/streak_off.png');
+			$('#glow').attr('src', '/assets/iconkitbuttons/streak_off.png');
 
 			$(`.iconTabButton[form=${selectedForm}]`).trigger('click');
 			$(`#${selectedForm}-${selectedIcon}`).trigger('click');
@@ -579,10 +579,10 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			icon!.copyToClipboard();
 			let copyIcon = $(this).find('img');
 			$(this).addClass('greyedOut');
-			copyIcon.attr('src', '../assets/iconkitbuttons/copied.png');
+			copyIcon.attr('src', '/assets/iconkitbuttons/copied.png');
 			setTimeout(() => {
 				$(this).removeClass('greyedOut');
-				copyIcon.attr('src', '../assets/iconkitbuttons/copy.png');
+				copyIcon.attr('src', '/assets/iconkitbuttons/copy.png');
 			}, 420);
 		});
 
@@ -677,7 +677,7 @@ $("#fetchUser").click(async function () {
 	if (!user || typeof(user) == "number" || !user.length) return $("#steal").hide();
 
 	$(`.iconTabButton[form=${formCopy}]`).trigger('click');
-	$('#glow').attr('src', '../assets/iconkitbuttons/streak_off.png');
+	$('#glow').attr('src', '/assets/iconkitbuttons/streak_off.png');
 	$("#steal").hide();
 	enableGlow = 0;
 

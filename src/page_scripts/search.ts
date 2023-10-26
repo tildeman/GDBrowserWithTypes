@@ -136,35 +136,35 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 				<h2 class="pre smaller inline gdButton help ${hasAuthor ? "" : "green unregistered"}" title="Account ID: ${x.accountID}\nPlayer ID: ${x.playerID}"><!--
 					-->${hasAuthor && !onePointNine ? `<a style="margin-right: 0.66vh" href="../u/${x.accountID}.">By ${x.author || "-"}</a>` : `<a ${userSearch ? "" : `href="../search/${x.playerID}?user"`}>By ${x.author || "-"}</a>`}</h2><!--
 					--><h2 class="inline" style="margin-left: 1.5%; transform:translateY(10%)"> ${x.copiedID == '0' ? "" : `<a target="_blank" href="../${x.copiedID}"><!--
-					--><img class="gdButton valign sideSpaceD" title="Original: ${x.copiedID}" src="../assets/copied.png" style="height: 3vh;"></a>`}<!--
-					-->${x.large ? `<img class="help valign sideSpaceD" title="${x.objects}${x.objects == 65535 ? "+" : ""} objects" src="../assets/large.png" style="height: 3vh;">` : ''}<!--
-					-->${x.twoPlayer ? `<img class="help valign sideSpaceD" title="Two player level" src="../assets/twoPlayer.png" style="height: 3vh;">` : ''}
+					--><img class="gdButton valign sideSpaceD" title="Original: ${x.copiedID}" src="/assets/copied.png" style="height: 3vh;"></a>`}<!--
+					-->${x.large ? `<img class="help valign sideSpaceD" title="${x.objects}${x.objects == 65535 ? "+" : ""} objects" src="/assets/large.png" style="height: 3vh;">` : ''}<!--
+					-->${x.twoPlayer ? `<img class="help valign sideSpaceD" title="Two player level" src="/assets/twoPlayer.png" style="height: 3vh;">` : ''}
 				</h2>
 				<h3 class="lessSpaced help ${noLink ? "" : 'gdButton '}pre ${songColor}" title="${filteredSong} by ${x.songAuthor} (${x.songID})" style="overflow: hidden; max-height: 19%; width: fit-content; padding: 1% 1% 0% 0%">${noLink ? filteredSong : `<a target="_blank" style="width: fit-content" href="https://www.newgrounds.com/audio/listen/${x.songID}">${filteredSong}</a>`}</h3>
 				<h3 class="lessSpaced" style="width: fit-content" title="">
-					<img class="help valign rightSpace" title="Length" src="../assets/time.png" style="height: 3.5vh;">${x.length}
-					<img class="help valign rightSpace" title="Downloads" src="../assets/download.png" style="height: 3.5vh;">${x.downloads}
-					<img class="help valign rightSpace" title="Likes" src="../assets/${x.disliked ? 'dis' : ''}like.png" style="height: 3.5vh;">${x.likes}
-					${x.orbs != 0 ? `<img class="help valign rightSpace" title="Mana Orbs" src="../assets/orbs.png" style="height: 3.5vh;">${x.orbs}` : ""}
+					<img class="help valign rightSpace" title="Length" src="/assets/time.png" style="height: 3.5vh;">${x.length}
+					<img class="help valign rightSpace" title="Downloads" src="/assets/download.png" style="height: 3.5vh;">${x.downloads}
+					<img class="help valign rightSpace" title="Likes" src="/assets/${x.disliked ? 'dis' : ''}like.png" style="height: 3.5vh;">${x.likes}
+					${x.orbs != 0 ? `<img class="help valign rightSpace" title="Mana Orbs" src="/assets/orbs.png" style="height: 3.5vh;">${x.orbs}` : ""}
 				</h3>
 			
 				<div class="center" style="position:absolute; top: ${6.5 + (y * 33.5) + (x.coins == 0 ? 2.5 : 0)}%; left: 4.4%; transform:scale(0.82); height: 10%; width: 12.5%;">
-					<img class="help spaced" id="dFace" title="${x.difficulty}${x.epic ? " (Epic)" : x.featured ? " (Featured)" : ""}" src="../assets/difficulties/${x.difficultyFace}.png" style="height: 12vh;" style="margin-bottom: 0%; ${x.epic ? 'transform:scale(1.2)' : x.featured ? 'transform:scale(1.1)' : ''}">
+					<img class="help spaced" id="dFace" title="${x.difficulty}${x.epic ? " (Epic)" : x.featured ? " (Featured)" : ""}" src="/assets/difficulties/${x.difficultyFace}.png" style="height: 12vh;" style="margin-bottom: 0%; ${x.epic ? 'transform:scale(1.2)' : x.featured ? 'transform:scale(1.1)' : ''}">
 					<h3 title="">${x.difficulty.includes('Demon') ? "Demon" : x.difficulty}</h3>
-					${x.stars != 0 && !demonList ? `<h3 class="help" title="${x.stars} star${x.stars == 1 ? "" : "s"}${x.starsRequested ? ` (${x.starsRequested} requested)` : ""}">${x.stars}<img class="valign sideSpaceB" src="../assets/star.png" style="height: 3vh;" style="transform:translateY(-8%)"></h3>` : ""}
+					${x.stars != 0 && !demonList ? `<h3 class="help" title="${x.stars} star${x.stars == 1 ? "" : "s"}${x.starsRequested ? ` (${x.starsRequested} requested)` : ""}">${x.stars}<img class="valign sideSpaceB" src="/assets/star.png" style="height: 3vh;" style="transform:translateY(-8%)"></h3>` : ""}
 
 					${demonList ? `<h3 class="help yellow" title="Ranked #${x.demonPosition} on the Demon List">#${x.demonPosition}</h3>` : ""}
 
 					<div id="coins" style="margin-top: 3%" title="${x.coins} user coin${x.coins == 1 ? "" : "s"} (${x.verifiedCoins ? "" : "un"}verified)">
-						${x.coins > 0 ? `<img src="../assets/${x.verifiedCoins ? 'silver' : 'brown'}coin.png" style="height: 4vh;" class="help">` : ""}
-						${x.coins > 1 ? `<img src="../assets/${x.verifiedCoins ? 'silver' : 'brown'}coin.png" style="height: 4vh;" class="help squeezeB">` : ""}
-						${x.coins > 2 ? `<img src="../assets/${x.verifiedCoins ? 'silver' : 'brown'}coin.png" style="height: 4vh;" class="help squeezeB">` : ""}
+						${x.coins > 0 ? `<img src="/assets/${x.verifiedCoins ? 'silver' : 'brown'}coin.png" style="height: 4vh;" class="help">` : ""}
+						${x.coins > 1 ? `<img src="/assets/${x.verifiedCoins ? 'silver' : 'brown'}coin.png" style="height: 4vh;" class="help squeezeB">` : ""}
+						${x.coins > 2 ? `<img src="/assets/${x.verifiedCoins ? 'silver' : 'brown'}coin.png" style="height: 4vh;" class="help squeezeB">` : ""}
 					</div>
 				</div>
 				<div class="center" style="position:absolute; right: 7%; transform:translateY(-${demonList ? 19.5 : 16.25}vh); height: 10%">
-					<a title="View level" href="../${x.id}""><img style="margin-bottom: 4.5%; height: 105%;" class="valign gdButton" src="../assets/view.png"></a>
-					${demonList ? `<br><a title="View leaderboard" href="../demon/${x.demonPosition}""><img class="valign gdButton" src="../assets/trophyButton.png" style="height: 110%;"></a>
-					<a title="View on Pointercrate" href="${demonListLink}demonlist/${x.demonPosition}" target=_blank><img class="valign gdButton" src="../assets/demonButton.png" style="height: 110%;"></a>` : "" }
+					<a title="View level" href="../${x.id}""><img style="margin-bottom: 4.5%; height: 105%;" class="valign gdButton" src="/assets/view.png"></a>
+					${demonList ? `<br><a title="View leaderboard" href="../demon/${x.demonPosition}""><img class="valign gdButton" src="/assets/trophyButton.png" style="height: 110%;"></a>
+					<a title="View on Pointercrate" href="${demonListLink}demonlist/${x.demonPosition}" target=_blank><img class="valign gdButton" src="/assets/demonButton.png" style="height: 110%;"></a>` : "" }
 					<p title="Level ID" style="text-align: right; color: rgba(0, 0, 0, 0.4); font-size: 2.2vh; transform: translate(2.8vh, ${demonList ? -1.8 : 2.5}vh)">#${x.id}</p>
 				</div>
 			</div>`);
