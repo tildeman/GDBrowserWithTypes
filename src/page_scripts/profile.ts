@@ -267,3 +267,5 @@ $(document).keydown(function(k) {
 		$('#pageUp').trigger('click');
 	}
 });
+
+export {};

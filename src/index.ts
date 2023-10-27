@@ -412,7 +412,7 @@ app.get("/iconkit", fetchTemplate("iconkit"));
 app.get("/leaderboard", fetchTemplateHTML("html/leaderboard.html"));
 app.get("/leaderboard/:text", fetchTemplateHTML("html/levelboard.html"));
 app.get("/mappacks", fetchTemplateHTML("html/mappacks.html"));
-app.get("/messages", fetchTemplateHTML("html/messages.html"));
+app.get("/messages", fetchTemplate("messages"));
 app.get("/search", fetchTemplate("filters"));
 app.get("/search/:text", fetchTemplate("search"));
 

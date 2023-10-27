@@ -1,0 +1,106 @@
+mixin portalCheckbox(numid, strid, name)
+	.portalSetting
+		h3
+			input.portalToggle(checked, type="checkbox", id="box" + numid, portal=strid)
+			label.gdcheckbox.gdButton.portalButton(for="box" + numid)
+			=name
+
+doctype html
+html(lang="en")
+	head
+		title Level Analysis
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/cp.png")
+		meta(property="og:type", content="website")
+		meta(id="meta-title", property="og:title", content="Level Analysis")
+		meta(id="meta-desc", property="og:description", content="Analyze a Geometry Dash level and view it's objects, portals, color channels, code, and more!")
+		meta(id="meta-image", name="og:image", content="https://gdbrowser.com/assets/coin.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+
+	body.levelBG(onbeforeunload="saveUrl()", style={ "overflow-y": "scroll" })
+		#everything.center
+			#analyzeError.popup
+				.fancybox.bounce.center.supercenter(style={ width: "80vh", top: "46%" })
+					h2.smaller.center(style={ "font-size": "5.5vh" }) Something Went Wrong!
+					p#errorMessage.bigger.center(style={ "margin-bottom": "2vh", "line-height": "5vh", "margin-top": "1.5vh" })
+						| An
+						|
+						cr unknown error
+						|
+						| occurred while trying to analyze this level.
+					//- If only I'm not such a f***ing spelling police to add an extra `r` to the word "occured"
+					img.gdButton.center.closeWindow(onclick='window.location.replace(window.location.href.replace("analyze/", ""))', src="/assets/btn-back.png", style={ width: "26%" })
+
+			#loadingDiv.supercenter(style={ height: "50%" })
+				h1(style={ transform: "scale(1.2)" }) Analyzing level...
+				img#loading.spin.noSelect(src="/assets/loading.png", style={ height: "25%", "margin-top": "7%" })
+
+			#colorInfo.popup
+				#colorStuff.brownBox.bounce.center.supercenter(style={ height: "60%", width: "90vh" })
+
+			#analysisDiv(style={ "margin-top": "2%", display: "none" })
+				h2#levelName.pre
+				p
+				h3#objectCount
+
+				#highDetailDiv
+					h1.topMargin Low Detail Mode
+					#highdetail.transparentBox.analysis.roundBottom(style={ height: "10%", "text-align": "left", overflow: "hidden", "background-color": "darkblue" })
+					h3#hdText(style={ "margin-top": "-0.25%" })
+
+				h1.topMargin Portal Order
+				#portals.transparentBox.analysis(style={ height: "23%" })
+				div
+					+portalCheckbox("1", "form", "Form Portals")
+					+portalCheckbox("2", "size", "Size Portals")
+					+portalCheckbox("3", "speed", "Speed Portals")
+					br
+					div(style={ height: "1.5%" })
+					+portalCheckbox("4", "mirror", "Mirror Portals")
+					+portalCheckbox("5", "dual", "Dual Portals")
+					+portalCheckbox("6", "dupe", "Duplicates")
+
+				h1#coinText.topMargin User Coins
+				#coins.transparentBox.analysis
+
+				h1#triggerText.topMargin2 Triggers
+				#triggers.transparentBox.analysis(style={ "margin-bottom": "0.6%" })
+				h3#alphaGroup.inline(style={ "margin-right": "1.2vh", "font-size": "4.2vh", display: "none" })
+					| Invisible Group:
+					|
+					span#alphaGroupNum.gold
+
+				h1#orbText.topMargin2 Jump Rings
+				#orbs.transparentBox.analysis
+
+				h1.topMargin2 Block Types
+				#blocks.transparentBox.analysis
+
+				h1.topMargin2 Misc Objects
+				#misc.transparentBox.analysis(style={ height: "25%" })
+
+				h1.topMargin2 Level Style
+				#style.transparentBox.analysis(style={ height: "20%" })
+
+				h1.topMargin2 Trigger Groups
+				#groups.transparentBox.analysis(style={ height: "18%" })
+				h3.inline(style={ "margin-right": "1.2vh" }) Sort:
+				h3#triggerSort.inline.gdButton.gold(style={ "text-decoration": "underline" }) Ascending
+
+				h1.topMargin2 Color Channels
+				#colorDiv.transparentBox.analysis
+
+				h1.topMargin2 Level Data
+				#levelCode.transparentBox.analysis
+					p#revealCode.menuLink Reveal level data
+					p#codeLength
+
+				div(style={ height: "7%" })
+
+			div(style={ position: "absolute", top: "2%", left: "-1.95%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="module", src="/page_scripts/analyze.js")

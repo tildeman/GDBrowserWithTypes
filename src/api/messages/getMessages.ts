@@ -6,14 +6,14 @@ import { XOR } from "../../lib/xor.js";
  * Auxiliary interface for a partial message object
  */
 interface MessageOverview {
-    id: string;
-    playerID: string;
-    accountID: string;
-    author: string;
-    subject: string;
-    date: string;
-    unread: boolean;
-    browserColor: boolean;
+	id: string;
+	playerID: string;
+	accountID: string;
+	author: string;
+	subject: string;
+	date: string;
+	unread: boolean;
+	browserColor: boolean;
 }
 
 export default async function(app: Express, req: Request, res: Response) {

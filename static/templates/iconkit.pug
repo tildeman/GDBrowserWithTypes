@@ -1,0 +1,143 @@
+mixin menuButton(buttonID, buttonTitle, buttonClick, img, imgID)
+	button.blankButton.menuButton(id=buttonID, title=buttonTitle, onclick=buttonClick)
+		img(src=("/assets/iconkitbuttons/" + img + ".png"), style={ width: "60px" }, id=imgID)
+
+mixin paletteButton(colorID, buttonTitle, display)
+	button.colorLabel.blankButton(id="cc" + colorID, onclick="$('#cp" + colorID + "').trigger('click')", title=buttonTitle, style=display ? null : { display: "none" })
+		img(src="/assets/col" + colorID + ".png", style=display ? null : { "background-color": "rgb(255, 255, 255)" })
+	input.colorPicker(type="color", id="cp" + colorID)
+
+doctype html
+html(lang="en")
+	head
+		title Online Icon Kit
+		meta(charset="UTF-8")
+		link(href="/assets/css/iconkit.css?v=3", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/icon.png")
+		meta(id="meta-title", property="og:title", content="Geometry Dash Online Icon Kit")
+		meta(id="meta-desc", property="og:description", content="Build and save your very own Geometry Dash icons, right from the internet!")
+		meta(id="meta-image", name="og:image", content="https://gdbrowser.com/assets/icon.png", itemprop="image")
+		meta(name="theme-color", content="#CCFF55")
+		meta(name="twitter:card", content="summary")
+	body(style={ background: "linear-gradient(rgb(139, 139, 139), rgb(100, 100, 100)) no-repeat center center fixed;" }, onbeforeunload="sessionStorage.setItem('prevUrl', window.location.href)")
+		.center
+			#steal.popup
+				#stealBox.brownBox.bounce.center.supercenter(style={ height: "350px", width: "700px" })
+					h1.center.gold(style={ "margin-top": "10px" }) Copy Icon
+					input#playerName(type="text", name="gdbrowser", autocomplete="off", placeholder="Username", maxlength="32", style={ height: "58px", width: "90%", "text-align": "center", "margin-top": "25px", "margin-bottom": "10px" })
+					#copyForms
+					img#fetchUser.postButton.gdButton.center(src="/assets/ok.png", style={ "margin-top": "30px", height: "55px" })
+					img.gdButton.xButton(src="/assets/close.png", style={ width: "70px" }, onclick="$('#steal').hide()")
+
+			#settings.popup(data-nosnippet)
+				.brownBox.bounce.center.supercenter(style={ height: "380px", width: "820px" })
+					h1.center.gold(style={ "margin-top": "10px", "margin-bottom": "20px" }) Settings
+					#settingList
+						.help(help="Removes the clear dome on top of UFOs")
+							input#box-ufo.iconsetting(type="checkbox")
+							label.gdcheckbox.gdButton(for="box-ufo")
+							h2 No UFO Dome
+						.help(help="Sorts the colors by internal ID instead of their in-game order")
+							input#box-sort.iconsetting(type="checkbox")
+							label.gdcheckbox.gdButton(for="box-sort")
+							h2 Unsort Colors
+						.help(help="Allows robots to play spider animations and vice versa")
+							input#box-cursed.iconsetting(type="checkbox")
+							label.gdcheckbox.gdButton(for="box-cursed")
+							h2 Cursed animations
+					p#helpText.white(style={ "font-size": "24px", "margin-bottom": "0" }) (Hover over a setting for information)
+					img.postButton.gdButton.center(src="/assets/ok.png", style={ "margin-top": "30px", height: "55px" }, onclick="$('#settings').hide()")
+					img.gdButton.xButton(src="/assets/close.png", style={ width: "70px" }, onclick="$('#steal').hide()")
+
+			#spoilerWarning.popup
+				.brownBox.bounce.center.supercenter(style={ height: "440px", width: "800px" })
+					h1.center.gold(style={ "margin-top": "12px" }) Enable 2.2 icons?
+					p(style={ "font-size": "26px", color: "white", width: "620px", margin: "17px auto" }) The newest update for Geometry Dash Lite revealed 500 new icons across all forms. Enabling this setting will reveal all these icons, however they will be lower quality since no UHD textures were provided.
+					p(style={ "font-size": "30px", color: "yellow" })
+						| THIS WILL REVEAL
+						|
+						u EVERY
+						|
+						| ICON.
+						br
+						| PRESS CANCEL IF YOU DON'T WANT TO BE SPOILED!!!
+					img.gdButton.center(src="/assets/iconkitbuttons/btn-reveal.png", style={ "margin-right": "33px", height: "60px" }, onclick="clickedSpoilerWarning = true; toggleSpoilers(); $('#spoilerwarning').hide()")
+					img.gdButton.center(src="/assets/btn-cancel.png", style={ height: "60px" }, onclick="$('#spoilerwarning').hide()")
+					img.gdButton.xButton(src="/assets/close.png", style={ width: "70px" }, onclick="$('#spoilerwarning').hide()")
+
+			img#iconkitlogo(src="/assets/iconkit.png", style={ margin: "7px 0", height: "50px" })
+			br
+			h2#howto(style={ margin: "5 auto 0 auto", display: "none", height: "45px" })
+				span(style={ color: "#aaaaaa" }) (hover over an icon for info)
+
+			#iconbox
+				canvas#result(style={ transform: "translateY(-35px)" })
+
+			hr#gdfloor
+
+			#menuButtons(style={ height: "65px", margin: "0 0 8px 0" })
+				+menuButton("customColors", "Settings", "$('#settings').show()", "cog", null)
+				+menuButton(null, "Download layered PSD", "icon.psdExport()", "psd", null)
+				+menuButton("copyToClipboard", "Copy to clipboard", null, "copy", null)
+				+menuButton(null, "Download icon", "icon.pngExport()", "save", null)
+				+menuButton("getUserIcon", "Get player icon", null, "steal", null)
+				+menuButton("randomIcon", "Random Icon", null, "shuffle", null)
+				+menuButton("unlockIcon", "Unlock details", null, "unlock", "lock")
+				+menuButton(null, "2.2 icons (spoilers!!!)", "clickedSpoilerWarning ? toggleSpoilers() : $('#spoilerwarning').show()", "spoilers", "newIconBtn")
+
+			#iconTabs
+			#iconKitParent.iconKit.noDarken
+				#iconprogressbar
+					#iconloading
+
+			div(style={ width: "1200px", margin: "3vh auto 0 auto", position: "relative", right: "42px" })
+				.colTypes.inline(style={ "padding-top": "15px", width: "75px", "vertical-align": "top" })
+					+paletteButton("1", "Primary Color", true)
+					+paletteButton("2", "Secondary Color", true)
+					.colorsplit(style={ height: "12.5px" })
+					+paletteButton("G", "Glow Color", true)
+					+paletteButton("W", "White Highlights", false)
+					+paletteButton("U", "UFO Dome", false)
+				#colors.inline.iconKit
+					#col1
+					#col2
+					.colorsplit(style={ height: "12.5px" })
+					#colG
+					#colW(style={ display: "none" })
+					#colU(style={ display: "none" })
+
+			#animationOptions(style={ display: "none" })
+				.animationSelector
+					h2(style={ "margin-right": "20px" })
+						| Animation:
+						|
+					select#robotAnimation
+				.animationSelector
+					h2(style={ "margin-right": "20px" })
+						| Speed:
+						|
+					input#animationSpeed(style={ width: "250px" }, type="range", value="1", placeholder="1", min="0.1", max="3", step="0.1")
+					input#animationSpeedBox(type="number", value="1")
+
+			p(style={ color: "rgb(20, 20, 20)", "margin-top": "25px", "margin-bottom": "25px", "line-height": "16px" })
+				| Created by
+				|
+				a(href="https://twitter.com/TheRealGDColon", target="_blank") Colon
+				| • All sprites/assets belong to
+				|
+				a(href="http://robtopgames.com", target="_blank") RobTop Games
+
+			.hideIfSmall(style={ position: "absolute", top: "20px", left: "20px", width: "64px", height: "64px", "pointer-events": "none" })
+				img#backButton.gdButton(style={ "pointer-events": "all", height: "100%" }, src="/assets/back.png", onclick="backButton()")
+
+			#extraInfo.hideIfSmall(style={ position: "absolute", top: "20px", right: "15px" })
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js")
+		script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
+		script(type="text/javascript", src="/iconkit/libs/ag-psd.js")
+		script(type="text/javascript", src="/iconkit/libs/pixi-ease.js")
+		script(type="text/javascript", src="/iconkit/libs/imagesloaded.js")
+		script(type="text/javascript", src="/global.js")
+		script(type="text/javascript", src="/iconkit/icon.js")
+		script(type="module", src="/page_scripts/iconkit.js")
