@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Site-specific script for the leaderboard page.
+ */
+
 import { Player } from "../classes/Player";
 
 /**
@@ -43,6 +47,11 @@ let creatorText =
 
 if (showWeek) $('#weeklyStats').attr('src', '/assets/sort-week-on.png');
 
+/**
+ * Change the information text.
+ * @param text The information text to display.
+ * @param altDiscord Whether to display the alternative Discord link button.
+ */
 function infoText(text: string, altDiscord?: boolean) {
 	$('#infoText').html(text)
 	if (altDiscord) {
@@ -60,10 +69,10 @@ infoText(top250Text);
 let didGDPSStuff = false;
 
 /**
- * Load the selected leaderboard
- * @param val The leaderboard type
- * @param leaderboardParams Additional parameters for the API call
- * @param scrollTo The account ID to focus the menu onto
+ * Load the selected leaderboard.
+ * @param val The leaderboard type.
+ * @param leaderboardParams Additional parameters for the API call.
+ * @param scrollTo The account ID to focus the menu onto.
  */
 function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?: string) {
 	$('#searchBox').html(`<div style="height: 4.5%"></div>`);
@@ -191,7 +200,7 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 	});
 }
 
-// $('#boomling').attr('src', `/assets/boomlings/${boomColors[Math.floor(Math.random() * boomColors.length)]}.png`)
+// $('#boomling').attr('src', `/assets/boomlings/${boomColors[Math.floor(Math.random() * boomColors.length)]}.png`);
 
 $(document).on('click', '.sortButton', function () {
 	if ($('#loading').is(":visible")) return;
@@ -267,6 +276,9 @@ $('#modSort').click(function() {
 	leaderboard(type);
 });
 
+/**
+ * Adjust the browser CSS to include the weekly tab.
+ */
 function weeklyAdjust() {
 	let weekEnabled = showWeek && type == "accurate";
 	$('.leaderboardSlot').css('height', weekEnabled ? '33%' : '25%');
@@ -320,6 +332,9 @@ $(document).keydown(function(k) {
 
 $("#topTabOff").trigger('click')
 
+/**
+ * Get rid of all icons with a `dontload` attribute and load them anyway.
+ */
 function lazyLoadIcons() {
 	let newIconFound = false;
 	$('gdicon[dontload]').each(function() {

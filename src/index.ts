@@ -400,7 +400,7 @@ app.get("/", function(req, res) {
 	}
 });
 
-app.get("/achievements", fetchTemplateHTML("html/achievements.html"));
+app.get("/achievements", fetchTemplate("achievements"));
 app.get("/analyze/:id", fetchTemplate("analyze"));
 app.get("/api", fetchTemplate("api"));
 app.get("/boomlings", fetchTemplateHTML("html/boomlings.html"));

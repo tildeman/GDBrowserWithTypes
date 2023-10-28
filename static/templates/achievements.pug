@@ -1,0 +1,63 @@
+mixin filterItem(filterCategory, bottomMargin, textTopMargin, textBottomMargin)
+	div(id=filterCategory + "Label")
+		img.achSelect.selectAll.gdButton.inline(filter=filterCategory + "Filter", style={ margin: `0 2% ${bottomMargin}% 0`, height: "5vh" }, src="/assets/select-all.png")
+		h1.smaller.inline(style={ "vertical-align": "top", "margin-bottom": textBottomMargin })= filterCategory[0].toUpperCase() + filterCategory.slice(1)
+		img.achSelect.selectNone.gdButton.inline(filter=filterCategory + "Filter", style={ margin: `0 0 ${bottomMargin}% 0`, height: "5vh" }, src="/assets/select-none.png")
+
+mixin gameSpinoff(id, imgSuffix, titleSuffix)
+	img.gdButton.achFilter.gameFilter(src="/assets/achievements/gd" + imgSuffix + ".png", style={ margin: "0 1%", height: "10vh" }, title="Geometry Dash" + titleSuffix, filter=id)
+
+doctype html
+html(lang="en")
+	head
+		title Level Search
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/trophies/1.png")
+		meta(id="meta-title", property="og:title", content="Achievements")
+		meta(id="meta-desc", property="og:description", content="View the list of achievements in Geometry Dash!")
+		meta(id="meta-image", name="og:image", content="/assets/trophies/1.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body.levelBG(onbeforeunload="saveUrl()")
+		#everything(style={ overflow: "auto" })
+			#filters.popup
+				.brownBox.bounce.center.supercenter(style={ width: "110vh", height: "75%", "padding-top": "0.3%", "padding-bottom": "3.5%" })
+					img.gdButton(src="/assets/close.png", style={ position: "absolute", top: "-7.5%", left: "-5.5vh", width: "10%" }, onclick="$('#filters').hide()")
+					h2.small(style={ "margin-bottom": "0" }) Filters
+					+filterItem("reward", 1.9, 0, "1.5%")
+					#forms
+					+filterItem("type", 1.4, "3%", "1%")
+					#types
+					+filterItem("game", 1.8, "1%", "1.3%")
+					#games
+						+gameSpinoff("gd", "", "")
+						+gameSpinoff("meltdown", "m", " Meltdown")
+						+gameSpinoff("world", "w", " World")
+						+gameSpinoff("subzero", "s", " Subzero")
+					img#submitFilters.gdButton(style={ margin: "2.5% 0.7%", height: "10%" }, src="/assets/btn-submit.png")
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%" })
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%", transform: "scaleX(-1)" })
+
+			#searchBox.supercenter.dragscroll(style={ width: "128vh" })
+				div(style={ height: "4.5%" })
+
+			.epicbox.supercenter.gs(style={ width: "126vh", height: "80%", "pointer-events": "none" })
+
+			.center(style={ position: "absolute", top: "8%", left: "0", right: "0" })
+				h1#header.pre Achievements
+
+			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+
+			div(style={ position: "absolute", top: "2%", right: "1.5%", width: "9%", "text-align": "right" })
+				img.gdButton(style={ "margin-bottom": "15%", width: "12vh" }, src="/assets/plus.png", onclick="$('#filters').show()")
+				img#check.gdButton(style={ "margin-bottom": "15%", width: "12vh" }, src="/assets/check-off.png")
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="text/javascript", src="/dragscroll.js")
+		script(type="module", src="/page_scripts/achievements.js")
