@@ -3,7 +3,7 @@ import { Player } from '../classes/Player.js'
 import { Express, Request, Response } from "express";
 import { AppRoutines, ExportBundle } from "../types.js";
 
-export default async function(app: Express, req: Request, res: Response, api, getLevels) {
+export default async function(app: Express, req: Request, res: Response, api?: boolean, getLevels?: string) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 	const appRoutines: AppRoutines = app.locals.stuff;
 

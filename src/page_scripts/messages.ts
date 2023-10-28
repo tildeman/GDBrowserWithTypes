@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Site-specific script for the private message management page.
+ */
+
 // TODO: Avoid duplicate interface declarations
 interface MessageOverview {
 	id: string;

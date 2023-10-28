@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Site-specific script for the level analysis page.
+ */
+
 interface CopiedHSV {
 	h: number | string;
 	s: number | string;

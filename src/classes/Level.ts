@@ -25,11 +25,11 @@ export interface LevelObject {
 	/**
 	 * Name of the level. (e.g.: isolation my ver)
 	 */
-	name: any;
+	name: string;
 	/**
 	 * ID of the level. (e.g.: 91209839)
 	 */
-	id: any;
+	id: string;
 	/**
 	 * The level's description, decoded from base64.
 	 */

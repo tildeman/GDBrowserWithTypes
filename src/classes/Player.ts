@@ -11,6 +11,34 @@ type ColorRGB = { r: number, g: number, b: number };
 const colors: Record<string , ColorRGB> = colors_raw;
 
 /**
+ * Interface for a player icon
+ */
+export interface PlayerIcon {
+	/**
+	 * The gamemode of the default icon.
+	 */
+	form: string;
+	/**
+	 * The icon ID (e.g.: Ship `22` yields the ghost ship).
+	 */
+	icon: number;
+	/**
+	 * The primary color of the icon.
+	 */
+	col1: number;
+	/**
+	 * The secondary color of the icon.
+	 */
+	col2: number;
+	/**
+	 * Whether glow is enabled for the icon.
+	 * 
+	 * Note: 2.2 introduces a breaking change where the glow color is independent.
+	 */
+	glow: boolean;
+}
+
+/**
  * Class for a Geometry Dash Player.
  */
 export class Player {
@@ -62,30 +90,7 @@ export class Player {
 	/**
 	 * The default icon of the player.
 	 */
-	icon: number | {
-		/**
-		 * The gamemode of the default icon.
-		 */
-		form: string
-		/**
-		 * The icon ID (e.g.: Ship `22` yields the ghost ship).
-		 */
-		icon: number,
-		/**
-		 * The primary color of the icon.
-		 */
-		col1: number,
-		/**
-		 * The secondary color of the icon.
-		 */
-		col2: number,
-		/**
-		 * Whether glow is enabled for the icon.
-		 * 
-		 * Note: 2.2 introduces a breaking change where the glow color is independent.
-		 */
-		glow: boolean
-	};
+	icon: number | PlayerIcon;
 	/**
 	 * The primary color of the icon.
 	 */

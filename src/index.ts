@@ -404,7 +404,7 @@ app.get("/achievements", fetchTemplateHTML("html/achievements.html"));
 app.get("/analyze/:id", fetchTemplate("analyze"));
 app.get("/api", fetchTemplate("api"));
 app.get("/boomlings", fetchTemplateHTML("html/boomlings.html"));
-app.get("/comments/:id", fetchTemplateHTML("html/comments.html"));
+app.get("/comments/:id", fetchTemplate("comments"));
 app.get("/demon/:id", fetchTemplateHTML("html/demon.html"));
 app.get("/gauntlets", fetchTemplateHTML("html/gauntlets.html"));
 app.get("/gdps", fetchTemplateHTML("html/gdps.html"));

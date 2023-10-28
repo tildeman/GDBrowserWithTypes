@@ -89,3 +89,4 @@ Fetch(`./api/credits`).then(async (res: any) => {
 		}
 	});
 });
+export {};
