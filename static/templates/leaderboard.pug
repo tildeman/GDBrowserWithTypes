@@ -1,0 +1,99 @@
+mixin scoreTab(id, suffix, offByDefault, sideSpace)
+	img(src="/assets/tab-" + id + suffix + "-on.png", class=(sideSpace ? "sideSpaceC ": "") + "leaderboardTab", id=id + "TabOn", style={ display: "none" })
+	img(src="/assets/tab-" + id + suffix + "-off.png", class=(sideSpace ? "sideSpaceC ": "") + "leaderboardTab leaderboardClick", id=id + "TabOff", style={ display: offByDefault ? "none" : null })
+
+mixin sortFilter(titleName, sortID, elementID, buttonName, offByDefault)
+	img.gdButton.sortButton(style={ "margin-bottom": "1vh", height: "11vh", display: offByDefault ? "none" : null }, sort=sortID, title="Most " + titleName, src="/assets/sort-" + buttonName + ".png", id=elementID)
+
+doctype html
+html(lang="en")
+	head
+		title Level Search
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/trophy.png")
+		meta(id="meta-title", property="og:title", content="Leaderboards")
+		meta(id="meta-desc", property="og:description", content="View Geometry Dash's leaderboards, plus an accurate and updated list of the top players.")
+		meta(id="meta-image", name="og:image", content="/assets/trophy.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body.levelBG(onbeforeunload="saveUrl()")
+		#everything
+			#scoreTabs
+				+scoreTab("top", "", false, false)
+				+scoreTab("weekly", "", true, true)
+				+scoreTab("accurate", "", false, true)
+				+scoreTab("creator", "s", false, true)
+
+			#infoDiv.popup
+				.fancybox.bounce.center.supercenter(style={ width: "80vh" })
+					h2.smaller.center(style={ "font-size": "5.5vh" }) Leaderboard Info
+					p#infoText.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh" })
+					img.gdButton.center(src="/assets/ok.png", style={ width: "20%" }, onclick="$('.popup').hide()")
+
+			div(style={ position: "absolute", bottom: "0%", left: "0%", width: "100%" })
+				img.cornerPiece.noClick(src="/assets/corner.png", style={ width: "7%" })
+
+			div(style={ position: "absolute", bottom: "0%", right: "0%", width: "100%", "text-align": "right" })
+				a(title="Boomlings Leaderboard?????", href="/boomlings")
+					img#boomling(style={ position: "absolute", width: "6%", top: "2%", right: "1%", display: "none" }) 
+				img.cornerPiece.noClick(src="/assets/corner.png", style={ width: "7%", transform: "scaleX(-1)" })
+
+			#searchBox.supercenter.dragscroll
+				div(style={ height: "4.5%" })
+
+			.leaderboardBox.supercenter.gs(style={ width: "120vh", height: "80%", "pointer-events": "none" })
+				#relativeUser.sortDiv(style={ position: "relative", left: "100%", transform: "translateX(4.5vh)", top: "12%", width: "0.1%" })
+					img#findRelative.gdButton(style={ "margin-bottom": "1vh", height: "11vh" }, title="Global Search", src="/assets/magnify.png")
+					img#clearRelative.gdButton(style={ "margin-bottom": "1vh", height: "11vh", display: "none" }, title="Clear Global Search", src="/assets/unmagnify.png")
+
+				.sortDiv(style={ display: "none", position: "relative", left: "100%", transform: "translateX(4.5vh)", top: "12%", width: "0.1%" })
+					img#modSort.gdButton(style={ "margin-bottom": "1vh", height: "11vh" }, title="Moderators", src="/assets/sort-mod.png")
+					img#weeklyStats.gdButton(style={ "margin-bottom": "1vh", height: "11vh" }, title="Weekly Stats", src="/assets/sort-week.png")
+
+				#statSort.sortDiv(style={ display: "none", position: "relative", right: "10.5%", transform: "translateY(-33.3%)", top: "0", width: "0.1%" })
+					+sortFilter("stars", "stars", "starSort", "stars-on", false)
+					+sortFilter("diamonds", "diamonds", null, "diamonds", false)
+					+sortFilter("coins", "coins", null, "coins", false)
+					+sortFilter("demons", "demons", null, "demons", false)
+					+sortFilter("creator points", "cps", "cpSort", "cps", true)
+
+			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+
+			div(style={ position: "absolute", top: "2.5%", right: "2%", width: "10%", "text-align": "right" })
+				img.gdButton(src="/assets/smallinfo.png", style={ width: "32%" }, onclick="$('#infoDiv').show()")
+
+			#discordLinks(style={ display: "none", position: "absolute", top: "12%", right: "1.5%", width: "21%", "text-align": "right" })
+				a#discord(href="https://discord.gg/leaderboard", target="_blank", title="Official leaderboard Discord!")
+					img.gdButton(src="/assets/discord.png", style={ width: "20%" })
+				a#altdiscord(href="https://discord.gg/Uz7pd4d", target="_blank", title="Accurate leaderboard Discord!", style={ display: "none", filter: "hue-rotate(300deg)" })
+					img.gdButton(src="/assets/discord.png", style={ width: "20%" })
+
+			#loading.supercenter(style={ height: "10%", top: "47%", display: "none" })
+				img.spin.noSelect(src="/assets/loading.png", style={ height: "105%" })
+
+			#userSearch.popup
+				.brownBox.bounce.center.supercenter(style={ width: "75vh" })
+					h2.smaller.center(style={ "font-size": "5.5vh", "margin-top": "1%" }) User Search
+					p
+						| Enter the
+						|
+						cy username
+						|
+						| of a player to find their position in the
+						|
+						ca global leaderboard
+						| .
+					input#relativeName(type="text", placeholder="Username", style={ height: "8vh", width: "90%", "text-align": "center", "margin-top": "0.5%", "margin-bottom": "5%" })
+					br
+					img.gdButton.postbutton.center(src="/assets/btn-cancel.png", style={ width: "32%", "margin-right": "1%" }, onclick="$('#userSearch').hide()")
+					img#relativeSearch.gdButton.postbutton.center(src="/assets/btn-submit.png", style={ width: "32%", "margin-left": "1%" })
+					p#relativeStatus(style={ display: "none" })
+					img.closeWindow.gdButton(src="/assets/close.png", style={ position: "absolute", top: "13.5%", left: "-6vh", width: "13%" }, onclick="$('#userSearch').hide()")
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
+		script(type="text/javascript", src="/iconkit/icon.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="text/javascript", src="/dragscroll.js")
+		script(type="module", src="/page_scripts/leaderboard.js")

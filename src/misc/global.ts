@@ -329,15 +329,20 @@ async function renderIcons() {
 	buildIcon(iconsToRender, 0);
 }
 
+/**
+ * Auxiliary function to render icons in a page.
+ * @param elements The list of GDIcon elements.
+ * @param current The current index of the element.
+ */
 function buildIcon(elements: JQuery<HTMLElement>, current: number) {
-	if (current >= elements.length) return
-	const currentIcon = elements.eq(current)
+	if (current >= elements.length) return;
+	const currentIcon = elements.eq(current);
 
-	const cacheID = currentIcon.attr('cacheID')
-	const foundCache = renderedIcons[cacheID || ""]
+	const cacheID = currentIcon.attr('cacheID');
+	const foundCache = renderedIcons[cacheID || ""];
 	if (foundCache) {
-		finishIcon(currentIcon, foundCache.name, foundCache.data)
-		return buildIcon(elements, current + 1)
+		finishIcon(currentIcon, foundCache.name, foundCache.data);
+		return buildIcon(elements, current + 1);
 	}
 
 	const iconConfig: IconConfiguration = {
@@ -347,7 +352,7 @@ function buildIcon(elements: JQuery<HTMLElement>, current: number) {
 		col2: parseIconColor(currentIcon.attr('col2') || ""),
 		glow: currentIcon.attr('glow') == "true",
 		app: iconRenderer
-	}
+	};
 	console.log(currentIcon);
 	console.log(iconConfig);
 
@@ -429,7 +434,7 @@ window.addEventListener("keydown", e => {
  * @param that The jQuery selection.
  * @returns A boolean indicating the visibility of the element in the viewport.
  */
-function isInViewport(that: JQueryStatic) {
+function isInViewport(that: JQuery<HTMLElement>) {
 	let elementTop = $(that).offset()?.top || 0;
 	let elementBottom = (elementTop || 0) + ($(that).outerHeight() || 0);
 	let viewportTop = $(window).scrollTop() || 0;

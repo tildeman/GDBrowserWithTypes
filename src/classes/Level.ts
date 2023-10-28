@@ -221,8 +221,8 @@ export class Level implements LevelObject {
 	dailyNumber?: number; nextDaily: number | null;
 	nextDailyTimestamp: number | null; objects: number;
 	large: boolean; cp: number; difficultyFace: string;
-	songName: any; songAuthor: any; songSize: string;
-	songID: any; songLink: string;
+	songName: string; songAuthor: string; songSize: string;
+	songID: string; songLink: string;
 
 	/**
 	 * @param levelInfo The level information, parsed from RobTop's colon-based data format.
@@ -302,7 +302,7 @@ export class Level implements LevelObject {
 			this.songName = songInfo[2] || "Unknown";
 			this.songAuthor = songInfo[4] || "Unknown";
 			this.songSize = (songInfo[5] || "0") + "MB";
-			this.songID = songInfo[1] || this.customSong;
+			this.songID = songInfo[1] || this.customSong.toString();
 			if (songInfo[10]) this.songLink = decodeURIComponent(songInfo[10]);
 		}
 		else if (this.officialSong) {

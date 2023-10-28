@@ -42,7 +42,7 @@ const appServers = pinnedServers.concat(notPinnedServers);
 const appSafeServers = appServers.map(({ endpoint, substitutions, overrides, disabled, ...rest }) => rest);
 
 /**
- * Message to display upon rate limit.
+ * Message to display upon hitting the rate limit.
  */
 const rlMessage = "Rate limited ¯\\_(ツ)_/¯<br><br>Please do not spam my servers with a crazy amount of requests. It slows things down on my end and stresses RobTop's servers just as much." +
 " If you really want to send a zillion requests for whatever reason, please download the GDBrowser repository locally - or even just send the request directly to the GD servers.<br><br>" +
@@ -409,7 +409,7 @@ app.get("/demon/:id", fetchTemplateHTML("html/demon.html"));
 app.get("/gauntlets", fetchTemplateHTML("html/gauntlets.html"));
 app.get("/gdps", fetchTemplateHTML("html/gdps.html"));
 app.get("/iconkit", fetchTemplate("iconkit"));
-app.get("/leaderboard", fetchTemplateHTML("html/leaderboard.html"));
+app.get("/leaderboard", fetchTemplate("leaderboard"));
 app.get("/leaderboard/:text", fetchTemplateHTML("html/levelboard.html"));
 app.get("/mappacks", fetchTemplateHTML("html/mappacks.html"));
 app.get("/messages", fetchTemplate("messages"));
@@ -448,13 +448,13 @@ app.get("/d/:id", function(req, res) { res.redirect('/demon/' + req.params.id) }
 // API AND HTML
 	 
 app.get("/u/:id", function(req, res) { run.profile(app, req, res) });
-app.get("/:id", function(req, res) { run.level(app, req, res) }) ;
+app.get("/:id", function(req, res) { run.level(app, req, res) });
 
 
 // MISC
 
 app.get("/api/userCache", function(req, res) { res.status(200).send(appAccountCache) });
-app.get("/api/achievements", function(req, res) { res.status(200).send({achievements, types: achievementTypes, shopIcons: sacredTexts.shops, colors: sacredTexts.colors }) });
+app.get("/api/achievements", function(req, res) { res.status(200).send({ achievements, types: achievementTypes, shopIcons: sacredTexts.shops, colors: sacredTexts.colors }) });
 app.get("/api/music", function(req, res) { res.status(200).send(music) });
 app.get("/api/gdps", function(req, res) {res.status(200).send(req.query.hasOwnProperty("current") ? appSafeServers.find(x => res.locals.stuff.req.server.id == x.id) : appSafeServers) });
 
@@ -489,14 +489,14 @@ newIcons.forEach(x => {
 		else newIconCounts[formName]++;
 	}
 });
-sacredTexts.newIconCounts = newIconCounts
+sacredTexts.newIconCounts = newIconCounts;
 
 app.get('/api/icons', function(req, res) { 
 	res.status(200).send(sacredTexts);
 });
 
 // important icon kit stuff
-const iconKitFiles: Record<string, string[]> = {}
+const iconKitFiles: Record<string, string[]> = {};
 const extraDataDir = fs.readdirSync('./iconkit/extradata');
 for (const x of extraDataDir) {
 	iconKitFiles[x.split(".")[0]] = (await import("./iconkit/extradata/" + x, { assert: { type: "json" } })).default;
@@ -526,7 +526,7 @@ app.get('*', function(req, res) {
 	if (req.path.startsWith('/api') || req.path.startsWith("/iconkit")) {
 		res.status(404).send('-1');
 	}
-	else res.redirect('/search/404%20');
+	else res.redirect('/14471563');
 });
 
 app.use(function (err: Error | undefined, req: Request, res: Response, next: NextFunction) {

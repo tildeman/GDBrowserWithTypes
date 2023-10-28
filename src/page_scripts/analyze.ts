@@ -166,13 +166,13 @@ function commafy(num: string | number) {
 
 		let dividerCount = $('.divider').length - 1;
 
-		$('.divider').each(function(y) {
-			if (y != dividerCount) $(this).remove();
+		$('.divider').each(function(dividerItem) {
+			if (dividerItem != dividerCount) $(this).remove();
 		});
 
-		portals.forEach(x => {
-			if (!x || x[0] == "") return;
-			$('#portals').append(`<div class="inline portalDiv"><img class="portalImage ${(x[0] || "").match(/[0-9]x/) ? "speedPortal" : ""}" src='../assets/objects/portals/${x[0]}.png'><h3>${x[1]}</h3></div>`);
+		portals.forEach(portalItem => {
+			if (!portalItem || portalItem[0] == "") return;
+			$('#portals').append(`<div class="inline portalDiv"><img class="portalImage ${(portalItem[0] || "").match(/[0-9]x/) ? "speedPortal" : ""}" src='../assets/objects/portals/${portalItem[0]}.png'><h3>${portalItem[1]}</h3></div>`);
 		});
 	}
 
@@ -184,9 +184,9 @@ function commafy(num: string | number) {
 		$('#groups').html("");
 		let groupList = Object.keys(res.triggerGroups);
 		if (!altTriggerSort) groupList = groupList.sort((a, b) => Number(a.slice(6)) - Number(b.slice(6)));
-		groupList.forEach(x => {
-			if (x == "total") $('#grouptext').text(`Trigger Groups (${commafy(res.triggerGroups[x])})`);
-			else $('#groups').append(`<div class="inline groupDiv"><h1 class="groupID">${x.slice(6)}</h1><h3 style="padding-top: 7%">x${commafy(res.triggerGroups[x])}</h3></div>`);
+		groupList.forEach(groupID => {
+			if (groupID == "total") $('#grouptext').text(`Trigger Groups (${commafy(res.triggerGroups[groupID])})`);
+			else $('#groups').append(`<div class="inline groupDiv"><h1 class="groupID">${groupID.slice(6)}</h1><h3 style="padding-top: 7%">x${commafy(res.triggerGroups[groupID])}</h3></div>`);
 		});
 	}
 
@@ -200,14 +200,14 @@ function commafy(num: string | number) {
 
 	else {
 		$('#coinText').text(`User Coins (${res.coins.length})`);
-		res.coins.forEach(x => {
-			$('#coins').append(`<div class="inline orbDiv"><img style="height: 10vh;" src='../assets/objects/${res.coinsVerified ? "coin" : "browncoin"}.png'><h3 style="padding-top: 7%">${x}%</h3></div>`);
+		res.coins.forEach(coinPos => {
+			$('#coins').append(`<div class="inline orbDiv"><img style="height: 10vh;" src='../assets/objects/${res.coinsVerified ? "coin" : "browncoin"}.png'><h3 style="padding-top: 7%">${coinPos}%</h3></div>`);
 		});
 	}
 
-	triggerList.forEach(x => {
-		if (x == "total") $('#triggerText').text(`Triggers (${commafy(res.triggers[x])})`);
-		else $('#triggers').append(`<div class="inline triggerDiv"><img style="height: 10vh;" src='../assets/objects/triggers/${x}.png'><h3 style="padding-top: 7%">x${commafy(res.triggers[x])}</h3></div>`);
+	triggerList.forEach(triggerType => {
+		if (triggerType == "total") $('#triggerText').text(`Triggers (${commafy(res.triggers[triggerType])})`);
+		else $('#triggers').append(`<div class="inline triggerDiv"><img style="height: 10vh;" src='../assets/objects/triggers/${triggerType}.png'><h3 style="padding-top: 7%">x${commafy(res.triggers[triggerType])}</h3></div>`);
 	});
 
 	if (res.invisibleGroup) {
@@ -215,18 +215,18 @@ function commafy(num: string | number) {
 		$('#alphaGroup').show();
 	}
 
-	orbList.forEach(x => {
-		if (x == "total") $('#orbText').text(`Jump Rings (${commafy(res.orbs[x])})`);
-		else $('#orbs').append(`<div class="inline orbDiv"><img style="height: 10vh;" src='../assets/objects/orbs/${x}.png'><h3 style="padding-top: 7%">x${commafy(res.orbs[x])}</h3></div>`);
+	orbList.forEach(orbType => {
+		if (orbType == "total") $('#orbText').text(`Jump Rings (${commafy(res.orbs[orbType])})`);
+		else $('#orbs').append(`<div class="inline orbDiv"><img style="height: 10vh;" src='../assets/objects/orbs/${orbType}.png'><h3 style="padding-top: 7%">x${commafy(res.orbs[orbType])}</h3></div>`);
 	});
 
-	blockList.forEach(x => {
-		$('#blocks').append(`<div class="inline blockDiv"><img style="height: 9vh;" src='../assets/objects/blocks/${x}.png'><h3 style="padding-top: 15%">x${commafy(res.blocks[x])}</h3></div>`);
+	blockList.forEach(blockType => {
+		$('#blocks').append(`<div class="inline blockDiv"><img style="height: 9vh;" src='../assets/objects/blocks/${blockType}.png'><h3 style="padding-top: 15%">x${commafy(res.blocks[blockType])}</h3></div>`);
 	});
 
-	miscList.forEach(x => {
-		if (x == "objects") return;
-		else $('#misc').append(`<div class="inline miscDiv"><img style="height: 8vh;" src='../assets/objects/${x.slice(0, -1)}.png'><h3 style="padding-top: 15%">x${commafy(res.misc[x][0])}<br>${res.misc[x][1]}</h3></div>`);
+	miscList.forEach(itemType => {
+		if (itemType == "objects") return;
+		else $('#misc').append(`<div class="inline miscDiv"><img style="height: 8vh;" src='../assets/objects/${itemType.slice(0, -1)}.png'><h3 style="padding-top: 15%">x${commafy(res.misc[itemType][0])}<br>${res.misc[itemType][1]}</h3></div>`);
 	});
 
 
@@ -271,7 +271,7 @@ function commafy(num: string | number) {
 		if ($(this).prop('checked')) disabledPortals = disabledPortals.filter(x => x != $(this).attr('portal'));
 		else disabledPortals.push($(this).attr('portal') || "");
 
-		portals = res.portals.split(", ").map(x => x.split(" "));
+		portals = res.portals.split(", ").map(portalStrFormat => portalStrFormat.split(" "));
 		if (disabledPortals.includes('form')) portals = portals.filter(x => !formPortals.includes(x[0] || ""));
 		if (disabledPortals.includes('speed')) portals = portals.filter(x => !speedPortals.includes(x[0] || ""));
 		if (disabledPortals.includes('size')) portals = portals.filter(x => !sizePortals.includes(x[0] || ""));
@@ -279,10 +279,10 @@ function commafy(num: string | number) {
 		if (disabledPortals.includes('mirror')) portals = portals.filter(x => !mirrorPortals.includes(x[0] || ""));
 
 		if (disabledPortals.includes('dupe')) {
-			portals.reverse().forEach((x, y) => {
-				if (portals[y + 1] && portals[y + 1][0] == x[0]) portals[y][0] = null;
+			portals.reverse().forEach((portalEntry, portalIndex) => {
+				if (portals[portalIndex + 1] && portals[portalIndex + 1][0] == portalEntry[0]) portals[portalIndex][0] = null;
 			});
-			portals = portals.reverse().filter(x => x[0] != null);
+			portals = portals.reverse().filter(portalItem => portalItem[0] != null);
 		}
 
 		appendPortals();
@@ -304,7 +304,7 @@ function commafy(num: string | number) {
 
 	$(document).on('click', '.color', function() {
 		// TODO: This is kludgy.
-		let col = res.colors.find(x => x.channel == $(this).attr('channel'));
+		let col = res.colors.find(colorObject => colorObject.channel == $(this).attr('channel'));
 		let hsv = col!.copiedHSV;
 		if (hsv) {
 			hsv.s = Number(hsv.s).toFixed(2);

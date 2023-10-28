@@ -24,17 +24,17 @@ function dragscroll(el: HTMLElement): void {
 			return;
 		}
 		if (somethingSelected()) return;
-	if (!previouslyMouseDown) {
-		for (let el of (e.target as HTMLDivElement)?.childNodes || "") {
-			if (el.nodeType === Node.TEXT_NODE && el.textContent?.replace(remover, '').length) return;
-	}
-	el.style['user-select'] = 'none';
-	el.style['-webkit-user-select'] = 'none';
-	previouslyMouseDown = true;
-}
-//el.scrollLeft -= e.movementX;
-el.scrollTop -= e.movementY;
-}, {passive: true});
+		if (!previouslyMouseDown) {
+				for (let el of (e.target as HTMLDivElement)?.childNodes || "") {
+					if (el.nodeType === Node.TEXT_NODE && el.textContent?.replace(remover, '').length) return;
+			}
+			el.style['user-select'] = 'none';
+			el.style['-webkit-user-select'] = 'none';
+			previouslyMouseDown = true;
+		}
+		//el.scrollLeft -= e.movementX;
+		el.scrollTop -= e.movementY;
+	}, { passive: true });
 }
 
 Array.prototype.forEach.call(document.getElementsByClassName('dragscroll'), dragscroll);
