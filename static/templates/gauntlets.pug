@@ -1,0 +1,30 @@
+doctype html
+html(lang="en")
+	head
+		//- TODO: This does get repetitive at times
+		title Map Packs
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/gauntlet.png")
+		meta(id="meta-title", property="og:title", content="Map Packs")
+		meta(id="meta-desc", property="og:description", content="Collections of terrible Geometry Dash levels that people only play because of the absurd number of icons they unlock.")
+		meta(id="meta-image", name="og:image", content="/assets/gauntlet.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body.levelBG.darkBG(onbeforeunload="saveUrl()", style={ "overflow-y": "auto" })
+		#everything.center(style={ width: "100%", height: "100%" })
+			div(style={ position: "absolute", top: "2%", left: "-1.95%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+
+			.center(style={ width: "100%", "margin-top": "2.5%", "margin-bottom": "1%" })
+				img(src="/assets/gauntlets.png", style={ width: "50%" })
+
+			img#loading.spin.noselect(style={ "margin-top": "1%", height: "12%" }, src="/assets/loading.png")
+
+			#gauntletList
+				br
+
+			br
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="module", src="/page_scripts/gauntlets.js")
