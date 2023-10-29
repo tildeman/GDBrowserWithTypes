@@ -74,9 +74,9 @@ function randInt(min: number, max: number) {
 }
 
 /**
- * Set the background color of a color channel button
- * @param e The channel ID (e.g.: `1`, `W` or `U`)
- * @param c The color value to set
+ * Set the background color of a color channel button.
+ * @param e The channel ID (e.g.: `1`, `W` or `U`).
+ * @param c The color value to set.
  * @param hex No effect. Uses hexadecimal if `c` is a string, raw RGB otherwise.
  */
 function colorBG(e: string, c: Color3B | string, hex?: boolean) {
@@ -389,7 +389,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			enableGlow = 0;
 		}); // disable glow after first generated
 
-		$(document).on('click', '.iconTabButton', function () {
+		$(document).on('click', '.iconTabButton', function() {
 			let form = $(this).attr('form');
 			let formElement = '#' + form + 's';
 
@@ -455,7 +455,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			updateDetails();
 		});
 		
-		$(document).on('click', '.copyForm', function () {
+		$(document).on('click', '.copyForm', function() {
 			$('.copyForm').each(function(x, y) {
 				$(this).children().first().attr('src', $(this).children().first().attr('src')!.replace('_on', '_off'));
 			});
@@ -464,7 +464,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			$(this).children().first().attr('src', src.replace('_off', '_on'));
 		});
 
-		$(document).on('click', '.iconButton', function () {
+		$(document).on('click', '.iconButton', function() {
 			$(".iconButton").removeClass("iconSelected");
 			$(this).addClass('iconSelected');
 			const oldForm = selectedForm;
@@ -488,7 +488,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			generateIcon();
 		});
 
-		$(document).on('click', '.color1', function () {
+		$(document).on('click', '.color1', function() {
 			$(".color1").removeClass("iconSelected");
 			$(this).addClass('iconSelected');
 			selectedCol1 = Number($(this).attr('col')) || 0;
@@ -496,7 +496,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			setColor("1", selectedCol1);
 		});
 
-		$(document).on('click', '.color2', function () {
+		$(document).on('click', '.color2', function() {
 			$(".color2").removeClass("iconSelected");
 			$(this).addClass('iconSelected');
 			selectedCol2 = Number($(this).attr('col')) || 0;
@@ -506,7 +506,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			setColor("2", selectedCol2);
 		});
 
-		$(document).on('click', '.colorG', function () {
+		$(document).on('click', '.colorG', function() {
 			$(".colorG").removeClass("iconSelected");
 			$(this).addClass('iconSelected');
 			selectedColG = Number($(this).attr('col')) || 0;
@@ -514,7 +514,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			setColor("g", selectedColG);
 		});
 
-		$(document).on('click', '.colorW', function () {
+		$(document).on('click', '.colorW', function() {
 			$(".colorW").removeClass("iconSelected");
 			$(this).addClass('iconSelected');
 			selectedColW = Number($(this).attr('col')) || 0;
@@ -523,7 +523,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			setColor("w", selectedColW);
 		});
 
-		$(document).on('click', '.colorU', function () {
+		$(document).on('click', '.colorU', function() {
 			$(".colorU").removeClass("iconSelected");
 			$(this).addClass('iconSelected');
 			selectedColU = Number($(this).attr('col')) || 0;
@@ -613,7 +613,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			$('#helpText').html(hoverText);
 		});
 
-		$(document).on('change', '.iconsetting', function (e) {
+		$(document).on('change', '.iconsetting', function(e) {
 			let checkedSettings: string[] = [];
 			$('.iconsetting:checkbox:checked').each((i, x) => {
 				checkedSettings.push(x.id.split('-')[1]);
@@ -656,7 +656,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			}
 		});
 		
-		$(document).on('mouseover', '.iconButton, .color1, .color2', function () {
+		$(document).on('mouseover', '.iconButton, .color1, .color2', function() {
 			if (unlockMode && achievements.length) {
 				$(this).addClass('iconHover');
 				let form = $(this).attr('form') || $(this).attr('colType');
@@ -665,14 +665,14 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			}
 		});
 
-		$(document).on('mouseleave', '.iconButton, .color1, .color2', function () {
+		$(document).on('mouseleave', '.iconButton, .color1, .color2', function() {
 			$(this).removeClass('iconHover');
 			$('#howto').html("<span style='color: #aaaaaa'>(hover over an icon for info)</span>");
 		});
 	});
 });
 
-$("#fetchUser").click(async function () {
+$("#fetchUser").click(async function() {
 	let user = $("#playerName").val();
 	if (!user || typeof(user) == "number" || !user.length) return $("#steal").hide();
 

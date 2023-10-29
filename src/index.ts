@@ -268,7 +268,7 @@ function appParseResponse(responseBody: string, splitter = ":") {
 	return res;
 }
 
-//xss bad
+// xss bad
 function appClean(text: string | number | undefined) {
 	return (text ? text.toString() : "")
 		.replace(/&/g, "&#38;")
