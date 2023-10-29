@@ -3,7 +3,8 @@
  */
 
 $('.subdiv').each(function() {
-	$(this).html($(this).html().replace(/(<p.*>)(.*:) /g, '$1<span class="param">$2</span> '));
+	console.log($(this).html());
+	$(this).html($(this).html().replace(/(<p( class=".*?")?>)([a-zA-Z0-9]*:) /g, '$1<span class="param">$3</span> '));
 });
 
 // smooth scrolling through anchors
@@ -33,7 +34,7 @@ for(let i = 0; i < headerLink.length; i++){
 }
 
 // revealing
-function revealSection(element: HTMLElement) {
+function revealSection(element: HTMLElement | JQuery<HTMLElement>) {
 	let el = $(element);
 	el.slideToggle(100);
 	let foundFetch = el.find('.fetch:not(.fetched)');
@@ -44,3 +45,7 @@ function revealSection(element: HTMLElement) {
 		});
 	}
 }
+
+$('.reveal').on('click', function() {
+	revealSection($(this).next());
+});

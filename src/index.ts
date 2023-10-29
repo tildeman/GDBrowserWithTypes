@@ -403,6 +403,7 @@ app.get("/", function(req, res) {
 app.get("/achievements", fetchTemplate("achievements"));
 app.get("/analyze/:id", fetchTemplate("analyze"));
 app.get("/api", fetchTemplate("api"));
+app.get("/docs", fetchTemplate("api_old"));
 app.get("/boomlings", fetchTemplate("boomlings"));
 app.get("/comments/:id", fetchTemplate("comments"));
 app.get("/demon/:id", fetchTemplate("demon"));
@@ -513,9 +514,9 @@ app.get('/api/iconkit', function(req, res) {
 });
 
 app.get('/icon/:text', function(req, res) {
-	const iconID = Number(req.query.icon || 1);
+	const iconID = Number(req.query.icon || 1) || 1;
 	// TODO: Why is it flattening `req.query.form` into a string?
-	const iconForm = sacredTexts.forms[req.query.form?.toString() || ""] ? req.query.form : "icon";
+	const iconForm = sacredTexts.forms[String(req.query.form)] ? req.query.form : "icon"
 	const iconPath = `${iconForm}_${iconID}.png`;
 	const fileExists = iconKitFiles.previewIcons.includes(iconPath);
 	if (fileExists) return res.status(200).sendFile(`./iconkit/premade/${iconPath}`, { root: __dirname });
