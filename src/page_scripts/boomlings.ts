@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Site-specific script for the Boomlings leaderboard page.
+ */
+
 $('#boomerbox').html('');
 $('#loading').show();
 

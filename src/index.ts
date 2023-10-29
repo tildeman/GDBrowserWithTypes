@@ -407,7 +407,7 @@ app.get("/boomlings", fetchTemplate("boomlings"));
 app.get("/comments/:id", fetchTemplate("comments"));
 app.get("/demon/:id", fetchTemplate("demon"));
 app.get("/gauntlets", fetchTemplateHTML("html/gauntlets.html"));
-app.get("/gdps", fetchTemplateHTML("html/gdps.html"));
+app.get("/gdps", fetchTemplate("gdps"));
 app.get("/iconkit", fetchTemplate("iconkit"));
 app.get("/leaderboard", fetchTemplate("leaderboard"));
 app.get("/leaderboard/:text", fetchTemplate("levelboard"));

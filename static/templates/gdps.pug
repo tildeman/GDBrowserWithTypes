@@ -1,0 +1,72 @@
+doctype html
+html(lang="en")
+	head
+		title GD Multiverse Navigation Terminal
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/unlock.png")
+		meta(id="meta-title", property="og:title", content="GD Multiverse Navigation Terminal")
+		meta(id="meta-desc", property="og:description", content="That's uhh... that's just fancy talk for GDPS Browser. Select a popular GD private server and view its levels, creators, packs, leaderboards, and more!")
+		meta(id="meta-image", name="og:image", content="/assets/unlock.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body.levelBG.vaultBG(onbeforeunload="saveUrl()")
+		#everything(style={ overflow: "auto" })
+			#infoDiv.popup
+				.fancybox.bounce.center.supercenter(style={ width: "90vh" })
+					h2.smaller.center(style={ "font-size": "5.5vh" }) Add server
+					p.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh", "margin-bottom": "2.5vh" })
+						| Interested in listing your
+						|
+						cg private server
+						|
+						| on GDBrowser?
+						|
+						a(href="https://forms.gle/kncuRqyKykQX42QD7", target="_blank")
+							ca.underline Fill out this form
+						|
+						| with your
+						|
+						cy server information
+						|
+						| and I'll look into adding it!
+					p.bigger.center(style={ "margin-top": "1vh" })
+						| Please note that I only add
+						|
+						cg relatively large
+						|
+						| servers into the list. Servers which are
+						|
+						cr inactive
+						|
+						| or have
+						|
+						cr few levels/members
+						|
+						| will not be accepted.
+					img.gdButton.center(src="/assets/ok.png", style={ width: "15%" }, onclick="$('.popup').hide()")
+
+			#searchBox.supercenter.dragscroll(style={ width: "127vh" })
+			.epicbox.supercenter.gs(style={ width: "126vh", height: "80%", "pointer-events": "none" })
+
+			.center(style={ position: "absolute", top: "8%", left: "0", right: "0" })
+				h1#header.pre GD Private Servers
+
+			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+
+			#loading.supercenter(style={ height: "10%", top: "47%" })
+				img.spin.noSelect(src="/assets/loading.png", style={ height: "105%" })
+
+			div(style={ position: "absolute", left: "7%", top: "45%", height: "10%" })
+				img#pageDown.gdButton(src="/assets/arrow-left.png", style={ height: "90%", display: "none" })
+
+			div(style={ position: "absolute", right: "7%", top: "45%", height: "10%" })
+				img#pageUp.gdButton(src="/assets/arrow-right.png", style={ height: "90%", display: "none" })
+
+			div(style={ position: "absolute", top: "3%", right: "2%", width: "20%", "text-align": "right" })
+				img#plusButton.gdButton(style={ width: "12vh" }, src="/assets/plus.png", onclick="$('#infoDiv').show()")
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="text/javascript", src="/dragscroll.js")
+		script(type="module", src="/page_scripts/gdps.js")

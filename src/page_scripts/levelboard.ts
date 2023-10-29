@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Site-specific script for the level leaderboard page.
+ */
+
 let loading = false;
 let lvlID = Math.round(+window.location.pathname.split('/')[2]);
 
