@@ -1,4 +1,4 @@
-mixin filterItem(filterCategory, bottomMargin, textTopMargin, textBottomMargin)
+mixin filterItem(filterCategory, bottomMargin, textBottomMargin)
 	div(id=filterCategory + "Label")
 		img.achSelect.selectAll.gdButton.inline(filter=filterCategory + "Filter", style={ margin: `0 2% ${bottomMargin}% 0`, height: "5vh" }, src="/assets/select-all.png")
 		h1.smaller.inline(style={ "vertical-align": "top", "margin-bottom": textBottomMargin })= filterCategory[0].toUpperCase() + filterCategory.slice(1)
@@ -10,7 +10,7 @@ mixin gameSpinoff(id, imgSuffix, titleSuffix)
 doctype html
 html(lang="en")
 	head
-		title Level Search
+		title Achievements
 		meta(charset="UTF-8")
 		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
 		link(rel="icon", href="/assets/trophies/1.png")
@@ -24,11 +24,11 @@ html(lang="en")
 				.brownBox.bounce.center.supercenter(style={ width: "110vh", height: "75%", "padding-top": "0.3%", "padding-bottom": "3.5%" })
 					img.gdButton(src="/assets/close.png", style={ position: "absolute", top: "-7.5%", left: "-5.5vh", width: "10%" }, onclick="$('#filters').hide()")
 					h2.small(style={ "margin-bottom": "0" }) Filters
-					+filterItem("reward", 1.9, 0, "1.5%")
+					+filterItem("reward", 1.9, "1.5%")
 					#forms
-					+filterItem("type", 1.4, "3%", "1%")
+					+filterItem("type", 1.4, "1%")
 					#types
-					+filterItem("game", 1.8, "1%", "1.3%")
+					+filterItem("game", 1.8, "1.3%")
 					#games
 						+gameSpinoff("gd", "", "")
 						+gameSpinoff("meltdown", "m", " Meltdown")

@@ -5,7 +5,7 @@
 import { Player } from "../classes/Player";
 
 /**
- * Weekly progress data (for 1.9 servers that use the weekly leaderboard)
+ * Weekly progress data (for 1.9 servers that use the weekly leaderboard).
  */
 interface WeeklyProgressItem {
 	stars: number;
@@ -15,7 +15,7 @@ interface WeeklyProgressItem {
 }
 
 /**
- * Cosmetics data (for 1.9 servers)
+ * Cosmetics data (for 1.9 servers).
  */
 interface CosmeticsData {
 	bgColor: number[];
@@ -125,10 +125,10 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 				demons: 0
 			};
 			let cosmetics = "cosmetics" in x ? x.cosmetics as CosmeticsData : {
-				bgColor: [0, 0, 0, 0],
-				nameColor: [0, 0, 0, 0]
+				bgColor: [],
+				nameColor: []
 			};
-			
+
 			let bgCol = cosmetics.bgColor;
 			let bgString = bgCol ? ` style="background-color: rgb(${bgCol.join()})"` : "";
 
@@ -138,7 +138,7 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 			if (x.userCoins) x.userCoins = x.userCoins;
 			if (wp.userCoins) wp.userCoins = wp.userCoins;
 
-			$('#searchBox').append(`<div class="searchresult leaderboardSlot"${bgString}>
+			$('#searchBox').append(`<div class="searchResult leaderboardSlot"${bgString}>
 
 				<div class="center ranking">
 					${x.icon.icon == -1 && type == "accurate" ? `<img class="spaced" src="./assets/trophies/${trophies.findIndex(z => y+1 <= z) + 1}.png" height="150%" style="margin-bottom: 0%; transform:scale(1.1)">` : 
@@ -207,7 +207,7 @@ $(document).on('click', '.sortButton', function () {
 	sort = $(this).attr('sort') || "";
 	$('.sortButton').each(function() {
 		$(this).attr('src', $(this).attr('src')!.replace('-on', '').replace('.png', '') + ($(this).attr('sort') == sort ? "-on" : "") + ".png");
-	})
+	});
 	return leaderboard("accurate");
 });
 
@@ -297,7 +297,7 @@ $('#findRelative').click(function() {
 	$('#relativeName').focus().select();
 });
 
-let relativeLoading = false
+let relativeLoading = false;
 $('#relativeSearch').click(function() {
 	let relativeUsername = $('#relativeName').val();
 	if (relativeLoading || !relativeUsername) return;
@@ -315,7 +315,6 @@ $('#relativeSearch').click(function() {
 			$('#relativeStatus').html(`${foundUser.username ? `<cy>${foundUser.username}</cy>` : "That user"} doesn't have a global rank!`).show();
 			relativeLoading = false;
 		}
-
 	}).catch(e => {
 		$('#relativeStatus').text("That account doesn't seem to exist!").show();
 		relativeLoading = false;
@@ -330,10 +329,10 @@ $(document).keydown(function(k) {
 	if ($('#userSearch').is(':visible') && k.which == 13 && !relativeLoading) $('#relativeSearch').trigger('click'); //enter
 });
 
-$("#topTabOff").trigger('click')
+$("#topTabOff").trigger('click');
 
 /**
- * Get rid of all icons with a `dontload` attribute and load them anyway.
+ * Get rid of the `dontload` attribute on icons that have it and load them anyway.
  */
 function lazyLoadIcons() {
 	let newIconFound = false;
