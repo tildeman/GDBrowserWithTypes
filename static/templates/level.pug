@@ -8,7 +8,7 @@ html(lang="en")
 		link(rel="icon", href="/assets/difficulties/" + level.difficultyFace + ".png")
 		meta(id="meta-title", property="og:title", content=level.name + " by " + level.author)
 		meta(id="meta-desc", property="og:description", content=`ID: ${level.id} | Stars: ${level.stars} | Difficulty: ${level.difficulty} | Downloads: ${level.downloads} | Likes: ${level.likes} | Length: ${level.length} | Song: ${level.songName} (${level.songID})`)
-		meta(id="meta-image", name="og:image", content="https://gdbrowser.com/assets/difficulties/" + level.difficultyFace + ".png", itemprop="image")
+		meta(id="meta-image", name="og:image", content="/assets/difficulties/" + level.difficultyFace + ".png", itemprop="image")
 		meta(name="twitter:card", content="summary")
 
 	body.levelBG(onbeforeunload="saveUrl()")
@@ -138,7 +138,7 @@ html(lang="en")
 						a.youCanClickThis(style={ color: "aqua" }, href="./analyze/" + level.id) (click to try anyways)
 					img.gdButton.center(src="/assets/ok.png", style={ width: "20%" }, onclick="$('.popup').hide()")
 
-			// Here used to be a form to like/dislike levels. Not sure why it was commented out
+			//- Here used to be a form to like/dislike levels. Not sure why it was commented out
 
 			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
 				img.cornerPiece(src="/assets/corner.png", style={ width: "7%" })

@@ -45,13 +45,14 @@ export default async function(app: Express, req: Request, res: Response) {
 		type: req.query.hasOwnProperty("week") ? "2" : "1",
 	};
 
-	reqBundle.gdRequest('getGJLevelScores211', params, function(err, resp, body) { 
-		if (err) return res.status(500).send({error: true, lastWorked: appRoutines.timeSince(reqBundle.id)});
-		let scores = body?.split('|').map(rawScorePlayerEntry => appRoutines.parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
-		if (!scores.length) return res.status(500).send([]);
+	reqBundle.gdRequest('getGJLevelScores211', params, function(err, resp, body) {
+		if (err) return res.status(500).send({ error: true, lastWorked: appRoutines.timeSince(reqBundle.id) });
+		const rawScores = body?.split('|').map(rawScorePlayerEntry => appRoutines.parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
+		const scores: LeaderboardEntry[] = [];
+		if (!rawScores.length) return res.status(500).send([]);
 		else appRoutines.trackSuccess(reqBundle.id);
 
-		scores.forEach(playerEntry => {
+		rawScores.forEach(playerEntry => {
 			const score: LeaderboardEntry = {
 				rank: +playerEntry[6],
 				username: playerEntry[1],
@@ -70,9 +71,10 @@ export default async function(app: Express, req: Request, res: Response) {
 					col2RGB: colors[playerEntry[11]] || colors["3"]
 				}
 			};
+			scores.push(score);
 			appRoutines.userCache(reqBundle.id, score.accountID, score.playerID, score.username);
-		}) 
+		});
 
 		return res.send(scores.slice(0, amount));
-	})
+	});
 }

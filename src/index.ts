@@ -410,7 +410,7 @@ app.get("/gauntlets", fetchTemplateHTML("html/gauntlets.html"));
 app.get("/gdps", fetchTemplateHTML("html/gdps.html"));
 app.get("/iconkit", fetchTemplate("iconkit"));
 app.get("/leaderboard", fetchTemplate("leaderboard"));
-app.get("/leaderboard/:text", fetchTemplateHTML("html/levelboard.html"));
+app.get("/leaderboard/:text", fetchTemplate("levelboard"));
 app.get("/mappacks", fetchTemplateHTML("html/mappacks.html"));
 app.get("/messages", fetchTemplate("messages"));
 app.get("/search", fetchTemplate("filters"));

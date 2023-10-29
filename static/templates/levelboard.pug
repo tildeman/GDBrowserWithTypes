@@ -1,0 +1,53 @@
+doctype html
+html(lang="en")
+	head
+		title= "Level Leaderboard"
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/trophy.png")
+		meta(id="meta-title", property="og:title", content="Level Leaderboard")
+		meta(id="meta-desc", property="og:description", content="View the leaderboard of a Geometry Dash level!")
+		meta(id="meta-image", name="og:image", content="/assets/trophy.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body.levelBG(onbeforeunload="saveUrl()")
+		#everything(style={ overflow: "auto" })
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%" })
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%", transform: "scaleX(-1)" })
+
+			#searchBox.supercenter.dragscroll(style={ width: "124vh" })
+				div(style={ height: "4.5%" })
+
+			.epicbox.supercenter.gs(style={ width: "126vh", height: "80%", "pointer-events": "none" })
+
+			.center(style={ position: "absolute", top: "8%", left: "0", right: "0" })
+				h1#header.pre
+
+			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+
+			#loading.supercenter(style={ height: "10%", top: "47%" })
+				img.spin.noSelect(src="/assets/loading.png", style={ height: "105%" })
+
+			#error.supercenter(style={ height: "20%", top: "47%", display: "none" })
+				h1.center No scores available...
+				h3.center(style={ "margin-top": "2%" }) Either this leaderboard is empty, or the scores weren't able to be obtained from the GD servers.
+				h5.center(style={ "margin-top": "1.5%" })
+					| Last worked:
+					|
+					span#lastWorked.gold
+
+			.supercenter(style={ left: "87%", top: "24%", height: "10%" })
+				img#topMode.gdButton.darken(src="/assets/leaderboard-top.png", style={ height: "90%" })
+
+			.supercenter(style={ left: "87%", top: "35%", height: "10%" })
+				img#weekMode.gdButton(src="/assets/leaderboard-week.png", style={ height: "90%" })
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
+		script(type="text/javascript", src="/iconkit/icon.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="text/javascript", src="/dragscroll.js")
+		script(type="module", src="/page_scripts/levelboard.js")

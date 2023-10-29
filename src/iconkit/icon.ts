@@ -43,10 +43,6 @@ let positionMultiplier = 4;
  * @param isGlow Whether glow is enabled.
  */
 function positionPart(part: PartForSpecialIcons, partIndex: number, layer, formName: string, isNew: boolean, isGlow?: boolean) {
-	console.log(part);
-	console.log(partIndex);
-	console.log(layer);
-	console.log(formName);
 	layer.position.x += (part.pos[0] * positionMultiplier * (isNew ? 0.5 : 1));
 	layer.position.y -= (part.pos[1] * positionMultiplier * (isNew ? 0.5 : 1));
 	layer.scale.x = part.scale[0];
