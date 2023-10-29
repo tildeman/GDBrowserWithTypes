@@ -1,0 +1,75 @@
+doctype html
+html(lang="en")
+	head
+		title Demon Leaderboard
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/trophy-demon.png")
+		meta(property="og:type", content="website")
+		meta(id="meta-title", property="og:title", content="Demon Leaderboard")
+		meta(id="meta-desc", property="og:description", content="View the victors of a very hard Geometry Dash level!")
+		meta(id="meta-image", name="og:image", content="/assets/trophy-demon.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+
+	body.levelBG.darkBG(onbeforeunload="saveUrl()", )
+		#everything(style={ overflow: "auto" })
+			#infoDiv.popup
+				.fancybox.bounce.center.supercenter(style={ width: "90vh" })
+					h2.smaller.center(style={ "font-size": "5.5vh" }) Credits
+					p#infoText.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh", "margin-bottom": "2.5vh" })
+						co Demon rankings
+						|
+						| made possible thanks to
+						|
+						a(href="https://pointercrate.com", target="_blank")
+							ca.underline Pointercrate
+						| !
+					p.bigger.center(style={ "margin-top": "1vh" })
+						| Usernames may
+						|
+						cy differ
+						|
+						| from what is used in GD 
+					img.gdButton.center(src="/assets/ok.png", style={ width: "15%" }, onclick="$('.popup').hide()")
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
+				img.cornerPiece.grayscale(src="/assets/corner.png", style={ width: "7%" })
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
+				img.cornerPiece.grayscale(src="/assets/corner.png", style={ width: "7%", transform: "scaleX(-1)" })
+
+			#searchBox.supercenter.dragscroll(style={ width: "124vh" })
+				div(style={ height: "4.5%" })
+
+			.epicbox.supercenter.gs(style={ width: "126vh", height: "80%", "pointer-events": "none" })
+
+			.center(style={ position: "absolute", top: "8%", left: "0", right: "0" })
+				h1#header.pre
+
+			div(style={ position: "absolute", left: "7%", top: "45%", height: "10%" })
+				a#pageDown
+					img.gdButton(src="/assets/arrow-left.png", style={ height: "90%" })
+
+			div(style={ position: "absolute", right: "7%", top: "45%", height: "10%" })
+				a#pageUp
+					img.gdButton(src="/assets/arrow-right.png", style={ height: "90%" })
+
+			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+
+			#loading.supercenter(style={ height: "10%", top: "47%" })
+				img.spin.noSelect(src="/assets/loading.png", style={ height: "105%" })
+
+			div(style={ position: "absolute", top: "3%", right: "2%", width: "20%", "text-align": "right" })
+				a#pointercrate(target="_blank")
+					img.inline.gdButton(src="/assets/demonButton.png", style={ width: "23%", "margin-right": "4%" })
+				img#creditsButton.inline.gdButton(src="/assets/credits.png", style={ width: "25%" }, onclick="$('#infoDiv').show()")
+
+			div(style={ position: "absolute", bottom: "5.5%", right: "3.5%", "text-align": "right", width: "18%" })
+				a#realLeaderboardLink
+					img.gdButton(src="/assets/leaderboard.png", style={ width: "35%" })
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="text/javascript", src="/dragscroll.js")
+		script(type="module", src="/page_scripts/demon.js")

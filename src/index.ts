@@ -405,7 +405,7 @@ app.get("/analyze/:id", fetchTemplate("analyze"));
 app.get("/api", fetchTemplate("api"));
 app.get("/boomlings", fetchTemplateHTML("html/boomlings.html"));
 app.get("/comments/:id", fetchTemplate("comments"));
-app.get("/demon/:id", fetchTemplateHTML("html/demon.html"));
+app.get("/demon/:id", fetchTemplate("demon"));
 app.get("/gauntlets", fetchTemplateHTML("html/gauntlets.html"));
 app.get("/gdps", fetchTemplateHTML("html/gdps.html"));
 app.get("/iconkit", fetchTemplate("iconkit"));

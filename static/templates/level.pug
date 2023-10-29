@@ -192,7 +192,7 @@ html(lang="en")
 						if (level.coins > 2)
 							img.squeeze(src="../assets/" + coinColor + ".png", style={ height: "5vh" })
 
-			// Another div, another styling hellhole
+			//- Another div, another styling hellhole
 			div(style={ position: "absolute", top: "20%", right: "0", height: "38%", width: "40%", "line-height": "8.5vh" })
 				img.valign.inline.spaced(src="/assets/download.png", style={ height: "15%", "margin-right": "2%" })
 				h1.valign.inline.smaller.spaced= level.downloads
@@ -244,14 +244,18 @@ html(lang="en")
 				br
 				img#infoButton.gdButton.sideButton(title="Level Info", src="/assets/info.png", onclick="$('#infoDiv').show()")
 				br
-				// There used to be a like button here, but it got disabled for "evil" reasons
+				//- There used to be a like button here, but it got disabled for "evil" reasons
 				a#analyzeLink(href="./analyze/" + level.id)
 					img#analyzeBtn.gdButton.sideButton(title="Analyze Level", src="/assets/edit.png")
 					br
 				a(href="./comments/" + level.id)
 					img.gdButton.sideButton(title="View Comments", src="/assets/comment.png")
 					br
-				if (!level.gdps)
+				if level.demonList
+					a(href="/demon/" + level.demonList)
+						img#leaderboardBtn.gdButton.sideButton(title="View Leaderboard", src="/assets/demonleaderboard.png")
+						br
+				else if (!level.gdps)
 					a(href="./leaderboard/" + level.id)
 						img#leaderboardBtn.gdButton.sideButton(title="View Leaderboard", src="/assets/leaderboard.png")
 						br

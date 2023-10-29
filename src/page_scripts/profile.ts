@@ -181,6 +181,7 @@ $(document).on('click', '.likeComment', function(cmnt) {
 });
 
 $('#submitVote').click(function() {
+	// This is how the game itself identifies voters. It's insecure.
 	if (likedComments.includes(commentID)) {
 		return $('#likeMessage').text("You've already liked/disliked this comment!");
 	}

@@ -52,14 +52,13 @@ function append(reset: boolean = true) {
 }
 
 fetch('./api/achievements').then(res => res.json()).then((ach: AchievementAPIResponse) => {
-
 	Object.keys(ach.types).forEach(achType => {
-		$('#types').append(`<img class="gdButton achFilter typeFilter" filter="${ach.types[achType][1].join(" ")}" src="/assets/achievements/${achType}.png" title="${ach.types[achType][0]}"  style="margin: 0.6% 0.4%; height:6vh">`)
-	})
+		$('#types').append(`<img class="gdButton achFilter typeFilter" filter="${ach.types[achType][1].join(" ")}" src="/assets/achievements/${achType}.png" title="${ach.types[achType][0]}"  style="margin: 0.6% 0.4%; height:6vh">`);
+	});
 
-	achievements = ach.achievements
-	colors = ach.colors
-	append()
+	achievements = ach.achievements;
+	colors = ach.colors;
+	append();
 
 	function label(labelName: string) {
 		let labelFilter = `.${labelName}Filter`;
@@ -128,4 +127,5 @@ fetch('./api/achievements').then(res => res.json()).then((ach: AchievementAPIRes
 		append(false);
 	});
 });
+
 export {};

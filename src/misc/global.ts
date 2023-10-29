@@ -1,5 +1,3 @@
-// Ambient declarations - only do typechecks
-
 type Color3B = {
 	r: number,
 	g: number,
@@ -353,8 +351,6 @@ function buildIcon(elements: JQuery<HTMLElement>, current: number) {
 		glow: currentIcon.attr('glow') == "true",
 		app: iconRenderer
 	};
-	console.log(currentIcon);
-	console.log(iconConfig);
 
 	loadIconLayers(iconConfig.form, iconConfig.id, function(a: unknown, b: unknown, c: boolean) {
 		if (c) iconConfig.new = true;
@@ -409,7 +405,9 @@ $(document).ready(function() {
 	$(window).trigger('resize');
 });
 
-// Adds all necessary elements into the tab index (all buttons and links that aren't natively focusable)
+/**
+ * Adds all necessary elements into the tab index (all buttons and links that aren't natively focusable)
+ */
 const inaccessibleLinkSelector = "*:not(a) > img.gdButton, .leaderboardTab, .gdcheckbox, .diffDiv, .lengthDiv";
 
 document.querySelectorAll(inaccessibleLinkSelector).forEach(elem => {
