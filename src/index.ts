@@ -403,7 +403,7 @@ app.get("/", function(req, res) {
 app.get("/achievements", fetchTemplate("achievements"));
 app.get("/analyze/:id", fetchTemplate("analyze"));
 app.get("/api", fetchTemplate("api"));
-app.get("/boomlings", fetchTemplateHTML("html/boomlings.html"));
+app.get("/boomlings", fetchTemplate("boomlings"));
 app.get("/comments/:id", fetchTemplate("comments"));
 app.get("/demon/:id", fetchTemplate("demon"));
 app.get("/gauntlets", fetchTemplateHTML("html/gauntlets.html"));
