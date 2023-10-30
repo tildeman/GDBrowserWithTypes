@@ -1,0 +1,25 @@
+doctype html
+html(lang="en")
+	head
+		title= "> " + name
+		meta(charset="UTF-8")
+		link(rel="icon", href="/assets/folder.png")
+		meta(name="robots", content="noindex")
+		meta#meta-desc(property="og:description", content="i only upload high quality geometry dash asset rips")
+		link(rel="stylesheet", href="/assets/css/assetsPage.css")
+	body
+		h1#listing(style={ margin: "15px 0 15px 0", "text-decoration": "underline" })= "Listing for " + pathname
+		#directories(style={ "margin-bottom": "20px" })
+			.name
+				| ⏪
+				|
+				a(href="../") Back
+			each directoryListing in data.directories
+				.name
+					| 📁
+					|
+					a(href="./" + directoryListing)= directoryListing
+		#filenames
+			each fileListing in data.files
+				.name
+					a(href="./" + fileListing)= fileListing

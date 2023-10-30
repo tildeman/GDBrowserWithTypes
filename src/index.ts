@@ -301,6 +301,9 @@ const appLocals: AppRoutines = {
 
 app.locals.stuff = appLocals;
 
+app.set("view engine", "pug");
+app.set("views", "./templates");
+
 // ASSETS
 
 app.use('/assets', express.static('assets', {maxAge: "7d"}));
@@ -309,7 +312,7 @@ app.use('/assets/css', express.static('assets/css'));
 app.use('/iconkit', express.static('iconkit'));
 app.get("/global.js", fetchTemplateHTML("misc/global.js"));
 app.get("/dragscroll.js", fetchTemplateHTML("misc/dragscroll.js"));
-app.use("/page_scripts", express.static("page_scripts"))
+app.use("/page_scripts", express.static("page_scripts"));
 
 app.get("/assets/:dir*?", function(req, res) {
 	let main = (req.params["dir*"] || "").toLowerCase();
@@ -334,9 +337,16 @@ app.get("/assets/:dir*?", function(req, res) {
 	const path = `./assets/${dir}`;
 	const files: string[] = fs.existsSync(path)? fs.readdirSync(path): [];
 
-	assetPage = fs.readFileSync('./html/assets.html', 'utf8');
-	const assetData = JSON.stringify({files: files.filter(x => x.includes('.')), directories: files.filter(x => !x.includes('.'))});
-	res.status(200).send(assetPage.replace('{NAME}', dir || "assets").replace('{DATA}', assetData));
+	const assetData = {
+		files: files.filter(x => x.includes('.')),
+		directories: files.filter(x => !x.includes('.'))
+	};
+
+	res.render("assets", {
+		name: dir || "assets",
+		data: assetData,
+		pathname: req.path
+	});
 });
 
 
@@ -371,9 +381,6 @@ const downloadDisabled = ['daily', 'weekly'];
  * For GDPS servers, do not display these.
  */
 const gdpsHide = ['achievements', 'messages'];
-
-app.set("view engine", "pug");
-app.set("views", "./templates");
 
 app.get("/", function(req, res) {
 	const { req: reqBundle }: ExportBundle = res.locals.stuff;
@@ -530,7 +537,7 @@ app.get('*', function(req, res) {
 	else res.redirect('/14471563');
 });
 
-app.use(function (err: Error | undefined, req: Request, res: Response, next: NextFunction) {
+app.use(function (err: Error | undefined, req: Request, res: Response) {
 	if (err && err.message == "Response timeout") {
 		res.status(504).send('Internal server error! (Timed out)');
 	}
