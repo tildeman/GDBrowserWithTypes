@@ -32,7 +32,7 @@ export default async function(app: Express, req: Request, res: Response) {
 		page: req.body.page || "0",
 		getSent: req.query.sent ? "1" : "0"
 	});
-	// console.log(XOR.encrypt(req.body.password, 37526));
+
 	reqBundle.gdRequest('getGJMessages20', params, function (err, resp, body) {
 
 		if (err) return res.status(400).send(`Error fetching messages! Messages get blocked a lot so try again later, or make sure your username and password are entered correctly. Last worked: ${appRoutines.timeSince(reqBundle.id)} ago.`);

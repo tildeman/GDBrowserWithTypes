@@ -1,6 +1,6 @@
 import achievementTypes from './misc/achievementTypes.json' assert { type: "json" };
 import achievements from './misc/achievements.json' assert { type: "json" };
-import { fetchTemplate, fetchTemplateHTML } from './lib/template_handle.js';
+import { fetchTemplate, fetchStaticFile } from './lib/template_handle.js';
 import sampleIcons from './misc/sampleIcons.json' assert {type: "json" };
 import secrets from "./misc/secretStuff.json" assert { type: "json" };
 import { AppRoutines, ExportBundle, ServerInfo } from "./types.js";
@@ -310,8 +310,8 @@ app.use('/assets', express.static('assets', {maxAge: "7d"}));
 app.use('/assets/css', express.static('assets/css'));
 
 app.use('/iconkit', express.static('iconkit'));
-app.get("/global.js", fetchTemplateHTML("misc/global.js"));
-app.get("/dragscroll.js", fetchTemplateHTML("misc/dragscroll.js"));
+app.get("/global.js", fetchStaticFile("misc/global.js"));
+app.get("/dragscroll.js", fetchStaticFile("misc/dragscroll.js"));
 app.use("/page_scripts", express.static("page_scripts"));
 
 app.get("/assets/:dir*?", function(req, res) {
@@ -386,7 +386,9 @@ app.get("/", function(req, res) {
 	const { req: reqBundle }: ExportBundle = res.locals.stuff;
 
 	if (req.query.hasOwnProperty("offline") || (reqBundle.offline && !req.query.hasOwnProperty("home"))) {
-		res.status(200).sendFile("html/offline.html");
+		res.render("offline", {
+			author: reqBundle.server.author
+		});
 	}
 	else {
 		try {
@@ -410,7 +412,6 @@ app.get("/", function(req, res) {
 app.get("/achievements", fetchTemplate("achievements"));
 app.get("/analyze/:id", fetchTemplate("analyze"));
 app.get("/api", fetchTemplate("api"));
-app.get("/docs", fetchTemplate("api_old"));
 app.get("/boomlings", fetchTemplate("boomlings"));
 app.get("/comments/:id", fetchTemplate("comments"));
 app.get("/demon/:id", fetchTemplate("demon"));
@@ -423,6 +424,18 @@ app.get("/mappacks", fetchTemplate("mappacks"));
 app.get("/messages", fetchTemplate("messages"));
 app.get("/search", fetchTemplate("filters"));
 app.get("/search/:text", fetchTemplate("search"));
+
+// This is documentation for the GDBrowser's internal API, which is off by default.
+// Uncomment this line if you want it enabled.
+
+// app.get("/docs", fetchTemplate("api_old"));
+
+// This is the "coming soon" page.
+// The browser currently encompasses all the online features of Update 2.11, but
+// with the upcoming release of 2.2, things may change.
+// Uncommenting this line will make the page available at `/comingsoon`.
+
+// app.get("/comingsoon", fetchTemplate("comingsoon"));
 
 // API
 

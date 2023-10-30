@@ -1,5 +1,5 @@
 /**
- * @fileoverview Handle GDBrowser's specialized templates.
+ * @fileoverview Handle GDBrowser's (no longer) specialized templates.
  */
 import { Request, Response } from "express";
 import { dirname } from "path";
@@ -11,11 +11,11 @@ import { fileURLToPath } from "url";
 const __dirname = dirname(dirname(fileURLToPath(import.meta.url)));
 
 /**
- * Fetch the requested HTML template file.
- * @param fileName The HTML template file to render.
+ * Fetch the requested static file.
+ * @param fileName The static file to send.
  * @returns A controller function to be used in Express.
  */
-export function fetchTemplateHTML(fileName: string) {
+export function fetchStaticFile(fileName: string) {
 	const closure = async function(req: Request, res: Response) {
 		res.status(200).sendFile(fileName, {
 			root: __dirname

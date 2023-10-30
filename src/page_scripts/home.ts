@@ -36,7 +36,6 @@ function loadCredits() {
 
 
 Fetch(`./api/credits`).then(async (res: any) => {
-
 	lastPage = res.credits.length + 1;
 	res.credits.forEach(async (x, y) => {
 			$('#credits').append(`<div id="credits${y+1}" class="subCredits" style="display: none;">

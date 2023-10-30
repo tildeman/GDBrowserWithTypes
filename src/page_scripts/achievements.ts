@@ -37,7 +37,6 @@ function append(reset: boolean = true) {
 		else if (achItem.rewardType == "deathEffect") iconImg = `/assets/deatheffects/${achItem.rewardID}.png" width="85%" title="Death Effect ${achItem.rewardID}"`;
 		else if (achItem.rewardType == "trail") iconImg = `/assets/trails/${achItem.rewardID}.png" width="85%" title="Trail ${achItem.rewardID}"`;
 		else if (achItem.rewardType == "misc") iconImg = `/assets/coin.png" width="85%"`;
-		console.log(iconImg);
 
 		$('#searchBox').append(`<div class="flex searchResult leaderboardSlot" style="align-items: center; height: 18%; width: 92%; padding-left: 3%; padding-top: 0%; overflow: hidden">
 			<div class="flex" style="width: 8%; margin-right: 2%"><img src="${iconImg}></div>

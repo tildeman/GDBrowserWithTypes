@@ -3,7 +3,6 @@
  */
 
 $('.subdiv').each(function() {
-	console.log($(this).html());
 	$(this).html($(this).html().replace(/(<p( class=".*?")?>)([a-zA-Z0-9]*:) /g, '$1<span class="param">$3</span> '));
 });
 

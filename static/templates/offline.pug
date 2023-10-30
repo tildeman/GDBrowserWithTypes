@@ -1,0 +1,52 @@
+doctype html
+html(lang="en")
+	head
+		title Geometry Dash Browser!
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/coin.png")
+		meta(id="meta-title", property="og:title", content="Geometry Dash Browser!")
+		meta(id="meta-desc", property="og:description", content="Browse all of Geometry Dash's online features, right from this handy little website! Levels, profiles, leaderboards, comments, and more!")
+		meta(id="meta-image", name="og:image", content="/assets/coin.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body.vaultBG(onbeforeunload="saveUrl()")
+		#everything.center(style={ overflow: "hidden" })
+			h2(style={ "margin-top": "2%", "margin-bottom": "2%" })= author + "'s Purgatory"
+			h1#msg.smaller(style={ "margin-bottom": "1.2%", "white-space": "normal" }) &nbsp;
+			img#glubfub.gdButton(src="/assets/keymaster.png", style={ height: "25%" })
+
+			#footer(style={ position: "absolute", left: "1%", bottom: "0", "text-align": "left" })
+				p(style={ "line-height": "150%" })
+					a.vaultLink(href="./api") • API
+					br
+					a.vaultLink(href="https://github.com/GDColon/GDBrowser") • GitHub
+					br
+					a.vaultLink(href="https://gdcolon.com/tools") • GD Tools
+					br
+					a.vaultLink(href="https://store.steampowered.com/app/322170/Geometry_Dash/") • Buy Geometry Dash!
+
+			div(style={ position: "absolute", top: "2.8%", left: "0.5%", width: "4.5%", "text-align": "right" })
+				a(href="/?home")
+					img.gdButton(src="/assets/arrow-left.png", style={ width: "80%" })
+
+			div(style={ position: "absolute", bottom: "3%", right: "3%", width: "10%", "text-align": "right" })
+				a(href="/gdps")
+					img.gdButton(src="/assets/basement.png", style={ width: "85%" })
+
+			div(style={ position: "absolute", bottom: "22%", right: "7%", width: "10%", "text-align": "right", "pointer-events": "none" })
+				img.gdButton(src="/assets/privateservers.png", style={ width: "85%" })
+
+			div(style={ position: "absolute", top: "15.5%", right: "7.5%", width: "10%", "text-align": "right", "pointer-events": "none" })
+				img.gdButton(src="/assets/leaderboardarrow.png", style={ width: "85%" })
+
+			div(style={ position: "absolute", top: "2.2%", right: "2.5%", width: "11%", "text-align": "right" })
+				a(href="/leaderboard")
+					img.gdButton(src="/assets/leaderboard.png", style={ width: "55%" })
+
+			div(style={ position: "absolute", top: "-1.5%", right: "11%", width: "10%", "text-align": "right" })
+				a(href="/iconkit")
+					img.iconRope(src="/assets/iconrope.png", style={ width: "40%" })
+
+		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="text/javascript", src="/global.js?v=1")
+		script(type="module", src="/page_scripts/offline.js")
