@@ -91,11 +91,11 @@ function clean(text: string | number | undefined) {
 
 let disabledPortals: string[] = [];
 let altTriggerSort = false;
-let formPortals = ['cube', 'ship', 'ball', 'ufo', 'wave', 'robot', 'spider'];
-let speedPortals = ['-1x', '1x', '2x', '3x', '4x'];
-let sizePortals = ['mini', 'big'];
-let dualPortals = ['dual', 'single'];
-let mirrorPortals = ['mirrorOn', 'mirrorOff'];
+const formPortals = ['cube', 'ship', 'ball', 'ufo', 'wave', 'robot', 'spider'];
+const speedPortals = ['-1x', '1x', '2x', '3x', '4x'];
+const sizePortals = ['mini', 'big'];
+const dualPortals = ['dual', 'single'];
+const mirrorPortals = ['mirrorOn', 'mirrorOff'];
 
 fetch(`../api${window.location.pathname}`).then(res => res.json()).then((res: (AnalysisResult | -1 | -2 | -3)) => {
 	if (typeof(res) != "object") {
@@ -130,11 +130,11 @@ fetch(`../api${window.location.pathname}`).then(res => res.json()).then((res: (A
 		$('#hdText').text(`${commafy(res.highDetail)}/${commafy(res.objects)} marked high detail • ${+hdPercent.toFixed(1)}% optimized`);
 	}
 
-	let triggerList = Object.keys(res.triggers);
-	let orbList = Object.keys(res.orbs);
-	let miscList = Object.keys(res.misc);
-	let blockList = Object.keys(res.blocks);
-	let colorList = Object.keys(res.colors);
+	const triggerList = Object.keys(res.triggers);
+	const orbList = Object.keys(res.orbs);
+	const miscList = Object.keys(res.misc);
+	const blockList = Object.keys(res.blocks);
+	const colorList = Object.keys(res.colors);
 
 	let portals: (string | null)[][] = res.portals.split(", ").map(x => x.split(" "));
 
@@ -248,7 +248,7 @@ function commafy(num: string | number) {
 	}
 
 	colorList.forEach((x, y) => {
-		let c = res.colors[x];
+		const c = res.colors[x];
 
 		$('#colorDiv').append(`${y % 8 == 0 ? "<brr>" : ""}<div class="inline aColor"><div class="color" channel="${c.channel}" style="background-color: rgba(${clean(c.cr || c.r)}, ${clean(c.cg || c.g)}, ${clean(c.cb || c.b)}, ${clean(c.opacity)}); border: 0.4vh solid rgb(${c.r}, ${c.g}, ${c.b})">
 			${c.copiedChannel ? `<h3 class='copiedColor'>C:${c.copiedChannel}</h3>` : c.pColor ? `<h3 class='copiedColor'>P${c.pColor}</h3>` : c.blending ? "<h3 class='blendingDot'>•</h3>" : ""}
@@ -304,13 +304,13 @@ function commafy(num: string | number) {
 
 	$(document).on('click', '.color', function() {
 		// TODO: This is kludgy.
-		let col = res.colors.find(colorObject => colorObject.channel == $(this).attr('channel'));
-		let hsv = col!.copiedHSV;
+		const col = res.colors.find(colorObject => colorObject.channel == $(this).attr('channel'));
+		const hsv = col!.copiedHSV;
 		if (hsv) {
 			hsv.s = Number(hsv.s).toFixed(2);
 			hsv.v = Number(hsv.v).toFixed(2);
 		}
-		let hex = "#" + ((1 << 24) + (+col!.r << 16) + (+col!.g << 8) + +col!.b).toString(16).slice(1);
+		const hex = "#" + ((1 << 24) + (+col!.r << 16) + (+col!.g << 8) + +col!.b).toString(16).slice(1);
 		$('#colorStuff').html(`
 		<h2 class="slightlySmaller">${isNaN(+(col!.channel || "")) ? col!.channel : "Color " + col!.channel}</h2>
 			<div class="colorSection">

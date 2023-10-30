@@ -178,8 +178,8 @@ function buildComments(lvl: Level | Player) {
 
 				if (auto) bgCol = $('.commentBG').first().hasClass('oddComment') ? "evenComment" : "oddComment";
 
-				let userName = !history ? x.username : ("username" in lvl ? lvl.username : "");
-				let modNumber = x.moderator || ("moderator" in lvl ? lvl.moderator : 0);
+				const userName = !history ? x.username : ("username" in lvl ? lvl.username : "");
+				const modNumber = x.moderator || ("moderator" in lvl ? lvl.moderator : 0);
 
 				if (x.pages) {
 					lastPage = x.pages;
@@ -353,10 +353,10 @@ function buildComments(lvl: Level | Player) {
 	});
 
 	$('#submitComment').click(function() {
-		let comment = $('#content').val();
-		let username = $('#username').val();
-		let password = $('#password').val();
-		let levelID = window.location.pathname.split('/')[2];
+		const comment = $('#content').val();
+		const username = $('#username').val();
+		const password = $('#password').val();
+		const levelID = window.location.pathname.split('/')[2];
 		let accountID = 0;
 
 		// Was `content` intentional
@@ -410,8 +410,8 @@ function buildComments(lvl: Level | Player) {
 
 	let commentID = "0";
 	let lvID = "0";
-	let likeCount, likeImg;
-	let likedComments;
+	let likeCount: JQuery<HTMLElement>, likeImg: JQuery<HTMLImageElement>;
+	let likedComments: string[];
 
 	$(document).on('click', '.likeComment', function(cmnt) {
 		if (gdps) return;
@@ -432,10 +432,10 @@ function buildComments(lvl: Level | Player) {
 			return $('#likeMessage').text("You've already liked/disliked this comment!");
 		}
 
-		let ID = commentID;
-		let username = $('#like-username').val();
-		let password = $('#like-password').val();
-		let extraID = lvID || window.location.pathname.split('/')[2];
+		const ID = commentID;
+		const username = $('#like-username').val();
+		const password = $('#like-password').val();
+		const extraID = lvID || window.location.pathname.split('/')[2];
 		let accountID = 0;
 		let likeType = like ? "1" : "0";
 		
@@ -499,4 +499,5 @@ function buildComments(lvl: Level | Player) {
 		}
 	});
 }
+
 export {};

@@ -1,4 +1,5 @@
 import achievementTypes from './misc/achievementTypes.json' assert { type: "json" };
+import { sacredTexts, extraData as iconKitFiles } from "./iconkit/static_files.js"
 import achievements from './misc/achievements.json' assert { type: "json" };
 import { fetchTemplate, fetchStaticFile } from './lib/template_handle.js';
 import sampleIcons from './misc/sampleIcons.json' assert {type: "json" };
@@ -6,6 +7,7 @@ import secrets from "./misc/secretStuff.json" assert { type: "json" };
 import { AppRoutines, ExportBundle, ServerInfo } from "./types.js";
 import serverListRaw from "./servers.json" assert { type: "json" };
 import express, { NextFunction, Request, Response } from 'express';
+import credits from "./misc/credits.json" assert { type: "json" };
 import rateLimit, { AugmentedRequest } from "express-rate-limit";
 import music from './misc/music.json' assert { type: "json" };
 import { convertUSP } from './lib/uspconvert.js';
@@ -81,8 +83,6 @@ const RL2 = rateLimit({
 		return req.headers['x-real-ip']?.toString() || req.headers['x-forwarded-for']?.toString() || "";
 	}
 });
-
-let assetPage = fs.readFileSync('./html/assets.html', 'utf8');
 
 const appAccountCache: Record<string, any> = {};
 const appLastSuccess: Record<string, number> = {};
@@ -442,7 +442,7 @@ app.get("/search/:text", fetchTemplate("search"));
 app.get("/api/analyze/:id", RL, function(req, res) { run.level(app, req, res, true, true) });
 app.get("/api/boomlings", function(req, res) { run.boomlings(app, req, res) });
 app.get("/api/comments/:id", RL2, function(req, res) { run.comments(app, req, res) });
-app.get("/api/credits", async function(req, res) { res.status(200).send((await import('./misc/credits.json', { assert: { type: "json" } })).default) });
+app.get("/api/credits", async function(req, res) { res.status(200).send(credits) });
 app.get("/api/gauntlets", function(req, res) { run.gauntlets(app, req, res) });
 app.get("/api/leaderboard", function(req, res) { run[req.query.hasOwnProperty("accurate") ? "accurate" : "scores"](app, req, res) });
 app.get("/api/leaderboardLevel/:id", RL2, function(req, res) { run.leaderboardLevel(app, req, res) });
@@ -475,17 +475,11 @@ app.get("/:id", function(req, res) { run.level(app, req, res) });
 // MISC
 
 app.get("/api/userCache", function(req, res) { res.status(200).send(appAccountCache) });
-app.get("/api/achievements", function(req, res) { res.status(200).send({ achievements, types: achievementTypes, shopIcons: sacredTexts.shops, colors: sacredTexts.colors }) });
+app.get("/api/achievements", function(req, res) { res.status(200).send({ achievements, types: achievementTypes, shopIcons: iconKitFiles.shops, colors: sacredTexts.colors }) });
 app.get("/api/music", function(req, res) { res.status(200).send(music) });
 app.get("/api/gdps", function(req, res) {res.status(200).send(req.query.hasOwnProperty("current") ? appSafeServers.find(x => res.locals.stuff.req.server.id == x.id) : appSafeServers) });
 
 // important icon stuff
-const sacredTexts: Record<string, any> = {};
-
-const sacredTextFiles = fs.readdirSync('./iconkit/sacredtexts');
-for (let x of sacredTextFiles) {
-	sacredTexts[x.split(".")[0]] = (await import("./iconkit/sacredtexts/" + x, { assert: { type: "json" } })).default;
-}
 
 const previewIcons = fs.readdirSync('./iconkit/premade');
 const newPreviewIcons = fs.readdirSync('./iconkit/newpremade');
@@ -517,11 +511,6 @@ app.get('/api/icons', function(req, res) {
 });
 
 // important icon kit stuff
-const iconKitFiles: Record<string, string[]> = {};
-const extraDataDir = fs.readdirSync('./iconkit/extradata');
-for (const x of extraDataDir) {
-	iconKitFiles[x.split(".")[0]] = (await import("./iconkit/extradata/" + x, { assert: { type: "json" } })).default;
-}
 
 iconKitFiles.previewIcons = previewIcons;
 iconKitFiles.newPreviewIcons = newPreviewIcons;

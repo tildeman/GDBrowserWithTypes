@@ -8,18 +8,18 @@ interface IDisabledFilters {
 	game: string[];
 }
 
-let disabledFilters: IDisabledFilters = {
+const disabledFilters: IDisabledFilters = {
 	reward: [],
 	type: [],
 	game: []
 };
-let forms = ["icon", "ship", "ball", "ufo", "wave", "robot", "spider"];
-let gameColors = { gd: "255,200,0", meltdown: "255, 100, 0", world: "100,220,0", subzero: "0,255,255" };
+const forms = ["icon", "ship", "ball", "ufo", "wave", "robot", "spider"];
+const gameColors = { gd: "255,200,0", meltdown: "255, 100, 0", world: "100,220,0", subzero: "0,255,255" };
 let achievements: AchievementItem[] = [];
 let colors: Record<number, Color3B> = {};
 let completed = false;
 
-let formStr = ["Icon", "Ship", "Ball", "UFO", "Wave", "Robot", "Spider", "Trail", "Death Effect", "Primary Color", "Secondary Color", "Misc"];
+const formStr = ["Icon", "Ship", "Ball", "UFO", "Wave", "Robot", "Spider", "Trail", "Death Effect", "Primary Color", "Secondary Color", "Misc"];
 forms.concat(["trail", "deathEffect", "color1", "color2", "misc"]).forEach((property, propertyIndex) => {
 	$('#forms').append(`<img class="gdButton achFilter rewardFilter" filter="${property}" title="${formStr[propertyIndex]}" src="/assets/${propertyIndex > 8 ? "achievements" : "iconkitbuttons"}/${property}_on.png" style="margin: 0% 0.75%; height:7vh">`);
 });
@@ -60,9 +60,9 @@ fetch('./api/achievements').then(res => res.json()).then((ach: AchievementAPIRes
 	append();
 
 	function label(labelName: string) {
-		let labelFilter = `.${labelName}Filter`;
-		let labelID = `#${labelName}Label h1`;
-		let labelButtons = `#${labelName}Label img`;
+		const labelFilter = `.${labelName}Filter`;
+		const labelID = `#${labelName}Label h1`;
+		const labelButtons = `#${labelName}Label img`;
 		$(labelFilter).hover(function() {
 			$(labelButtons).addClass('hidey');
 			$(labelID).attr('text', $(labelID).text()).text($(this).attr('title')!.toString()).addClass("labelHover");

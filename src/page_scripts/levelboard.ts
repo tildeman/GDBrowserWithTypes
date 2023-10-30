@@ -3,7 +3,7 @@
  */
 
 let loading = false;
-let lvlID = Math.round(+window.location.pathname.split('/')[2]);
+const lvlID = Math.round(+window.location.pathname.split('/')[2]);
 
 if (!lvlID || lvlID > 99999999 || lvlID < -99999999) {
 	window.location.href = window.location.href.replace("leaderboard", "search");

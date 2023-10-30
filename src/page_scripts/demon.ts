@@ -4,11 +4,11 @@
 
 import { ServerInfo } from "../types";
 
-let max = 250;
-let trophies = [1, 5, 10, 25, 50, 100, max];
+const max = 250;
+const trophies = [1, 5, 10, 25, 50, 100, max];
 
-let demonID = Math.round(+window.location.pathname.split('/')[2]);
-let illegal = (!demonID || demonID > max || demonID < 1);
+const demonID = Math.round(+window.location.pathname.split('/')[2]);
+const illegal = (!demonID || demonID > max || demonID < 1);
 
 if (demonID > 1) $('#pageDown').attr('href', `./${demonID - 1}`);
 else $('#pageDown').hide();
@@ -23,7 +23,7 @@ Fetch(`../api/gdps?current=1`).then((server: ServerInfo) => {
 	fetch(`${server.demonList}api/v2/demons/listed?after=${demonID - 1}&before=${demonID + 1}`).then(res => res.json()).then(rawDemon => {
 		// two requests because stadust is h
 		if (rawDemon && rawDemon[0]) fetch(`${server.demonList}api/v2/demons/${rawDemon[0].id}`).then(res => res.json()).then(demonRes => {
-			let demon = demonRes.data;
+			const demon = demonRes.data;
 			if (!demon.id) window.location.href = "/";
 
 			document.title = "Demon Leaderboard for " + demon.name;

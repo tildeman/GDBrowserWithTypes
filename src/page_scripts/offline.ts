@@ -3,7 +3,7 @@
  */
 
 let line = 0;
-let dialogue = [
+const dialogue = [
 	"Hi there!", "We got IP banned again :)", "As usual we don't know why...", "Bit of a shame honestly", "We had a good streak going", "Sometimes the GD servers are slow",
 	"And Rob tries to fix it...", "...by killing GDBrowser??", "Look I really don't know", "Anyways uhhh",
 	"Hopefully we're back soon", "You're stuck with me for now", "Some features still work though!",
@@ -14,7 +14,7 @@ let dialogue = [
 ];
 
 $("#glubfub").click(function() {
-	let msg = dialogue[line];
+	const msg = dialogue[line];
 	$("#msg").text(msg);
 	line++;
 	if (line == dialogue.length) line = 0;

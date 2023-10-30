@@ -60,12 +60,12 @@ interface IconConfiguration {
  */
 interface PartForSpecialIcons {
 	part: number;
-	pos: [number, number];
-	scale: [number, number];
+	pos: number[];
+	scale: number[];
 	rotation: number;
-	flipped: [boolean, boolean];
+	flipped: boolean[];
 	z: number;
-	name: string;
+	name?: string;
 }
 
 interface ExtraSettings {
@@ -86,7 +86,7 @@ interface AnimationObject {
 		/**
 		 * If the animation ends, should it replay from the beginning?
 		 */
-		loop: boolean;
+		loop?: boolean;
 	};
 	/**
 	 * The frame data for the animation.
@@ -118,7 +118,7 @@ interface IconData {
 		/**
 		 * Whether this form contains extra animations.
 		 */
-		spicy: boolean;
+		spicy?: boolean;
 	}>;
 	/**
 	 * Animations for "spicy" forms.
@@ -136,7 +136,7 @@ interface IconData {
 			 * A tint value.
 			 * Its use is unknown.
 			 */
-			tints: number[];
+			tints: Record<string, number>;
 		}>;
 		/**
 		 * The actual keyframes that define the animation.
@@ -146,7 +146,11 @@ interface IconData {
 	/**
 	 * A list of colors in RGB format.
 	 */
-	colors: Color3B[];
+	colors: Record<string, Color3B>;
+	/**
+	 * The number of icons for each gamemode.
+	 */
+	iconCounts?: Record<string, number>;
 	/**
 	 * The number of 2.2 icons for each gamemode.
 	 * The trailer says around 800.
@@ -159,11 +163,11 @@ interface IconData {
 		/**
 		 * The offset x and y values for the icon part.
 		 */
-		spriteOffset: [number, number];
+		spriteOffset: number[];
 		/**
 		 * The size of the icon part.
 		 */
-		spriteSize: [number, number];
+		spriteSize: number[];
 	}>;
 	/**
 	 * A list of all the new icons.
@@ -361,7 +365,7 @@ function buildIcon(elements: JQuery<HTMLElement>, current: number) {
 					info: {},
 					animations: {}
 				},
-				colors: [],
+				colors: {},
 				newIconCounts: {},
 				gameSheet: {},
 				newIcons: []

@@ -6,8 +6,8 @@ import { ServerInfo } from "../types";
 
 let pageSize = 20;
 let page = 1;
-let localhost = window.location.hostname == "localhost";
-let host = window.location.host.split(".").slice(-2).join(".");
+const localhost = window.location.hostname == "localhost";
+const host = window.location.host.split(".").slice(-2).join(".");
 
 Fetch('/api/gdps').then((servers: ServerInfo[]) => {
 	let currentServer = servers.find(x => x.id == gdps);

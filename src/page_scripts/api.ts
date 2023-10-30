@@ -16,8 +16,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 	});
 });
 
-let menuButton = document.getElementById('menu-btn') as HTMLButtonElement;
-let headerLink = document.getElementsByClassName('header-link') as HTMLCollectionOf<HTMLButtonElement>;
+const menuButton = document.getElementById('menu-btn') as HTMLButtonElement;
+const headerLink = document.getElementsByClassName('header-link') as HTMLCollectionOf<HTMLButtonElement>;
 
 // menu button
 menuButton.onclick = function(){

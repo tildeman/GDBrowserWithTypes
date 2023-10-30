@@ -10,10 +10,10 @@ const levelNextDaily: string = $('#dataBlock').data('nextdaily');
 const levelSongID: string = $('#dataBlock').data('songid');
 
 /**
- * Format a duration in Colon's favorite format
- * @param secs The total number of seconds
- * @param timeUp If set to `true`, return "Time's up!" if the number of seconds is 0
- * @returns The formatted time string
+ * Format a duration in Colon's favorite format.
+ * @param secs The total number of seconds.
+ * @param timeUp If set to `true`, return "Time's up!" if the number of seconds is 0.
+ * @returns The formatted time string.
  */
 function colonize(secs: number, timeUp: boolean) {
 	if (secs < 0) {
@@ -114,7 +114,7 @@ function saveLevel() {
 }
 
 /**
- * If the level is saved, modify the button to delete the level from the saved list instead
+ * If the level is saved, modify the button to delete the level from the saved list instead.
  */
 function savedLevel() {
 	$('#saveButton').attr('src', '/assets/delete.png').attr('onclick', '$("#deleteDiv").show()');

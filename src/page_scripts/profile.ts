@@ -127,9 +127,9 @@ $('#content').on('input', function() {
 });
 
 $('#submitComment').click(function () {
-	let comment = $('#content').val();
-	let username = accountUsername;
-	let password = $('#password').val();
+	const comment = $('#content').val();
+	const username = accountUsername;
+	const password = $('#password').val();
 	if (!comment || !password || loadingComments) return $('#leavePost').hide();
 	$('#message').text("Posting...");
 	$('.postbutton').hide();
@@ -186,12 +186,12 @@ $('#submitVote').click(function() {
 		return $('#likeMessage').text("You've already liked/disliked this comment!");
 	}
 
-	let ID = commentID;
-	let username = $('#like-username').val();
-	let password = $('#like-password').val();
-	let extraID = lvID || window.location.pathname.split('/')[2];
+	const ID = commentID;
+	const username = $('#like-username').val();
+	const password = $('#like-password').val();
+	const extraID = lvID || window.location.pathname.split('/')[2];
+	const likeType = like ? "1" : "0";
 	let accountID = 0;
-	let likeType = like ? "1" : "0";
 	
 	if (!ID || !username || !password || loadingComments) {
 		return $('#postComment').hide();

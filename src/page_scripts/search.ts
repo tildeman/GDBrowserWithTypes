@@ -9,16 +9,16 @@ $('#pageUp').hide();
 
 let accID = "";
 let path = location.pathname.replace('/search/', "");
-let url = new URL(window.location.href);
-let gauntlet = url.searchParams.get('gauntlet');
-let userMode = url.searchParams.get('user');
-let type = url.searchParams.get('type') || "";
-let list = url.searchParams.get('list');
-let count = url.searchParams.get('count');
+const url = new URL(window.location.href);
+const gauntlet = url.searchParams.get('gauntlet');
+const userMode = url.searchParams.get('user');
+const type = url.searchParams.get('type') || "";
+const list = url.searchParams.get('list');
+const count = url.searchParams.get('count');
 let header = url.searchParams.get('header');
-let demonList = ["demonList", "demonlist"].some(x => typeof url.searchParams.get(x) == "string" || type == x);
+const demonList = ["demonList", "demonlist"].some(x => typeof url.searchParams.get(x) == "string" || type == x);
 let loading = false;
-let gauntlets = [
+const gauntlets = [
 	"Fire", "Ice", "Poison", "Shadow", "Lava", "Bonus",
 	"Chaos", "Demon", "Time", "Crystal", "Magic", "Spike",
 	"Monster", "Doom", "Death"
@@ -29,7 +29,7 @@ let pages = 0;
 let results = 0;
 let legalPages = true;
 let gdwMode = false;
-let superSearch = ['*', '*?type=mostliked', '*?type=mostdownloaded', '*?type=recent'].includes(window.location.href.split('/')[4].toLowerCase());
+const superSearch = ['*', '*?type=mostliked', '*?type=mostdownloaded', '*?type=recent'].includes(window.location.href.split('/')[4].toLowerCase());
 let pageCache = {};
 
 let demonListLink = "https://pointercrate.com/";
@@ -263,18 +263,18 @@ $('#purgeSaved').click(function() {
 	location.reload();
 });
 
-var max = 9999;
-var min = 1;
+const max = 9999;
+const min = 1;
 
 $('#pageSelect').on('input', function () {
-	var x = $(this).val();
+	const x = $(this).val();
 	if ($(this).val() != "") {
 		$(this).val(Math.max(Math.min(Math.floor(Number(x) || 0), max), min));
 	}
 });
 
 $('#pageSelect').on('blur', function () {
-	var x = $(this).val();
+	const x = $(this).val();
 	if ($(this).val() != "") {
 		$(this).val(Math.max(Math.min(Math.floor(Number(x) || 0), max), min));
 	}

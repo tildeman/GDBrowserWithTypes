@@ -147,7 +147,7 @@ $(document).on('change', '.chk', function () {
 $(document).on('click', '.gdMessage', function () {
 	messageID = $(this).attr('messageID') || "0";
 	playerID = $(this).attr('playerID') || "0";
-	let subject = $(this).find('h3:first');
+	const subject = $(this).find('h3:first');
 	subject.html(subject.html().replace('<cg>!</cg>', "")); //lazy way to mark as read
 
 	$('#theMfMessage').attr('style', '');
@@ -219,16 +219,16 @@ $('#deleteCurrentMessage').click(function () {
 });
 
 $('#purge').click(function () {
-	let checked = $(document).find('.chk:checked').length;
+	const checked = $(document).find('.chk:checked').length;
 	if (checked == 0) return;
-	let selectStr = checked + " message" + (checked != 1 ? "s" : "");
+	const selectStr = checked + " message" + (checked != 1 ? "s" : "");
 	$('.selectedAmount').text(selectStr);
 	$('#bulkDelete').show();
 });
 
 $('#bulkDeleteMessages').click(function () {
 	allowEsc = false;
-	let msgIDs: string[] = [];
+	const msgIDs: string[] = [];
 	$('.chk:checked').each(function () {
 		msgIDs.push($(this).attr('messageID') || "");
 	});
@@ -268,8 +268,8 @@ $('#replyButton').click(function() {
 });
 
 $('#postMessage').click(function () {
-	let subject = $('#postSubject').val();
-	let message = $('#postContent').val();
+	const subject = $('#postSubject').val();
+	const message = $('#postContent').val();
 	if (!subject || !message || !messageStatus[playerID] || messageStatus[playerID][0] == "off") return;
 	allowEsc = false;
 	$('#reply-loading').show();

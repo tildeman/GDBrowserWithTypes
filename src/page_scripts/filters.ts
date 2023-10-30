@@ -20,7 +20,7 @@ function undupe<T>(array: T[]) {
 
 // TODO: Remove this deprecated usage
 $('#userSearch').click(function() {
-	let query = encodeURIComponent(($('#levelName').val() || "").toString()).replace(/%2F/gi, "");
+	const query = encodeURIComponent(($('#levelName').val() || "").toString()).replace(/%2F/gi, "");
 	if (query) window.location.href = "./u/" + query;
 });
 
@@ -54,9 +54,9 @@ $('.levelSearch').click(function() {
 
 	// === SONG === //
 
-	let selectedOfficial = customSong ? null : officialSong;
-	let selectedCustom = customSong && $('#songID').val() ? ($('#songID').val() || "").toString().slice(0, 16) : null;
-	let selectedSong = selectedCustom || selectedOfficial;
+	const selectedOfficial = customSong ? null : officialSong;
+	const selectedCustom = customSong && $('#songID').val() ? ($('#songID').val() || "").toString().slice(0, 16) : null;
+	const selectedSong = selectedCustom || selectedOfficial;
 
 	if (selectedSong) {
 		url += "&songID=" + selectedSong;
@@ -112,7 +112,7 @@ $('.diffDiv').click(function() {
 
 	filters = getDiffFilters();
 
-	let minusCheck = filters.filter(x => +x < 0);
+	const minusCheck = filters.filter(x => +x < 0);
 	if (minusCheck.length || $(this).hasClass('demonDiff')) {
 		filters = minusCheck;
 		$('.diffDiv').removeClass('selectedFilter');
@@ -141,9 +141,9 @@ $(document).keydown(function(k) {
 });
 
 $('#pageSize').on('input blur', function (event) {
-	var x = +($(this).val() || "0");
-	var max = 250;
-	var min = 1;
+	const x = +($(this).val() || "0");
+	const max = 250;
+	const min = 1;
 	if (event.type == "input") {
 		if (x > max || x < min) $(this).addClass('red');
 		else $(this).removeClass('red');
@@ -155,7 +155,7 @@ $('#pageSize').on('input blur', function (event) {
 	$('#listLevels').trigger('input');
 });
 
-let listMsg = $('#listInfo').html()
+const listMsg = $('#listInfo').html()
 $('#listLevels, #listName').on('input blur', function (event) {
 	let levels = ($('#listLevels').val() || "").toString().replace(/\n| /g, ",").split(",").map(x => x.replace(/[^0-9]/g, "")).filter(x => +x > 0 && +x < 100000000000);
 	levels = undupe(levels);
@@ -235,7 +235,7 @@ function clearFilters() {
  * Check for additional (advanced) options, and turns the plus button blue
  */
 function checkExtraFilters() {
-	let hasExtra = savedFilters.checked.length || savedFilters.defaultSong || savedFilters.song > 0;
+	const hasExtra = savedFilters.checked.length || savedFilters.defaultSong || savedFilters.song > 0;
 	$('#showFilters').attr('src', `/assets/plus${hasExtra ? "_blue" : ""}.png`);
 }
 
@@ -261,7 +261,7 @@ if (savedFilters.starred) $('#starCheck').addClass('selectedFilter');
 if (!savedFilters.checked) savedFilters.checked = [];
 else (savedFilters.checked.forEach(x => $(`input[id=box-${x}]`).prop('checked', true)));
 
-let hadDefaultSong = savedFilters.defaultSong;
+const hadDefaultSong = savedFilters.defaultSong;
 if (savedFilters.defaultSong) {
 	officialSong = +savedFilters.song || 1;
 	$('#normalSong').trigger('click');
@@ -270,7 +270,7 @@ else if (+savedFilters.song && +savedFilters.song > 0) $('#songID').val(savedFil
 
 checkExtraFilters();
 
-Fetch(`../api/music`).then((music: any) => {
+Fetch(`/api/music`).then((music: any) => {
 
 	$('#songName').html("1: " + music[1][0]);
 
@@ -303,7 +303,7 @@ Fetch(`../api/music`).then((music: any) => {
 		$('#levelName').css('width', '76%');
 	}
 
-	if (gdps) Fetch(`../api/gdps?current=1`).then((res: any) => {
+	if (gdps) Fetch(`/api/gdps?current=1`).then((res: any) => {
 		if (res.demonList) $('#demonList').show();
 	});
 	else $('#demonList').show();

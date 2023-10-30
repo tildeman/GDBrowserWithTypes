@@ -31,7 +31,7 @@ html(lang="en")
 				img.cornerPiece(src="/assets/corner.png", style={ width: "7%", transform: "scaleY(-1)" })
 
 			div(style={ position: "absolute", top: "1.7%", right: "2%", width: "10%", "text-align": "right"})
-				img#creditsButton.gdButton(src="/assets/credits.png", width="60%", onclick="loadCredits()")
+				img#creditsButton.gdButton(src="/assets/credits.png", width="60%")
 
 			// TODO: This is kludgy
 			div(class=(isOnePointNine && onePointNineDisabled.includes("achievements")) || (serverDisabled.includes("achievements")) || (isDownloadDisabled && downloadDisabled.includes("achievements")) ? "menuDisabled" : "menu-achievements", style={ position: "absolute", top: "5.5%", left: "3%", width: "12%"})

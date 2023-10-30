@@ -27,22 +27,22 @@ let sort = "stars";
 let modMode = false;
 let weekly = false;
 let showWeek = localStorage.weeklyStats == "1";
-let trophies = [1, 3, 10, 25, 50, 75, 100];
-let boomColors = ["red", "orange", "yellow", "green", "teal", "blue", "pink"];
+const trophies = [1, 3, 10, 25, 50, 75, 100];
+const boomColors = ["red", "orange", "yellow", "green", "teal", "blue", "pink"];
 
 let top250Text = 
 `The <cg>Stars</cg> leaderboard contains the <cg>top 100 players</cg>, sorted by <cy>star</cy> value. It was formerly <co>inaccurate</co> but should be much more <cb>reliable</cb> now.`;
 
-let topGDPSText = 
+const topGDPSText = 
 `The <cg>Stars</cg> leaderboard contains the <cg>top players</cg>, sorted by <cy>star</cy> value.`;
 
-let weeklyText = 
+const weeklyText = 
 `The <cg>Weekly</cg> leaderboard displays the players who have gained the most <cy>stars</cy> in the <cb>past week</cb>. It was officially <co>removed</co> in update 2.0, but lives on in some GDPS'es.`;
 
-let accurateText =
+const accurateText =
 `The <cg>Accurate Leaderboard</cg> is an <cy>externally managed</cy> leaderboard which aims to provide <ca>detailed</ca> and hacker-proof stats on top players. It also once provided a way to view an <cg>accurate</cg> list of players with the most <cy>stars</cy> when the official leaderboards were <ca>frozen</ca>. It is managed by <cb>XShadowWizardX, Pepper360, Octeract</cb>, and many many other helpers.`;
 
-let creatorText = 
+const creatorText = 
 `The <cg>Creators Leaderboard</cg> is sorted by <cg>creator points</cg>, rather than stars. A player's <cg>creator points</cg> (CP) is calculated by counting their number of <cy>star rated</cy> levels, plus an extra point for every level that has been <cb>featured</cb>, plus an additional point for <co>epic rated</co> levels.`;
 
 if (showWeek) $('#weeklyStats').attr('src', '/assets/sort-week-on.png');
@@ -111,29 +111,29 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 		if (modMode && sort == "cp" && res != -1) res = res.sort(function(a, b) {
 			return b.cp - a.cp;
 		});
-		let wk = type == "weekly";
+		const wk = type == "weekly";
 
 		if ((leaderboardParams ? true : val == type) && res != -1 && res.length) res.forEach((x, y) => {
 			// Quick and dirty method, just in case
 			if (typeof(x.icon) == "number") return;
 
 			// Zombie code
-			let wp = "weeklyProgress" in x ? x.weeklyProgress as WeeklyProgressItem : {
+			const wp = "weeklyProgress" in x ? x.weeklyProgress as WeeklyProgressItem : {
 				stars: 0,
 				diamonds: 0,
 				userCoins: 0,
 				demons: 0
 			};
-			let cosmetics = "cosmetics" in x ? x.cosmetics as CosmeticsData : {
+			const cosmetics = "cosmetics" in x ? x.cosmetics as CosmeticsData : {
 				bgColor: [],
 				nameColor: []
 			};
 
-			let bgCol = cosmetics.bgColor;
-			let bgString = bgCol ? ` style="background-color: rgb(${bgCol.join()})"` : "";
+			const bgCol = cosmetics.bgColor;
+			const bgString = bgCol ? ` style="background-color: rgb(${bgCol.join()})"` : "";
 
-			let nameCol = cosmetics.nameColor;
-			let nameString = nameCol ? `; color: rgb(${nameCol.join()}) ;` : null;
+			const nameCol = cosmetics.nameColor;
+			const nameString = nameCol ? `; color: rgb(${nameCol.join()}) ;` : null;
 
 			if (x.userCoins) x.userCoins = x.userCoins;
 			if (wp.userCoins) wp.userCoins = wp.userCoins;
@@ -280,7 +280,7 @@ $('#modSort').click(function() {
  * Adjust the browser CSS to include the weekly tab.
  */
 function weeklyAdjust() {
-	let weekEnabled = showWeek && type == "accurate";
+	const weekEnabled = showWeek && type == "accurate";
 	$('.leaderboardSlot').css('height', weekEnabled ? '33%' : '25%');
 	$('.weeklyStuff').css('display', weekEnabled ? 'block' : 'none');
 }
@@ -299,7 +299,7 @@ $('#findRelative').click(function() {
 
 let relativeLoading = false;
 $('#relativeSearch').click(function() {
-	let relativeUsername = $('#relativeName').val();
+	const relativeUsername = $('#relativeName').val();
 	if (relativeLoading || !relativeUsername) return;
 	relativeLoading = true;
 	Fetch("../api/profile/" + relativeUsername).then(foundUser => {
