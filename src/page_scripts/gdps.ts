@@ -12,7 +12,7 @@ const host = window.location.host.split(".").slice(-2).join(".");
 Fetch('/api/gdps').then((servers: ServerInfo[]) => {
 	let currentServer = servers.find(x => x.id == gdps);
 	servers = [currentServer].concat(servers.filter(x => x.id != gdps)).filter(x => x) as ServerInfo[];
-	let pageCount = Math.floor((servers.length-1)/pageSize) + 1;
+	let pageCount = Math.floor((servers.length - 1) / pageSize) + 1;
 
 	/**
 	 * List the available servers in `servers.json`.
@@ -23,7 +23,7 @@ Fetch('/api/gdps').then((servers: ServerInfo[]) => {
 		if (page <= 1) $('#pageDown').hide();
 		else $('#pageDown').show();
 
-		let serverPage = servers.slice((page-1)*pageSize, (page-1)*pageSize + pageSize);
+		let serverPage = servers.slice((page - 1)*pageSize, (page - 1)*pageSize + pageSize);
 		$('#searchBox').html('<div style="height: 4.5%"></div>').scrollTop(0);
 
 		// TODO: This has a few glaring visual glitches

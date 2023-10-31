@@ -8,7 +8,7 @@ import { fileURLToPath } from "url";
 /**
  * The directory name, used by `express.Response.sendFile()`.
  */
-const __dirname = dirname(dirname(fileURLToPath(import.meta.url)));
+export const __dirname = dirname(dirname(fileURLToPath(import.meta.url)));
 
 /**
  * Fetch the requested static file.

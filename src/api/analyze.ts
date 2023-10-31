@@ -2,25 +2,14 @@
  * @fileoverview Spaghetti code for level analysis.
  */
 
-import zlib from "zlib";
-import blocks from "../misc/analysis/blocks.json" assert { type: "json" };
+import properties from "../misc/analysis/objectProperties.json" assert { type: "json" };
 import colorStuff from "../misc/analysis/colorProperties.json" assert { type: "json" };
 import init from "../misc/analysis/initialProperties.json" assert { type: "json" };
-import properties from "../misc/analysis/objectProperties.json" assert { type: "json" };
-import rawIds from "../misc/analysis/objects.json" assert { type: "json" };
-import { Express, Request, Response } from "express";
+import ids from "../misc/analysis/objects.json" assert { type: "json" };
+import blocks from "../misc/analysis/blocks.json" assert { type: "json" };
 import { DownloadedLevel } from "../classes/Level.js";
-
-interface ObjectMap {
-	portals: Record<string, string>;
-	coins: Record<string, string>;
-	orbs: Record<string, string>;
-	triggers: Record<string, string>;
-	misc: Record<string, [string, ...number[]]>
-}
-
-// Dirty workaround. Avoid at all costs.
-const ids: ObjectMap = rawIds as any;
+import { Request, Response } from "express";
+import zlib from "zlib";
 
 /**
  * Raw information for a level object.
@@ -129,14 +118,13 @@ interface RelevantHeaderResponse {
 }
 
 /**
- * Analyze a level (Auxiliary Express middleware).
- * @param app The Express app (nothing relevant).
+ * Analyze a level (controller function).
  * @param req The client request (nothing relevant).
  * @param res The server response (to send the level details/error).
- * @param level The level data as a string.
+ * @param level The level containing data as a string.
  * @returns A Promise that resolves to `void`.
  */
-export default async function(app: Express, req: Request, res: Response, level?: DownloadedLevel) {
+export default async function(req: Request, res: Response, level?: DownloadedLevel) {
 	if (!level) {
 		return res.status(500).send("44");
 	}
@@ -149,7 +137,8 @@ export default async function(app: Express, req: Request, res: Response, level?:
 
 		const response_data = analyze_level(level, raw_data);
 		return res.send(response_data);
-	} else {
+	}
+	else {
 		zlib.unzip(levelString, (err, buffer) => {
 			if (err) {
 				return res.status(500).send("-2");
@@ -265,7 +254,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 			opacity: Number(raw_obj.opacity) || undefined,
 			duration: Number(raw_obj.duration) || undefined,
 			targetGroupID: raw_obj.targetGroupID
-		}
+		};
 
 		let id = obj.id;
 
@@ -343,7 +332,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	alphaTriggers.forEach(tr => {
 		if ((tr.x || 0) < 500 && !tr.touchTriggered && !tr.spawnTriggered && tr.opacity == 0 && tr.duration == 0
 			&& alphaTriggers.filter(x => x.targetGroupID == tr.targetGroupID).length == 1) {
-			invisTriggers.push(Number(tr.targetGroupID))
+			invisTriggers.push(Number(tr.targetGroupID));
 		}
 	});
 
@@ -365,7 +354,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	const responseCoins = level_coins.sort(function (a, b) {
 		return (a.x || 0) - (b.x || 0);
 	}).map(x => Math.floor((x.x || 0) / (Math.max(last, 529.0) + 340.0) * 100));
-	const responseCoinsVerified = level.verifiedCoins
+	const responseCoinsVerified = level.verifiedCoins;
 	
 	const responseOrbs = orb_array;
 	responseOrbs.total = Object.values(orb_array).reduce((a, x) => a + x, 0); // we already have an array of objects, use it
@@ -380,7 +369,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	triggerGroups.forEach(x => {
 		if (responseTriggerGroups["Group " + x]) responseTriggerGroups["Group " + x] += 1;
 		else responseTriggerGroups["Group " + x] = 1;
-	})
+	});
 	
 	responseTriggerGroups = sortObj(responseTriggerGroups);
 	let triggerKeys = Object.keys(responseTriggerGroups).map(x => Number(x.slice(6)));
@@ -554,7 +543,7 @@ function parse_header(header: string) {
 			}
 		}
 		response.settings[name] = val;
-	})
+	});
 
 	if (!response.settings.ground || response.settings.ground > 17) response.settings.ground = 1;
 	if (!response.settings.background || response.settings.background > 20) response.settings.background = 1;

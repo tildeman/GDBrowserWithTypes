@@ -1,22 +1,27 @@
 import achievementTypes from './misc/achievementTypes.json' assert { type: "json" };
-import { sacredTexts, extraData as iconKitFiles } from "./iconkit/static_files.js"
+import { sacredTexts, extraData as iconKitFiles } from "./iconkit/static_files.js";
 import achievements from './misc/achievements.json' assert { type: "json" };
-import { fetchTemplate, fetchStaticFile } from './lib/template_handle.js';
+import { __dirname , fetchTemplate, fetchStaticFile } from './lib/template_handle.js';
 import sampleIcons from './misc/sampleIcons.json' assert {type: "json" };
 import secrets from "./misc/secretStuff.json" assert { type: "json" };
 import { AppRoutines, ExportBundle, ServerInfo } from "./types.js";
 import serverListRaw from "./servers.json" assert { type: "json" };
-import express, { NextFunction, Request, Response } from 'express';
 import credits from "./misc/credits.json" assert { type: "json" };
 import rateLimit, { AugmentedRequest } from "express-rate-limit";
 import music from './misc/music.json' assert { type: "json" };
+import express, { Request, Response } from 'express';
 import { convertUSP } from './lib/uspconvert.js';
+import { UserCache } from './classes/UserCache.js';
 import request, { AxiosResponse } from 'axios'; // `request` is trash
 import compression from 'compression';
 import appConfig from './settings.js';
 import timeout from 'connect-timeout';
 import { XOR } from './lib/xor.js';
 import fs from "node:fs";
+
+// ROUTES
+import assetRoutes from "./routes/assets.js";
+import levelRoutes from "./routes/levels.js";
 
 // TODO: Enforce strict mode for everything
 
@@ -93,10 +98,13 @@ appServers.forEach(x => {
 	appLastSuccess[x.id || "gd"] = Date.now();
 });
 
+// All usages of user caching will be done here.
+const userCacheHandle = new UserCache(appConfig.cacheAccountIDs, appServers);
+
 // The default no-id endpoint always exists, trust me!
 const appMainEndpoint = appServers.find(x => !x.id)!.endpoint; // boomlings.com unless changed in fork
 
-app.set('json spaces', 2)
+app.set('json spaces', 2);
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -108,7 +116,7 @@ app.use(async function(req, res, next) {
 	if (subdomains.length < subdomain_level) subdomains = [""];
 	const reqServer = appServers.find(x => subdomains.includes(x.id.toLowerCase()));
 	if (subdomains.length > subdomain_level || !reqServer) {
-		return res.redirect("http://" + req.get('host')?.split(".").slice(subdomains.length).join(".") + req.originalUrl);
+		return res.redirect("http://" + req.get('host')!.split(".").slice(subdomains.length).join(".") + req.originalUrl);
 	}
 
 	// will expand this in the future :wink:
@@ -306,49 +314,11 @@ app.set("views", "./templates");
 
 // ASSETS
 
-app.use('/assets', express.static('assets', {maxAge: "7d"}));
-app.use('/assets/css', express.static('assets/css'));
-
+app.use("/assets", assetRoutes);
 app.use('/iconkit', express.static('iconkit'));
 app.get("/global.js", fetchStaticFile("misc/global.js"));
 app.get("/dragscroll.js", fetchStaticFile("misc/dragscroll.js"));
 app.use("/page_scripts", express.static("page_scripts"));
-
-app.get("/assets/:dir*?", function(req, res) {
-	let main = (req.params["dir*"] || "").toLowerCase();
-	const dir = main + (req.params[0] || "").toLowerCase();
-
-	if (dir.includes('.') || !req.path.endsWith("/")) {
-		// As a JS/TS developer I am morally responsible that I make my code look good for everyone
-		// and not "unintentionally write bad code and not be willing to open-source it"
-		if (!req.params[0]) main = "";
-		if (req.params["dir*"] == "deatheffects" || req.params["dir*"] == "trails") {
-			return res.status(200).sendFile("assets/deatheffects/0.png");
-		}
-		else if (req.params["dir*"] == "gdps" && req.params[0].endsWith("_icon.png")) {
-			return res.status(200).sendFile("assets/gdps/unknown_icon.png");
-		}
-		else if (req.params["dir*"] == "gdps" && req.params[0].endsWith("_logo.png")) {
-			return res.status(200).sendFile("assets/gdps/unknown_logo.png");
-		}
-		return res.status(404).send(`<p style="font-size: 20px; font-family: aller, helvetica, arial">Looks like this file doesn't exist ¯\\_(ツ)_/¯<br><a href='/assets/${main}'>View directory listing for <b>/assets/${main}</b></a></p>`);
-	}
-
-	const path = `./assets/${dir}`;
-	const files: string[] = fs.existsSync(path)? fs.readdirSync(path): [];
-
-	const assetData = {
-		files: files.filter(x => x.includes('.')),
-		directories: files.filter(x => !x.includes('.'))
-	};
-
-	res.render("assets", {
-		name: dir || "assets",
-		data: assetData,
-		pathname: req.path
-	});
-});
-
 
 // POST REQUESTS
 
@@ -362,7 +332,6 @@ app.post("/deleteMessage", RL, function(req, res) { run.deleteMessage(app, req, 
 app.post("/sendMessage", RL, function(req, res) { run.sendMessage(app, req, res) });
 
 app.post("/accurateLeaderboard", function(req, res) { run.accurate(app, req, res, true) });
-app.post("/analyzeLevel", function(req, res) { run.analyze(app, req, res) });
 
 // HTML
 
@@ -439,19 +408,15 @@ app.get("/search/:text", fetchTemplate("search"));
 
 // API
 
-app.get("/api/analyze/:id", RL, function(req, res) { run.level(app, req, res, true, true) });
 app.get("/api/boomlings", function(req, res) { run.boomlings(app, req, res) });
 app.get("/api/comments/:id", RL2, function(req, res) { run.comments(app, req, res) });
-app.get("/api/credits", async function(req, res) { res.status(200).send(credits) });
+app.get("/api/credits", function(req, res) { res.status(200).send(credits) });
 app.get("/api/gauntlets", function(req, res) { run.gauntlets(app, req, res) });
 app.get("/api/leaderboard", function(req, res) { run[req.query.hasOwnProperty("accurate") ? "accurate" : "scores"](app, req, res) });
 app.get("/api/leaderboardLevel/:id", RL2, function(req, res) { run.leaderboardLevel(app, req, res) });
-app.get("/api/level/:id", RL, function(req, res) { run.level(app, req, res, true) });
 app.get("/api/mappacks", function(req, res) { run.mappacks(app, req, res) });
 app.get("/api/profile/:id", RL2, function(req, res) { run.profile(app, req, res, true) });
 app.get("/api/search/:text", RL2, function(req, res) { run.search(app, req, res) });
-app.get("/api/song/:song", function(req, res){ run.song(app, req, res) });
- 
 
 // REDIRECTS
 
@@ -469,7 +434,6 @@ app.get("/d/:id", function(req, res) { res.redirect('/demon/' + req.params.id) }
 // API AND HTML
 	 
 app.get("/u/:id", function(req, res) { run.profile(app, req, res) });
-app.get("/:id", function(req, res) { run.level(app, req, res) });
 
 
 // MISC
@@ -478,6 +442,10 @@ app.get("/api/userCache", function(req, res) { res.status(200).send(appAccountCa
 app.get("/api/achievements", function(req, res) { res.status(200).send({ achievements, types: achievementTypes, shopIcons: iconKitFiles.shops, colors: sacredTexts.colors }) });
 app.get("/api/music", function(req, res) { res.status(200).send(music) });
 app.get("/api/gdps", function(req, res) {res.status(200).send(req.query.hasOwnProperty("current") ? appSafeServers.find(x => res.locals.stuff.req.server.id == x.id) : appSafeServers) });
+
+// MIGRATED ROUTES
+
+app.use("/", levelRoutes(userCacheHandle));
 
 // important icon stuff
 

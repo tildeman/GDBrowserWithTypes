@@ -1,12 +1,27 @@
-import { Express, Request, Response } from "express";
+import { parseResponse } from "../lib/parse_response.js";
 import { AppRoutines, ExportBundle } from "../types.js";
-import { DownloadedLevel, Level } from '../classes/Level.js';
+import { DownloadedLevel } from '../classes/Level.js';
+import { Express, Request, Response } from "express";
+import { UserCache } from "../classes/UserCache.js";
+import analyzeController from "./analyze.js";
 import request from 'axios';
 
-export default async function(app: Express, req: Request, res: Response, api: boolean, ID: string, analyze: boolean) {
+/**
+ * Download a level, and then inspect its data.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param api Whether this is an API request.
+ * @param ID The ID of the level.
+ * @param analyze Whether to analyze the level or look for metadata.
+ * @param userCacheHandle The user cache passed by reference.
+ * @returns If this is an API request, return the raw data in JSON. Else display it in a webpage.
+ */
+export default async function(req: Request, res: Response, api: boolean, ID: string, analyze: boolean, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
 
+	/**
+	 * If the level info is ill-formed, redirect the user to the search page.
+	 */
 	function rejectLevel() {
 		if (!api) return res.redirect('search/' + req.params.id);
 		else return sendError();
@@ -32,16 +47,16 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 
 		let authorData = body?.split("#")[3] || "";  // daily/weekly only, most likely
 
-		let levelInfo = appRoutines.parseResponse(body || "");
+		let levelInfo = parseResponse(body || "");
 		let level = new DownloadedLevel(levelInfo, reqBundle.server, true, {});
 		if (!level.id) return rejectLevel();
 
-		let foundID = appRoutines.accountCache[reqBundle.id][Object.keys(appRoutines.accountCache[reqBundle.id]).find(x => appRoutines.accountCache[reqBundle.id][x][1] == level.playerID) || ""];
+		let foundID: string[] = userCacheHandle.accountCache[reqBundle.id][Object.keys(userCacheHandle.accountCache[reqBundle.id]).find(x => userCacheHandle.accountCache[reqBundle.id][x][1] == level.playerID) || ""];
 		if (foundID) foundID = foundID.filter(x => x != level.playerID);
 
 		// TODO: find a way to deal with this stack of four requests
 		reqBundle.gdRequest(authorData ? "" : 'getGJUsers20', { str: level.playerID }, function (err1, res1, b1) {
-			let gdSearchResult = authorData ? "" : appRoutines.parseResponse(b1 || "");
+			let gdSearchResult = authorData ? "" : parseResponse(b1 || "");
 			reqBundle.gdRequest(authorData ? "" : 'getGJUserInfo20', { targetAccountID: gdSearchResult[16] }, function (err2, res2, b2) {
 				if (err2 && (foundID || authorData)) {
 					let authorInfo = foundID || authorData.split(":");
@@ -50,7 +65,7 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 				}
 
 				else if (!err && b2 != '-1') {
-					let account = appRoutines.parseResponse(b2 || "");
+					let account = parseResponse(b2 || "");
 					level.author = account[1] || "-";
 					level.accountID = gdSearchResult[16];
 				}
@@ -60,16 +75,16 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 					level.accountID = "0";
 				}
 
-				if (level.author != "-") appRoutines.userCache(reqBundle.id, level.accountID.toString(), level.playerID.toString(), level.author);
+				if (level.author != "-") userCacheHandle.userCache(reqBundle.id, level.accountID.toString(), level.playerID.toString(), level.author);
 
 				reqBundle.gdRequest('getGJSongInfo', { songID: level.customSong }, function (err, resp, songRes) {
 
-					level = level.getSongInfo(appRoutines.parseResponse(songRes || "", '~|~') as any); // TODO: use a better type
+					level = level.getSongInfo(parseResponse(songRes || "", '~|~') as any); // TODO: use a better type
 					level.extraString = levelInfo[36];
 					level.data = levelInfo[4];
 					if (reqBundle.isGDPS) level.gdps = (reqBundle.onePointNine ? "1.9/" : "") + reqBundle.server.id;
 
-					if (analyze) return appRoutines.run.analyze(app, req, res, level);
+					if (analyze) return analyzeController(req, res, level);
 
 					/**
 					 * If this is called as an API call, send the raw response.
@@ -78,7 +93,7 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 					 */
 					function sendLevel() {
 						if (api) return res.send(level);
-						res.render("level", { level })
+						res.render("level", { level });
 					}
 
 					if (levelID < 0) {
@@ -88,7 +103,7 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 							level.nextDaily = +dailyTime;
 							level.nextDailyTimestamp = Math.round((Date.now() + (+dailyTime * 1000)) / 100000) * 100000;
 							return sendLevel();
-						})  
+						})  ;
 					}
 
 					else if (reqBundle.server.demonList && level.difficulty == "Extreme Demon") {
@@ -98,7 +113,7 @@ export default async function(app: Express, req: Request, res: Response, api: bo
 							if (demon[0] && demon[0].position) level.demonList = demon[0].position;
 						}).finally(function() {
 							return sendLevel();
-						})
+						});
 					}
 					else return sendLevel();
 				});
