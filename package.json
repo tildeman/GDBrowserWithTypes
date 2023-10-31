@@ -6,6 +6,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "build": "copyup static/**/* out && tsc",
     "dev": "node out/index.js"
   },
   "dependencies": {
@@ -31,6 +32,7 @@
     "@types/jquery": "^3.5.22",
     "@types/node": "^20.8.2",
     "@types/pixi.js": "^5.0.0",
+    "copyfiles": "^2.4.1",
     "typescript": "^5.2.2"
   }
 }
