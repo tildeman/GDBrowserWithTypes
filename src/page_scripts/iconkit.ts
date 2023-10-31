@@ -776,4 +776,26 @@ $(document).on('click', '.popup', function () {
 	$('.popup').hide();
 });
 
+$("#newIconBtn").on("click", function() {
+	clickedSpoilerWarning ? toggleSpoilers() : $('#spoilerWarning').show();
+})
+
+$("#downloadIconPNG").on("click", function() {
+	icon?.pngExport();
+});
+
+$("#downloadIconPSD").on("click", function() {
+	icon?.psdExport();
+});
+
+$("#iconSettings").on("click", function() {
+	$('#settings').show();
+});
+
+$("#revealSpoilers").on("click", function() {
+	clickedSpoilerWarning = true;
+	toggleSpoilers();
+	$('#spoilerWarning').hide();
+});
+
 export {};

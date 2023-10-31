@@ -1,5 +1,5 @@
-mixin menuButton(buttonID, buttonTitle, buttonClick, img, imgID)
-	button.blankButton.menuButton(id=buttonID, title=buttonTitle, onclick=buttonClick)
+mixin menuButton(buttonID, buttonTitle, img, imgID)
+	button.blankButton.menuButton(id=buttonID, title=buttonTitle)
 		img(src=("/assets/iconkitbuttons/" + img + ".png"), style={ width: "60px" }, id=imgID)
 
 mixin paletteButton(colorID, buttonTitle, display)
@@ -61,9 +61,9 @@ html(lang="en")
 						| ICON.
 						br
 						| PRESS CANCEL IF YOU DON'T WANT TO BE SPOILED!!!
-					img.gdButton.center(src="/assets/iconkitbuttons/btn-reveal.png", style={ "margin-right": "33px", height: "60px" }, onclick="clickedSpoilerWarning = true; toggleSpoilers(); $('#spoilerwarning').hide()")
-					img.gdButton.center(src="/assets/btn-cancel.png", style={ height: "60px" }, onclick="$('#spoilerwarning').hide()")
-					img.gdButton.xButton(src="/assets/close.png", style={ width: "70px" }, onclick="$('#spoilerwarning').hide()")
+					img#revealSpoilers.gdButton.center(src="/assets/iconkitbuttons/btn-reveal.png", style={ "margin-right": "33px", height: "60px" })
+					img.gdButton.center(src="/assets/btn-cancel.png", style={ height: "60px" }, onclick="$('#spoilerWarning').hide()")
+					img.gdButton.xButton(src="/assets/close.png", style={ width: "70px" }, onclick="$('#spoilerWarning').hide()")
 
 			img#iconkitlogo(src="/assets/iconkit.png", style={ margin: "7px 0", height: "50px" })
 			br
@@ -76,14 +76,14 @@ html(lang="en")
 			hr#gdfloor
 
 			#menuButtons(style={ height: "65px", margin: "0 0 8px 0" })
-				+menuButton("customColors", "Settings", "$('#settings').show()", "cog", null)
-				+menuButton(null, "Download layered PSD", "icon.psdExport()", "psd", null)
-				+menuButton("copyToClipboard", "Copy to clipboard", null, "copy", null)
-				+menuButton(null, "Download icon", "icon.pngExport()", "save", null)
-				+menuButton("getUserIcon", "Get player icon", null, "steal", null)
-				+menuButton("randomIcon", "Random Icon", null, "shuffle", null)
-				+menuButton("unlockIcon", "Unlock details", null, "unlock", "lock")
-				+menuButton(null, "2.2 icons (spoilers!!!)", "clickedSpoilerWarning ? toggleSpoilers() : $('#spoilerwarning').show()", "spoilers", "newIconBtn")
+				+menuButton("customColors", "Settings", "cog", "iconSettings")
+				+menuButton(null, "Download layered PSD", "psd", "downloadIconPSD")
+				+menuButton("copyToClipboard", "Copy to clipboard", "copy", null)
+				+menuButton(null, "Download icon", "save", "downloadIconPNG")
+				+menuButton("getUserIcon", "Get player icon", "steal", null)
+				+menuButton("randomIcon", "Random Icon", "shuffle", null)
+				+menuButton("unlockIcon", "Unlock details", "unlock", "lock")
+				+menuButton(null, "2.2 icons (spoilers!!!)", "spoilers", "newIconBtn")
 
 			#iconTabs
 			#iconKitParent.iconKit.noDarken
