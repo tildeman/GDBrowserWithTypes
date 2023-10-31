@@ -1,5 +1,5 @@
 /**
- * @fileoverview Routing page for static assets
+ * @fileoverview Routing page for static assets.
  */
 
 import express from "express";

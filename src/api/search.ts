@@ -1,7 +1,10 @@
-import request, { AxiosResponse } from 'axios';
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../types.js";
+import { parseResponse } from '../lib/parse_response.js';
 import { SearchQueryLevel } from '../classes/Level.js';
+import { UserCache } from '../classes/UserCache.js';
+import profileController from "./profile.js";
+import { Request, Response } from "express";
+import { ExportBundle } from "../types.js";
+import request from 'axios';
 
 let demonList = {};
 
@@ -65,9 +68,8 @@ function idInDemon(needle: number, haystack: ListDemon[]) {
 	return -1;
 }
 
-export default async function(app: Express, req: Request, res: Response) {
+export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) return res.status(500).send(req.query.hasOwnProperty("err") ? "err" : "-1");
 
@@ -146,11 +148,11 @@ export default async function(app: Express, req: Request, res: Response) {
 	}
 
 	if (req.query.hasOwnProperty("user")) {
-		let accountCheck = appRoutines.userCache(reqBundle.id, filters.str || "", "", "");
+		let accountCheck = userCacheHandle.userCache(reqBundle.id, filters.str || "", "", "");
 		filters.type = 5;
 		if (accountCheck) filters.str = accountCheck[1];
 		else if (!filters.str?.match(/^[0-9]*$/)) {
-			return appRoutines.run.profile(app, req, res, null, req.params.text);
+			return profileController(req, res, userCacheHandle, false, req.params.text);
 		}
 	} 
 
@@ -180,7 +182,7 @@ export default async function(app: Express, req: Request, res: Response) {
 		let songList = {};
 		let authors = splitBody[1].split('|');
 		let songString = splitBody[2];
-		let songs = songString.split('~:~').map(songResponse => appRoutines.parseResponse(`~${songResponse}~`, '~|~'));
+		let songs = songString.split('~:~').map(songResponse => parseResponse(`~${songResponse}~`, '~|~'));
 		songs.forEach(songEntry => {
 			songList[songEntry['~1']] = songEntry['2'];
 		});
@@ -191,7 +193,7 @@ export default async function(app: Express, req: Request, res: Response) {
 			authorList[arr[0]] = [arr[1], arr[2]];
 		});
 
-		let levelArray = preRes.map(levelResponse => appRoutines.parseResponse(levelResponse)).filter(levelResponse => levelResponse[1]);
+		let levelArray = preRes.map(levelResponse => parseResponse(levelResponse)).filter(levelResponse => levelResponse[1]);
 		let parsedLevels: SearchQueryLevel[] = [];
 
 		levelArray.forEach((levelData, levelIndex) => {
@@ -209,7 +211,7 @@ export default async function(app: Express, req: Request, res: Response) {
 			}
 
 			if (reqBundle.isGDPS) level.gdps = (reqBundle.onePointNine ? "1.9/" : "") + reqBundle.server.id;
-			if (level.author != "-" && appRoutines.config.cacheAccountIDs) appRoutines.userCache(reqBundle.id, level.accountID.toString(), level.playerID.toString(), level.author);
+			if (level.author != "-") userCacheHandle.userCache(reqBundle.id, level.accountID.toString(), level.playerID.toString(), level.author);
 
 			//this is broken if you're not on page 0, blame robtop
 			if (filters.page == 0 && levelIndex == 0 && splitBody[3]) {

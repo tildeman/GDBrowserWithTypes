@@ -22,6 +22,8 @@ import fs from "node:fs";
 // ROUTES
 import assetRoutes from "./routes/assets.js";
 import levelRoutes from "./routes/levels.js";
+import profileRoutes from "./routes/profiles.js";
+import searchRoutes from "./routes/search.js";
 
 // TODO: Enforce strict mode for everything
 
@@ -391,8 +393,6 @@ app.get("/leaderboard", fetchTemplate("leaderboard"));
 app.get("/leaderboard/:text", fetchTemplate("levelboard"));
 app.get("/mappacks", fetchTemplate("mappacks"));
 app.get("/messages", fetchTemplate("messages"));
-app.get("/search", fetchTemplate("filters"));
-app.get("/search/:text", fetchTemplate("search"));
 
 // This is documentation for the GDBrowser's internal API, which is off by default.
 // Uncomment this line if you want it enabled.
@@ -415,8 +415,6 @@ app.get("/api/gauntlets", function(req, res) { run.gauntlets(app, req, res) });
 app.get("/api/leaderboard", function(req, res) { run[req.query.hasOwnProperty("accurate") ? "accurate" : "scores"](app, req, res) });
 app.get("/api/leaderboardLevel/:id", RL2, function(req, res) { run.leaderboardLevel(app, req, res) });
 app.get("/api/mappacks", function(req, res) { run.mappacks(app, req, res) });
-app.get("/api/profile/:id", RL2, function(req, res) { run.profile(app, req, res, true) });
-app.get("/api/search/:text", RL2, function(req, res) { run.search(app, req, res) });
 
 // REDIRECTS
 
@@ -430,15 +428,9 @@ app.get("/a/:id", function(req, res) { res.redirect('/analyze/' + req.params.id)
 app.get("/c/:id", function(req, res) { res.redirect('/comments/' + req.params.id) });
 app.get("/d/:id", function(req, res) { res.redirect('/demon/' + req.params.id) });
 
-
-// API AND HTML
-	 
-app.get("/u/:id", function(req, res) { run.profile(app, req, res) });
-
-
 // MISC
 
-app.get("/api/userCache", function(req, res) { res.status(200).send(appAccountCache) });
+app.get("/api/userCache", function(req, res) { res.status(200).send(userCacheHandle.accountCache) });
 app.get("/api/achievements", function(req, res) { res.status(200).send({ achievements, types: achievementTypes, shopIcons: iconKitFiles.shops, colors: sacredTexts.colors }) });
 app.get("/api/music", function(req, res) { res.status(200).send(music) });
 app.get("/api/gdps", function(req, res) {res.status(200).send(req.query.hasOwnProperty("current") ? appSafeServers.find(x => res.locals.stuff.req.server.id == x.id) : appSafeServers) });
@@ -446,6 +438,8 @@ app.get("/api/gdps", function(req, res) {res.status(200).send(req.query.hasOwnPr
 // MIGRATED ROUTES
 
 app.use("/", levelRoutes(userCacheHandle));
+app.use("/", profileRoutes(userCacheHandle));
+app.use("/", searchRoutes(userCacheHandle));
 
 // important icon stuff
 

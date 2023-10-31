@@ -14,7 +14,7 @@ const rlMessage = "Rate limited ¯\\_(ツ)_/¯<br><br>Please do not spam my serv
  * @param req The request alongside additional properties.
  * @returns The "X-REAL-IP" or "X-FORWARDED-FOR" headers that Robtop recommends.
  */
-function keyGeneratorHelper(req: AugmentedRequest): string | Promise<string> { 
+function keyGeneratorHelper(req: AugmentedRequest): string { 
 	return req.headers['x-real-ip']?.toString() || req.headers['x-forwarded-for']?.toString() || "";
 }
 

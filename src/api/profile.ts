@@ -1,11 +1,21 @@
-import fs from 'fs'
-import { Player } from '../classes/Player.js'
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../types.js";
+import { parseResponse } from '../lib/parse_response.js';
+import { UserCache } from '../classes/UserCache.js';
+import { Player } from '../classes/Player.js';
+import { Request, Response } from "express";
+import { ExportBundle } from "../types.js";
+import searchController from "./search.js";
 
-export default async function(app: Express, req: Request, res: Response, api?: boolean, getLevels?: string) {
+/**
+ * Inspect a user's statistics.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param userCacheHandle The user cache passed in by reference.
+ * @param api Whether this is an API request.
+ * @param getLevels If true, pack the user info up and "redirect" into the search results tab.
+ * @returns If this is an API request, return the raw data in JSON. Else display it in a webpage.
+ */
+export default async function(req: Request, res: Response, userCacheHandle: UserCache, api?: boolean, getLevels?: string) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) {
 		if (!api) return res.redirect('/search/' + req.params.id);
@@ -19,30 +29,31 @@ export default async function(app: Express, req: Request, res: Response, api?: b
 		probablyID = Number(username);
 	}
 	let accountMode = !req.query.hasOwnProperty("player") && Number(req.params.id);
-	let foundID = appRoutines.userCache(reqBundle.id, username, "", "");
+	let foundID = userCacheHandle.userCache(reqBundle.id, username, "", "");
 	let skipRequest = accountMode || (foundID && +foundID[0]) || probablyID;
 	let searchResult: Record<number, string>;
 
 	// if you're searching by account id, an intentional error is caused to skip the first request to the gd servers. see i pulled a sneaky on ya. (fuck callbacks man)
+	// TODO: Convert GDRequests to promises
 	reqBundle.gdRequest(skipRequest ? "" : 'getGJUsers20', skipRequest ? {} : { str: username, page: 0 }, function (err1, res1, b1) {   
 		if (foundID) searchResult = foundID[0];
 		else if (accountMode || err1 || b1 == '-1' || b1?.startsWith("<") || !b1) {
 			searchResult = probablyID ? username : req.params.id;
 		}
-		else if (!reqBundle.isGDPS) searchResult = appRoutines.parseResponse(b1.split("|")[0])[16];
+		else if (!reqBundle.isGDPS) searchResult = parseResponse(b1.split("|")[0])[16];
 		else {  // GDPS's return multiple users, GD no longer does this
-			let userResults = b1.split("|").map(variable => appRoutines.parseResponse(variable));
+			let userResults = b1.split("|").map(variable => parseResponse(variable));
 			searchResult = userResults.find(variable => variable[1].toLowerCase() == username.toLowerCase() || variable[2] == username) || {};
 			if (searchResult) searchResult = searchResult[16];
 		}
 
 		if (getLevels) {
-			req.params.text = foundID ? foundID[1] : appRoutines.parseResponse(b1 || "")[2];
-			return appRoutines.run.search(app, req, res);
+			req.params.text = foundID ? foundID[1] : parseResponse(b1 || "")[2];
+			return searchController(req, res, userCacheHandle);
 		}
 		
 		reqBundle.gdRequest('getGJUserInfo20', { targetAccountID: searchResult }, function (err2, res2, body) {
-			let account = appRoutines.parseResponse(body || "");
+			let account = parseResponse(body || "");
 			let dumbGDPSError = reqBundle.isGDPS && (!account[16] || account[1].toLowerCase() == "undefined");
 			
 			if (err2 || dumbGDPSError) {
@@ -50,7 +61,7 @@ export default async function(app: Express, req: Request, res: Response, api?: b
 				else return sendError();
 			}
 			
-			if (!foundID) appRoutines.userCache(reqBundle.id, account[16], account[2], account[1]);
+			if (!foundID) userCacheHandle.userCache(reqBundle.id, account[16], account[2], account[1]);
 			
 			let userData = new Player(account);
 

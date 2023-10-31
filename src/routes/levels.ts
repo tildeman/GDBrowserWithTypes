@@ -1,5 +1,5 @@
 /**
- * @fileoverview Routing page for levels
+ * @fileoverview Routing page for levels.
  */
 
 import { RL } from "../lib/ratelimits.js";

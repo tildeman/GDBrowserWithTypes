@@ -6,7 +6,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "copyup static/**/* out && tsc",
+    "build": "copyfiles --up 1 \"static/**/*\" out && tsc",
     "dev": "node out/index.js"
   },
   "dependencies": {

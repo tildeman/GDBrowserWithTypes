@@ -13,7 +13,7 @@ import request from 'axios';
  * @param api Whether this is an API request.
  * @param ID The ID of the level.
  * @param analyze Whether to analyze the level or look for metadata.
- * @param userCacheHandle The user cache passed by reference.
+ * @param userCacheHandle The user cache passed in by reference.
  * @returns If this is an API request, return the raw data in JSON. Else display it in a webpage.
  */
 export default async function(req: Request, res: Response, api: boolean, ID: string, analyze: boolean, userCacheHandle: UserCache) {
