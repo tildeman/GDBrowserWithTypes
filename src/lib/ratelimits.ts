@@ -5,6 +5,9 @@
 import rateLimit, { AugmentedRequest } from "express-rate-limit";
 import appConfig from '../settings.js';
 
+/**
+ * Message to display upon hitting the rate limit.
+ */
 const rlMessage = "Rate limited ¯\\_(ツ)_/¯<br><br>Please do not spam my servers with a crazy amount of requests. It slows things down on my end and stresses RobTop's servers just as much." +
 " If you really want to send a zillion requests for whatever reason, please download the GDBrowser repository locally - or even just send the request directly to the GD servers.<br><br>" +
 "This kind of spam usually leads to GDBrowser getting IP banned by RobTop, and every time that happens I have to start making the rate limit even stricter. Please don't be the reason for that.<br><br>";

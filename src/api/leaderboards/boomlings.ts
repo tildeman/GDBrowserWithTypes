@@ -1,5 +1,5 @@
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../../types.js";
+import { Request, Response } from "express";
+import { ExportBundle } from "../../types.js";
 import request from "axios";
 
 /**
@@ -19,15 +19,14 @@ interface BoomlingsUser {
     raw: string;
 }
 
-export default async function(app: Express, req: Request, res: Response) {
+export default async function(req: Request, res: Response, secret?: string) {
 	const {req: reqBundle}: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
 
 	// Accurate leaderboard returns 418 because Private servers do not use.
 	if (reqBundle.isGDPS) return res.status(418).send("0");
 
 	request.post('http://robtopgames.com/Boomlings/get_scores.php', {
-		secret: appRoutines.config.params.secret || "Wmfd2893gb7",
+		secret: secret || "Wmfd2893gb7",
 		name: "Player"
 	}).then(function(resp) {
 		let body = resp.data;

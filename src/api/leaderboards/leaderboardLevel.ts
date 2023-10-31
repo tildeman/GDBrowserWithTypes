@@ -1,6 +1,9 @@
 import colors from '../../iconkit/sacredtexts/colors.json' assert { type: "json" };
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../../types.js";
+import secret_stuff from "../../misc/secretStuff.json" assert { type: "json" };
+import { parseResponse } from '../../lib/parse_response.js';
+import { UserCache } from '../../classes/UserCache.js';
+import { ExportBundle } from "../../types.js";
+import { Request, Response } from "express";
 
 /**
  * An entry for the in-game leaderboard.
@@ -25,32 +28,38 @@ interface LeaderboardEntry {
 }
 
 
-export default async function(app: Express, req: Request, res: Response) {
+/**
+ * Fetch data for the level leaderboard.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param userCacheHandle The user cache passed in by reference.
+ * @returns The response of the level leaderboard in JSON.
+ */
+export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) return sendError();
 
 	let amount = 100;
-	let count = req.query.count ? parseInt(req.query.count.toString()) : null;
+	const count = req.query.count ? parseInt(req.query.count.toString()) : null;
 	if (count && count > 0) {
 		if (count > 200) amount = 200;
 		else amount = count;
 	}
 
-	let params = {
+	const params = {
 		levelID: req.params.id,
-		accountID: appRoutines.id,
-		gjp: appRoutines.gjp, 
+		accountID: secret_stuff.id,
+		gjp: secret_stuff.gjp, 
 		type: req.query.hasOwnProperty("week") ? "2" : "1",
 	};
 
 	reqBundle.gdRequest('getGJLevelScores211', params, function(err, resp, body) {
-		if (err) return res.status(500).send({ error: true, lastWorked: appRoutines.timeSince(reqBundle.id) });
-		const rawScores = body?.split('|').map(rawScorePlayerEntry => appRoutines.parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
+		if (err) return res.status(500).send({ error: true, lastWorked: userCacheHandle.timeSince(reqBundle.id) });
+		const rawScores = body?.split('|').map(rawScorePlayerEntry => parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
 		const scores: LeaderboardEntry[] = [];
 		if (!rawScores.length) return res.status(500).send([]);
-		else appRoutines.trackSuccess(reqBundle.id);
+		else userCacheHandle.trackSuccess(reqBundle.id);
 
 		rawScores.forEach(playerEntry => {
 			const score: LeaderboardEntry = {
@@ -72,7 +81,7 @@ export default async function(app: Express, req: Request, res: Response) {
 				}
 			};
 			scores.push(score);
-			appRoutines.userCache(reqBundle.id, score.accountID, score.playerID, score.username);
+			userCacheHandle.userCache(reqBundle.id, score.accountID, score.playerID, score.username);
 		});
 
 		return res.send(scores.slice(0, amount));

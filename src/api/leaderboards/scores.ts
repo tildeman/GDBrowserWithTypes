@@ -1,6 +1,8 @@
+import { parseResponse } from "../../lib/parse_response.js";
+import { UserCache } from "../../classes/UserCache.js";
 import { Player } from "../../classes/Player.js";
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../../types.js";
+import { ExportBundle } from "../../types.js";
+import { Request, Response } from "express";
 
 /**
  * Leaderboard parameters.
@@ -20,9 +22,15 @@ interface ScoreParameters {
 	accountID?: string;
 }
 
-export default async function(app: Express, req: Request, res: Response) {
+/**
+ * Fetch data for the in-game leaderboard.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param userCacheHandle The user cache passed in by reference.
+ * @returns The response of the leaderboard in JSON.
+ */
+export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) return sendError();
 
@@ -51,11 +59,11 @@ export default async function(app: Express, req: Request, res: Response) {
 
 	reqBundle.gdRequest('getGJScores20', params, function(err, resp, body) { 
 		if (err) return sendError();
-		let scoresArr = body?.split('|').map(rawScorePlayerEntry => appRoutines.parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
+		let scoresArr = body?.split('|').map(rawScorePlayerEntry => parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
 		if (!scoresArr.length) return sendError();
 
 		let scores = scoresArr.map(scorePlayerEntry => new Player(scorePlayerEntry));
-		scores.forEach(playerEntry => appRoutines.userCache(reqBundle.id, playerEntry.accountID, playerEntry.playerID, playerEntry.username));
+		scores.forEach(playerEntry => userCacheHandle.userCache(reqBundle.id, playerEntry.accountID, playerEntry.playerID, playerEntry.username));
 		return res.send(scores.slice(0, amount));
 	});
 }

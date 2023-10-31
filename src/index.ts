@@ -23,7 +23,8 @@ import fs from "node:fs";
 import assetRoutes from "./routes/assets.js";
 import levelRoutes from "./routes/levels.js";
 import profileRoutes from "./routes/profiles.js";
-import searchRoutes from "./routes/search.js";
+import searchRoutes from "./routes/searches.js";
+import leaderboardRoutes from "./routes/leaderboards.js";
 
 // TODO: Enforce strict mode for everything
 
@@ -333,8 +334,6 @@ app.post("/messages/:id", RL, function(req, res) { run.fetchMessage(app, req, re
 app.post("/deleteMessage", RL, function(req, res) { run.deleteMessage(app, req, res) });
 app.post("/sendMessage", RL, function(req, res) { run.sendMessage(app, req, res) });
 
-app.post("/accurateLeaderboard", function(req, res) { run.accurate(app, req, res, true) });
-
 // HTML
 
 /**
@@ -389,8 +388,6 @@ app.get("/demon/:id", fetchTemplate("demon"));
 app.get("/gauntlets", fetchTemplate("gauntlets"));
 app.get("/gdps", fetchTemplate("gdps"));
 app.get("/iconkit", fetchTemplate("iconkit"));
-app.get("/leaderboard", fetchTemplate("leaderboard"));
-app.get("/leaderboard/:text", fetchTemplate("levelboard"));
 app.get("/mappacks", fetchTemplate("mappacks"));
 app.get("/messages", fetchTemplate("messages"));
 
@@ -412,8 +409,6 @@ app.get("/api/boomlings", function(req, res) { run.boomlings(app, req, res) });
 app.get("/api/comments/:id", RL2, function(req, res) { run.comments(app, req, res) });
 app.get("/api/credits", function(req, res) { res.status(200).send(credits) });
 app.get("/api/gauntlets", function(req, res) { run.gauntlets(app, req, res) });
-app.get("/api/leaderboard", function(req, res) { run[req.query.hasOwnProperty("accurate") ? "accurate" : "scores"](app, req, res) });
-app.get("/api/leaderboardLevel/:id", RL2, function(req, res) { run.leaderboardLevel(app, req, res) });
 app.get("/api/mappacks", function(req, res) { run.mappacks(app, req, res) });
 
 // REDIRECTS
@@ -440,6 +435,7 @@ app.get("/api/gdps", function(req, res) {res.status(200).send(req.query.hasOwnPr
 app.use("/", levelRoutes(userCacheHandle));
 app.use("/", profileRoutes(userCacheHandle));
 app.use("/", searchRoutes(userCacheHandle));
+app.use("/", leaderboardRoutes(userCacheHandle, appConfig.params.secret));
 
 // important icon stuff
 
