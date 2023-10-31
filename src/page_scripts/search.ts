@@ -134,8 +134,8 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 			$('#searchBox').append(`<div class="searchResult" title="${clean(x.description)}">
 				<h1 class="lessspaced pre" title="${x.name} by ${!x.author || x.author == "-" ? "some nerd" : x.author}" style="width: fit-content; padding-right: 1%">${clean(x.name || " ")}</h1>
 				<h2 class="pre smaller inline gdButton help ${hasAuthor ? "" : "green unregistered"}" title="Account ID: ${x.accountID}\nPlayer ID: ${x.playerID}"><!--
-					-->${hasAuthor && !onePointNine ? `<a style="margin-right: 0.66vh" href="../u/${x.accountID}.">By ${x.author || "-"}</a>` : `<a ${userSearch ? "" : `href="../search/${x.playerID}?user"`}>By ${x.author || "-"}</a>`}</h2><!--
-					--><h2 class="inline" style="margin-left: 1.5%; transform:translateY(10%)"> ${x.copiedID == '0' ? "" : `<a target="_blank" href="../${x.copiedID}"><!--
+					-->${hasAuthor && !onePointNine ? `<a style="margin-right: 0.66vh" href="/u/${x.accountID}.">By ${x.author || "-"}</a>` : `<a ${userSearch ? "" : `href="/search/${x.playerID}?user"`}>By ${x.author || "-"}</a>`}</h2><!--
+					--><h2 class="inline" style="margin-left: 1.5%; transform:translateY(10%)"> ${x.copiedID == '0' ? "" : `<a target="_blank" href="/level/${x.copiedID}"><!--
 					--><img class="gdButton valign sideSpaceD" title="Original: ${x.copiedID}" src="/assets/copied.png" style="height: 3vh;"></a>`}<!--
 					-->${x.large ? `<img class="help valign sideSpaceD" title="${x.objects}${x.objects == 65535 ? "+" : ""} objects" src="/assets/large.png" style="height: 3vh;">` : ''}<!--
 					-->${x.twoPlayer ? `<img class="help valign sideSpaceD" title="Two player level" src="/assets/twoPlayer.png" style="height: 3vh;">` : ''}
@@ -162,8 +162,8 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 					</div>
 				</div>
 				<div class="center" style="position:absolute; right: 7%; transform:translateY(-${demonList ? 19.5 : 16.25}vh); height: 10%">
-					<a title="View level" href="../${x.id}""><img style="margin-bottom: 4.5%; height: 105%;" class="valign gdButton" src="/assets/view.png"></a>
-					${demonList ? `<br><a title="View leaderboard" href="../demon/${x.demonPosition}""><img class="valign gdButton" src="/assets/trophyButton.png" style="height: 110%;"></a>
+					<a title="View level" href="/level/${x.id}""><img style="margin-bottom: 4.5%; height: 105%;" class="valign gdButton" src="/assets/view.png"></a>
+					${demonList ? `<br><a title="View leaderboard" href="/demon/${x.demonPosition}""><img class="valign gdButton" src="/assets/trophyButton.png" style="height: 110%;"></a>
 					<a title="View on Pointercrate" href="${demonListLink}demonlist/${x.demonPosition}" target=_blank><img class="valign gdButton" src="/assets/demonButton.png" style="height: 110%;"></a>` : "" }
 					<p title="Level ID" style="text-align: right; color: rgba(0, 0, 0, 0.4); font-size: 2.2vh; transform: translate(2.8vh, ${demonList ? -1.8 : 2.5}vh)">#${x.id}</p>
 				</div>
@@ -284,12 +284,12 @@ $('#shuffle').click(function() {
 	if (superSearch) {
 		$('#searchBox').html('<div style="height: 4.5%"></div>');
 		$('#loading').show();
-		fetch("../api/search/*page=0&type=recent").then(res => res.json()).then(recent => {
+		fetch("/api/search/*page=0&type=recent").then(res => res.json()).then(recent => {
 			let mostRecent = recent[0].id;
 			function fetchRandom() {
-				fetch(`../api/level/${Math.floor(Math.random() * (mostRecent)) + 1}`).then(res => res.json()).then(res => {
+				fetch(`/api/level/${Math.floor(Math.random() * (mostRecent)) + 1}`).then(res => res.json()).then(res => {
 					if (res == "-1" || !res.id) return fetchRandom();
-					else window.location.href = "../" + res.id;
+					else window.location.href = "/level/" + res.id;
 				});
 			}
 			fetchRandom();
@@ -305,7 +305,7 @@ $('#shuffle').click(function() {
 		$('#searchBox').html('<div style="height: 4.5%"></div>');
 		$('#loading').show();
 		fetch(searchFilters.replace('[PAGE]', (randomPage - 1).toString())).then(res => res.json()).then(res => {
-			window.location.href = "../" + res[randomIndex-1].id;
+			window.location.href = "/level/" + res[randomIndex-1].id;
 		});
 	}
 	else return $('#shuffleDiv').show();

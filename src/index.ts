@@ -504,7 +504,7 @@ app.get('*', function(req, res) {
 	if (req.path.startsWith('/api') || req.path.startsWith("/iconkit")) {
 		res.status(404).send('-1');
 	}
-	else res.redirect('/14471563');
+	else res.redirect('/level/14471563');
 });
 
 app.use(function (err: Error | undefined, req: Request, res: Response) {

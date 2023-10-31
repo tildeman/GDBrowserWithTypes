@@ -82,7 +82,7 @@ html(lang="en")
 								cy= level.starsRequested
 						else if (!isDownloadDisabled)
 							br
-							a#additional.youCanClickThis(href="/" + level.id + "?download")
+							a#additional.youCanClickThis(href="/level/" + level.id + "?download")
 								ca Download additional info
 						else
 							br
@@ -248,7 +248,7 @@ html(lang="en")
 				a#analyzeLink(href="./analyze/" + level.id)
 					img#analyzeBtn.gdButton.sideButton(title="Analyze Level", src="/assets/edit.png")
 					br
-				a(href="./comments/" + level.id)
+				a(href="/comments/" + level.id)
 					img.gdButton.sideButton(title="View Comments", src="/assets/comment.png")
 					br
 				if level.demonList
@@ -256,7 +256,7 @@ html(lang="en")
 						img#leaderboardBtn.gdButton.sideButton(title="View Leaderboard", src="/assets/demonleaderboard.png")
 						br
 				else if (!level.gdps)
-					a(href="./leaderboard/" + level.id)
+					a(href="/leaderboard/" + level.id)
 						img#leaderboardBtn.gdButton.sideButton(title="View Leaderboard", src="/assets/leaderboard.png")
 						br
 

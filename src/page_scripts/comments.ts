@@ -108,9 +108,9 @@ function buildComments(lvl: Level | Player) {
 		if (lvl.accountID == undefined) $('#levelAuthor').remove();
 		else if (lvl.accountID == "0") {
 			$('#levelAuthor').addClass("green").addClass("unregistered");
-			$('#authorLink').attr('href', '../search/' + lvl.playerID + "?user");
+			$('#authorLink').attr('href', '/search/' + lvl.playerID + "?user");
 		}
-		else $('#authorLink').attr('href', `../u/${lvl.accountID}.`);
+		else $('#authorLink').attr('href', `/u/${lvl.accountID}.`);
 		if ("name" in lvl) {
 			$('#levelName').text(lvl.name || ("Nonexistent level " + lvlID));
 			$('#levelAuthor').text("By " + (lvl.author || "-"));
@@ -124,7 +124,7 @@ function buildComments(lvl: Level | Player) {
 			}
 			if (!lvl.name) $('#leaveComment').hide();
 			if (lvl.accountID && lvl.author != "-") {
-				if (lvl.id) $('#levelLink').attr('href', '../' + lvl.id);
+				if (lvl.id) $('#levelLink').attr('href', '/level/' + lvl.id);
 				else $('#levelID').removeClass("gdButton");
 			}
 		}
@@ -152,7 +152,7 @@ function buildComments(lvl: Level | Player) {
 		}
 
 		if (!noCache && commentCache[page]) addComments(commentCache[page]);
-		fetch(`../api${!history ? window.location.pathname : "/comments/" + lvl.playerID}?count=${compact && !auto ? 20 : 10}&page=${page}${history ? "&type=commentHistory" : ""}&${mode}`).then((res) => {
+		fetch(`/api${!history ? window.location.pathname : "/comments/" + lvl.playerID}?count=${compact && !auto ? 20 : 10}&page=${page}${history ? "&type=commentHistory" : ""}&${mode}`).then((res) => {
 			if (res.status === 204) return [];
 			return res.json();
 		}).then(addComments);
@@ -207,7 +207,7 @@ function buildComments(lvl: Level | Player) {
 						</div>
 						<p class="commentDate" id="date-${x.ID}">${x.date}</p>
 						<div class="commentLikes">
-							${history ? `<h3 style="margin-right: 1.5vh; pointer-events: all;" class="gold inline"><a href="/${x.levelID}">(${x.levelID})</a></h3>` : ""}
+							${history ? `<h3 style="margin-right: 1.5vh; pointer-events: all;" class="gold inline"><a href="/level/${x.levelID}">(${x.levelID})</a></h3>` : ""}
 							<div class="inline gdButton likeComment" commentID="${x.ID}" ${x.levelID ? `levelID="${x.levelID}"` : ""}">
 								<img id="thumb-${x.ID}" class="inline gdButton" ${x.likes < 0 ? "style='transform: translateY(25%); margin-right: 0.4%; height: 4vh;'" : "style='height: 4vh;'"} src="/assets/${x.likes < 0 ? "dis" : ""}like.png">
 							</div>
@@ -234,7 +234,7 @@ function buildComments(lvl: Level | Player) {
 						</div>
 						<p class="commentDate compactDate" id="date-${x.ID}">${x.date}</p>
 						<div class="commentLikes">
-							${history ? `<h3 style="margin-right: 0.5vh; pointer-events: all;" class="gold inline"><a href="/${x.levelID}">(${x.levelID})</a></h3>` : ""}
+							${history ? `<h3 style="margin-right: 0.5vh; pointer-events: all;" class="gold inline"><a href="/level/${x.levelID}">(${x.levelID})</a></h3>` : ""}
 							<div class="inline gdButton likeComment" commentID="${x.ID}"${x.levelID ? `levelID="${x.levelID}"` : ""}>
 								<img id="thumb-${x.ID}" class="inline" ${x.likes < 0 ? "style='transform: translateY(15%); margin-right: 0.4%; height: 4vh;'" : "style='height: 4vh;'"} src="/assets/${x.likes < 0 ? "dis" : ""}like.png">
 							</div>
@@ -368,7 +368,7 @@ function buildComments(lvl: Level | Player) {
 		$('.postbutton').hide();
 		allowEsc = false;
 
-		fetch(`../api/profile/${username}`).then(res => res.json()).then(res => {
+		fetch(`/api/profile/${username}`).then(res => res.json()).then(res => {
 			if (!res || res == "-1") {
 				allowEsc = true;
 				$('.postbutton').show();
@@ -376,7 +376,7 @@ function buildComments(lvl: Level | Player) {
 			}
 			else accountID = res.accountID;
 
-			$.post("../postComment",  {comment, username, password, levelID, accountID, color: true}).done((x: unknown) => {
+			$.post("/postComment",  {comment, username, password, levelID, accountID, color: true}).done((x: unknown) => {
 				$('#content').val("");
 				$('#postComment').hide();
 				$('.postbutton').show();
@@ -447,7 +447,7 @@ function buildComments(lvl: Level | Player) {
 		$('.postbutton').hide();
 		allowEsc = false;
 
-		fetch(`../api/profile/${username}`).then(res => res.json()).then(res => {
+		fetch(`/api/profile/${username}`).then(res => res.json()).then(res => {
 			if (!res || res == "-1") {
 				allowEsc = true;
 				$('.postbutton').show();
@@ -455,7 +455,7 @@ function buildComments(lvl: Level | Player) {
 			}
 			else accountID = res.accountID;
 
-			$.post("../like",  { ID, accountID, password, like: likeType, type: 2, extraID }).done(x => {
+			$.post("/like",  { ID, accountID, password, like: likeType, type: 2, extraID }).done(x => {
 				let newCount = parseInt(likeCount.text()) + (like ? 1 : -1);
 				likeCount.text(newCount);
 				if (newCount < 0) likeImg.attr('src', '/assets/dislike.png').css('transform', compact ? 'translateY(15%)' : 'translateY(25%)');

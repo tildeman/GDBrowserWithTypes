@@ -29,7 +29,7 @@ export default function(userCacheHandle: UserCache) {
 		songController(req, res);
 	});
 
-	router.get("/:id", function(req, res) {
+	router.get("/level/:id", function(req, res) {
 		levelController(req, res, false, false, userCacheHandle);
 	});
 

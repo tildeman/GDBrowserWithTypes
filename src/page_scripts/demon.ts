@@ -16,7 +16,7 @@ else $('#pageDown').hide();
 if (demonID < max) $('#pageUp').attr('href', `./${demonID + 1}`);
 else $('#pageUp').hide();
 
-Fetch(`../api/gdps?current=1`).then((server: ServerInfo) => {
+Fetch(`/api/gdps?current=1`).then((server: ServerInfo) => {
 	if (illegal || !server.demonList) return $('#loading').hide();
 
 	// TODO: Define types for both
