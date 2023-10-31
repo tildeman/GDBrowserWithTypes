@@ -4,6 +4,7 @@ import { parseResponse } from '../../lib/parse_response.js';
 import { UserCache } from '../../classes/UserCache.js';
 import { ExportBundle } from "../../types.js";
 import { Request, Response } from "express";
+import { XOR } from '../../lib/xor.js';
 
 /**
  * An entry for the in-game leaderboard.
@@ -50,7 +51,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	const params = {
 		levelID: req.params.id,
 		accountID: secret_stuff.id,
-		gjp: secret_stuff.gjp, 
+		gjp: secret_stuff.gjp || XOR.encrypt(secret_stuff.password),
 		type: req.query.hasOwnProperty("week") ? "2" : "1",
 	};
 
