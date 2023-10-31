@@ -1,7 +1,13 @@
 import { Request, Response } from "express";
 import { ExportBundle } from "../types.js";
 
-export default async (req: Request<{ song: string; }>, res: Response<any, Record<string, any>>) => {
+/**
+ * Check if a song is allowed for use.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @returns `1` if the song is valid, `0` otherwise.
+ */
+export default async function(req: Request, res: Response) {
     const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
     if (reqBundle.offline) return sendError();
 

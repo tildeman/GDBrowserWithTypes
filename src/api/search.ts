@@ -68,6 +68,13 @@ function idInDemon(needle: number, haystack: ListDemon[]) {
 	return -1;
 }
 
+/**
+ * Search for levels from given filters.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param userCacheHandle The user cache passed in by reference.
+ * @returns A list of levels in JSON.
+ */
 export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 

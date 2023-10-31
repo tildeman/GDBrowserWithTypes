@@ -21,6 +21,7 @@ export default {
      * Enables rate limiting to avoid api spam, feel free to disable for private use.
      */
     rateLimiting: true,
+
     /**
      * Forwards 'x-real-ip' to the servers. (requested by robtop)
      */
@@ -30,10 +31,17 @@ export default {
      * Caches map packs to speed up loading. Useful if they're rarely updated.
      */
     cacheMapPacks: true,
+
+    /**
+     * Caches gauntlets to speed up loading. Useful if they're rarely updated.
+     */
+    cacheGauntlets: true,
+
     /**
      * Caches account IDs in order to shave off an extra request to the servers.
      */
     cacheAccountIDs: true,
+
     /**
      * Caches player icons to speed up loading. Changing your icon in-game may take time to update on the site.
      */

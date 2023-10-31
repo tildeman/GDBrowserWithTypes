@@ -1,5 +1,6 @@
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../types.js";
+import { parseResponse } from "../lib/parse_response.js";
+import { Request, Response } from "express";
+import { ExportBundle } from "../types.js";
 
 /**
  * An entry for a Geometry Dash gauntlet.
@@ -32,28 +33,34 @@ let gauntletNames = [
 	"Monster", "Doom", "Death"
 ];
 
-export default async function(app: Express, req: Request, res: Response) {
+/**
+ * Return a list of available gauntlets.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param cacheMapPacks Whether to cache gauntlets.
+ * @returns A list of gauntlets in JSON.
+ */
+export default async function(req: Request, res: Response, cacheGauntlets: boolean) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) return sendError();
 
 	let cached = cache[reqBundle.id];
-	if (appRoutines.config.cacheGauntlets && cached && cached.data && cached.indexed + 2000000 > Date.now()) {
+	if (cacheGauntlets && cached && cached.data && cached.indexed + 2000000 > Date.now()) {
 		return res.send(cached.data); // half hour cache
 	}
 
 	reqBundle.gdRequest('getGJGauntlets21', {}, function (err, resp, body) {
 
 		if (err) return sendError();
-		let gauntlets = body?.split('#')[0].split('|').map(gauntletResponse => appRoutines.parseResponse(gauntletResponse)).filter(gauntletResponse => gauntletResponse[3]) || [];
+		let gauntlets = body?.split('#')[0].split('|').map(gauntletResponse => parseResponse(gauntletResponse)).filter(gauntletResponse => gauntletResponse[3]) || [];
 		let gauntletList: GauntletEntry[] = gauntlets.map((gauntletItem) => ({
 			id: +gauntletItem[1],
 			name: gauntletNames[+gauntletItem[1] - 1] || "Unknown",
 			levels: gauntletItem[3].split(",")
 		}));
 
-		if (appRoutines.config.cacheGauntlets) cache[reqBundle.id] = {
+		if (cacheGauntlets) cache[reqBundle.id] = {
 			data: gauntletList,
 			indexed: Date.now()
 		};

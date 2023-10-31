@@ -39,6 +39,13 @@ interface ICommentContent {
 	username?: string;
 }
 
+/**
+ * Fetch comments from a level or user.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param userCacheHandle The user cache passed in by reference.
+ * @returns The requested data in JSON.
+ */
 export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 

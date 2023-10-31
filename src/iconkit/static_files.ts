@@ -8,14 +8,38 @@ import hardcodedUnlocks from "./extradata/hardcodedUnlocks.json" assert { type: 
 import iconCredits from "./extradata/iconCredits.json" assert { type: "json" }
 import shops from "./extradata/shops.json" assert { type: "json" }
 
+import fs from "node:fs";
+
+const previewIcons = fs.readdirSync('./iconkit/premade');
+const newPreviewIcons = fs.readdirSync('./iconkit/newpremade');
+
+const previewCounts = {};
+previewIcons.forEach(x => {
+	if (x.endsWith("_0.png")) return;
+	const iconType = forms[x.split("_")[0]]?.form || "";
+	if (!previewCounts[iconType]) previewCounts[iconType] = 1;
+	else previewCounts[iconType]++;
+});
+
+const newIcons = fs.readdirSync('./iconkit/newicons');
+const newIconCounts: Record<string, number> = {};
+newIcons.forEach(x => {
+	if (x.endsWith(".plist")) {
+		newIcons.push(x.split("-")[0]);
+		let formName = x.split(/_\d/g)[0];
+		if (!newIconCounts[formName]) newIconCounts[formName] = 1;
+		else newIconCounts[formName]++;
+	}
+});
+
 // TODO: make a more rigorous type import model
 export const sacredTexts: IconData = {
     forms,
     robotAnimations,
     colors,
     gameSheet,
-    newIconCounts: {},
-    newIcons: []
+    newIconCounts,
+    newIcons
 }
 
 export const extraData: ExtraData = {
@@ -23,6 +47,6 @@ export const extraData: ExtraData = {
     hardcodedUnlocks,
     iconCredits,
     shops,
-    previewIcons: [],
-    newPreviewIcons: []
+    previewIcons,
+    newPreviewIcons
 }

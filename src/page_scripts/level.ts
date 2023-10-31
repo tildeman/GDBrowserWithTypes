@@ -84,7 +84,7 @@ if ($("#additional").hasClass('downloadDisabled')) {
 	});
 }
 
-if (window.location.pathname == "/weekly") {
+if (window.location.pathname == "/level/weekly") {
 	$('body').addClass('darkBG');
 	$('.cornerPiece').addClass('grayscale');
 }

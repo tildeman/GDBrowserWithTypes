@@ -4,6 +4,13 @@ import { Request, Response } from "express";
 import { sha1 } from "../../lib/sha.js";
 import { XOR } from "../../lib/xor.js";
 
+/**
+ * Post a comment on a user's profile.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param userCacheHandle The user cache passed in by reference.
+ * @returns An error message if something goes wrong.
+ */
 export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle }: ExportBundle = res.locals.stuff;
 

@@ -78,14 +78,14 @@ html(lang="en")
 				table
 					tr.menuButtonList
 						+mainButton("saved", "saved", "./search/*?type=saved", "Saved Levels")
-						+mainButton("daily", "daily", "./daily", "Daily Level")
+						+mainButton("daily", "daily", "./level/daily", "Daily Level")
 						if (isOnePointNine && onePointNineDisabled.includes("weekly")) || (serverDisabled.includes("weekly")) || (isDownloadDisabled && downloadDisabled.includes("weekly"))
 							td#menu_featured
 								a(tabindex="1", href="./search/*?type=featured")
 									img.menuButton(class="menu-featured", src="/assets/category-featured.png", title="Featured")
 						else
 							td#menu_weekly
-								a(tabindex="1", href="./weekly")
+								a(tabindex="1", href="./level/weekly")
 									img.menuButton(class="menu-weekly", src="/assets/category-weekly.png", title="Weekly Demon")
 						+mainButton("gauntlets", "gauntlets", "./gauntlets", "Gauntlets")
 					tr.menuButtonList

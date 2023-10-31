@@ -1,5 +1,6 @@
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../types.js";
+import { parseResponse } from "../lib/parse_response.js";
+import { Request, Response } from "express";
+import { ExportBundle } from "../types.js";
 
 /**
  * An entry for a Geometry Dash map pack.
@@ -36,14 +37,20 @@ let difficulties = [
  */
 let cache: Record<string, MapPackCacheItem> = {};
 
-export default async function(app: Express, req: Request, res: Response) {
+/**
+ * Return a list of available map packs.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param cacheMapPacks Whether to cache map packs.
+ * @returns A list of map packs in JSON.
+ */
+export default async function(req: Request, res: Response, cacheMapPacks: boolean) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) return sendError();
 	
 	let cached = cache[reqBundle.id];
-	if (appRoutines.config.cacheMapPacks && cached && cached.data && cached.indexed + 5000000 > Date.now()) {
+	if (cacheMapPacks && cached && cached.data && cached.indexed + 5000000 > Date.now()) {
 		return res.send(cached.data); // 1.5 hour cache
 	}
 	let params = { count: 250, page: 0 };
@@ -57,7 +64,7 @@ export default async function(app: Express, req: Request, res: Response) {
 
 			if (err) return sendError();
 
-			let newPacks = body?.split('#')[0].split('|').map(mapPackResponse => appRoutines.parseResponse(mapPackResponse)).filter(mapPackResponse => mapPackResponse[2]) || [];
+			let newPacks = body?.split('#')[0].split('|').map(mapPackResponse => parseResponse(mapPackResponse)).filter(mapPackResponse => mapPackResponse[2]) || [];
 			packs = packs.concat(newPacks);
 
 			// not all GDPS'es support the count param, which means recursion time!!!
@@ -77,7 +84,7 @@ export default async function(app: Express, req: Request, res: Response) {
 				textColor: mapPackEntry[8]
 			}));
 
-			if (appRoutines.config.cacheMapPacks) {
+			if (cacheMapPacks) {
 				cache[reqBundle.id] = {
 					data: mappacks,
 					indexed: Date.now()

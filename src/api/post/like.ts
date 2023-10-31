@@ -20,6 +20,13 @@ interface ILikeParams {
 	chk: string;
 }
 
+/**
+ * Vote on a post.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param userCacheHandle The user cache passed in by reference.
+ * @returns An error message if something goes wrong.
+ */
 export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const {req: reqBundle}: ExportBundle = res.locals.stuff;
 

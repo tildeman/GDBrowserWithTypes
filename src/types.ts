@@ -153,7 +153,7 @@ export interface ExportBundle {
 /**
  * A dictionary of servers without risky attributes.
  */
-type SafeServers = Omit<ServerInfo, "endpoint" | "substitutions" | "overrides" | "disabled">;
+export type SafeServers = Omit<ServerInfo, "endpoint" | "substitutions" | "overrides" | "disabled">;
 
 /**
  * App-wide routines & functions.
