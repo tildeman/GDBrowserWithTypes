@@ -19,11 +19,11 @@ html(lang="en")
 					img.closeWindow.gdButton(src="/assets/close.png", style={ height: "25%", position: "absolute", top: "-13.5%", left: "-6vh" })
 
 					.supercenter(style={ left: "25%", top: "43%", height: "10%" })
-						// TODO: convert this into a routine
+						//- TODO: convert this into a routine
 						img.gdButton(src="/assets/whitearrow-left.png" style={ height: "160%" }, onclick="$('#pageSelect').val(parseInt($('#pageSelect').val() || 0) - 1); $('#pageSelect').trigger('input');")
 
 					.supercenter(style={ left: "75%", top: "43%", height: "10%" })
-						// TODO: convert this into a routine
+						//- TODO: convert this into a routine
 						img.gdButton(src="/assets/whitearrow-right.png" style={ height: "160%" }, onclick="$('#pageSelect').val(parseInt($('#pageSelect').val() || 0) + 1); $('#pageSelect').trigger('input');")
 			
 			#purgeDiv.popup
@@ -79,7 +79,7 @@ html(lang="en")
 			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
 				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
 
-			// Find a way to get rid of these styling hellholes
+			//- Find a way to get rid of these styling hellholes
 			#purge(style={ position: "absolute", bottom: "20%", right: "-3%", width: "10%", display: "none" })
 				img.gdButton(src="/assets/delete.png", style={ width: "60%" }, onclick="$('#purgeDiv').show()")
 
@@ -106,5 +106,5 @@ html(lang="en")
 		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
 		script(type="text/javascript", src="/global.js?v=1")
 		script(type="text/javascript", src="/dragscroll.js")
-		// Quite a cheesy solution, but hey, things change
+		//- Quite a cheesy solution, but hey, things change
 		script(type="module", src="/page_scripts/search.js")

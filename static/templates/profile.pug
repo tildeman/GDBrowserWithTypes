@@ -32,11 +32,11 @@ html(lang="en")
 		title#tabTitle= player.username + "'s Profile"
 		meta(charset="UTF-8")
 		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
-		// TODO: Use a proper image for the HTTP reference
+		//- TODO: Use a proper image for the HTTP reference
 		link(rel="icon", href="")
 		meta(id="meta-title", property="og:title", content=player.username + "'s profile")
 		meta(id="meta-desc", property="og:description", content=`Stars: ${player.stars} | Diamonds: ${player.diamonds} | Coins: ${player.coins} | User Coins: ${player.userCoins} | Demons: ${player.demons} | CP: ${player.cp}`)
-		// TODO: Nothing better to say than "fix this"
+		//- TODO: Nothing better to say than "fix this"
 		meta(id="meta-image", name="og:image", content="/coin.png", itemprop="image")
 		meta(name="twitter:card", content="summary")
 	body.levelBG(onbeforeunload="saveUrl()")
@@ -132,7 +132,7 @@ html(lang="en")
 
 				hr.profilePostHide(style={ "margin-bottom": "2%" })
 				h3#collectibles.profilePostHide
-					// TODO: convert this into a routine
+					//- TODO: convert this into a routine
 					span#stars(class=player.stars >= 100000 ? "yellow" : "")= player.stars
 					img.help.valign(src="/assets/star.png", title="Stars")
 					span#diamonds(class=player.diamonds >= 65535 ? "blue" : "")= player.diamonds
@@ -192,7 +192,7 @@ html(lang="en")
 							img.gdButton.socialButton(src="/assets/youtube.png")
 					if player.twitter
 						a#twitter(target="_blank", href="https://twitter.com/" + player.twitter)
-							// TODO: Use the X logo
+							//- TODO: Use the X logo
 							img.gdButton.socialButton(src="/assets/twitter.png")
 					if player.twitch
 						a#twitch(target="_blank", href="https://twitch.tv/" + player.twitch)

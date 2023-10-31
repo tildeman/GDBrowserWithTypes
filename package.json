@@ -32,6 +32,7 @@
     "@types/jquery": "^3.5.22",
     "@types/node": "^20.8.2",
     "@types/pixi.js": "^5.0.0",
+    "@types/plist": "^3.0.4",
     "copyfiles": "^2.4.1",
     "typescript": "^5.2.2"
   }

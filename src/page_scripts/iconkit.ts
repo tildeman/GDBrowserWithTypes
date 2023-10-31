@@ -772,9 +772,9 @@ $(document).on('click', '.brownbox', function (e) {
 	e.stopPropagation();
 });
 
-$(document).on('click', '.popup', function () {
-	$('.popup').hide();
-});
+// $(document).on('click', '.popup', function () {
+// 	$('.popup').hide();
+// });
 
 $("#newIconBtn").on("click", function() {
 	clickedSpoilerWarning ? toggleSpoilers() : $('#spoilerWarning').show();
