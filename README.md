@@ -1,47 +1,27 @@
-hi, this is colon from the future.
+# GDBrowser with types
 
-what the FUCK was wrong with me back then???? seriously this is some of the worst code i've ever seen
+Originally intended as a small side project while working on [binalyi](https://github.com/tildeman/binalyi), it quickly became an attempt of me tidying up code. While the end result is far from perfect (god, those templates are awful), they are much better categorized.
 
-welp, here's the readme. but you've been warned,,,
-
-
-# GDBrowser
-
-  
-
-Uh... so I've never actually used GitHub before this. But I'll try to explain everything going on here.
-
-  
-
-Sorry for my messy code. It's why I was skeptical about making this open source, but you know what, the code runs fine in the end.
-
-  
-  ## How do I run this?
-If you're just here to use GDBrowser locally because the site is down or blocked or restricted or god knows what, this is the only part you really need to read
+## How do I run this?
+If you're just here to use GDBrowser locally because the site is down or outdated or blocked or restricted or god knows what, this is the only part you really need to read
 
 
 To run GDBrowser locally:
 1) Install [node.js](https://nodejs.org/en/download/) if you don't already have it
-2) Clone/download this repository  
+2) Clone/download this repository
 3) Open cmd/powershell/terminal in the main folder (with index.js)
 4) Type `npm i` to flood your hard drive with code that's 99% useless
-5) Type `node index` to run the web server
-6) GDBrowser is now running locally at http://localhost:2000
-
+5) Type `npm run build` to transpile all the code into something node.js can actually understand.
+6) Type `cd out && node index` to run the web server
+7) GDBrowser is now running locally at http://localhost:2000
 
 If you want to disable rate limits, ip forwarding, etc you can do so by modifying `settings.js`. Doing this is probably a good idea if you feel like obliterating Rob's servers for some reason. (please don't)
 
-
 ## Using this for a GDPS?
 
-~~I mean, sure. Why not.~~
-Hold up, wait a minute... private servers are an official feature now!
+I mean, sure. Why not.
 
-
-If you would like to add your GDPS to GDBrowser, [fill out this quick form](https://forms.gle/kncuRqyKykQX42QD7) and I'll be happy to add it (provided the server is relatively large and active)
-  
-  
-If you 100% insist on adding a private server to your own magical little fork, you can do so by adding it to **servers.json**. Simply add a new object to the array with the following information:
+As this is nothing more than a side project. Yes, you can add your own server into your own magical little fork by adding it to **servers.json**. Simply add a new object to the array with the following information:
 
 | identifier       | description                  |
 |:----------------:|:-----------------------------:|
@@ -63,81 +43,64 @@ There's also a few optional values for fine-tuning. I'll add more over time
 | `pinned` | "Pins" the server to the top of the GDPS list. It appears above all unpinned servers and is not placed in alphabetical order. | bool |
 | `onePointNine` | Makes a bunch of fancy changes to better fit 1.9 servers. (removes orbs/diamonds, hides some pointless buttons, etc) | bool |
 | `weeklyLeaderboard` | Enables the lost but not forgotten Weekly Leaderboard, for servers that still milk it | bool |
-| `substitutions` | A list of parameter substitutions, because some servers rename/obfuscate them. (e.g. `{ "levelID": "oiuyhxp4w9I" }`) | object |
-| `overrides` | A list of endpoint substitutions, because some servers use renamed or older versions. (e.g. `{ "getGJLevels21": "dorabaeChooseLevel42" }`) | object |
+| `substitutions` | A list of parameter substitutions, because some servers rename/obfuscate them. (e.g. `{ "levelID": "oiuyhxp4w9I" }`) | `Record<string, string>` |
+| `overrides` | A list of endpoint substitutions, because some servers use renamed or older versions. (e.g. `{ "getGJLevels21": "dorabaeChooseLevel42" }`) | `Record<string, string>` |
 
-  
+## Folders
 
-# Folders
+GDBrowser has a lot of folders. [you don't need citation it's obvious through `/src`]
 
-  
-
-GDBrowser has a lot of folders. [citation needed]
-
-I pride myself in keeping my files neat, without doing the whole `src/main/data/stuff/code/homework/newfolder/util/actualcode` garbage 
-
-  
+For this random side project, I intend to break all the rules of categorization and just go for what works the best. In the end I have more folders than I really need to, but I hope that the resulting code is more readable.
 
 Most folders contain exactly what you'd expect, but here's some in-depth info in case you're in the dark.
 
-  
-
-## API
+### API
 
 This is where all the backend stuff happens! Yipee!
 
-  
+If you've studied web applications before, this is a list of controllers.
 
 They're all fairly similar. Fetch something, parse the response, and serve it in a crisp and non-intimidating JSON. This is probably what you came for.
 
-
-  
-
-## Assets
+### Assets (in `/static`)
 
 Assets! Assets everywhere!
 
-  
-
 All the GD stuff was ripped straight from the GD spritesheets via [Absolute's texture splitter hack](https://youtu.be/pYQgIyNhow8). If you want a nice categorized version, [I've done all the dirty work for you.](https://www.mediafire.com/file/4d99bw1zhwcl507/textures.zip/file)
-
-  
 
 I'd explain what's in all the subfolders but it's pretty obvious. I tried my best to organize everything nicely.
 
-  
-
-## Classes
+### Classes
 
 What's a class you ask? Good question.
 
-  
+I guess the best way to put it is uh... **representations** of data capsules that do things???
 
-I guess the best way to put it is uh... super fancy functions???
+`Level.ts` and `Player.ts` parse the server's disgusting response and sends back a nice object with all the relevant info.
 
-  
+`UserCache.ts` handles caching and in-memory storage for common requests.
 
-Level.js parses the server's disgusting response and sends back a nice object with all the level info
+### HTML (in `/static`)
 
-  
+These are old remains of the original GDBrowser where HTML code is manipulated directly through servers. These are prone to bugs and are what pushed me for a complete rewrite. Currently unused.
 
-XOR.js encrypts/decrypts stuff like GD passwords
+### Lib
 
-  
+I put plain old reusable functions there in order to avoid the usage of fancier classes that require initialization and all that stuff.
 
-## HTML
+`xor.ts` used to be a class, but I converted it into a collection of separate functions for the sake of clarity.
 
-The HTML files! Nothing too fancy, since it can all be seen directly from gdbrowser. Note that profile.html and level.html (and some parts of home.html) have [[VARIABLES]] (name, id, etc) replaced by the server when they're sent.
+### Middleware
 
+I didn't plan to add this folder, but I don't want `index.ts` to be cluttered, either. It basically contains helper functions for use in most files in `/api`.
 
-## Misc
+### Misc
 
 Inevitable misc folder
 
-  
+When you're working on a project the size and scale of GDBrowser, there has to be several one-off fragments that aren't enough on their own but don't go well with other files. Mostly JSON files and some modules and scripts.
 
-**Level Analysis Stuff (in a separate folder)**
-
+**Level Analysis Stuff (in `/analysis`)**
   
 | name | description |
 |:----:|:-----------:|
@@ -147,11 +110,8 @@ Inevitable misc folder
 | `objectProperties.json` | Object property cheatsheet. Low budget version of [AlFas' one](https://github.com/AlFasGD/GDAPI/blob/master/GDAPI/GDAPI/Enumerations/GeometryDash/ObjectProperty.cs) |
 | `objects.json` | IDs for portals, orbs, triggers, and misc stuff |
 
-  
-
 **Everything Else**
 
-  
 | name | description |
 |:----:|:-----------:|
 | `achievements.json` | List of all GD/meltdown/subzero/etc achievements. `parseAchievementPlist.js` automatically creates this file |
@@ -163,8 +123,58 @@ Inevitable misc folder
 | `sampleIcons.json` | A pool of icons, one of which will randomly appear when visiting the icon kit. Syntax is [Name, ID, Col1, Col2, Glow] |
 | `secretStuff.json` | GJP goes here, needed for level leaderboards. Not included in the repo for obvious reasons |
 
----
+### Page scripts
 
-  
+These are a collection of modules for use on individual webpages. `comments.ts` loads comments for the commments page. `filters.ts` remembers your filters the next time you visit GDBrowser. I separated these from the respective HTML for two reasons:
 
-happy gdbrowsing and god bless.
+1) Type-checking code works better when the files are detached from HTML.
+2) These files are imported as ES6 modules, and they are designed not to pollute the global namespace. Keeping them detached makes usage of imports and exports much more convenient.
+
+### Routes
+
+When you go on a link, the web server has to know what you're looking for. It does this by checking the URI of the webpage, and then looking for what you expect should show up on that page.
+
+For example, if you're looking for levels, you go to the right page (`/search`), and the routing does all of that for you.
+
+This does seem a lot like ravioli code, but it may aid in readability.
+
+### Templates
+
+This is the "views" part in the MVC model if you're familiar with that. I will call them templates to help make it easier to understand.
+
+These are the "new" templates that are made to replace the contents in `/html`, notably those about levels and profiles.
+
+A lot of them have conditions and mix-ins that replace the preprocessing functions that manually replace placeholder values server-side. Instead of embedding unknown stuff into HTML files and hope it doesn't break (GDBrowser does glitch out sometimes for earlier levels), now the preprocessing is all handled by the template engine.
+
+## RAQ (Rarely Asked Questions)
+
+Q: What on earth is GDBrowser?
+
+A: Basically a website to browse some of Geometry Dash's online features.
+
+
+Q: Why don't you write normal `.js` files? Why `.ts`?
+
+A: TypeScripts (and IntelliSense) works much better on `.ts` files. They may aid in catching errors early in development.
+
+
+Q: Some of the buttons/icons/UI elements don't match up with the original GDBrowser.
+
+A: This is a side effect of how browsers handle webpages. Since the original GDBrowser templates were written without a `<!DOCTYPE html>`, this causes the browser to implement quirks that affect webpage rendering. While transitioning the templates to HTML5, I had to sacrifice some of the formatting details; this resulted in bugs and glitches.
+
+
+Q: What happens when 2.2 releases?
+
+A: I may have to bring back the "Coming Soon" page for missing 2.2 features. They will be added to GDBrowser given enough time. I'll also be checking upstream to see if Colon adds those features before I do.
+
+
+Q: I don't see much difference in the overall usage.
+
+A: The application does not attempt to drastically modify any existing user interfaces. Most of the "improvements" are done over the backend.
+
+## Roadmap
+
+[ ] Complete all the TODOs (36).
+[ ] Implement 2.2 features once the release is out.
+[ ] Write JSDoc for all the types and interfaces in code.
+[ ] Fix glaring formatting errors.
