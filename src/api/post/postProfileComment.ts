@@ -1,24 +1,11 @@
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../../types.js";
+import { UserCache } from "../../classes/UserCache.js";
+import { ExportBundle } from "../../types.js";
+import { Request, Response } from "express";
 import { sha1 } from "../../lib/sha.js";
 import { XOR } from "../../lib/xor.js";
 
-
-/**
- * Parameters for comment posts
- */
-interface ICommentParams {
-	ctype: string;
-	comment: string;
-	gjp: string;
-	accountID: string;
-	userName: string;
-	chk: string;
-}
-
-export default async function(app: Express, req: Request, res: Response) {
-	const {req: reqBundle}: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
+export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
+	const { req: reqBundle }: ExportBundle = res.locals.stuff;
 
 	if (req.method !== "POST") return res.status(405).send("Method not allowed.");
 
@@ -44,12 +31,12 @@ export default async function(app: Express, req: Request, res: Response) {
 	params.chk = chk;
 
 	reqBundle.gdRequest("uploadGJAccComment20", params, function (err, resp, body) {
-		if (err) return res.status(400).send(`The Geometry Dash servers rejected your profile post! Try again later, or make sure your username and password are entered correctly. Try again later, or make sure your username and password are entered correctly. Last worked: ${appRoutines.timeSince(reqBundle.id)} ago.`);
+		if (err) return res.status(400).send(`The Geometry Dash servers rejected your profile post! Try again later, or make sure your username and password are entered correctly. Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
 		else if (body?.startsWith("temp")) {
 			let banStuff = body.split("_");
 			return res.status(400).send(`You have been banned from commenting for ${(parseInt(banStuff[1]) / 86400).toFixed(0)} days. Reason: ${banStuff[2] || "None"}`);
 		}
-		else appRoutines.trackSuccess(reqBundle.id);
+		else userCacheHandle.trackSuccess(reqBundle.id);
 		res.send(`Comment posted to ${params.userName} with ID ${body}`);
 	});
 }

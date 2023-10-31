@@ -26,6 +26,7 @@ import profileRoutes from "./routes/profiles.js";
 import searchRoutes from "./routes/searches.js";
 import leaderboardRoutes from "./routes/leaderboards.js";
 import messageRoutes from "./routes/messages.js";
+import postRoutes from "./routes/posts.js";
 
 // TODO: Enforce strict mode for everything
 
@@ -114,7 +115,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(timeout('20s'));
 
-app.use(async function(req, res, next) {
+app.use(function(req, res, next) {
 	const subdomain_level = 1;
 	let subdomains = req.subdomains.map(x => x.toLowerCase());
 	if (subdomains.length < subdomain_level) subdomains = [""];
@@ -202,7 +203,7 @@ app.use(async function(req, res, next) {
 	res.locals.stuff = bundle;
 
 	next();
-})
+});
 
 const directories = [""];
 fs.readdirSync('./api').filter(x => !x.includes(".")).forEach(x => directories.push(x));
@@ -324,12 +325,6 @@ app.get("/global.js", fetchStaticFile("misc/global.js"));
 app.get("/dragscroll.js", fetchStaticFile("misc/dragscroll.js"));
 app.use("/page_scripts", express.static("page_scripts"));
 
-// POST REQUESTS
-
-app.post("/like", RL, function(req, res) { run.like(app, req, res) });
-app.post("/postComment", RL, function(req, res) { run.postComment(app, req, res) });
-app.post("/postProfileComment", RL, function(req, res) { run.postProfileComment(app, req, res) });
-
 // HTML
 
 /**
@@ -376,9 +371,7 @@ app.get("/", function(req, res) {
 });
 
 app.get("/achievements", fetchTemplate("achievements"));
-app.get("/analyze/:id", fetchTemplate("analyze"));
 app.get("/api", fetchTemplate("api"));
-app.get("/comments/:id", fetchTemplate("comments"));
 app.get("/gauntlets", fetchTemplate("gauntlets"));
 app.get("/gdps", fetchTemplate("gdps"));
 app.get("/iconkit", fetchTemplate("iconkit"));
@@ -398,7 +391,6 @@ app.get("/mappacks", fetchTemplate("mappacks"));
 
 // API
 
-app.get("/api/comments/:id", RL2, function(req, res) { run.comments(app, req, res) });
 app.get("/api/credits", function(req, res) { res.status(200).send(credits) });
 app.get("/api/gauntlets", function(req, res) { run.gauntlets(app, req, res) });
 app.get("/api/mappacks", function(req, res) { run.mappacks(app, req, res) });
@@ -429,6 +421,7 @@ app.use("/", profileRoutes(userCacheHandle));
 app.use("/", searchRoutes(userCacheHandle));
 app.use("/", leaderboardRoutes(userCacheHandle, appConfig.params.secret));
 app.use("/", messageRoutes(userCacheHandle));
+app.use("/", postRoutes(userCacheHandle));
 
 // important icon stuff
 

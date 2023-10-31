@@ -2,11 +2,12 @@
  * @fileoverview Routing page for levels.
  */
 
-import { RL } from "../lib/ratelimits.js";
+import { fetchTemplate } from "../lib/template_handle.js";
 import { UserCache } from "../classes/UserCache.js";
 import analyzeController from "../api/analyze.js";
 import levelController from "../api/level.js";
 import songController from "../api/song.js";
+import { RL } from "../lib/ratelimits.js";
 import express from "express";
 
 export default function(userCacheHandle: UserCache) {
@@ -32,6 +33,8 @@ export default function(userCacheHandle: UserCache) {
 	router.get("/level/:id", function(req, res) {
 		levelController(req, res, false, false, userCacheHandle);
 	});
+
+	router.get("/analyze/:id", fetchTemplate("analyze"));
 
 	return router;
 }

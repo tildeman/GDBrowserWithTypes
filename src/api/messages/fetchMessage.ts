@@ -4,8 +4,6 @@ import { ExportBundle } from "../../types.js";
 import { Request, Response } from "express";
 import { XOR } from "../../lib/xor.js";
 
-
-
 /**
  * Fetch the contents of the message.
  * @param req The client request.

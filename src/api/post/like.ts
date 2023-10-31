@@ -1,7 +1,8 @@
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../../types.js";
+import { Request, Response } from "express";
+import { ExportBundle } from "../../types.js";
 import { sha1 } from "../../lib/sha.js";
 import { XOR } from "../../lib/xor.js";
+import { UserCache } from "../../classes/UserCache.js";
 
 /**
  * Parameters for item likes
@@ -19,9 +20,9 @@ interface ILikeParams {
 	chk: string;
 }
 
-export default async function(app: Express, req: Request, res: Response) {
+export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const {req: reqBundle}: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
+
 	if (req.method !== "POST") return res.status(405).send("Method not allowed.");
 
 	if (!req.body.ID) return res.status(400).send("No ID provided!");
@@ -36,7 +37,7 @@ export default async function(app: Express, req: Request, res: Response) {
 		uuid: "0",
 		rs: "8f0l0ClAN1",
 		itemID: req.body.ID.toString(),
-		gjp: app.locals.stuff.xor.encrypt(req.body.password, 37526),
+		gjp: XOR.encrypt(req.body.password, 37526),
 		accountID: req.body.accountID.toString(),
 		like: req.body.like.toString(),
 		special: req.body.extraID.toString(),
@@ -52,8 +53,8 @@ export default async function(app: Express, req: Request, res: Response) {
 
 	reqBundle.gdRequest("likeGJItem211", params, function (err, resp, body) {
 		// TODO: Determine the last time the like worked
-		if (err) return res.status(400).send(`The Geometry Dash servers rejected your vote! Try again later, or make sure your username and password are entered correctly. Last worked: ${appRoutines.timeSince(reqBundle.id)} ago.`);
-		else appRoutines.trackSuccess(reqBundle.id);
+		if (err) return res.status(400).send(`The Geometry Dash servers rejected your vote! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
+		else userCacheHandle.trackSuccess(reqBundle.id);
 		res.send((params.like == "1" ? "Successfully liked!" : "Successfully disliked!") + " (this will only take effect if this is your first time doing so)");
 	});
 }

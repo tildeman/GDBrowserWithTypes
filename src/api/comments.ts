@@ -1,6 +1,8 @@
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../types.js";
+import { UserCache } from "../classes/UserCache.js";
 import { Player } from "../classes/Player.js";
+import { Request, Response } from "express";
+import { ExportBundle } from "../types.js";
+import { parseResponse } from "../lib/parse_response.js";
 
 /**
  * Interface for comment parameters.
@@ -37,9 +39,8 @@ interface ICommentContent {
 	username?: string;
 }
 
-export default async function(app: Express, req: Request, res: Response) {
+export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
 
 	if (reqBundle.offline) return sendError();
 
@@ -68,7 +69,7 @@ export default async function(app: Express, req: Request, res: Response) {
 
 		const split_bars = body?.split('|') || [];
 		const split_colons = split_bars.map(commentInfo => commentInfo.split(':'));
-		let comments = split_colons.map(commentInfo => commentInfo.map(commentInfo => appRoutines.parseResponse(commentInfo, "~")));
+		let comments = split_colons.map(commentInfo => commentInfo.map(commentInfo => parseResponse(commentInfo, "~")));
 		if (req.query.type == "profile") comments = comments.filter(commentInfo => commentInfo[0][2]);
 		else comments = comments.filter(commentInfo => commentInfo[0] && commentInfo[0][2]);
 		if (!comments.length) return res.status(204).send([]);
@@ -107,7 +108,7 @@ export default async function(app: Express, req: Request, res: Response) {
 				comment.color = (comment.playerID == "16" ? "50,255,255" : commentInfo[12] || "255,255,255");
 				if (+commentInfo[10] > 0) comment.percent = +commentInfo[10];
 				comment.moderator = +commentInfo[11] || 0;
-				appRoutines.userCache(reqBundle.id, comment.accountID || "", comment.playerID, comment.username || "");
+				userCacheHandle.userCache(reqBundle.id, comment.accountID || "", comment.playerID || "", comment.username || "");
 			}
 
 			if (commentIndex == 0 && req.query.type != "commentHistory") {
