@@ -1,10 +1,20 @@
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../../types.js";
+import { parseResponse } from "../../lib/parse_response.js";
+import { UserCache } from "../../classes/UserCache.js";
+import { ExportBundle } from "../../types.js";
+import { Request, Response } from "express";
 import { XOR } from "../../lib/xor.js";
 
-export default async function(app: Express, req: Request, res: Response) {
-	const {req: reqBundle}: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
+
+
+/**
+ * Fetch the contents of the message.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param userCacheHandle The user cache passed in by reference.
+ * @returns The message along with its contents.
+ */
+export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
+	const { req: reqBundle }: ExportBundle = res.locals.stuff;
 
 	if (req.method !== 'POST') return res.status(405).send("Method not allowed.");
 
@@ -19,11 +29,11 @@ export default async function(app: Express, req: Request, res: Response) {
 
 	reqBundle.gdRequest('downloadGJMessage20', params, function (err, resp, body) {
 		if (err) {
-			return res.status(400).send(`Error fetching message! Try again later, or make sure your username and password are entered correctly. Last worked: ${appRoutines.timeSince(reqBundle.id)} ago.`);
+			return res.status(400).send(`Error fetching message! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
 		}
-		else appRoutines.trackSuccess(reqBundle.id);
+		else userCacheHandle.trackSuccess(reqBundle.id);
 
-		let colon_separated_response = appRoutines.parseResponse(body || "");
+		let colon_separated_response = parseResponse(body || "");
 		let msg = {
 			id: colon_separated_response[1],
 			playerID: colon_separated_response[3],

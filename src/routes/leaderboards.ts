@@ -18,8 +18,10 @@ export default function(userCacheHandle: UserCache, secret?: string) {
 		accurateLeaderboardController(req, res, userCacheHandle, true);
 	});
 
+	router.get("/boomlings", fetchTemplate("boomlings"));
 	router.get("/leaderboard", fetchTemplate("leaderboard"));
 	router.get("/leaderboard/:text", fetchTemplate("levelboard"));
+	router.get("/demon/:id", fetchTemplate("demon"));
 
 	router.get("/api/leaderboard", function(req, res) {
 		if (req.query.hasOwnProperty("accurate")) {

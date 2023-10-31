@@ -25,6 +25,7 @@ import levelRoutes from "./routes/levels.js";
 import profileRoutes from "./routes/profiles.js";
 import searchRoutes from "./routes/searches.js";
 import leaderboardRoutes from "./routes/leaderboards.js";
+import messageRoutes from "./routes/messages.js";
 
 // TODO: Enforce strict mode for everything
 
@@ -329,11 +330,6 @@ app.post("/like", RL, function(req, res) { run.like(app, req, res) });
 app.post("/postComment", RL, function(req, res) { run.postComment(app, req, res) });
 app.post("/postProfileComment", RL, function(req, res) { run.postProfileComment(app, req, res) });
 
-app.post("/messages", RL, function(req, res) { run.getMessages(app, req, res) });
-app.post("/messages/:id", RL, function(req, res) { run.fetchMessage(app, req, res) });
-app.post("/deleteMessage", RL, function(req, res) { run.deleteMessage(app, req, res) });
-app.post("/sendMessage", RL, function(req, res) { run.sendMessage(app, req, res) });
-
 // HTML
 
 /**
@@ -382,14 +378,11 @@ app.get("/", function(req, res) {
 app.get("/achievements", fetchTemplate("achievements"));
 app.get("/analyze/:id", fetchTemplate("analyze"));
 app.get("/api", fetchTemplate("api"));
-app.get("/boomlings", fetchTemplate("boomlings"));
 app.get("/comments/:id", fetchTemplate("comments"));
-app.get("/demon/:id", fetchTemplate("demon"));
 app.get("/gauntlets", fetchTemplate("gauntlets"));
 app.get("/gdps", fetchTemplate("gdps"));
 app.get("/iconkit", fetchTemplate("iconkit"));
 app.get("/mappacks", fetchTemplate("mappacks"));
-app.get("/messages", fetchTemplate("messages"));
 
 // This is documentation for the GDBrowser's internal API, which is off by default.
 // Uncomment this line if you want it enabled.
@@ -405,7 +398,6 @@ app.get("/messages", fetchTemplate("messages"));
 
 // API
 
-app.get("/api/boomlings", function(req, res) { run.boomlings(app, req, res) });
 app.get("/api/comments/:id", RL2, function(req, res) { run.comments(app, req, res) });
 app.get("/api/credits", function(req, res) { res.status(200).send(credits) });
 app.get("/api/gauntlets", function(req, res) { run.gauntlets(app, req, res) });
@@ -436,6 +428,7 @@ app.use("/", levelRoutes(userCacheHandle));
 app.use("/", profileRoutes(userCacheHandle));
 app.use("/", searchRoutes(userCacheHandle));
 app.use("/", leaderboardRoutes(userCacheHandle, appConfig.params.secret));
+app.use("/", messageRoutes(userCacheHandle));
 
 // important icon stuff
 
@@ -477,7 +470,7 @@ app.get('/api/iconkit', function(req, res) {
 	const {req: reqBundle}: ExportBundle = res.locals.stuff;
 	const sample = [JSON.stringify(sampleIcons[Math.floor(Math.random() * sampleIcons.length)].slice(1))];
 	const iconserver = reqBundle.isGDPS ? reqBundle.server.name : undefined;
-	res.status(200).send(Object.assign(iconKitFiles, {sample, server: iconserver, noCopy: reqBundle.onePointNine || reqBundle.offline}));
+	res.status(200).send(Object.assign(iconKitFiles, { sample, server: iconserver, noCopy: reqBundle.onePointNine || reqBundle.offline }));
 });
 
 app.get('/icon/:text', function(req, res) {

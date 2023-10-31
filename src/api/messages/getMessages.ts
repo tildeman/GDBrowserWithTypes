@@ -1,5 +1,8 @@
-import { Express, Request, Response } from "express";
-import { AppRoutines, ExportBundle } from "../../types.js";
+import { parseResponse } from "../../lib/parse_response.js";
+import countMessagesController from "./countMessages.js";
+import { UserCache } from "../../classes/UserCache.js";
+import { ExportBundle } from "../../types.js";
+import { Request, Response } from "express";
 import { XOR } from "../../lib/xor.js";
 
 /**
@@ -16,13 +19,21 @@ interface MessageOverview {
 	browserColor: boolean;
 }
 
-export default async function(app: Express, req: Request, res: Response) {
-	const {req: reqBundle}: ExportBundle = res.locals.stuff;
-	const appRoutines: AppRoutines = app.locals.stuff;
+
+
+/**
+ * Get a list of messages.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param userCacheHandle The user cache passed in by reference.
+ * @returns The list of the most recent messages for a given user.
+ */
+export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
+	const { req: reqBundle }: ExportBundle = res.locals.stuff;
 
 	if (req.method !== 'POST') return res.status(405).send("Method not allowed.");
 
-	if (req.body.count) return appRoutines.run.countMessages(app, req, res);
+	if (req.body.count) return countMessagesController(req, res, userCacheHandle);
 	if (!req.body.accountID) return res.status(400).send("No account ID provided!");
 	if (!req.body.password) return res.status(400).send("No password provided!");
 
@@ -34,11 +45,10 @@ export default async function(app: Express, req: Request, res: Response) {
 	});
 
 	reqBundle.gdRequest('getGJMessages20', params, function (err, resp, body) {
+		if (err) return res.status(400).send(`Error fetching messages! Messages get blocked a lot so try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
+		else userCacheHandle.trackSuccess(reqBundle.id);
 
-		if (err) return res.status(400).send(`Error fetching messages! Messages get blocked a lot so try again later, or make sure your username and password are entered correctly. Last worked: ${appRoutines.timeSince(reqBundle.id)} ago.`);
-		else appRoutines.trackSuccess(reqBundle.id);
-
-		let messages = (body || "").split("|").map(msg => appRoutines.parseResponse(msg));
+		let messages = (body || "").split("|").map(msg => parseResponse(msg));
 		let messageArray: MessageOverview[] = [];
 		messages.forEach(colon_separated_response => {
 			let msg = {
@@ -58,7 +68,7 @@ export default async function(app: Express, req: Request, res: Response) {
 				msg.browserColor = true;
 			}
 
-			appRoutines.userCache(reqBundle.id, msg.accountID, msg.playerID, msg.author);
+			userCacheHandle.userCache(reqBundle.id, msg.accountID, msg.playerID, msg.author);
 			messageArray.push(msg);
 		});
 		return res.send(messageArray);
