@@ -32,7 +32,7 @@ $('.levelSearch').click(function() {
 	let difficulties: string[] = [];
 	$('.diffDiv').each(function() {if ($(this).hasClass('selectedFilter')) difficulties.push($(this).attr('diff') || "")});
 	const demonFilter = demonMode && (+difficulties[0] > 0);
-	
+
 	if (!difficulties.length) url += "";
 	else if (!demonFilter) url += "&diff=" + undupe(difficulties).join(",");
 	else url += "&diff=-2&demonFilter=" + difficulties[0];
@@ -137,7 +137,7 @@ $(document).keydown(function(k) {
 	if ((!$(':focus-visible').length || searchFocus) && k.which == 13) { // enter
 		if (!$('#customlist').is(':hidden')) k.preventDefault();
 		else if ($('#filters').is(':hidden')) $('#searchBtn').trigger('click');
-	} 
+	}
 });
 
 $('#pageSize').on('input blur', function (event) {
@@ -274,7 +274,7 @@ Fetch(`/api/music`).then((music: any) => {
 
 	$('#songName').html("1: " + music[1][0]);
 
-	$(document).on('click', '.songChange', function () { 
+	$(document).on('click', '.songChange', function () {
 		officialSong += Number($(this).attr('jump'));
 		if (officialSong < 1) officialSong = 1;
 		// There was once a check here

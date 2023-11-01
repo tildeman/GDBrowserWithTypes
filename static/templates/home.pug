@@ -1,6 +1,6 @@
 mixin mainButton(id, link, dir, name)
 	td
-		a(tabindex="1", href=dir)
+		a(tabindex="1", href=(isOnePointNine && onePointNineDisabled.includes(id)) || (serverDisabled.includes(id)) || (isDownloadDisabled && downloadDisabled.includes(id)) ? null : dir)
 			img.menuButton(class=(isOnePointNine && onePointNineDisabled.includes(id)) || (serverDisabled.includes(id)) || (isDownloadDisabled && downloadDisabled.includes(id)) ? "menuDisabled" : "menu-" + id, src="/assets/category-" + link + ".png", title=name)
 
 doctype html
@@ -35,11 +35,11 @@ html(lang="en")
 
 			//- TODO: This is kludgy
 			div(class=(isOnePointNine && onePointNineDisabled.includes("achievements")) || (serverDisabled.includes("achievements")) || (isDownloadDisabled && downloadDisabled.includes("achievements")) ? "menuDisabled" : "menu-achievements", style={ position: "absolute", top: "5.5%", left: "3%", width: "12%"})
-				a(href="/achievements")
+				a(href=(isOnePointNine && onePointNineDisabled.includes("achievements")) || (serverDisabled.includes("achievements")) || (isDownloadDisabled && downloadDisabled.includes("achievements")) ? null : "/achievements")
 					img.gdButton(src="/assets/achievements.png", style={ width: "40%" })
 
 			div(class=(isOnePointNine && onePointNineDisabled.includes("messages")) || (serverDisabled.includes("messages")) || (isDownloadDisabled && downloadDisabled.includes("messages")) ? "menuDisabled" : "menu-messages", style={ position: "absolute", top: "-1.7%", left: "11%", width: "10%", "text-align": "left"})
-				a(href="/messages")
+				a(href=(isOnePointNine && onePointNineDisabled.includes("messages")) || (serverDisabled.includes("messages")) || (isDownloadDisabled && downloadDisabled.includes("messages")) ? null : "/messages")
 					img.iconRope(src="/assets/messagerope.png", style={ width: "40%" })
 
 			div(style={ position: "absolute", top: "-1.5%", right: "10%", width: "10%", "text-align": "right" })
@@ -140,8 +140,8 @@ html(lang="en")
 							|
 							| level!
 
-		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
-		script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
-		script(type="text/javascript", src="/iconkit/icon.js")
-		script(type="text/javascript", src="/global.js?v=1")
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
+		script(src="/iconkit/icon.js")
+		script(src="/global.js?v=1")
 		script(type="module", src="/page_scripts/home.js")

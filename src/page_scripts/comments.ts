@@ -214,9 +214,9 @@ function buildComments(lvl: Level | Player) {
 							<h3 id="likes-${x.ID}" class="inline">${x.likes}</h3>
 						</div>
 					</div>`
-					
+
 				////// COMPACT  MODE //////
-				
+
 					:  `
 					<div class="commentBG compactBG ${bgCol}">
 						<div class="comment compact" commentID="${x.ID}">
@@ -438,7 +438,7 @@ function buildComments(lvl: Level | Player) {
 		const extraID = lvID || window.location.pathname.split('/')[2];
 		let accountID = 0;
 		let likeType = like ? "1" : "0";
-		
+
 		if (!ID || !username || !password || loadingComments) {
 			return $('#postComment').hide();
 		}
@@ -493,7 +493,7 @@ function buildComments(lvl: Level | Player) {
 		if (k.which == 37 && $('#pageDown').is(":visible")) { //left
 			$('#pageDown').trigger('click');
 		}
-		
+
 		if (k.which == 39 && $('#pageUp').is(":visible")) { //right
 			$('#pageUp').trigger('click');
 		}

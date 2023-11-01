@@ -110,7 +110,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		if (count > 500) amount = 500;
 		else amount = count;
 	}
-	
+
 	let filters: SearchFilters = {
 		str: req.params.text,
 
@@ -161,7 +161,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		else if (!filters.str?.match(/^[0-9]*$/)) {
 			return profileController(req, res, userCacheHandle, false, req.params.text);
 		}
-	} 
+	}
 
 	if (req.query.hasOwnProperty("creators")) filters.type = 12;
 

@@ -204,7 +204,7 @@ function parseNewPlist(data: string) {
 				let textureArr = keyData.slice(1, -1).split("},{").map(x => parseWeirdArray(x));
 				positionData[frameName].pos = textureArr[0];
 				positionData[frameName].size = textureArr[1];
-			}  
+			}
 		}
 
 		if (isRotated) positionData[frameName].size.reverse();
@@ -306,16 +306,16 @@ class Icon {
 				x.name = iconData?.robotAnimations.info[this.form].names[y] || "";
 				let part = new IconPart(this.form, this.id, this.colors, false, { part: x, skipGlow: true, new: this.new });
 				positionPart(x, y, part.sprite, this.form, this.new);
-	
+
 				let glowPart = new IconPart(this.form, this.id, this.colors, true, { part: x, onlyGlow: true, new: this.new });
 				positionPart(x, y, glowPart.sprite, this.form, this.new, true);
 				glowPart.sprite.visible = this.glow;
 				this.glowLayers.push(glowPart);
-	
+
 				this.layers.push(part);
 				this.sprite.addChild(part.sprite);
 			});
-	
+
 			let fullGlow = new PIXI.Container();
 			this.glowLayers.forEach(x => fullGlow.addChild(x.sprite));
 			this.sprite.addChildAt(fullGlow, 0);
@@ -488,7 +488,7 @@ class Icon {
 		// this took hours to figure out. i fucking hate my life
 		xRange[1]++;
 		yRange[1]++;
-		
+
 		let realWidth = xRange[1] - xRange[0];
 		let realHeight = yRange[1] - yRange[0];
 
@@ -543,7 +543,7 @@ class Icon {
 		this.app.renderer.render(this.app.stage);
 		this.app.view.toBlob(blob => {
 			let item = new ClipboardItem({ "image/png": blob });
-			navigator.clipboard.write([item]); 
+			navigator.clipboard.write([item]);
 		});
 		this.revertCrop();
 	}
@@ -568,7 +568,7 @@ class Icon {
 		function addPSDLayer(layer, parent, sprite) {
 			allLayers.forEach(x => x.sprite.alpha = 0);
 			layer.sprite.alpha = 255;
-		
+
 			let layerChild: any = {
 				name: layer.colorName,
 				canvas: renderer.plugins.extract.canvas(sprite)
@@ -609,7 +609,7 @@ class Icon {
 		downloader.setAttribute("download", `${this.formName()}_${this.id}.psd`);
 		document.body.appendChild(downloader);
 		downloader.click();
-		document.body.removeChild(downloader); 
+		document.body.removeChild(downloader);
 		this.setGlow(glowing);
 	}
 }
@@ -681,7 +681,7 @@ class IconLayer {
 	color: any;
 
 	/**
-	 * 
+	 *
 	 * @param path The path of the icon layer.
 	 * @param color The color of the icon layer, as a string or a number.
 	 * @param colorType The color type of the icon layer.

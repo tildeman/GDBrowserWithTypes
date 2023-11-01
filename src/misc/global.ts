@@ -237,14 +237,14 @@ $('body').append(`
 
 // TODO: fix this deprecated usage
 $(window).resize(function () {
-	if (window.innerHeight > window.innerWidth - 75) { 
-		$('#everything').hide(); 
+	if (window.innerHeight > window.innerWidth - 75) {
+		$('#everything').hide();
 		$('#tooSmall').show();
 	}
 
-	else { 
-		$('#everything').show(); 
-		$('#tooSmall').hide() 
+	else {
+		$('#everything').show();
+		$('#tooSmall').hide()
 	}
 });
 
@@ -298,7 +298,7 @@ $(document).keydown(function(k) {
 	if (k.keyCode == 27) { //esc
 		if (!allowEsc) return
 		k.preventDefault()
-		if (popupEsc && $('.popup').is(":visible")) $('.popup').hide();   
+		if (popupEsc && $('.popup').is(":visible")) $('.popup').hide();
 		else $('#backButton').trigger('click')
 	}
 });
@@ -402,7 +402,7 @@ function finishIcon(currentIcon, name, data) {
 // reset scroll
 while ($(this).scrollTop() != 0) {
 	$(this).scrollTop(0);
-} 
+}
 
 // TODO: fix this deprecated usage
 $(document).ready(function() {

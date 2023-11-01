@@ -21,7 +21,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		if (!api) return res.redirect('/search/' + req.params.id);
 		else return sendError();
 	}
-	
+
 	let username = getLevels || req.params.id;
 	let probablyID = 0;
 	if (username.endsWith(".") && reqBundle.isGDPS) {
@@ -35,7 +35,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	// if you're searching by account id, an intentional error is caused to skip the first request to the gd servers. see i pulled a sneaky on ya. (fuck callbacks man)
 	// TODO: Convert GDRequests to promises
-	reqBundle.gdRequest(skipRequest ? "" : 'getGJUsers20', skipRequest ? {} : { str: username, page: 0 }, function (err1, res1, b1) {   
+	reqBundle.gdRequest(skipRequest ? "" : 'getGJUsers20', skipRequest ? {} : { str: username, page: 0 }, function (err1, res1, b1) {
 		if (foundID) searchResult = foundID[0];
 		else if (accountMode || err1 || b1 == '-1' || b1?.startsWith("<") || !b1) {
 			searchResult = probablyID ? username : req.params.id;
@@ -51,18 +51,18 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			req.params.text = foundID ? foundID[1] : parseResponse(b1 || "")[2];
 			return searchController(req, res, userCacheHandle);
 		}
-		
+
 		reqBundle.gdRequest('getGJUserInfo20', { targetAccountID: searchResult }, function (err2, res2, body) {
 			let account = parseResponse(body || "");
 			let dumbGDPSError = reqBundle.isGDPS && (!account[16] || account[1].toLowerCase() == "undefined");
-			
+
 			if (err2 || dumbGDPSError) {
 				if (!api) return res.redirect('/search/' + req.params.id);
 				else return sendError();
 			}
-			
+
 			if (!foundID) userCacheHandle.userCache(reqBundle.id, account[16], account[2], account[1]);
-			
+
 			let userData = new Player(account);
 
 			if (api) return res.send(userData);

@@ -17,7 +17,7 @@ const router = express.Router();
 const onePointNineDisabled = ['daily', 'weekly', 'gauntlets', 'messages'];
 /**
  * Entries that are disabled for servers that block level downloads.
- * 
+ *
  * RobTop is known to do so for the main GDBrowser website.
  */
 const downloadDisabled = ['daily', 'weekly'];
@@ -41,7 +41,7 @@ router.get("/", function(req, res) {
 				isOnePointNine: reqBundle.onePointNine || false,
 				serverName: reqBundle.server.name,
 				serverID: reqBundle.id,
-				serverDisabled: reqBundle.server.disabled || [],
+				serverDisabled: (reqBundle.server.disabled || []).concat(reqBundle.isGDPS ? gdpsHide : []),
 				onePointNineDisabled,
 				isDownloadDisabled: reqBundle.server.downloadsDisabled || false,
 				downloadDisabled

@@ -15,7 +15,7 @@ html(lang="en")
 				.brownBox.bounce.center.supercenter(style={ height: "80%", width: "110vh" })
 					p#charcount(style={ position: "absolute", right: "1vh", "margin-top": "0", "text-align": "left" }) 150
 					h1.smaller.center(style={ "font-size": "5.5vh" }) Add Comment
-					textarea#content(placeholder="Insert comment", maxlength="150", style={ margin: "2% 0" }) 
+					textarea#content(placeholder="Insert comment", maxlength="150", style={ margin: "2% 0" })
 					form(action="nothing lol")
 						h3.center GD Username
 						input#username(type="text", name="gdbrowser", maxlength="50", style={ height: "8vh", width: "90%", "text-align": "center", "margin-top": "0.5%" })
@@ -97,9 +97,9 @@ html(lang="en")
 			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
 				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
 
-		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
-		script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
-		script(type="text/javascript", src="/iconkit/icon.js")
-		script(type="text/javascript", src="/global.js?v=1")
-		script(type="text/javascript", src="/dragscroll.js")
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
+		script(src="/iconkit/icon.js")
+		script(src="/global.js?v=1")
+		script(src="/dragscroll.js")
 		script(type="module", src="/page_scripts/comments.js")

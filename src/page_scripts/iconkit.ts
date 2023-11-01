@@ -87,7 +87,7 @@ function colorBG(e: string, c: Color3B | string, hex?: boolean) {
 /**
  * Separate extra color channels from main color channels, if visible.
  */
-function colorSplit() { 
+function colorSplit() {
 	if ($("#colG").is(':visible') || $("#colW").is(':visible') || $("#colU").is(':visible')) {
 		$('.colorSplit').show();
 	}
@@ -307,7 +307,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 		 * @param name The icon name.
 		 * @returns The filtered icons.
 		 */
-		function filterIcon(name: string) { 
+		function filterIcon(name: string) {
 			return iconStuff.previewIcons.concat(iconStuff.newPreviewIcons).filter(x => x.startsWith(name)).sort(function (a,b) {
 				return +a.replace(/[^0-9]/g, "") - +b.replace(/[^0-9]/g, "");
 			});
@@ -346,7 +346,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 		 * Load the color channels.
 		 * @param devmode Unused value.
 		 */
-		function loadColors(devmode?: unknown) { 
+		function loadColors(devmode?: unknown) {
 			let colTypes = [1, 2, "G", "W", "U"];
 			colTypes.forEach(x => $(`#col${x}`).html(""));
 			(iconStuff.colorOrder || []).forEach(function (p, n) {
@@ -361,7 +361,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 
 		loadColors();
 		let icons = filterIcon('icon');
-		
+
 		let sample = JSON.parse(iconStuff.sample.join(""));
 		enableGlow = sample[3] * 2;
 		[selectedIcon, selectedCol1, selectedCol2] = sample;
@@ -454,7 +454,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			icon!.setGlow(enableGlow > 0);
 			updateDetails();
 		});
-		
+
 		$(document).on('click', '.copyForm', function() {
 			$('.copyForm').each(function(x, y) {
 				$(this).children().first().attr('src', $(this).children().first().attr('src')!.replace('_on', '_off'));
@@ -566,14 +566,14 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			selectedColU = +($('#cpU').val()!.toString().slice(1)) || 0;
 			setColor("u", selectedColU);
 		});
-		
+
 		$("#getUserIcon").click(function() {
 			$(`.copyForm[form=${currentForm}]`).trigger('click')
 			$('#steal').show();
 			$('#playerName').focus();
 			$('#playerName').select();
 		});
-		
+
 		$('#copyToClipboard').click(function() {
 			if ($(this).hasClass('greyedOut')) return;
 			icon!.copyToClipboard();
@@ -605,7 +605,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 		});
 
 		let hoverText = $('#helpText').html();
-		$(".help").hover(function() { 
+		$(".help").hover(function() {
 			$(this).css('color', 'rgba(200, 255, 255)');
 			$('#helpText').html($(this).attr('help') || "");
 		}, function() {
@@ -632,7 +632,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 		});
 
 		$('#unlockIcon').click(function() {
-			if (!achievements.length) { 
+			if (!achievements.length) {
 				fetch('/api/achievements').then(res => {
 					res.json().then(x => {
 						achievements = x.achievements;
@@ -655,7 +655,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 				}
 			}
 		});
-		
+
 		$(document).on('mouseover', '.iconButton, .color1, .color2', function() {
 			if (unlockMode && achievements.length) {
 				$(this).addClass('iconHover');

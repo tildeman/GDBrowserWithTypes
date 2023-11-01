@@ -30,19 +30,19 @@ let showWeek = localStorage.weeklyStats == "1";
 const trophies = [1, 3, 10, 25, 50, 75, 100];
 const boomColors = ["red", "orange", "yellow", "green", "teal", "blue", "pink"];
 
-let top250Text = 
+let top250Text =
 `The <cg>Stars</cg> leaderboard contains the <cg>top 100 players</cg>, sorted by <cy>star</cy> value. It was formerly <co>inaccurate</co> but should be much more <cb>reliable</cb> now.`;
 
-const topGDPSText = 
+const topGDPSText =
 `The <cg>Stars</cg> leaderboard contains the <cg>top players</cg>, sorted by <cy>star</cy> value.`;
 
-const weeklyText = 
+const weeklyText =
 `The <cg>Weekly</cg> leaderboard displays the players who have gained the most <cy>stars</cy> in the <cb>past week</cb>. It was officially <co>removed</co> in update 2.0, but lives on in some GDPS'es.`;
 
 const accurateText =
 `The <cg>Accurate Leaderboard</cg> is an <cy>externally managed</cy> leaderboard which aims to provide <ca>detailed</ca> and hacker-proof stats on top players. It also once provided a way to view an <cg>accurate</cg> list of players with the most <cy>stars</cy> when the official leaderboards were <ca>frozen</ca>. It is managed by <cb>XShadowWizardX, Pepper360, Octeract</cb>, and many many other helpers.`;
 
-const creatorText = 
+const creatorText =
 `The <cg>Creators Leaderboard</cg> is sorted by <cg>creator points</cg>, rather than stars. A player's <cg>creator points</cg> (CP) is calculated by counting their number of <cy>star rated</cy> levels, plus an extra point for every level that has been <cb>featured</cb>, plus an additional point for <co>epic rated</co> levels.`;
 
 if (showWeek) $('#weeklyStats').attr('src', '/assets/sort-week-on.png');
@@ -141,7 +141,7 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 			$('#searchBox').append(`<div class="searchResult leaderboardSlot"${bgString}>
 
 				<div class="center ranking">
-					${x.icon.icon == -1 && type == "accurate" ? `<img class="spaced" src="./assets/trophies/${trophies.findIndex(z => y+1 <= z) + 1}.png" height="150%" style="margin-bottom: 0%; transform:scale(1.1)">` : 
+					${x.icon.icon == -1 && type == "accurate" ? `<img class="spaced" src="./assets/trophies/${trophies.findIndex(z => y+1 <= z) + 1}.png" height="150%" style="margin-bottom: 0%; transform:scale(1.1)">` :
 					`<gdicon dontload="true" class="leaderboardIcon" iconID=${x.icon.icon} cacheID=${x.playerID} iconForm="${x.icon.form}" col1="${x.icon.col1}" col2="${x.icon.col2}" glow="${x.icon.glow}"></gdicon>`}
 					<h2 class="slightlySmaller" style="transform: scale(${1 - (Math.max(0, String(x.rank).length - 1) * 0.1)})">${x.rank}</h2>
 				</div>
@@ -264,7 +264,7 @@ $('#creatorTabOff').click(function() {
 $('#modSort').click(function() {
 	modMode = !modMode;
 	$(this).attr('src', `/assets/sort-mod${modMode ? "-on" : ""}.png`);
-	if (modMode) { 
+	if (modMode) {
 		$('#cpSort').show();
 		$('#statSort').css('transform', 'translateY(-26.7%');
 	}

@@ -36,11 +36,12 @@ const appMainEndpoint = appServers.find(x => !x.id)!.endpoint; // boomlings.com 
  * @param next The next function in the Express pipeline.
  */
 export default function(req: Request, res: Response, next: NextFunction) {
-	const subdomain_level = 1;
+	// There's simply no good way to identify subdomains for both local and production environments.
+	const subdomainLevel = 1;
 	let subdomains = req.subdomains.map(x => x.toLowerCase());
-	if (subdomains.length < subdomain_level) subdomains = [""];
+	if (subdomains.length < subdomainLevel) subdomains = [""];
 	const reqServer = appServers.find(x => subdomains.includes(x.id.toLowerCase()));
-	if (subdomains.length > subdomain_level || !reqServer) {
+	if (subdomains.length > subdomainLevel || !reqServer) {
 		return res.redirect("http://" + req.get('host')!.split(".").slice(subdomains.length).join(".") + req.originalUrl);
 	}
 

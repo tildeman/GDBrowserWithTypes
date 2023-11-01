@@ -30,7 +30,7 @@
     { "form": "ship", "id": 49, "type": "gauntlet", "gauntlet": "Death" },
     { "form": "ship", "id": 50, "unlock": "Visit @RobTopGames on Twitter" },
     { "form": "ship", "id": 51, "type": "treasureRoom", "keys": 5 },
-    
+
     { "form": "ball", "id": 21, "type": "treasureRoom", "keys": 1 },
     { "form": "ball", "id": 23, "type": "treasureRoomMilestone", "chests": 50 },
     { "form": "ball", "id": 39, "type": "treasureRoom", "keys": 5 },

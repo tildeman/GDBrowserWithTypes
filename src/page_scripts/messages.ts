@@ -86,7 +86,7 @@ $('#logIn').click(function () {
 			const targetUser = window.location.search.match(/(\?|&)sendTo=(.+)/);
 			if (targetUser) {
 				const targetUserStr = decodeURIComponent(targetUser[2]);
-				fetch(`../api/profile/${targetUserStr}`).then(res => res.json()).then(res => { 
+				fetch(`../api/profile/${targetUserStr}`).then(res => res.json()).then(res => {
 					if (res == "-1" || !res) return;
 					$('#replyAuthor').html(`<a href="../u/${res.accountID}." target="_blank">To: ${res.username}</a>`);
 					messageStatus[res.accountID] = [res.messages, res.username];
@@ -189,7 +189,7 @@ $(document).on('click', '.gdMessage', function () {
 		else {
 			loadMsg();
 		}
-	}).fail(e => { 
+	}).fail(e => {
 		$('#messageAuthor').html('&nbsp;');
 		$('#messageSubject').html('&nbsp;');
 		$('#messageLoad').hide() ;
@@ -211,7 +211,7 @@ $('#deleteCurrentMessage').click(function () {
 			$('#confirmDelete').hide();
 			$('#preDelete').show();
 			$('#deleting').hide();
-	}).fail(e => { 
+	}).fail(e => {
 		$('#deleting').hide();
 		$('#delete-error').show();
 		$('#delError').html(e.responseText);
@@ -245,7 +245,7 @@ $('#bulkDeleteMessages').click(function () {
 		$('#bulkDelete').hide();
 		$('#bulkDeleting').hide();
 		$('#preBulkDelete').show();
-	}).fail(e => { 
+	}).fail(e => {
 		$('#bulkDeleting').hide();
 		$('#bd-error').show();
 		$('#bdError').html(e.responseText);
@@ -281,7 +281,7 @@ $('#postMessage').click(function () {
 		$('#reply-loading').hide();
 		$('#reply-sent').show();
 		allowEsc = true;
-	}).fail(e => { 
+	}).fail(e => {
 		$('#reply-loading').hide();
 		$('#reply-error').show();
 		allowEsc = true;
@@ -319,7 +319,7 @@ $(document).keydown(function (k) {
 	if (loading) return;
 
 	if ($('#access').is(':visible')) {
-		if (k.which == 13) $('#logIn').trigger('click'); //enter 
+		if (k.which == 13) $('#logIn').trigger('click'); //enter
 		else return;
 	}
 

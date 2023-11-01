@@ -192,7 +192,7 @@ $('#submitVote').click(function() {
 	const extraID = lvID || window.location.pathname.split('/')[2];
 	const likeType = like ? "1" : "0";
 	let accountID = 0;
-	
+
 	if (!ID || !username || !password || loadingComments) {
 		return $('#postComment').hide();
 	}
@@ -222,7 +222,7 @@ $('#submitVote').click(function() {
 				allowEsc = true;
 				likedComments.push(commentID);
 				localStorage.setItem('likedComments', JSON.stringify(likedComments));
-			})		
+			})
 			.fail(e => {
 				allowEsc = true;
 				$('.postbutton').show();

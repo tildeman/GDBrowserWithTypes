@@ -48,7 +48,7 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
 	if (reqBundle.offline) return sendError();
-	
+
 	let cached = cache[reqBundle.id];
 	if (cacheMapPacks && cached && cached.data && cached.indexed + 5000000 > Date.now()) {
 		return res.send(cached.data); // 1.5 hour cache
@@ -72,7 +72,7 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 				params.page++;
 				return mapPackLoop();
 			}
-			
+
 			let mappacks: MapPackEntry[] = packs.map(mapPackEntry => ({ // "packs.map()" laugh now please
 				id: +mapPackEntry[1],
 				name: mapPackEntry[2],

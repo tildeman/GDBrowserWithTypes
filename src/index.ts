@@ -27,7 +27,7 @@ import miscRoutes from "./routes/misc.js";
 /**
  * The Express app that does all the stuff.
  */
-const app = express(); 
+const app = express();
 
 /**
  * The list of servers in `servers.json`.

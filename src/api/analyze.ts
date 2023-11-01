@@ -224,7 +224,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 
 	const data = rawData.split(";");
 	const header = data.shift();
-	
+
 	const objdata: LevelObject[] = [];
 	let level_portals: LevelObject[] = [];
 	let level_coins: LevelObject[] = [];
@@ -347,7 +347,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 
 	const responseObjects = data.length - 2;
 	const responseHighDetail = highDetail;
-	
+
 	const responsePortals = level_portals.sort(function (a, b) {
 		return (a.x || 0) - (b.x || 0);
 	}).map(x => x.portal + " " + Math.floor((x.x || 0) / (Math.max(last, 529.0) + 340.0) * 100) + "%").join(", ");
@@ -355,33 +355,33 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 		return (a.x || 0) - (b.x || 0);
 	}).map(x => Math.floor((x.x || 0) / (Math.max(last, 529.0) + 340.0) * 100));
 	const responseCoinsVerified = level.verifiedCoins;
-	
+
 	const responseOrbs = orb_array;
 	responseOrbs.total = Object.values(orb_array).reduce((a, x) => a + x, 0); // we already have an array of objects, use it
-	
+
 	const responseTriggers = trigger_array;
 	responseTriggers.total = Object.values(trigger_array).reduce((a, x) => a + x, 0);
-	
+
 	let responseTriggerGroups: Record<string, number> = {};
 	const responseBlocks = sortObj(blockCounts);
 	const responseMisc = sortObj(miscCounts, "0");
-	
+
 	triggerGroups.forEach(x => {
 		if (responseTriggerGroups["Group " + x]) responseTriggerGroups["Group " + x] += 1;
 		else responseTriggerGroups["Group " + x] = 1;
 	});
-	
+
 	responseTriggerGroups = sortObj(responseTriggerGroups);
 	let triggerKeys = Object.keys(responseTriggerGroups).map(x => Number(x.slice(6)));
 	if ("total" in responseTriggerGroups) responseTriggerGroups.total = triggerKeys.length;
-	
+
 	// find alpha group with the most objects
 	const responseInvisibleGroup = triggerKeys.find(x => invisTriggers.includes(x));
-	
+
 	const responseText = level_text.sort(function (a, b) {
 		return (a.x || 0) - (b.x || 0);
 	}).map(x => [Buffer.from(x.message || "", "base64").toString(), Math.round((x.x || 0) / last * 99) + "%"]);
-	
+
 	const headerResponse = parse_header(header || "") as { settings: LevelSettings, colors: ColorObject[] };
 	const responseSettings: LevelSettings = headerResponse.settings;
 	const responseColors = headerResponse.colors;

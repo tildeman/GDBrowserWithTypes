@@ -41,7 +41,7 @@ function leaderboard() {
 
 		res.forEach((x, y) => {
 			$('#searchBox').append(`<div class="searchResult leaderboardSlot levelboardSlot" style="align-items: center; padding-left: 1vh; height: 15%; width: 100%; position: relative">
-				
+
 				<h2 class="center" style="width: 12%; margin: 0% 0% 0% 0.5%; transform: scale(${1 - (Math.max(0, String(x.rank).length - 1) * 0.2)}">${x.rank}</h2>
 				<gdicon dontload="true" iconID=${x.icon.icon} cacheID=${x.playerID} iconForm="${x.icon.form}" col1="${x.icon.col1}" col2="${x.icon.col2}" glow="${x.icon.glow}" style="width: 7%; margin-bottom: 1%" imgStyle="width: 100%"></gdicon>
 				<h2 class="small gdButton" style="font-size: 6.5vh; margin-right: 3%; margin-left: 3%"><a href="/u/${x.accountID}.">${x.username}</a></h2>

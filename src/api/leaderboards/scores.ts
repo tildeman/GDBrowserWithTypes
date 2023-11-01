@@ -57,7 +57,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		params.accountID = req.query.accountID?.toString() || "";
 	}
 
-	reqBundle.gdRequest('getGJScores20', params, function(err, resp, body) { 
+	reqBundle.gdRequest('getGJScores20', params, function(err, resp, body) {
 		if (err) return sendError();
 		let scoresArr = body?.split('|').map(rawScorePlayerEntry => parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
 		if (!scoresArr.length) return sendError();

@@ -142,10 +142,10 @@ fetch(`../api${window.location.pathname}`).then(res => res.json()).then((res: (A
 	 * Select every third digit of a string or number, then separate them using commas.
 	 * @param num The string or a number to split into commas
 	 * @returns A comma-separated string
-	 * 
+	 *
 	 * @example
 	 * commafy("9494949494"); // Returns "9,494,949,494"
-	 * 
+	 *
 	 * @example
 	 * commafy(12345678); // Returns "12,345,678"
 	 */

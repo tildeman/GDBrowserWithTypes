@@ -39,7 +39,7 @@ Fetch(`/api/gdps?current=1`).then((server: ServerInfo) => {
 				if (demonEntry.video && demonEntry.video.includes("youtube.com")) videoIcon = "youtube";
 				else if (demonEntry.video && demonEntry.video.includes("twitch.tv")) videoIcon = "twitch";
 
-				$('#searchBox').append(`<div class="searchresult leaderboardSlot" style="align-items: center; padding-left: 1vh; height: 15%; width: 100%; position: relative;">	
+				$('#searchBox').append(`<div class="searchresult leaderboardSlot" style="align-items: center; padding-left: 1vh; height: 15%; width: 100%; position: relative;">
 
 					<h2 class="center" style="width: 12%; margin: 0% 0% 0% 0.5%; transform: scale(${1 - (Math.max(0, String(recordIndex + 1).length - 1) * 0.2)}">${recordIndex + 1}</h2>
 					<img class="inline spaced" src="/assets/trophies/${trophies.findIndex(z => recordIndex+1 <= z) + 1}.png" style="margin-bottom: 0%; height: 80%;">

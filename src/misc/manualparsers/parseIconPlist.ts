@@ -31,5 +31,5 @@ for (let key in frames) {
 		}
 	}
 }
-fs.writeFileSync('./parsed/gameSheet.json', JSON.stringify(frames, null, 2).replace(/\[\n.+?(-?\d+),\n.+?(-?\d+)\n.+]/g, "[$1, $2]")); // regex to make it easier to read 
+fs.writeFileSync('./parsed/gameSheet.json', JSON.stringify(frames, null, 2).replace(/\[\n.+?(-?\d+),\n.+?(-?\d+)\n.+]/g, "[$1, $2]")); // regex to make it easier to read
 console.log("Successfully parsed!");

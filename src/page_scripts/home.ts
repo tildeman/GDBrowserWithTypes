@@ -26,7 +26,7 @@ function loadCredits() {
 	$('#credits').show();
 	if (page == lastPage) $('#closeCredits').css('height', '52%');
 	else $('#closeCredits').css('height', xButtonPos);
-	$('.creditsIcon:not(".creditLoaded"):visible').each(async function() { // only load icons when necessary 
+	$('.creditsIcon:not(".creditLoaded"):visible').each(async function() { // only load icons when necessary
 		$(this).addClass('creditLoaded');
 		let profile: any = await Fetch(`./api/profile/${$(this).attr('ign')}?forceGD=1`).catch(e => {}) || {};
 		$(this).append(`<gdicon cacheID=${profile.playerID} iconID=${profile.icon} col1="${profile.col1}" col2="${profile.col2}" glow="${profile.glow}"></gdicon>`);
@@ -43,7 +43,7 @@ Fetch(`./api/credits`).then(async (res: any) => {
 		<div class="brownBox center supercenter" style="width: 80vh; height: 43%; padding-top: 1.5%; padding-bottom: 3.5%;">
 			<h1>${x.header}</h1>
 			<h2 style="margin-bottom: 1.5%; margin-top: 1.5%" class="gdButton biggerShadow"><a href="https://gdbrowser.com/u/${x.ign || x.name}" title=${x.name}>${x.name}</h2></a>
-			
+
 			<div class="creditsIcon" ign="${x.ign || x.name}"></div>
 
 			<a target=_blank href="${x.youtube[0]}" title="YouTube"><img src="/assets/${x.youtube[1]}.png" width="11%" class="gdButton"></a>
@@ -81,7 +81,7 @@ Fetch(`./api/credits`).then(async (res: any) => {
 			page -= 1;
 			loadCredits();
 		}
-		
+
 		if (k.which == 39 && page < lastPage) { //right
 			page += 1;
 			loadCredits();

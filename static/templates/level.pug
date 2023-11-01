@@ -221,7 +221,7 @@ html(lang="en")
 						a.songLink(href="https://" + level.songAuthor + ".newgrounds.com", target="_blank")
 							img#moreSongs.gdButton.valign(src="/assets/more.png", style={ width: "12%" })
 					if (!level.songID.toString().startsWith("Level") && !level.gdps)
-						img#checksong.gdButton.valign(style={ width: "16%", "margin-top": "1%" }, title="Check song verification", src="../assets/btn-check.png")
+						img#checkSong.gdButton.valign(style={ width: "16%", "margin-top": "1%" }, title="Check song verification", src="../assets/btn-check.png")
 					h3#songLoading(style={ display: "none", "margin-top": "0.5%" }) Loading...
 					h3#songAllowed(style={ display: "none", "margin-top": "0.5%", color: "lime" }) Song is allowed for use
 					h3#songNotAllowed(style={ display: "none", "margin-top": "0.5%", color: "red" }) Song is not allowed for use
@@ -267,6 +267,6 @@ html(lang="en")
 				.copied.center.noClick(style={ position: "absolute", top: "36%", left: "50%", width: "90vh", transform: "translate(-50%,-50%)" })
 					h1#copiedText.smaller.noSelect ID copied to clipboard
 
-		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
-		script(type="text/javascript", src="/global.js?v=1")
-		script(type="text/javascript", src="/page_scripts/level.js")
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(src="/global.js?v=1")
+		script(src="/page_scripts/level.js")

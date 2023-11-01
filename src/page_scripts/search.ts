@@ -147,7 +147,7 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 					<img class="help valign rightSpace" title="Likes" src="/assets/${x.disliked ? 'dis' : ''}like.png" style="height: 3.5vh;">${x.likes}
 					${x.orbs != 0 ? `<img class="help valign rightSpace" title="Mana Orbs" src="/assets/orbs.png" style="height: 3.5vh;">${x.orbs}` : ""}
 				</h3>
-			
+
 				<div class="center" style="position:absolute; top: ${6.5 + (y * 33.5) + (x.coins == 0 ? 2.5 : 0)}%; left: 4.4%; transform:scale(0.82); height: 10%; width: 12.5%;">
 					<img class="help spaced" id="dFace" title="${x.difficulty}${x.epic ? " (Epic)" : x.featured ? " (Featured)" : ""}" src="/assets/difficulties/${x.difficultyFace}.png" style="height: 12vh;" style="margin-bottom: 0%; ${x.epic ? 'transform:scale(1.2)' : x.featured ? 'transform:scale(1.1)' : ''}">
 					<h3 title="">${x.difficulty.includes('Demon') ? "Demon" : x.difficulty}</h3>
@@ -249,7 +249,7 @@ if (!$('#header').text() && typeof userMode != "string") {
 	if (path != "*") {
 		$('#header').text(decodeURIComponent(path));
 		$('#tabTitle').text(decodeURIComponent(path) + " - Level Search");
-	} 
+	}
 	else $('#header').text("Online Levels");
 }
 
@@ -315,7 +315,7 @@ $(document).keydown(function(k) {
 	if (loading) return;
 
 	if ($('#pageDiv').is(':visible')) {
-		if (k.which == 13) $('#pageJump').trigger('click'); //enter 
+		if (k.which == 13) $('#pageJump').trigger('click'); //enter
 		else return;
 	}
 

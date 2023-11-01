@@ -55,8 +55,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	if (count > 1000) count = 1000;
 
 	let params: ICommentParams = {
-			userID : req.params.id, 
-			accountID : req.params.id, 
+			userID : req.params.id,
+			accountID : req.params.id,
 			levelID: req.params.id,
 			page: +(req.query.page || 0),
 			count,
@@ -70,7 +70,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	}
 	else if (req.query.type == "profile") path = "getGJAccountComments20";
 
-	reqBundle.gdRequest(path, reqBundle.gdParams(params as any), function(err, resp, body) { 
+	reqBundle.gdRequest(path, reqBundle.gdParams(params as any), function(err, resp, body) {
 
 		if (err) return sendError();
 
@@ -103,7 +103,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 				comment.content = comment.content.slice(0, -1);
 				comment.browserColor = true ;
 			}
-			
+
 			if (req.query.type != "profile") {
 				let commentUser = new Player(accountInfo);
 				// TODO: Make a cleaner data transfer
@@ -126,7 +126,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 			commentArray.push(comment);
 
-		}) 
+		})
 
 		return res.send(commentArray);
 	});

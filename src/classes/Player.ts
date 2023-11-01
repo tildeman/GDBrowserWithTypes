@@ -32,7 +32,7 @@ export interface PlayerIcon {
 	col2: number;
 	/**
 	 * Whether glow is enabled for the icon.
-	 * 
+	 *
 	 * Note: 2.2 introduces a breaking change where the glow color is independent.
 	 */
 	glow: boolean;
@@ -101,7 +101,7 @@ export class Player {
 	col2?: number;
 	/**
 	 * Whether glow is enabled for the icon.
-	 * 
+	 *
 	 * Note: 2.2 introduces a breaking change where the glow color is independent.
 	 */
 	glow?: boolean;
@@ -169,7 +169,7 @@ export class Player {
 	 * The death effect of the player.
 	*/
 	deathEffect: number;
-	
+
 	/**
 	 * @param account The player account object.
 	 */
@@ -194,7 +194,7 @@ export class Player {
 				col2: +account[11],
 				glow: +account[15] > 1 || account[28] == "1"
 			};
-			
+
 			delete this.col1;
 			delete this.col2;
 			delete this.glow;

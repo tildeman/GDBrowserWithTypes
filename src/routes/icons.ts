@@ -16,7 +16,7 @@ router.get("/iconkit", fetchTemplate("iconkit"));
 
 // important icon stuff
 
-router.get('/api/icons', function(req, res) { 
+router.get('/api/icons', function(req, res) {
 	res.status(200).send(sacredTexts);
 });
 

@@ -1,7 +1,7 @@
 - var trophySrc = "/assets/trophies/0.png"
-- if (+(player.rank) < 2) 
+- if (+(player.rank) < 2)
 	- trophySrc = "/assets/trophies/1.png"
-- else if (+(player.rank) <= 10) 
+- else if (+(player.rank) <= 10)
 	- trophySrc = "/assets/trophies/2.png"
 - else if (+(player.rank) <= 50)
 	- trophySrc = "/assets/trophies/3.png"
@@ -54,7 +54,7 @@ html(lang="en")
 						p#message(style={ padding: "0 10%", "margin-top": "2%" })
 					img.postButton.gdButton.center(src="/assets/btn-cancel.png", style={ "margin-right": "1%", height: "11%" }, onclick="$('#leavePost').hide(); $('textarea').val('')")
 					img#submitComment.postButton.gdButton.center(src="/assets/btn-submit.png", style={ "margin-left": "1%", height: "11%" }, type="submit")
-			
+
 			#likeComment.popup
 				.brownBox.bounce.center.supercenter(style={ height: "75%", width: "110vh" })
 					h1.smaller.center(style={ "font-size": "5.5vh" }) Vote
@@ -207,9 +207,9 @@ html(lang="en")
 				#postButton(style={ position: "absolute", bottom: "0", left: "0", width: "14%", "text-align": "left", transform: "translate(-35%, 40%)" })
 					img.gdButton(src="/assets/comment.png", style={ width: "60%" }, onclick="$('#content').trigger('input'); $('#leavePost').show();")
 
-		script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
-		script(type="text/javascript", src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
-		script(type="text/javascript", src="/iconkit/icon.js")
-		script(type="text/javascript", src="/global.js?v=1")
-		script(type="text/javascript", src="/dragscroll.js")
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
+		script(src="/iconkit/icon.js")
+		script(src="/global.js?v=1")
+		script(src="/dragscroll.js")
 		script(type="module", src="/page_scripts/profile.js")

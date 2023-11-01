@@ -79,5 +79,5 @@ let cleanJSON = JSON.stringify({info, animations}, null, 2)
 	.replace(/],\n(\s+)"(.+?)": \[\n/g, '],\n\n$1"$2": [\n') // blank line between animations
 	.replace('  "animations"', '\n  "animations"'); // blank line before animation list
 
-fs.writeFileSync('./parsed/robotAnimations.json', cleanJSON); // regex to make it easier to read 
+fs.writeFileSync('./parsed/robotAnimations.json', cleanJSON); // regex to make it easier to read
 console.log("Successfully parsed!");

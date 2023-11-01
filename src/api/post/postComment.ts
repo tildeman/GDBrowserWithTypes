@@ -52,7 +52,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	if (req.body.comment.includes('\n')) return res.status(400).send("Comments cannot contain line breaks!");
 
 	if (rateLimit[req.body.username]) return res.status(400).send(`Please wait ${getTime(rateLimit[req.body.username] + cooldown - Date.now())} seconds before posting another comment!`);
-	
+
 	let params: ICommentParams = {
 		percent: 0,
 		comment: Buffer.from(req.body.comment + (req.body.color ? "☆" : "")).toString('base64').replace(/\//g, '_').replace(/\+/g, "-"),

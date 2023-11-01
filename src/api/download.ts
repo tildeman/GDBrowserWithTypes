@@ -26,7 +26,7 @@ export default async function(req: Request, res: Response, api: boolean, ID: str
 		if (!api) return res.redirect('search/' + req.params.id);
 		else return sendError();
 	}
-	
+
 	let levelIDCode = ID || req.params.id, levelID: number;
 
 	if (reqBundle.offline) {
