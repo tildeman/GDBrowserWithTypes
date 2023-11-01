@@ -131,7 +131,7 @@ When you're working on a project the size and scale of GDBrowser, there has to b
 
 ### Page scripts
 
-These are a collection of modules for use on individual webpages. `comments.ts` loads comments for the commments page. `filters.ts` remembers your filters the next time you visit GDBrowser. I separated these from the respective HTML for two reasons:
+These are a collection of modules for use on individual webpages. `comments.ts` loads comments for the commments page. `filters.ts` remembers your filters the next time you search on GDBrowser. I separated these from the respective HTML for two reasons:
 
 1) Type-checking code works better when the files are detached from HTML.
 2) These files are imported as ES6 modules, and they are designed not to pollute the global namespace. Keeping them detached makes usage of imports and exports much more convenient.
@@ -140,7 +140,7 @@ These are a collection of modules for use on individual webpages. `comments.ts` 
 
 When you go on a link, the web server has to know what you're looking for. It does this by checking the URI of the webpage, and then looking for what you expect should show up on that page. For example, if you're looking for levels, you go to the right page (`/search`), and the routing does all of that for you.
 
-The original repository didn't have this folder; the routes were all packaged in `index.ts` and add the `app` parameter for some app-wide routines. This hurted code coupling.
+The original repository didn't have this folder; the routes were all packaged in `index.ts` and added the `app` parameter to controllers for some app-wide routines. This hurted code coupling.
 
 This does seem a lot like ravioli code, but it may aid in readability.
 
@@ -151,9 +151,9 @@ This is the "views" part in the MVC model if you're familiar with that. I will c
 These are the "new" templates that are made to replace the contents in `/html`, notably those about levels and profiles.
 
 The original version of GDBrowser uses raw HTML files for webpages. While the resulting code does work (kinda), it is very prone to errors and bugs that may affect quality of usage. Some of their limitations are:
-- Most of these HTML files did not include a `<!DOCTYPE html>`, which meant browsers interpreted those pages in a special mode called "Quirks mode". This was how webpages were displayed back in ancient browsers (Netscape Navigator 4 & Internet Explorer 5, as some examples). When these pages are displayed under "No-quirks mode" (or "Standards mode", as this is how browsers display standards-compliant HTML5/CSS3), some of the properties (like `height`) work differently, breaking the page.
+- Most of these HTML files did not include a `<!DOCTYPE html>`, which meant browsers interpreted those pages in a special mode called "Quirks mode". This was how webpages were displayed back in ancient browsers (Netscape Navigator 4 & Internet Explorer 5, as some examples). When these pages are displayed under "No-quirks mode" (or "Standards mode", as this is how browsers display standards-compliant HTML5/CSS3), some of the HTML/CSS properties (like `height`) work differently, breaking the page.
 - They didn't conform to the HTML standard. Images still used the `height` property incorrectly, and `<script>` tags included the unnecessary `type` attribute `text/javascript` for non-ES scripts.
-- Some of them could not retrieve values on their own and require server-side processing. This meant taking the raw HTML, fill out all of the placeholder values, and then putting it on display. This resulted in awful glitches when those properties are nonexistent (See the info tab in [GDBrowser's page on Project J](https://gdbrowser.com/1908735)).
+- Some of them could not retrieve values on their own and require server-side processing. This meant taking the raw HTML, filling out all of the placeholder values, and then putting it on display. This resulted in awful glitches when those properties are nonexistent (See the info tab in [GDBrowser's page on Project J](https://gdbrowser.com/1908735)).
 
 These templates (written in [Pug](https://pugjs.org)) are designed to address those limitations by doing the following:
 - Conform as much as possible to the HTML standards and Pug styling guidelines.
@@ -161,33 +161,39 @@ These templates (written in [Pug](https://pugjs.org)) are designed to address th
 
 ## RAQ (Rarely Asked Questions)
 
-Q: What on Earth is GDBrowser?
+**Q**: What on Earth is GDBrowser?
 
-A: Basically a website to browse some of Geometry Dash's online features. It's incorrect to say that it can browse "all features" (as written in the description of the original repository), as things might change significantly in update 2.2.
-
-Q: Why don't you write normal `.js` files? Why `.ts`?
-
-A: TypeScript (and IntelliSense) work much better on `.ts` files. They may aid in catching errors early in development (also that's the whole point of this repository).
+**A**: Basically a website to browse some of Geometry Dash's online features. It's incorrect to say that it can browse "all features" (as written in the description of the original repository), as things might change significantly in update 2.2.
 
 
-Q: Some of the buttons/icons/UI elements don't match up with the original GDBrowser.
 
-A: This is a side effect of how browsers handle webpages. Since the original GDBrowser templates were written without a `<!DOCTYPE html>`, this causes the browser to implement quirks that affect webpage rendering. While transitioning the templates to HTML5, I had to sacrifice some of the formatting details; this resulted in bugs and glitches.
+**Q**: Why don't you write normal `.js` files? Why `.ts`?
 
-
-Q: What happens when 2.2 releases?
-
-A: I may have to bring back the "Coming Soon" page for missing 2.2 features. They will be added to GDBrowser given enough time. I'll also be checking upstream to see if Colon adds those features before I do.
+**A**: TypeScript (and IntelliSense) work much better on `.ts` files. They may aid in catching errors early in development (also that's the whole point of this repository).
 
 
-Q: I don't see much difference in the overall usage.
 
-A: The application does not attempt to drastically modify any existing user interfaces. Most of the "improvements" are done over the backend.
+**Q**: Some of the buttons/icons/UI elements don't match up with the original GDBrowser.
+
+**A**: This is a side effect of how browsers handle webpages. Since the original GDBrowser templates were written without a `<!DOCTYPE html>`, this causes the browser to implement quirks that affect webpage rendering. While transitioning the templates to HTML5, I had to sacrifice some of the formatting details; this resulted in bugs and glitches.
 
 
-Q: What about those shiny new JS runtimes (Deno, Bun, etc.)?
 
-A: This project was originally written for Node.js, and the ecosystem surrounding it is more stable and reliable than that of some other JS/TS runtimes. Brand-new projects from me without Node-specific dependencies may use them, but I'll never know for sure.
+**Q**: What happens when 2.2 releases?
+
+**A**: I may have to bring back the "Coming Soon" page for missing 2.2 features. They will be added to GDBrowser given enough time. I'll also be checking upstream to see if Colon adds those features before I do.
+
+
+
+**Q**: I don't see much difference in the overall usage.
+
+**A**: The application does not attempt to drastically modify any existing user interfaces. Most of the "improvements" are done over the backend.
+
+
+
+**Q**: What about those shiny new JS runtimes (Deno, Bun, etc.)?
+
+**A**: This project was originally written for Node.js, and the ecosystem surrounding it is more stable and reliable than that of some other JS/TS runtimes. Brand-new projects from me without Node-specific dependencies may use them, but I'll never know for sure.
 
 ## Roadmap
 
