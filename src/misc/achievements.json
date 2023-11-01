@@ -1735,7 +1735,7 @@
 		"name": "Can't stop jumping!!!",
 		"rewardType": "ball",
 		"rewardID": 13,
-		"description": "Jump 50000 times",
+		"description": "Jump 100000 times",
 		"achievedDescription": "Jumped 100000 times",
 		"trueID": "geometry.ach.jump05"
 	},

@@ -1,5 +1,7 @@
 # GDBrowser with types
 
+![Repo size](https://img.shields.io/github/repo-size/tildeman/GDBrowserWithTypes)
+
 Originally intended as a small side project while working on [binalyi](https://github.com/tildeman/binalyi), it quickly became an attempt of me tidying up code. While the end result is far from perfect (god, those templates are awful), they are much better categorized.
 
 ## How do I run this?
@@ -174,13 +176,13 @@ A: The application does not attempt to drastically modify any existing user inte
 
 ## Roadmap
 
-[ ] Complete all the TODOs (36).
+- [ ] Complete all the TODOs (36).
 
-[ ] Implement 2.2 features once the release is out.
+- [ ] Implement 2.2 features once the release is out.
 
-[ ] Write JSDoc for all the types and interfaces in code.
+- [ ] Write JSDoc for all the types and interfaces in code.
 
-[ ] Fix glaring formatting errors.
+- [ ] Fix glaring formatting errors.
 
 ---
 

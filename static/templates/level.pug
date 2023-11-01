@@ -150,7 +150,7 @@ html(lang="en")
 				h1.pre(style={ transform: "scale(1.2)" })= level.name
 
 			.center(style={ position: "absolute", top: "9%", left: "0", right: "0", height: "5%" })
-				if level.accountID
+				if level.accountID && +(level.accountID) != 0
 					h2#authorName.pre.inline.slightlySmaller.normalCursor.gdButton
 						a#authorLink.linkButton(href="/u/" + level.accountID)= "By " + level.author
 				else

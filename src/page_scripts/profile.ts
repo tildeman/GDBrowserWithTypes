@@ -92,7 +92,7 @@ function appendComments() {
 					</div>
 					<p class="commentDate">${x.date}</p>
 					<div class="commentLikes">
-						<img id="likeImg" class="likeComment gdButton inline" commentID="${x.ID}" ${x.likes < 0 ? "style='transform: translateY(25%)'" : ""} src="/assets/${x.likes < 0 ? "dis" : ""}like.png" style="margin-right: 0.4%; height: 4vh">
+						<img id="likeImg" class="likeComment gdButton inline" commentID="${x.ID}" ${x.likes < 0 ? "style='transform: translateY(25%); margin-right: 0.4%; height: 4vh'" : "style='margin-right: 0.4%; height: 4vh'"} src="/assets/${x.likes < 0 ? "dis" : ""}like.png">
 						<h3 class="inline">${x.likes}</h3><br>
 					</div>
 				</div>`);
