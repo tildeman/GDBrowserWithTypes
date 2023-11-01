@@ -155,7 +155,7 @@ A: Basically a website to browse some of Geometry Dash's online features.
 
 Q: Why don't you write normal `.js` files? Why `.ts`?
 
-A: TypeScripts (and IntelliSense) works much better on `.ts` files. They may aid in catching errors early in development.
+A: TypeScript (and IntelliSense) work much better on `.ts` files. They may aid in catching errors early in development.
 
 
 Q: Some of the buttons/icons/UI elements don't match up with the original GDBrowser.
@@ -175,6 +175,13 @@ A: The application does not attempt to drastically modify any existing user inte
 ## Roadmap
 
 [ ] Complete all the TODOs (36).
+
 [ ] Implement 2.2 features once the release is out.
+
 [ ] Write JSDoc for all the types and interfaces in code.
+
 [ ] Fix glaring formatting errors.
+
+---
+
+happy gdbrowsing and god bless.
