@@ -38,10 +38,10 @@ let formCopy: string;
 
 let icon: Icon | null = null;
 
-let iconCanvasA = document.getElementById('result');
+const iconCanvas = document.getElementById('result');
 // TODO: find a better type
 let app: any = new PIXI.Application({
-	view: iconCanvasA,
+	view: iconCanvas,
 	width: 300,
 	height: 300,
 	backgroundAlpha: 0
@@ -49,9 +49,9 @@ let app: any = new PIXI.Application({
 
 if (mobile) $('#logo').attr('width', '80%');
 
-let iconSettings = (localStorage.iconkit || "").split(",");
-iconSettings.forEach(x => {
-	$(`#box-${x}`).prop('checked', true);
+let iconSettings: string[] = (localStorage.iconkit || "").split(",");
+iconSettings.forEach(setting => {
+	$(`#box-${setting}`).prop('checked', true);
 });
 
 /**
@@ -75,13 +75,13 @@ function randInt(min: number, max: number) {
 
 /**
  * Set the background color of a color channel button.
- * @param e The channel ID (e.g.: `1`, `W` or `U`).
- * @param c The color value to set.
- * @param hex No effect. Uses hexadecimal if `c` is a string, raw RGB otherwise.
+ * @param channelID The channel ID (e.g.: `1`, `W` or `U`).
+ * @param colValue The color value to set.
+ * @param hex No effect. Uses hexadecimal if `colValue` is a string, raw RGB otherwise.
  */
-function colorBG(e: string, c: Color3B | string, hex?: boolean) {
-	$(`#cc${e} img`).css('background-color', (typeof(c) == "string") ? `#${c}` : `rgb(${c.r}, ${c.g}, ${c.b})`);
-	if (typeof(c) == "object") $(`#cp${e}`).val(toHexCode(rgbToDecimal(c)));
+function colorBG(channelID: string, colValue: Color3B | string, hex?: boolean) {
+	$(`#cc${channelID} img`).css('background-color', (typeof(colValue) == "string") ? `#${colValue}` : `rgb(${colValue.r}, ${colValue.g}, ${colValue.b})`);
+	if (typeof(colValue) == "object") $(`#cp${channelID}`).val(toHexCode(rgbToDecimal(colValue)));
 }
 
 /**
@@ -134,7 +134,7 @@ function checkGlow() {
  * Check if white col tab should be visible.
  */
 function checkWhite() {
-	let hasWhite = icon!.layers[0].sections.some(x => x.colorType == "w");
+	let hasWhite = icon!.layers[0].sections.some(color => color.colorType == "w");
 	if (hasWhite) {
 		$('#colW').show();
 		$('#ccW').show();
@@ -163,7 +163,7 @@ function checkAnimation() {
  * @returns The sorted animation record.
  */
 function animationSort(anim: Record<string, AnimationObject>) {
-	return Object.keys(anim).sort((a, b) => a.localeCompare(b));
+	return Object.keys(anim).sort((objectA, objectB) => objectA.localeCompare(objectB));
 }
 
 /**
@@ -173,14 +173,14 @@ function animationSort(anim: Record<string, AnimationObject>) {
  */
 function appendAnimations(form: string, animationData: Record<string, AnimationObject>) {
 	let animationNames = animationSort(animationData);
-	$('#robotAnimation').html(animationNames.map(x => `<option form="${form}" value="${x}">${x.replace(/_/g, " ")}</option>`).join());
+	$('#robotAnimation').html(animationNames.map(animationName => `<option form="${form}" value="${animationName}">${animationName.replace(/_/g, " ")}</option>`).join());
 	$('#robotAnimation').val("idle");
 	$('#robotAnimation').attr("form", selectedForm);
 
 	if (iconSettings.includes("cursed")) Object.keys(iconDataA!.robotAnimations.animations).forEach(altForm => {
 		if (altForm != form) {
 			let altNames = animationSort(iconDataA!.robotAnimations.animations[altForm]);
-			$('#robotAnimation').append(altNames.map(x => `<option form="${altForm}" value="${x}">*${x.replace(/_/g, " ")} (${altForm})</option>`).join(""));
+			$('#robotAnimation').append(altNames.map(altName => `<option form="${altForm}" value="${altName}">*${altName.replace(/_/g, " ")} (${altForm})</option>`).join(""));
 		}
 	});
 
@@ -201,14 +201,14 @@ function setExtras() {
 	if ($('#colW').is(":visible") && (getCol(selectedColW) != 0xffffff)) extraInfo["White"] = extraColString(selectedColW);
 	if ($('#colU').is(":visible") && (getCol(selectedColU) != 0xffffff)) extraInfo["UFO Dome"] = extraColString(selectedColU);
 
-	const foundCredit = iconStuff.iconCredits.find(x => x.form == selectedForm && x.id == selectedIcon);
+	const foundCredit = iconStuff.iconCredits.find(creditsItem => creditsItem.form == selectedForm && creditsItem.id == selectedIcon);
 	if (foundCredit) extraInfo["🎨 Artist"] = foundCredit.name;
 	else if (icon?.new) {
 		extraInfo["2.2 icon"] = "Yes!";
 		extraInfo["🎨 Artist"] = "(uncredited)";
 	}
 
-	const extraData = Object.entries(extraInfo).map(x => `<div><p>${x[0]}: ${x[1]}</p></div>`);
+	const extraData = Object.entries(extraInfo).map(infoProperty => `<div><p>${infoProperty[0]}: ${infoProperty[1]}</p></div>`);
 	$('#extraInfo').html(extraData.join(""));
 }
 
@@ -220,7 +220,7 @@ function setExtras() {
 function extraColString(col: string | number | null) {
 	const realCol = getCol(col);
 	const hexCol = toHexCode(realCol) ;
-	const foundGDCol = Object.entries(iconStuff.colors).find(x => rgbToDecimal(x[1]) == realCol);
+	const foundGDCol = Object.entries(iconStuff.colors).find(color => rgbToDecimal(color[1]) == realCol);
 	return foundGDCol ? `${foundGDCol[0]} (${hexCol})` : hexCol;
 }
 
@@ -241,8 +241,8 @@ function toHexCode(decimal: number) {
 }
 
 let iconDataA: IconData | null = null;
-fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
-	fetch('../api/iconkit').then(res => res.json()).then((iconKitData: IconKitAPIResponse) => {
+fetch('/api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
+	fetch('/api/iconkit').then(res => res.json()).then((iconKitData: IconKitAPIResponse) => {
 		iconStuff = Object.assign(sacredTexts, iconKitData);
 		iconDataA = sacredTexts;
 
@@ -308,7 +308,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 		 * @returns The filtered icons.
 		 */
 		function filterIcon(name: string) {
-			return iconStuff.previewIcons.concat(iconStuff.newPreviewIcons).filter(x => x.startsWith(name)).sort(function (a,b) {
+			return iconStuff.previewIcons.concat(iconStuff.newPreviewIcons).filter(iconName => iconName.startsWith(name)).sort(function (a,b) {
 				return +a.replace(/[^0-9]/g, "") - +b.replace(/[^0-9]/g, "");
 			});
 		}
@@ -326,9 +326,9 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 			const hasMini = form[0].endsWith("_0.png");
 			if (hasMini) form.shift();
 
-			form.forEach(function (i, p) {
-				const newOne = iconStuff.newPreviewIcons.includes(i);
-				formContainer.append(`<button num="${p + 1}" form="${formName}"${newOne ? ` isnew="true"${enableSpoilers ? "" : ` style="display: none"`}` : ""} class="blankButton iconButton" id="${formName}-${p + 1}"><img src="./${newOne ? "new" : ""}premade/${i}" title="${capitalize(formName)} ${p + 1}"></button>`);
+			form.forEach(function (formItem, formIndex) {
+				const newOne = iconStuff.newPreviewIcons.includes(formItem);
+				formContainer.append(`<button num="${formIndex + 1}" form="${formName}"${newOne ? ` isnew="true"${enableSpoilers ? "" : ` style="display: none"`}` : ""} class="blankButton iconButton" id="${formName}-${formIndex + 1}"><img src="./${newOne ? "new" : ""}premade/${formItem}" title="${capitalize(formName)} ${formIndex + 1}"></button>`);
 			});
 
 			if (hasMini) {
@@ -348,12 +348,12 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 		 */
 		function loadColors(devmode?: unknown) {
 			let colTypes = [1, 2, "G", "W", "U"];
-			colTypes.forEach(x => $(`#col${x}`).html(""));
-			(iconStuff.colorOrder || []).forEach(function (p, n) {
-				if (iconSettings.includes("sort")) p = n;
+			colTypes.forEach(colorType => $(`#col${colorType}`).html(""));
+			(iconStuff.colorOrder || []).forEach(function (colorID, n) {
+				if (iconSettings.includes("sort")) colorID = n;
 				colTypes.forEach(c => {
-					let colRGB = iconStuff.colors[p];
-					$(`#col${c}`).append(`<button col=${p} colType=color${c} class="blankButton color${c} iconColor" title="Color ${p} (#${toHexCode(rgbToDecimal(colRGB))})" id="col${c}-${p}"><div style="background-color: rgb(${colRGB.r}, ${colRGB.g}, ${colRGB.b})"></button>`);
+					let colRGB = iconStuff.colors[colorID];
+					$(`#col${c}`).append(`<button col=${colorID} colType=color${c} class="blankButton color${c} iconColor" title="Color ${colorID} (#${toHexCode(rgbToDecimal(colRGB))})" id="col${c}-${colorID}"><div style="background-color: rgb(${colRGB.r}, ${colRGB.g}, ${colRGB.b})"></button>`);
 				});
 			});
 			$('#col1').append("<span style='min-width: 10px'></span>");
@@ -395,14 +395,14 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 
 			currentForm = form || "icon";
 
-			$('.iconTabButton').each(function(x, y) {
+			$('.iconTabButton').each(function() {
 				$(this).children().first().attr('src', $(this).children().first().attr('src')!.replace('_on', '_off'));
 			});
 
 			let img = $(this).children().first();
 			img.attr('src', img.attr('src')!.replace('_off', '_on'));
 
-			$('#iconKitParent').each(function(x, y) {
+			$('#iconKitParent').each(function() {
 				$(this).children().not('#iconprogressbar').hide();
 			});
 
@@ -456,7 +456,7 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 		});
 
 		$(document).on('click', '.copyForm', function() {
-			$('.copyForm').each(function(x, y) {
+			$('.copyForm').each(function() {
 				$(this).children().first().attr('src', $(this).children().first().attr('src')!.replace('_on', '_off'));
 			});
 			formCopy = $(this).attr('form') || "";
@@ -615,8 +615,8 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 
 		$(document).on('change', '.iconsetting', function(e) {
 			let checkedSettings: string[] = [];
-			$('.iconsetting:checkbox:checked').each((i, x) => {
-				checkedSettings.push(x.id.split('-')[1]);
+			$('.iconsetting:checkbox:checked').each((i, setting) => {
+				checkedSettings.push(setting.id.split('-')[1]);
 			});
 			iconSettings = checkedSettings
 			switch ($(this).attr('id')!.slice(4)) {
@@ -634,8 +634,8 @@ fetch('../api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 		$('#unlockIcon').click(function() {
 			if (!achievements.length) {
 				fetch('/api/achievements').then(res => {
-					res.json().then(x => {
-						achievements = x.achievements;
+					res.json().then((achievementsItem: AchievementAPIResponse) => {
+						achievements = achievementsItem.achievements;
 						shopIcons = iconStuff.shops;
 						unlockMode = true;
 						$('#lock').attr('src', $('#lock').attr('src')!.replace('.png', '_on.png'));
@@ -681,7 +681,7 @@ $("#fetchUser").click(async function() {
 	$("#steal").hide();
 	enableGlow = 0;
 
-	let info = await fetch('../api/profile/' + user).then(res => res.json()).catch(e => {});
+	let info = await fetch('/api/profile/' + user).then(res => res.json()).catch(e => {});
 	if (info == "-1") info = {};
 
 	$(`#${formCopy}-${Math.min(info[formCopy] || 1, $(`.iconButton[form=${formCopy}]`).length)}`).trigger('click');
@@ -704,9 +704,9 @@ function getUnlockMethod(iconNumber: number, form: string) {
 	else if (iconNumber == 0 && form == "icon") return "Legacy mini icon, enable in settings";
 	else if (iconNumber == 1 || ((form == "icon") && iconNumber <= 4) || ((form.startsWith('color')) && iconNumber <= 3)) return "Always unlocked";
 
-	let method = iconStuff.hardcodedUnlocks.find(x => x.form == form && x.id == iconNumber);
-	let foundAch = achievements.find(x => x.rewardType == form && x.rewardID == +iconNumber);
-	let foundMerch = shopIcons.find(x => x.type == form && x.icon == +iconNumber);
+	let method = iconStuff.hardcodedUnlocks.find(unlockItem => unlockItem.form == form && unlockItem.id == iconNumber);
+	let foundAch = achievements.find(unlockItem => unlockItem.rewardType == form && unlockItem.rewardID == +iconNumber);
+	let foundMerch = shopIcons.find(unlockItem => unlockItem.type == form && unlockItem.icon == +iconNumber);
 
 	if (method) {
 		switch (method.type) {

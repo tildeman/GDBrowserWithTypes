@@ -11,8 +11,8 @@ const localhost = window.location.hostname == "localhost";
 const host = window.location.host.split(".").slice(-2).join(".");
 
 Fetch('/api/gdps').then((servers: ServerInfo[]) => {
-	let currentServer = servers.find(x => x.id == gdps);
-	servers = [currentServer].concat(servers.filter(x => x.id != gdps)).filter(x => x) as ServerInfo[];
+	let currentServer = servers.find(serverItem => serverItem.id == gdps);
+	servers = [currentServer].concat(servers.filter(serverItem => serverItem.id != gdps)).filter(serverItem => serverItem) as ServerInfo[];
 	let pageCount = Math.floor((servers.length - 1) / pageSize) + 1;
 
 	/**
@@ -28,17 +28,17 @@ Fetch('/api/gdps').then((servers: ServerInfo[]) => {
 		$('#searchBox').html('<div style="height: 4.5%"></div>').scrollTop(0);
 
 		// TODO: This has a few glaring visual glitches
-		serverPage.forEach(x => {
+		serverPage.forEach(serverInfo => {
 			$('#searchBox').append(`<div class="searchResult" style="height: 19%; padding-top: 1.2%; margin-right: 20vh;">
-					<h1 class="lessspaced blue" style="color: ${(gdps || "") == x.id ? "#00DDFF" : "white"}">${x.name}</h1>
-					<h2 class="lessSpaced smaller inline gdButton"><a href="${x.authorLink}" target="_blank">By ${x.author}</a></h2>
+					<h1 class="lessspaced blue" style="color: ${(gdps || "") == serverInfo.id ? "#00DDFF" : "white"}">${serverInfo.name}</h1>
+					<h2 class="lessSpaced smaller inline gdButton"><a href="${serverInfo.authorLink}" target="_blank">By ${serverInfo.author}</a></h2>
 
 					<div class="center" style="position:absolute; height: 10%; width: 12.5%; left: 3%; transform:translateY(-160%)">
-						<a href="${x.link}" target="_blank"><img class="gdButton spaced gdpslogo" src="/assets/gdps/${x.id || "gd"}_icon.png" style="height: 130%;"></a>
+						<a href="${serverInfo.link}" target="_blank"><img class="gdButton spaced gdpslogo" src="/assets/gdps/${serverInfo.id || "gd"}_icon.png" style="height: 130%;"></a>
 					</div>
 
 					<div class="center" style="position:absolute; right: 7%; transform:translateY(-150%); height: 10%">
-						<a href="http://${x.id || ""}${x.id && localhost ? ".x" : ""}${x.id ? "." : ""}${host}"><img style="margin-bottom: 4.5%" class="valign gdButton" src="/assets/view.png" height="105%"></a>
+						<a href="http://${serverInfo.id || ""}${serverInfo.id && localhost ? ".serverInfo" : ""}${serverInfo.id ? "." : ""}${host}"><img style="margin-bottom: 4.5%" class="valign gdButton" src="/assets/view.png" height="105%"></a>
 					</div>
 				</div>`);
 		});

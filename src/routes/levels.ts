@@ -26,7 +26,7 @@ export default function(userCacheHandle: UserCache) {
 		levelController(req, res, true, true, userCacheHandle);
 	});
 
-	router.get("/api/song/:song", function(req, res){
+	router.get("/api/song/:song", function(req, res) {
 		songController(req, res);
 	});
 

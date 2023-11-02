@@ -260,7 +260,7 @@ function saveUrl() {
  * Go back a page.
  */
 function backButton() {
-	if (window.history.length > 1 && document.referrer.startsWith(window.location.origin)){
+	if (window.history.length > 1 && document.referrer.startsWith(window.location.origin)) {
 			if (window.location.href.endsWith('?download') && sessionStorage.getItem('prevUrl') === window.location.href.replace('?download', '')) {
 				window.history.go(-2);
 			}
@@ -376,7 +376,7 @@ function buildIcon(elements: JQuery<HTMLElement>, current: number) {
 				return;
 			}
 			let dataURL = icon.toDataURL();
-			let titleStr = `${Object.values(iconData.forms).find(x => x.form == icon.form)?.name} ${icon.id}`;
+			let titleStr = `${Object.values(iconData.forms).find(formItem => formItem.form == icon.form)?.name} ${icon.id}`;
 			if (cacheID) renderedIcons[cacheID] = {name: titleStr, data: dataURL};
 			finishIcon(currentIcon, titleStr, dataURL);
 			if (overrideLoader) {

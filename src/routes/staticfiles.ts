@@ -29,7 +29,7 @@ export default function(userCacheHandle: UserCache, safeServers: SafeServers[]) 
 		res.status(200).send(music);
 	});
 	router.get("/gdps", function(req, res) {
-		res.status(200).send(req.query.hasOwnProperty("current") ? safeServers.find(x => res.locals.stuff.req.server.id == x.id) : safeServers);
+		res.status(200).send(req.query.hasOwnProperty("current") ? safeServers.find(serverItem => res.locals.stuff.req.server.id == serverItem.id) : safeServers);
 	});
 
 	return router;

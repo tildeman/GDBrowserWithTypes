@@ -113,18 +113,18 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 		});
 		const wk = type == "weekly";
 
-		if ((leaderboardParams ? true : val == type) && res != -1 && res.length) res.forEach((x, y) => {
+		if ((leaderboardParams ? true : val == type) && res != -1 && res.length) res.forEach((lbItem, lbIndex) => {
 			// Quick and dirty method, just in case
-			if (typeof(x.icon) == "number") return;
+			if (typeof(lbItem.icon) == "number") return;
 
 			// Zombie code
-			const wp = "weeklyProgress" in x ? x.weeklyProgress as WeeklyProgressItem : {
+			const wp = "weeklyProgress" in lbItem ? lbItem.weeklyProgress as WeeklyProgressItem : {
 				stars: 0,
 				diamonds: 0,
 				userCoins: 0,
 				demons: 0
 			};
-			const cosmetics = "cosmetics" in x ? x.cosmetics as CosmeticsData : {
+			const cosmetics = "cosmetics" in lbItem ? lbItem.cosmetics as CosmeticsData : {
 				bgColor: [],
 				nameColor: []
 			};
@@ -135,31 +135,31 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 			const nameCol = cosmetics.nameColor;
 			const nameString = nameCol ? `; color: rgb(${nameCol.join()}) ;` : null;
 
-			if (x.userCoins) x.userCoins = x.userCoins;
+			if (lbItem.userCoins) lbItem.userCoins = lbItem.userCoins;
 			if (wp.userCoins) wp.userCoins = wp.userCoins;
 
 			$('#searchBox').append(`<div class="searchResult leaderboardSlot"${bgString}>
 
 				<div class="center ranking">
-					${x.icon.icon == -1 && type == "accurate" ? `<img class="spaced" src="./assets/trophies/${trophies.findIndex(z => y+1 <= z) + 1}.png" height="150%" style="margin-bottom: 0%; transform:scale(1.1)">` :
-					`<gdicon dontload="true" class="leaderboardIcon" iconID=${x.icon.icon} cacheID=${x.playerID} iconForm="${x.icon.form}" col1="${x.icon.col1}" col2="${x.icon.col2}" glow="${x.icon.glow}"></gdicon>`}
-					<h2 class="slightlySmaller" style="transform: scale(${1 - (Math.max(0, String(x.rank).length - 1) * 0.1)})">${x.rank}</h2>
+					${lbItem.icon.icon == -1 && type == "accurate" ? `<img class="spaced" src="./assets/trophies/${trophies.findIndex(z => lbIndex + 1 <= z) + 1}.png" height="150%" style="margin-bottom: 0%; transform:scale(1.1)">` :
+					`<gdicon dontload="true" class="leaderboardIcon" iconID=${lbItem.icon.icon} cacheID=${lbItem.playerID} iconForm="${lbItem.icon.form}" col1="${lbItem.icon.col1}" col2="${lbItem.icon.col2}" glow="${lbItem.icon.glow}"></gdicon>`}
+					<h2 class="slightlySmaller" style="transform: scale(${1 - (Math.max(0, String(lbItem.rank).length - 1) * 0.1)})">${lbItem.rank}</h2>
 				</div>
 
 				<div class="leaderboardSide">
 					<div class="leaderboardStars">
-						${x.moderator ? `<img title="${x.moderator == 2 ? "Elder " : ""}Moderator" src="/assets/mod${x.moderator == 2 ? "-elder" : ""}.png" style="width: 9%; cursor: help; padding-right: 1.6%; transform: translateY(0.7vh)">` : ""}
-						<h2 class="leaderboardName small inline gdButton" style="margin-top: 1.5%${nameString || (x.moderator == 2 ? "; color: #FF9977;" : "")}"><a href="${onePointNine ? `../search/${x.playerID}?user` : `../u/${x.accountID}.`}" accountID="${x.accountID}">${x.username}</a></h2>
-						<h3 class="inline${x.stars >= 100000 ? " yellow" : ""}" style="margin-left: 4%; margin-top: 2%; font-size: 4.5vh${type == "weekly" ? "; display: none" : ""};">${x.stars} <img class="help valign" src="/assets/star.png"style="width: 4vh; transform: translate(-25%, -10%);" title="Stars"></h3>
+						${lbItem.moderator ? `<img title="${lbItem.moderator == 2 ? "Elder " : ""}Moderator" src="/assets/mod${lbItem.moderator == 2 ? "-elder" : ""}.png" style="width: 9%; cursor: help; padding-right: 1.6%; transform: translateY(0.7vh)">` : ""}
+						<h2 class="leaderboardName small inline gdButton" style="margin-top: 1.5%${nameString || (lbItem.moderator == 2 ? "; color: #FF9977;" : "")}"><a href="${onePointNine ? `../search/${lbItem.playerID}?user` : `../u/${lbItem.accountID}.`}" accountID="${lbItem.accountID}">${lbItem.username}</a></h2>
+						<h3 class="inline${lbItem.stars >= 100000 ? " yellow" : ""}" style="margin-left: 4%; margin-top: 2%; font-size: 4.5vh${type == "weekly" ? "; display: none" : ""};">${lbItem.stars} <img class="help valign" src="/assets/star.png"style="width: 4vh; transform: translate(-25%, -10%);" title="Stars"></h3>
 					</div>
 
 					<h3 class="lessSpaced leaderboardStats">
-						${type != "weekly" ? "" : `<span${x.stars >= 1000 ? " class='yellow'" : ""}>+${x.stars}</span> <img class="help valign" src="/assets/star.png" title="Star Gain">`}
-						${wk || onePointNine ? "" : `<span${x.diamonds >= 65535 ? ` class='blue'>` : ">"}${x.diamonds}</span> <img class="help valign" src="/assets/diamond.png" title="Diamonds">`}
-						${wk ? "&nbsp;" : `<span${x.coins >= 149 ? " class='yellow'" : ""}>${x.coins}</span> <img class="help valign" src="/assets/coin.png" title="Secret Coins">`}
-						${wk || onePointNine ? "" : `<span${x.userCoins >= 10000 ? " class='brightblue'" : ""}>${x.userCoins}</span> <img class="help valign" src="/assets/silvercoin.png" title="User Coins">`}
-						${wk ? "" : `<span${x.demons >= 1000 ? " class='brightred'" : ""}>${x.demons}</span> <img class="help valign" src="/assets/demon.png" title="Demons">`}
-						${x.cp <= 0 ? "" : `<span${x.cp >= 100 ? " class='yellow'" : ""}>${x.cp}</span> <img class="help valign" src="/assets/cp.png" title="Creator Points">`}
+						${type != "weekly" ? "" : `<span${lbItem.stars >= 1000 ? " class='yellow'" : ""}>+${lbItem.stars}</span> <img class="help valign" src="/assets/star.png" title="Star Gain">`}
+						${wk || onePointNine ? "" : `<span${lbItem.diamonds >= 65535 ? ` class='blue'>` : ">"}${lbItem.diamonds}</span> <img class="help valign" src="/assets/diamond.png" title="Diamonds">`}
+						${wk ? "&nbsp;" : `<span${lbItem.coins >= 149 ? " class='yellow'" : ""}>${lbItem.coins}</span> <img class="help valign" src="/assets/coin.png" title="Secret Coins">`}
+						${wk || onePointNine ? "" : `<span${lbItem.userCoins >= 10000 ? " class='brightblue'" : ""}>${lbItem.userCoins}</span> <img class="help valign" src="/assets/silvercoin.png" title="User Coins">`}
+						${wk ? "" : `<span${lbItem.demons >= 1000 ? " class='brightred'" : ""}>${lbItem.demons}</span> <img class="help valign" src="/assets/demon.png" title="Demons">`}
+						${lbItem.cp <= 0 ? "" : `<span${lbItem.cp >= 100 ? " class='yellow'" : ""}>${lbItem.cp}</span> <img class="help valign" src="/assets/cp.png" title="Creator Points">`}
 					</h3>
 
 					<h3 class="lessSpaced leaderboardStats weeklyStuff"}>

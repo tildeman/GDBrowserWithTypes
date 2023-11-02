@@ -29,9 +29,9 @@ export class UserCache{
 		this.lastSuccess = {};
 		this.actuallyWorked = {};
 		this.cacheAccountIDs = cacheAccountIDs || true;
-		servers.forEach(x => {
-			this.accountCache[x.id || "gd"] = {};
-			this.lastSuccess[x.id || "gd"] = Date.now();
+		servers.forEach(serverItem => {
+			this.accountCache[serverItem.id || "gd"] = {};
+			this.lastSuccess[serverItem.id || "gd"] = Date.now();
 		});
 	}
 

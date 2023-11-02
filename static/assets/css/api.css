@@ -260,14 +260,14 @@ footer a{
 }
 
 
-@media screen and (max-width: 960px){
+@media screen and (max-width: 960px) {
 	.header-link{
 		font-size: 14px;
 		padding: 0 10px;
 	}
 }
 
-@media screen and (max-width: 750px){
+@media screen and (max-width: 750px) {
 	.main-header{
 		justify-content: space-around;
 		flex-direction: column;

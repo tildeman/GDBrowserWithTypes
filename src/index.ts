@@ -37,12 +37,12 @@ const serverList: ServerInfo[] = serverListRaw;
 /**
  * Servers that are pinned to the top. Sorted by whatever comes first.
  */
-const pinnedServers = serverList.filter(x => x.pinned);
+const pinnedServers = serverList.filter(serverItem => serverItem.pinned);
 
 /**
  * Servers that are not pinned to the top. Sorted alphabetically.
  */
-const notPinnedServers = serverList.filter(x => !x.pinned).sort((a, b) => a.name.localeCompare(b.name));
+const notPinnedServers = serverList.filter(serverItem => !serverItem.pinned).sort((serverA, serverB) => serverA.name.localeCompare(serverB.name));
 
 const appServers = pinnedServers.concat(notPinnedServers);
 const appSafeServers: SafeServers[] = appServers.map(({ endpoint, substitutions, overrides, disabled, ...rest }) => rest);

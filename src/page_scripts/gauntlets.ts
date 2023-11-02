@@ -5,7 +5,7 @@
 // TODO: Separate types from API files
 fetch('/api/gauntlets').then(res => res.json()).then(gauntlets => {
 	$('#loading').hide();
-	gauntlets.forEach((gauntletItem, gauntletIndex) => {
+	gauntlets.forEach((gauntletItem) => {
 		$('#gauntletList').append(`
 			<div class="gauntlet">
 			<a href="/search/*?gauntlet=${gauntletItem.id}">

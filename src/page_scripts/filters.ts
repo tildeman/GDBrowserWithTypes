@@ -15,7 +15,7 @@ let officialSong = 1;
  */
 function undupe<T>(array: T[]) {
   if (!Array.isArray(array)) return [];
-  else return array.filter((x, y) => array.indexOf(x) == y);
+  else return array.filter((value, index) => array.indexOf(value) == index);
 }
 
 // TODO: Remove this deprecated usage
@@ -40,7 +40,7 @@ $('.levelSearch').click(function() {
 	// === LENGTH === //
 	let lengths: string[] = []
 	$('.lengthDiv').each(function() {
-		if ($(this).hasClass('selectedFilter') && $(this).attr('len')){
+		if ($(this).hasClass('selectedFilter') && $(this).attr('len')) {
 			lengths.push($(this).attr('len') || "");
 		}
 	});

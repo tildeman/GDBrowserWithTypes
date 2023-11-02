@@ -22,7 +22,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	let params = {
 		accountID: req.body.accountID,
 		gjp: XOR.encrypt(req.body.password, 37526),
-		messages: Array.isArray(req.body.id) ? req.body.id.map(x => x.trim()).join(",") : req.body.id,
+		messages: Array.isArray(req.body.id) ? req.body.id.map(messageContent => messageContent.trim()).join(",") : req.body.id,
 	};
 
 	let deleted: number = params.messages.split(",").length;

@@ -128,7 +128,7 @@ function parseIconForm(form: string) {
  * @param cb The callback once the icons are loaded.
  * @returns The return value of the callback.
  */
-function loadIconLayers(form: string, id: number, cb) {
+function loadIconLayers(form: string, id: number, cb: (...arguments: any) => any) {
 	let iconStr = `${form}_${padZero(validateIconID(id, form))}`;
 	let texturesToLoad = Object.keys(iconData?.gameSheet || {}).filter(x => x.startsWith(iconStr + "_"));
 
@@ -149,7 +149,7 @@ function loadIconLayers(form: string, id: number, cb) {
  * @param cb The callback once the icons are loaded.
  * @returns This function does not return.
  */
-function loadNewIcon(iconStr: string, cb) {
+function loadNewIcon(iconStr: string, cb: (...arguments: any) => any) {
 	fetch(`/iconkit/newicons/${iconStr}-hd.plist`).then(pl => pl.text()).then(plist => {
 		let data = parseNewPlist(plist);
 		let sheetName = iconStr + "-sheet";
@@ -178,7 +178,7 @@ function parseNewPlist(data: string) {
 	let plist = dom_parser.parseFromString(data, "text/xml");
 	let iconFrames = plist.children[0].children[0].children[1].children;
 	let positionData = {};
-	for (let i=0; i < iconFrames.length; i += 2) {
+	for (let i = 0; i < iconFrames.length; i += 2) {
 		let frameName = iconFrames[i].innerHTML;
 		let frameData = iconFrames[i + 1].children;
 		let isRotated = false;
@@ -188,7 +188,7 @@ function parseNewPlist(data: string) {
 		};
 		positionData[frameName] = {};
 
-		for (let n=0; n < frameData.length; n += 2) {
+		for (let n = 0; n < frameData.length; n += 2) {
 			let keyName = frameData[n].innerHTML;
 			let keyData = frameData[n + 1].innerHTML
 			if (["spriteOffset", "spriteSize", "spriteSourceSize"].includes(keyName)) {
@@ -302,13 +302,13 @@ class Icon {
 		// spider + robot
 		else {
 			let idlePosition = this.getAnimation(data.animation || "", data.animationForm).frames[0];
-			idlePosition.forEach((x, y) => {
-				x.name = iconData?.robotAnimations.info[this.form].names[y] || "";
-				let part = new IconPart(this.form, this.id, this.colors, false, { part: x, skipGlow: true, new: this.new });
-				positionPart(x, y, part.sprite, this.form, this.new);
+			idlePosition.forEach((position, index) => {
+				position.name = iconData?.robotAnimations.info[this.form].names[index] || "";
+				let part = new IconPart(this.form, this.id, this.colors, false, { part: position, skipGlow: true, new: this.new });
+				positionPart(position, index, part.sprite, this.form, this.new);
 
-				let glowPart = new IconPart(this.form, this.id, this.colors, true, { part: x, onlyGlow: true, new: this.new });
-				positionPart(x, y, glowPart.sprite, this.form, this.new, true);
+				let glowPart = new IconPart(this.form, this.id, this.colors, true, { part: position, onlyGlow: true, new: this.new });
+				positionPart(position, index, glowPart.sprite, this.form, this.new, true);
 				glowPart.sprite.visible = this.glow;
 				this.glowLayers.push(glowPart);
 
@@ -385,7 +385,7 @@ class Icon {
 	 */
 	setGlow(toggle: boolean) {
 		this.glow = !!toggle;
-		this.glowLayers.forEach(x => x.sprite.visible = (this.colors["1"] == 0 || this.glow));
+		this.glowLayers.forEach(layer => layer.sprite.visible = (this.colors["1"] == 0 || this.glow));
 	}
 
 	/**

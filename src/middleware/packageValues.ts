@@ -17,17 +17,17 @@ const serverList: ServerInfo[] = serverListRaw;
 /**
  * Servers that are pinned to the top. Sorted by whatever comes first.
  */
-const pinnedServers = serverList.filter(x => x.pinned);
+const pinnedServers = serverList.filter(serverItem => serverItem.pinned);
 
 /**
  * Servers that are not pinned to the top. Sorted alphabetically.
  */
-const notPinnedServers = serverList.filter(x => !x.pinned).sort((a, b) => a.name.localeCompare(b.name));
+const notPinnedServers = serverList.filter(serverItem => !serverItem.pinned).sort((serverA, serverB) => serverA.name.localeCompare(serverB.name));
 
 const appServers = pinnedServers.concat(notPinnedServers);
 
 // The default no-id endpoint always exists, trust me!
-const appMainEndpoint = appServers.find(x => !x.id)!.endpoint; // boomlings.com unless changed in fork
+const appMainEndpoint = appServers.find(serverItem => !serverItem.id)!.endpoint; // boomlings.com unless changed in fork
 
 /**
  * Package useful functions into `reqBundle`, and let the controllers handle the rest.
@@ -38,9 +38,9 @@ const appMainEndpoint = appServers.find(x => !x.id)!.endpoint; // boomlings.com 
 export default function(req: Request, res: Response, next: NextFunction) {
 	// There's simply no good way to identify subdomains for both local and production environments.
 	const subdomainLevel = 1;
-	let subdomains = req.subdomains.map(x => x.toLowerCase());
+	let subdomains = req.subdomains.map(subdomain => subdomain.toLowerCase());
 	if (subdomains.length < subdomainLevel) subdomains = [""];
-	const reqServer = appServers.find(x => subdomains.includes(x.id.toLowerCase()));
+	const reqServer = appServers.find(serverItem => subdomains.includes(serverItem.id.toLowerCase()));
 	if (subdomains.length > subdomainLevel || !reqServer) {
 		return res.redirect("http://" + req.get('host')!.split(".").slice(subdomains.length).join(".") + req.originalUrl);
 	}
@@ -62,8 +62,8 @@ export default function(req: Request, res: Response, next: NextFunction) {
 	if (reqIsGDPS) res.set("gdps", (reqOnePointNine ? "1.9/" : "") + reqId);
 
 	const reqGdParams = function(obj: Record<string, string | number | undefined> = {}, substitute = true) {
-		Object.keys(appConfig.params).forEach(x => { if (!obj[x]) obj[x] = appConfig.params[x] });
-		Object.keys(reqServer.extraParams || {}).forEach(x => { if (!obj[x]) obj[x] = reqServer.extraParams?.x });
+		Object.keys(appConfig.params).forEach(parameter => { if (!obj[parameter]) obj[parameter] = appConfig.params[parameter] });
+		Object.keys(reqServer.extraParams || {}).forEach(parameter => { if (!obj[parameter]) obj[parameter] = reqServer.extraParams?.parameter });
 		const ip = req.headers['x-real-ip']?.toString() || req.headers['x-forwarded-for']?.toString() || "";
 		const params = {
 			form: obj,

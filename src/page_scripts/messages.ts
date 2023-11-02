@@ -41,15 +41,15 @@ function appendMessages(dontCheckPages?: boolean) {
 	$('#selectAll').show();
 	$('#selectNone').hide();
 	$('#msgList').html('');
-	messages.forEach((x, y) => {
+	messages.forEach((messageItem, messageIndex) => {
 		$('#msgList').append(`
-		<div messageID=${x.id} playerID="${x.accountID}" ${x.browserColor ? 'browserColor="true" ' : ""}class="commentBG gdMessage">
-			<h3 style="color: ${x.browserColor ? 'rgb(120, 200, 255)' : 'white'}; font-size: ${x.subject.length > 35 ? "3" : x.subject.length > 30 ? "3.5" : x.subject.length > 25 ? "3.75" : "4"}vh">${x.subject}${x.unread ? " <cg>!</cg>" : ""}</h3>
-			<h3 class="gold gdButton msgAuthor hitbox fit"><a href="../u/${x.accountID}." target="_blank">From: ${x.author}</a></h3>
-			<p class="msgDate">${x.date}</p>
+		<div messageID=${messageItem.id} playerID="${messageItem.accountID}" ${messageItem.browserColor ? 'browserColor="true" ' : ""}class="commentBG gdMessage">
+			<h3 style="color: ${messageItem.browserColor ? 'rgb(120, 200, 255)' : 'white'}; font-size: ${messageItem.subject.length > 35 ? "3" : messageItem.subject.length > 30 ? "3.5" : messageItem.subject.length > 25 ? "3.75" : "4"}vh">${messageItem.subject}${messageItem.unread ? " <cg>!</cg>" : ""}</h3>
+			<h3 class="gold gdButton msgAuthor hitbox fit"><a href="../u/${messageItem.accountID}." target="_blank">From: ${messageItem.author}</a></h3>
+			<p class="msgDate">${messageItem.date}</p>
 			<div class="labelButton hitbox">
-				<input id="message-${y}" type="checkbox" class="chk" messageID=${x.id}>
-				<label for="message-${y}" class="gdcheckbox gdButton"></label>
+				<input id="message-${messageIndex}" type="checkbox" class="chk" messageID=${messageItem.id}>
+				<label for="message-${messageIndex}" class="gdcheckbox gdButton"></label>
 			</div>${/*
 			<div class="xButton hitbox">
 				<img class="gdButton" style="width: 8%" src="../assets/xbutton.png">
@@ -126,15 +126,15 @@ function getMessages() {
 	});
 }
 
-$(document).on('click', '.hitbox', function (x) {
-	x.stopImmediatePropagation();
+$(document).on('click', '.hitbox', function (event) {
+	event.stopImmediatePropagation();
 });
 
-$(document).on('mouseover', '.hitbox', function (x) {
+$(document).on('mouseover', '.hitbox', function (event) {
 	$('.gdMessage').css('border', '0.6vh solid transparent');
 });
 
-$(document).on('mouseleave', '.hitbox', function (x) {
+$(document).on('mouseleave', '.hitbox', function (event) {
 	$('.gdMessage').removeAttr('style');
 });
 
@@ -204,7 +204,7 @@ $('#deleteCurrentMessage').click(function () {
 	$('#deleting').show();
 
 	$.post("../deleteMessage/", { password, accountID, id: messageID }).done(msg => {
-			messages = messages.filter(x => x.id != messageID);
+			messages = messages.filter(messageItem => messageItem.id != messageID);
 			appendMessages(true);
 			allowEsc = true;
 			$('#selectedMessage').hide();
@@ -238,7 +238,7 @@ $('#bulkDeleteMessages').click(function () {
 	$.post("../deleteMessage/", { password, accountID, id: msgIDs }).done(msg => {
 		if (msgIDs.length > 10) getMessages();
 		else {
-			messages = messages.filter(x => !msgIDs.includes(x.id));
+			messages = messages.filter(messageItem => !msgIDs.includes(messageItem.id));
 			appendMessages(true);
 		}
 		allowEsc = true;

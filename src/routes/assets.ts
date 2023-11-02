@@ -34,8 +34,8 @@ router.get("/:dir*?", function(req, res) {
 	const files: string[] = fs.existsSync(path)? fs.readdirSync(path): [];
 
 	const assetData = {
-		files: files.filter(x => x.includes('.')),
-		directories: files.filter(x => !x.includes('.'))
+		files: files.filter(fileName => fileName.includes('.')),
+		directories: files.filter(directoryName => !directoryName.includes('.'))
 	};
 
 	res.render("assets", {

@@ -167,24 +167,24 @@ function buildComments(lvl: Level | Player) {
 
 			commentCache[page] = res;
 
-			res.forEach((x, index) => {
-				$(`#date-${x.ID}`).html(x.date);
-				$(`#likes-${x.ID}`).html(x.likes.toString());
+			res.forEach((comment, index) => {
+				$(`#date-${comment.ID}`).html(comment.date);
+				$(`#likes-${comment.ID}`).html(comment.likes.toString());
 				// TODO: Avoid these raw HTML manipulations
-				$(`#thumb-${x.ID}`).attr('style', x.likes < 0 ? `transform: translateY(${compact ? '15' : '25'}%); margin-right: 0.4%; height: 4vh;` : 'height: 4vh;').attr('src', `/assets/${x.likes < 0 ? "dis" : ""}like.png`);
-				if ($(`.comment[commentID=${x.ID}]`).length) return; // auto mode, ignore duplicates
+				$(`#thumb-${comment.ID}`).attr('style', comment.likes < 0 ? `transform: translateY(${compact ? '15' : '25'}%); margin-right: 0.4%; height: 4vh;` : 'height: 4vh;').attr('src', `/assets/${comment.likes < 0 ? "dis" : ""}like.png`);
+				if ($(`.comment[commentID=${comment.ID}]`).length) return; // auto mode, ignore duplicates
 
 				let bgCol = index % 2 ? "evenComment" : "oddComment";
 
 				if (auto) bgCol = $('.commentBG').first().hasClass('oddComment') ? "evenComment" : "oddComment";
 
-				const userName = !history ? x.username : ("username" in lvl ? lvl.username : "");
-				const modNumber = x.moderator || ("moderator" in lvl ? lvl.moderator : 0);
+				const userName = !history ? comment.username : ("username" in lvl ? lvl.username : "");
+				const modNumber = comment.moderator || ("moderator" in lvl ? lvl.moderator : 0);
 
-				if (x.pages) {
-					lastPage = x.pages;
-					$('#pagenum').html(`Page ${page+1} of ${x.pages}`);
-					if (page+1 >= x.pages) $('#pageUp').hide();
+				if (comment.pages) {
+					lastPage = comment.pages;
+					$('#pagenum').html(`Page ${page+1} of ${comment.pages}`);
+					if (page+1 >= comment.pages) $('#pageUp').hide();
 					else $('#pageUp').show();
 				}
 
@@ -192,26 +192,26 @@ function buildComments(lvl: Level | Player) {
 
 				const commentHTML = !compact ? `
 					<div class="commentBG ${bgCol}">
-						<div class="comment" commentID="${x.ID}">
+						<div class="comment" commentID="${comment.ID}">
 							<div class="commentRow">
-								<gdicon class="commentIcon inline" cacheID=${x.playerID} iconID=${x.icon.icon} iconForm="${x.icon.form}" col1="${x.icon.col1}" col2="${x.icon.col2}" glow="${x.icon.glow}"></gdicon>
-								<a href=/${x.accountID == "0" ? `search/${x.playerID}?user` : `/u/${x.accountID}.`}>
-								<h2 class="inline gdButton ${(!x.accountID || x.accountID == "0") ? "green unregistered" : ""}">${userName}</h2></a>
+								<gdicon class="commentIcon inline" cacheID=${comment.playerID} iconID=${comment.icon.icon} iconForm="${comment.icon.form}" col1="${comment.icon.col1}" col2="${comment.icon.col2}" glow="${comment.icon.glow}"></gdicon>
+								<a href=/${comment.accountID == "0" ? `search/${comment.playerID}?user` : `/u/${comment.accountID}.`}>
+								<h2 class="inline gdButton ${(!comment.accountID || comment.accountID == "0") ? "green unregistered" : ""}">${userName}</h2></a>
 								${modNumber > 0 ? `<img class="inline" src="/assets/mod${modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : ""}.png" style="margin-left: 1%; width: 3.5%">` : ""}
-								<p class="commentPercent inline">${x.percent ? x.percent + "%" : ""}</p>
+								<p class="commentPercent inline">${comment.percent ? comment.percent + "%" : ""}</p>
 							</div>
 
 							<div class="commentAlign">
-								<p class="pre commentText" style="color: rgb(${!history && x.playerID == lvl.playerID ? "255,255,75" : x.browserColor ? "255,180,255" : x.color})">${clean(x.content)}</p>
+								<p class="pre commentText" style="color: rgb(${!history && comment.playerID == lvl.playerID ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color})">${clean(comment.content)}</p>
 							</div>
 						</div>
-						<p class="commentDate" id="date-${x.ID}">${x.date}</p>
+						<p class="commentDate" id="date-${comment.ID}">${comment.date}</p>
 						<div class="commentLikes">
-							${history ? `<h3 style="margin-right: 1.5vh; pointer-events: all;" class="gold inline"><a href="/level/${x.levelID}">(${x.levelID})</a></h3>` : ""}
-							<div class="inline gdButton likeComment" commentID="${x.ID}" ${x.levelID ? `levelID="${x.levelID}"` : ""}">
-								<img id="thumb-${x.ID}" class="inline gdButton" ${x.likes < 0 ? "style='transform: translateY(25%); margin-right: 0.4%; height: 4vh;'" : "style='height: 4vh;'"} src="/assets/${x.likes < 0 ? "dis" : ""}like.png">
+							${history ? `<h3 style="margin-right: 1.5vh; pointer-events: all;" class="gold inline"><a href="/level/${comment.levelID}">(${comment.levelID})</a></h3>` : ""}
+							<div class="inline gdButton likeComment" commentID="${comment.ID}" ${comment.levelID ? `levelID="${comment.levelID}"` : ""}">
+								<img id="thumb-${comment.ID}" class="inline gdButton" ${comment.likes < 0 ? "style='transform: translateY(25%); margin-right: 0.4%; height: 4vh;'" : "style='height: 4vh;'"} src="/assets/${comment.likes < 0 ? "dis" : ""}like.png">
 							</div>
-							<h3 id="likes-${x.ID}" class="inline">${x.likes}</h3>
+							<h3 id="likes-${comment.ID}" class="inline">${comment.likes}</h3>
 						</div>
 					</div>`
 
@@ -219,26 +219,26 @@ function buildComments(lvl: Level | Player) {
 
 					:  `
 					<div class="commentBG compactBG ${bgCol}">
-						<div class="comment compact" commentID="${x.ID}">
+						<div class="comment compact" commentID="${comment.ID}">
 							<div class="commentRow">
-								<gdicon class="commentIcon inline" cacheID=${x.playerID} iconID=${x.icon.icon} iconForm="${x.icon.form}" col1="${x.icon.col1}" col2="${x.icon.col2}" glow="${x.icon.glow}"></gdicon>
-								<a href=/${x.accountID == "0" ? `search/${x.playerID}?user` : `/u/${x.accountID}.`}>
-								<h2 class="inline gdButton ${x.accountID == "0" ? "green unregistered" : ""}">${userName}</h2></a>
+								<gdicon class="commentIcon inline" cacheID=${comment.playerID} iconID=${comment.icon.icon} iconForm="${comment.icon.form}" col1="${comment.icon.col1}" col2="${comment.icon.col2}" glow="${comment.icon.glow}"></gdicon>
+								<a href=/${comment.accountID == "0" ? `search/${comment.playerID}?user` : `/u/${comment.accountID}.`}>
+								<h2 class="inline gdButton ${comment.accountID == "0" ? "green unregistered" : ""}">${userName}</h2></a>
 								${modNumber > 0 ? `<img class="inline" src="/assets/mod${modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : ""}.png" style="margin-left: 1.2%; width: 3.2%">` : ""}
-								<p class="commentPercent inline">${x.percent ? x.percent + "%" : ""}</p>
+								<p class="commentPercent inline">${comment.percent ? comment.percent + "%" : ""}</p>
 							</div>
 
 							<div class="commentAlign">
-								<p class="pre commentText" style="color: rgb(${!history && x.playerID == lvl.playerID ? "255,255,75" : x.browserColor ? "255,180,255" : x.color})">${clean(x.content)}</p>
+								<p class="pre commentText" style="color: rgb(${!history && comment.playerID == lvl.playerID ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color})">${clean(comment.content)}</p>
 							</div>
 						</div>
-						<p class="commentDate compactDate" id="date-${x.ID}">${x.date}</p>
+						<p class="commentDate compactDate" id="date-${comment.ID}">${comment.date}</p>
 						<div class="commentLikes">
-							${history ? `<h3 style="margin-right: 0.5vh; pointer-events: all;" class="gold inline"><a href="/level/${x.levelID}">(${x.levelID})</a></h3>` : ""}
-							<div class="inline gdButton likeComment" commentID="${x.ID}"${x.levelID ? `levelID="${x.levelID}"` : ""}>
-								<img id="thumb-${x.ID}" class="inline" ${x.likes < 0 ? "style='transform: translateY(15%); margin-right: 0.4%; height: 4vh;'" : "style='height: 4vh;'"} src="/assets/${x.likes < 0 ? "dis" : ""}like.png">
+							${history ? `<h3 style="margin-right: 0.5vh; pointer-events: all;" class="gold inline"><a href="/level/${comment.levelID}">(${comment.levelID})</a></h3>` : ""}
+							<div class="inline gdButton likeComment" commentID="${comment.ID}"${comment.levelID ? `levelID="${comment.levelID}"` : ""}>
+								<img id="thumb-${comment.ID}" class="inline" ${comment.likes < 0 ? "style='transform: translateY(15%); margin-right: 0.4%; height: 4vh;'" : "style='height: 4vh;'"} src="/assets/${comment.likes < 0 ? "dis" : ""}like.png">
 							</div>
-							<h3 id="likes-${x.ID}" class="inline">${x.likes}</h3>
+							<h3 id="likes-${comment.ID}" class="inline">${comment.likes}</h3>
 						</div>
 					</div>`;
 
@@ -376,7 +376,7 @@ function buildComments(lvl: Level | Player) {
 			}
 			else accountID = res.accountID;
 
-			$.post("/postComment",  {comment, username, password, levelID, accountID, color: true}).done((x: unknown) => {
+			$.post("/postComment",  {comment, username, password, levelID, accountID, color: true}).done(() => {
 				$('#content').val("");
 				$('#postComment').hide();
 				$('.postbutton').show();
@@ -455,7 +455,7 @@ function buildComments(lvl: Level | Player) {
 			}
 			else accountID = res.accountID;
 
-			$.post("/like",  { ID, accountID, password, like: likeType, type: 2, extraID }).done(x => {
+			$.post("/like",  { ID, accountID, password, like: likeType, type: 2, extraID }).done(() => {
 				let newCount = parseInt(likeCount.text()) + (like ? 1 : -1);
 				likeCount.text(newCount);
 				if (newCount < 0) likeImg.attr('src', '/assets/dislike.png').css('transform', compact ? 'translateY(15%)' : 'translateY(25%)');

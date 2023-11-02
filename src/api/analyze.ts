@@ -159,9 +159,9 @@ export default async function(req: Request, res: Response, level?: DownloadedLev
  */
 function sortObj(obj: {}, sortBy?: string) {
 	var sorted = {};
-	var keys = !sortBy ? Object.keys(obj).sort((a, b) => obj[b] - obj[a]) : Object.keys(obj).sort((a, b) => obj[b][sortBy] - obj[a][sortBy]);
-	keys.forEach(x => {
-		sorted[x] = obj[x];
+	var keys = !sortBy ? Object.keys(obj).sort((objectA, objectB) => obj[objectB] - obj[objectA]) : Object.keys(obj).sort((objectA, objectB) => obj[objectB][sortBy] - obj[objectA][sortBy]);
+	keys.forEach(key => {
+		sorted[key] = obj[key];
 	});
 	return sorted;
 }
@@ -281,10 +281,11 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 		else if (id in ids.triggers) {
 			obj.trigger = ids.triggers[id];
 
-			if (obj.trigger){
+			if (obj.trigger) {
 				if (obj.trigger in trigger_array) {
 					trigger_array[obj.trigger]++;
-				} else {
+				}
+				else {
 					trigger_array[obj.trigger] = 1;
 				}
 			}
@@ -295,7 +296,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 		}
 
 		if (obj.triggerGroups) {
-			obj.triggerGroups.split(".").forEach(x => triggerGroups.push(x));
+			obj.triggerGroups.split(".").forEach(triggerGroup => triggerGroups.push(triggerGroup));
 		}
 		if (obj.highDetail == 1) highDetail += 1;
 
@@ -303,7 +304,8 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 			const name = misc_objects[id];
 			if (name in miscCounts) {
 				miscCounts[name][0] += 1;
-			} else {
+			}
+			else {
 				miscCounts[name] = [1, ids.misc[name][0]];
 			}
 		}
@@ -312,7 +314,8 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 			const name = block_ids[id];
 			if (name in blockCounts) {
 				blockCounts[name] += 1;
-			} else {
+			}
+			else {
 				blockCounts[name] = 1;
 			}
 		}
@@ -331,7 +334,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	let invisTriggers: number[] = [];
 	alphaTriggers.forEach(tr => {
 		if ((tr.x || 0) < 500 && !tr.touchTriggered && !tr.spawnTriggered && tr.opacity == 0 && tr.duration == 0
-			&& alphaTriggers.filter(x => x.targetGroupID == tr.targetGroupID).length == 1) {
+			&& alphaTriggers.filter(trigger => trigger.targetGroupID == tr.targetGroupID).length == 1) {
 			invisTriggers.push(Number(tr.targetGroupID));
 		}
 	});
@@ -348,39 +351,39 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	const responseObjects = data.length - 2;
 	const responseHighDetail = highDetail;
 
-	const responsePortals = level_portals.sort(function (a, b) {
-		return (a.x || 0) - (b.x || 0);
-	}).map(x => x.portal + " " + Math.floor((x.x || 0) / (Math.max(last, 529.0) + 340.0) * 100) + "%").join(", ");
-	const responseCoins = level_coins.sort(function (a, b) {
-		return (a.x || 0) - (b.x || 0);
-	}).map(x => Math.floor((x.x || 0) / (Math.max(last, 529.0) + 340.0) * 100));
+	const responsePortals = level_portals.sort(function (portalA, portalB) {
+		return (portalA.x || 0) - (portalB.x || 0);
+	}).map(portal => portal.portal + " " + Math.floor((portal.x || 0) / (Math.max(last, 529.0) + 340.0) * 100) + "%").join(", ");
+	const responseCoins = level_coins.sort(function (coinA, coinB) {
+		return (coinA.x || 0) - (coinB.x || 0);
+	}).map(coin => Math.floor((coin.x || 0) / (Math.max(last, 529.0) + 340.0) * 100));
 	const responseCoinsVerified = level.verifiedCoins;
 
 	const responseOrbs = orb_array;
-	responseOrbs.total = Object.values(orb_array).reduce((a, x) => a + x, 0); // we already have an array of objects, use it
+	responseOrbs.total = Object.values(orb_array).reduce((orbID, orbIndex) => orbID + orbIndex, 0); // we already have an array of objects, use it
 
 	const responseTriggers = trigger_array;
-	responseTriggers.total = Object.values(trigger_array).reduce((a, x) => a + x, 0);
+	responseTriggers.total = Object.values(trigger_array).reduce((triggerID, triggerIndex) => triggerID + triggerIndex, 0);
 
 	let responseTriggerGroups: Record<string, number> = {};
 	const responseBlocks = sortObj(blockCounts);
 	const responseMisc = sortObj(miscCounts, "0");
 
-	triggerGroups.forEach(x => {
-		if (responseTriggerGroups["Group " + x]) responseTriggerGroups["Group " + x] += 1;
-		else responseTriggerGroups["Group " + x] = 1;
+	triggerGroups.forEach(triggerGroup => {
+		if (responseTriggerGroups["Group " + triggerGroup]) responseTriggerGroups["Group " + triggerGroup] += 1;
+		else responseTriggerGroups["Group " + triggerGroup] = 1;
 	});
 
 	responseTriggerGroups = sortObj(responseTriggerGroups);
-	let triggerKeys = Object.keys(responseTriggerGroups).map(x => Number(x.slice(6)));
+	let triggerKeys = Object.keys(responseTriggerGroups).map(triggerGroup => Number(triggerGroup.slice(6)));
 	if ("total" in responseTriggerGroups) responseTriggerGroups.total = triggerKeys.length;
 
 	// find alpha group with the most objects
-	const responseInvisibleGroup = triggerKeys.find(x => invisTriggers.includes(x));
+	const responseInvisibleGroup = triggerKeys.find(trigger => invisTriggers.includes(trigger));
 
-	const responseText = level_text.sort(function (a, b) {
-		return (a.x || 0) - (b.x || 0);
-	}).map(x => [Buffer.from(x.message || "", "base64").toString(), Math.round((x.x || 0) / last * 99) + "%"]);
+	const responseText = level_text.sort(function (levelTextA, levelTextB) {
+		return (levelTextA.x || 0) - (levelTextB.x || 0);
+	}).map(levelText => [Buffer.from(levelText.message || "", "base64").toString(), Math.round((levelText.x || 0) / last * 99) + "%"]);
 
 	const headerResponse = parse_header(header || "") as { settings: LevelSettings, colors: ColorObject[] };
 	const responseSettings: LevelSettings = headerResponse.settings;
@@ -425,10 +428,10 @@ function parse_header(header: string) {
 
 	const header_keyed = parse_obj(header, ",", init.values, true);
 
-	Object.keys(header_keyed).forEach(x => {
-		let val = init.values[x];
+	Object.keys(header_keyed).forEach(header => {
+		let val = init.values[header];
 		let name: string = val[0];
-		let property = header_keyed[x];
+		let property = header_keyed[header];
 		switch (val[1]) {
 			case "list":
 				val = init[(val[0] + "s")][property];
@@ -455,7 +458,7 @@ function parse_header(header: string) {
 					response.colors.push({ channel: channel, opacity: 1, r: 0, g: 0, b: 0 });
 				}
 				// from here we touch the color object
-				let currentChannel = response.colors.find(k => k.channel == channel);
+				let currentChannel = response.colors.find(colorItem => colorItem.channel == channel);
 				if (color == "blend") {
 					currentChannel!.blending = true; // only one color has blending though lol
 				} else if (color == "pcol" && property != "0") {
@@ -498,12 +501,12 @@ function parse_header(header: string) {
 			case "colors": {
 				let colorList: string[] = property.split("|");
 				let colorList2: ColorObject[] = [];
-				colorList.forEach((x, y) => {
-					const color = parse_obj(x, "_", colorStuff.properties);
+				colorList.forEach((colorItem, colorIndex) => {
+					const color = parse_obj(colorItem, "_", colorStuff.properties);
 					let colorObj = color as unknown as ColorObject;
-					if (!color.channel) return colorList = colorList.filter((h, i) => y != i);
+					if (!colorObj.channel) return colorList = colorList.filter((color, index) => colorIndex != index);
 
-					if (colorStuff.channels[colorObj.channel]){
+					if (colorStuff.channels[colorObj.channel]) {
 						colorObj.channel = colorStuff.channels[colorObj.channel];
 					}
 					if (+colorObj.channel > 1000) return;
@@ -517,8 +520,8 @@ function parse_header(header: string) {
 						let hsv: string[] = [];
 						if (typeof(colorObj.copiedHSV) == "string") hsv = colorObj.copiedHSV.split("a");
 						colorObj.copiedHSV = {};
-						hsv.forEach((x, y) => {
-							colorObj.copiedHSV![colorStuff.hsv[y]] = x;
+						hsv.forEach((colorValue, colorIndex) => {
+							colorObj.copiedHSV![colorStuff.hsv[colorIndex]] = colorValue;
 						})
 						colorObj.copiedHSV["s-checked"] = colorObj.copiedHSV["s-checked"] == 1;
 						colorObj.copiedHSV["v-checked"] = colorObj.copiedHSV["v-checked"] == 1;
@@ -528,15 +531,15 @@ function parse_header(header: string) {
 					colorList2.push(colorObj);
 				});
 				// we assume this is only going to be run once so... some stuff can go here
-				colorList2 = colorList2.filter(x => typeof x == "object");
-				if (!colorList2.find(x => x.channel == "Obj")) colorList2.push({r: 255, g: 255, b: 255, channel: "Obj", opacity: 1});
+				colorList2 = colorList2.filter(color => typeof color == "object");
+				if (!colorList2.find(color => color.channel == "Obj")) colorList2.push({r: 255, g: 255, b: 255, channel: "Obj", opacity: 1});
 
 				const specialSort = ["BG", "G", "G2", "Line", "Obj", "3DL"]
-				let specialColors = colorList2.filter(x =>  isNaN(+x.channel)).sort(function(a, b) {
-					return +(specialSort.indexOf(a.channel) > specialSort.indexOf(b.channel));
+				let specialColors = colorList2.filter(color =>  isNaN(+color.channel)).sort(function(colorA, colorB) {
+					return +(specialSort.indexOf(colorA.channel) > specialSort.indexOf(colorB.channel));
 				});
-				let regularColors = colorList2.filter(x => !isNaN(+x.channel)).sort(function(a, b) {
-					return (+a.channel) - (+b.channel)
+				let regularColors = colorList2.filter(color => !isNaN(+color.channel)).sort(function(colorA, colorB) {
+					return (+colorA.channel) - (+colorB.channel)
 				});
 				response.colors = specialColors.concat(regularColors);
 				break;

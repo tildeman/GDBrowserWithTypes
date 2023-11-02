@@ -29,7 +29,7 @@ interface LeaderboardEntry {
 
 const sheet = new GoogleSpreadsheet('1ADIJvAkL0XHGBDhO7PP9aQOuK3mPIKB2cVPbshuBBHc', { apiKey: secret_stuff.sheetsKey }); // accurate leaderboard spreadsheet
 
-const indexes = ["stars", "coins", "demons", "diamonds"];
+const indices = ["stars", "coins", "demons", "diamonds"];
 
 const forms = ['cube', 'ship', 'ball', 'ufo', 'wave', 'robot', 'spider'];
 const lastIndex = [{"stars": 0, "coins": 0, "demons": 0}, {"stars": 0, "coins": 0, "demons": 0, "diamonds": 0}];
@@ -60,7 +60,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	let type = req.query.type ? req.query.type.toString().toLowerCase() : 'stars';
 	if (type == "usercoins") type = "coins";
-	if (!indexes.includes(type)) type = "stars";
+	if (!indices.includes(type)) type = "stars";
 	if (lastIndex[modMode ? 1 : 0][type] + 600000 > Date.now() && cache[type]) {
 		return res.send(gdMode ? cache[type] : JSON.parse(cache[type])); // 10 min cache
 	}
@@ -69,8 +69,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		const tab = sheet.sheetsById[1555821000];
 		await tab.loadCells('A2:H2');
 
-		let cellIndex = indexes.findIndex(x => type == x);
-		if (modMode) cellIndex += indexes.length;
+		let cellIndex = indices.findIndex(index => type == index);
+		if (modMode) cellIndex += indices.length;
 
 		const cell = tab.getCell(1, cellIndex).value;
 		if (!cell || typeof cell != "string" || cell.startsWith("GoogleSpreadsheetFormulaError")) {
@@ -81,9 +81,9 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		const leaderboard: LeaderboardEntry[] = JSON.parse(cell.replace(/~( |$)/g, ""));
 
 		let gdFormatting = "";
-		leaderboard.forEach(x => {
-			userCacheHandle.userCache(reqBundle.id, x.accountID, x.playerID, x.username);
-			gdFormatting += `1:${x.username}:2:${x.playerID}:13:${x.coins}:17:${x.usercoins}:6:${x.rank}:9:${x.icon.icon}:10:${x.icon.col1}:11:${x.icon.col2}:14:${forms.indexOf(x.icon.form)}:15:${x.icon.glow ? 2 : 0}:16:${x.accountID}:3:${x.stars}:8:${x.cp}:46:${x.diamonds}:4:${x.demons}|`;
+		leaderboard.forEach(entry => {
+			userCacheHandle.userCache(reqBundle.id, entry.accountID, entry.playerID, entry.username);
+			gdFormatting += `1:${entry.username}:2:${entry.playerID}:13:${entry.coins}:17:${entry.usercoins}:6:${entry.rank}:9:${entry.icon.icon}:10:${entry.icon.col1}:11:${entry.icon.col2}:14:${forms.indexOf(entry.icon.form)}:15:${entry.icon.glow ? 2 : 0}:16:${entry.accountID}:3:${entry.stars}:8:${entry.cp}:46:${entry.diamonds}:4:${entry.demons}|`;
 		});
 		caches[modMode ? 1 : 0][type] = JSON.stringify(leaderboard);
 		caches[2][type] = gdFormatting;

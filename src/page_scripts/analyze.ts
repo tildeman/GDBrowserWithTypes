@@ -248,13 +248,13 @@ function commafy(num: string | number) {
 	}
 
 	colorList.forEach((x, y) => {
-		const c = res.colors[x];
+		const color = res.colors[x];
 
-		$('#colorDiv').append(`${y % 8 == 0 ? "<brr>" : ""}<div class="inline aColor"><div class="color" channel="${c.channel}" style="background-color: rgba(${clean(c.cr || c.r)}, ${clean(c.cg || c.g)}, ${clean(c.cb || c.b)}, ${clean(c.opacity)}); border: 0.4vh solid rgb(${c.r}, ${c.g}, ${c.b})">
-			${c.copiedChannel ? `<h3 class='copiedColor'>C:${c.copiedChannel}</h3>` : c.pColor ? `<h3 class='copiedColor'>P${c.pColor}</h3>` : c.blending ? "<h3 class='blendingDot'>•</h3>" : ""}
-			${c.copiedChannel && c.copiedHSV ? `<h3 class='copiedColor copiedHSV'> +HSV</h3>` : ""}
-			${c.opacity != "1" ? `<h3 class='copiedColor'>${c.opacity}%</h3>` : ""}
-			</div><h3 style="padding-top: 7%">${c.channel > 0 ? "Col " + c.channel : c.channel}</h3></div>`);
+		$('#colorDiv').append(`${y % 8 == 0 ? "<brr>" : ""}<div class="inline aColor"><div class="color" channel="${color.channel}" style="background-color: rgba(${clean(color.cr || color.r)}, ${clean(color.cg || color.g)}, ${clean(color.cb || color.b)}, ${clean(color.opacity)}); border: 0.4vh solid rgb(${color.r}, ${color.g}, ${color.b})">
+			${color.copiedChannel ? `<h3 class='copiedColor'>C:${color.copiedChannel}</h3>` : color.pColor ? `<h3 class='copiedColor'>P${color.pColor}</h3>` : color.blending ? "<h3 class='blendingDot'>•</h3>" : ""}
+			${color.copiedChannel && color.copiedHSV ? `<h3 class='copiedColor copiedHSV'> +HSV</h3>` : ""}
+			${color.opacity != "1" ? `<h3 class='copiedColor'>${color.opacity}%</h3>` : ""}
+			</div><h3 style="padding-top: 7%">${color.channel > 0 ? "Col " + color.channel : color.channel}</h3></div>`);
 	});
 
 	if (colorList.length == 0) {
@@ -268,7 +268,7 @@ function commafy(num: string | number) {
 	});
 
 	$(".portalToggle").click(function() {
-		if ($(this).prop('checked')) disabledPortals = disabledPortals.filter(x => x != $(this).attr('portal'));
+		if ($(this).prop('checked')) disabledPortals = disabledPortals.filter(portal => portal != $(this).attr('portal'));
 		else disabledPortals.push($(this).attr('portal') || "");
 
 		portals = res.portals.split(", ").map(portalStrFormat => portalStrFormat.split(" "));

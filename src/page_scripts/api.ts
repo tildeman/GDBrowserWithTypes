@@ -8,8 +8,8 @@ $('.subdiv').each(function() {
 
 // smooth scrolling through anchors
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-	anchor.addEventListener('click', function(e) {
-		e.preventDefault();
+	anchor.addEventListener('click', function(event) {
+		event.preventDefault();
 		document.querySelector(this.getAttribute('href')).scrollIntoView({
 			behavior: 'smooth'
 		});
@@ -20,13 +20,13 @@ const menuButton = document.getElementById('menu-btn') as HTMLButtonElement;
 const headerLink = document.getElementsByClassName('header-link') as HTMLCollectionOf<HTMLButtonElement>;
 
 // menu button
-menuButton.onclick = function(){
+menuButton.onclick = function() {
 	document.getElementsByClassName('header-links')[0].classList.toggle('hid');
 	menuButton.classList.toggle('active');
 }
 
-for(let i = 0; i < headerLink.length; i++){
-	headerLink[i].onclick = function(){
+for(let i = 0; i < headerLink.length; i++) {
+	headerLink[i].onclick = function() {
 		document.getElementsByClassName('header-links')[0].classList.toggle('hid');
 		menuButton.classList.toggle('active');
 	}
