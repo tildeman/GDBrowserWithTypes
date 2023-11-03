@@ -86,7 +86,7 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 			$('#accurateTabOn').remove();
 			$('#accurateTabOff').remove();
 
-			Fetch('../api/gdps?current=1').then(ps => {
+			Fetch('/api/gdps?current=1').then(ps => {
 				if (weekly) return;
 				else if (ps.weeklyLeaderboard) {
 					$('#weeklyTabOff').show();
@@ -149,7 +149,7 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 				<div class="leaderboardSide">
 					<div class="leaderboardStars">
 						${lbItem.moderator ? `<img title="${lbItem.moderator == 2 ? "Elder " : ""}Moderator" src="/assets/mod${lbItem.moderator == 2 ? "-elder" : ""}.png" style="width: 9%; cursor: help; padding-right: 1.6%; transform: translateY(0.7vh)">` : ""}
-						<h2 class="leaderboardName small inline gdButton" style="margin-top: 1.5%${nameString || (lbItem.moderator == 2 ? "; color: #FF9977;" : "")}"><a href="${onePointNine ? `../search/${lbItem.playerID}?user` : `../u/${lbItem.accountID}.`}" accountID="${lbItem.accountID}">${lbItem.username}</a></h2>
+						<h2 class="leaderboardName small inline gdButton" style="margin-top: 1.5%${nameString || (lbItem.moderator == 2 ? "; color: #FF9977;" : "")}"><a href="${onePointNine ? `/search/${lbItem.playerID}?user` : `/u/${lbItem.accountID}.`}" accountID="${lbItem.accountID}">${lbItem.username}</a></h2>
 						<h3 class="inline${lbItem.stars >= 100000 ? " yellow" : ""}" style="margin-left: 4%; margin-top: 2%; font-size: 4.5vh${type == "weekly" ? "; display: none" : ""};">${lbItem.stars} <img class="help valign" src="/assets/star.png"style="width: 4vh; transform: translate(-25%, -10%);" title="Stars"></h3>
 					</div>
 
@@ -302,7 +302,7 @@ $('#relativeSearch').click(function() {
 	const relativeUsername = $('#relativeName').val();
 	if (relativeLoading || !relativeUsername) return;
 	relativeLoading = true;
-	Fetch("../api/profile/" + relativeUsername).then(foundUser => {
+	Fetch("/api/profile/" + relativeUsername).then(foundUser => {
 		if (foundUser && foundUser.accountID && foundUser.rank) {
 			leaderboard(null, "type=relative&accountID=" + foundUser.accountID, foundUser.accountID);
 			$('#userSearch').hide();

@@ -20,7 +20,7 @@ function leaderboard() {
 	loading = true;
 	$('#loading').show();
 
-	fetch(`../api/level/${lvlID}`).then(lvl => lvl.json()).then(lvl => {
+	fetch(`/api/level/${lvlID}`).then(lvl => lvl.json()).then(lvl => {
 		if (lvl == "-1") return $('#header').html("Nonexistent level " + lvlID);
 
 		document.title = "Leaderboards for " + lvl.name;
@@ -30,7 +30,7 @@ function leaderboard() {
 	});
 
 	// TODO: add better types
-	fetch(`../api/leaderboardLevel/${lvlID}?count=200${weekly ? "&week" : ""}`).then(res => res.json()).then(res => {
+	fetch(`/api/leaderboardLevel/${lvlID}?count=200${weekly ? "&week" : ""}`).then(res => res.json()).then(res => {
 		if (!res || res.error || res == "-1") {
 			loading = false;
 			$('#loading').hide();

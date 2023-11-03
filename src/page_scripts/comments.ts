@@ -66,7 +66,7 @@ else $('#timeSort').attr('src', "/assets/sort-time-on.png")
  * @returns The sanitized text that is safe to display.
  */
 function clean(text: string | number | undefined) {
-	return (text || "").toString()
+	return String(text)
 		.replace(/&/g, "&#38;")
 		.replace(/</g, "&#60;")
 		.replace(/>/g, "&#62;")

@@ -182,10 +182,10 @@ html(lang="en")
 				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
 
 			div(style={ position: "absolute", top: "2%", right: "1.5%", width: "10%", "text-align": "right" })
-				img.gdButton(src="/assets/close.png", style={ width: "60%", "margin-bottom": "12%" }, onclick="clearFilters()")
+				img#clearFilters.gdButton(src="/assets/close.png", style={ width: "60%", "margin-bottom": "12%" })
 				img#showFilters.gdButton(src="/assets/plus.png", style={ width: "60%", "margin-bottom": "12%" }, onclick="$('#filters').show()")
 				img.gdButton(src="/assets/listbutton.png", style={ width: "60%" }, onclick="$('#customlist').show()")
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
 		script(src="/global.js?v=1")
-		script(src="/page_scripts/filters.js")
+		script(type="module", src="/page_scripts/filters.js")

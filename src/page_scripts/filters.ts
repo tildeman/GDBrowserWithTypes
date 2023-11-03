@@ -25,7 +25,7 @@ $('#userSearch').click(function() {
 });
 
 $('.levelSearch').click(function() {
-	let url = "./search/" + (encodeURIComponent(($('#levelName').val() || "").toString()) || "*") + "?type=" + $(this).attr('search');
+	let url = "/search/" + (encodeURIComponent(($('#levelName').val() || "").toString()) || "*") + "?type=" + $(this).attr('search');
 	if ($(this).attr('search') == "featured") return window.location.href = url;
 
 	// === DIFFICULTY === //
@@ -162,7 +162,7 @@ $('#listLevels, #listName').on('input blur', function (event) {
 
 	if (levels.length > 1 && levels.length <= 100) {
 		$('#listInfo').html(`A list of <cy>${levels.length}</cy> levels will be created.`);
-		$('#listLink').attr('href', `../search/${levels.join(",")}?list&count=${+($('#pageSize').val() || "0")}${($('#listName').val() as string[])?.length ? `&header=${encodeURIComponent(($('#listName').val() || "").toString())}` : ""}`);
+		$('#listLink').attr('href', `/search/${levels.join(",")}?list&count=${+($('#pageSize').val() || "0")}${($('#listName').val() as string[])?.length ? `&header=${encodeURIComponent(($('#listName').val() || "").toString())}` : ""}`);
 		$('#createList').removeClass('disabled');
 	}
 
@@ -308,3 +308,5 @@ Fetch(`/api/music`).then((music: any) => {
 	});
 	else $('#demonList').show();
 });
+
+$("#clearFilters").on("click", clearFilters);

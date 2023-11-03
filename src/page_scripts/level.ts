@@ -8,6 +8,7 @@ const levelID: string = $('#dataBlock').data('id');
 const levelDailyNumber: string = $('#dataBlock').data('dailynumber');
 const levelNextDaily: string = $('#dataBlock').data('nextdaily');
 const levelSongID: string = $('#dataBlock').data('songid');
+let levelSaved = false;
 
 /**
  * Format a duration in Colon's favorite format.
@@ -29,13 +30,13 @@ if (window.location.href.endsWith('?download')) {
 	$('#infoDiv').show();
 }
 
-let copyMessages = [
+const copyMessages = [
 	"ID copied to clipboard", "ID copied x[C]!", "ID copied again!",
 	"ID copied once more!", "ID clipboard to copied!", "ID copied yet again!",
 	"As you wish", "Copy that!", "This one actually works", "You can't play levels, son",
 	"Keep it coming", "Click again, I dare you", "C-C-C-C-COPIED!", "Get a life", "...",
 	"bruh moment", "Etched into thy's memory!", "h", "I feel physical pain",
-	"Play it in GD!", "[[ID]]", "go away", "Every copy costs 2 cents!", "Un-copied!",
+	"Play it in GD!", levelID, "go away", "Every copy costs 2 cents!", "Un-copied!",
 	"Copied++", "C O P I E D", "help me please", "Open GD to play the level!",
 	"pretend you're playing it", "Anotha one!"
 ];
@@ -52,7 +53,9 @@ $('#playButton').click(function () {
 		$('#copied').stop().fadeIn(200).delay(500).fadeOut(500, function() {
 			animated = false;
 			if (copies > 1) {
-				$('#copiedText').text(copyMessages[Math.floor(Math.random()*(copies > 4 ? copyMessages.length : 6))].replace("[C]", copies.toString()));
+				$('#copiedText')
+					.text(copyMessages[Math.floor(Math.random() * (copies > 4 ? copyMessages.length : 6))]
+					.replace("[C]", copies.toString()));
 			}
 		});
 	}
@@ -90,8 +93,8 @@ if (window.location.pathname == "/level/weekly") {
 }
 
 $(window).on('load', function() {
-	let boxWidth = $('#songBox').width();
-	let nameWidth = $('#songname')[0].scrollWidth;
+	const boxWidth = $('#songBox').width();
+	const nameWidth = $('#songname')[0].scrollWidth;
 	if (nameWidth > (boxWidth || 0)) {
 		let overflow = (nameWidth - (boxWidth || 0)) * 0.007;
 		if (overflow > 3) overflow = 3;
@@ -102,7 +105,8 @@ $(window).on('load', function() {
 let savedLevels: string[] = JSON.parse(localStorage.getItem('saved') || '[]');
 let deleteMode = false;
 if (savedLevels.includes(levelID)) {
-	$('#saveButton').attr('src', '/assets/delete.png').attr('onclick', '$("#deleteDiv").show()');
+	$('#saveButton').attr('src', '/assets/delete.png');
+	levelSaved = true
 }
 
 /**
@@ -117,8 +121,9 @@ function saveLevel() {
  * If the level is saved, modify the button to delete the level from the saved list instead.
  */
 function savedLevel() {
-	$('#saveButton').attr('src', '/assets/delete.png').attr('onclick', '$("#deleteDiv").show()');
+	$('#saveButton').attr('src', '/assets/delete.png');
 	$('.popup').hide();
+	levelSaved = true;
 }
 
 /**
@@ -129,14 +134,15 @@ function deleteLevel() {
 		return el != levelID;
 	});
 	localStorage.setItem('saved', JSON.stringify(savedLevels));
-	$('#saveButton').attr('src', '/assets/plus.png').attr('onclick', '$("#saveDiv").show(); saveLevel()');
+	$('#saveButton').attr('src', '/assets/plus.png');
 	$('.popup').hide();
+	levelSaved = false;
 }
 
 $('#checkSong').click(function() {
 	$('#checkSong').hide();
 	$('#songLoading').show();
-	fetch(`../api/song/${ levelSongID }`).then(res => res.json()).then(info => {
+	fetch(`/api/song/${ levelSongID }`).then(res => res.json()).then(info => {
 		$('#songLoading').hide();
 		$(info && info != -1 ? '#songAllowed' : '#songNotAllowed').show().addClass('songStatus');
 	});
@@ -152,3 +158,23 @@ $('.artistIcon').hover(function() {
 	$('#artistInfo').hide();
 	$('.songStatus').show();
 });
+
+$("#confirmDelete").on("click", deleteLevel);
+
+$("#saveButton").on("click", function() {
+	if (levelSaved) {
+		$("#deleteDiv").show();
+	} 
+	else {
+		saveLevel();
+		$("#saveDiv").show();
+	}
+});
+
+$("#infoButton").on("click", function() {
+	$("#infoDiv").show();
+});
+
+$("#checkSaved").on("click", savedLevel);
+
+export {};

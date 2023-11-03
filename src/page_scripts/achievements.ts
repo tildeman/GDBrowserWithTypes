@@ -28,15 +28,15 @@ function append(reset: boolean = true) {
 	$('#searchBox').html(`<div style="height: 4.5%"></div>`);
 	achievements.forEach(achItem => {
 		let iconImg = `"`;
-		if (forms.includes(achItem.rewardType)) iconImg = `../iconkit/premade/${achItem.rewardType}_${achItem.rewardID}.png" width="90%" title="${achItem.rewardType}_${achItem.rewardID < 10 ? "0" : ""}${achItem.rewardID}"`;
+		if (forms.includes(achItem.rewardType)) iconImg = `/iconkit/premade/${achItem.rewardType}_${achItem.rewardID}.png" style="width: 90%" title="${achItem.rewardType}_${achItem.rewardID < 10 ? "0" : ""}${achItem.rewardID}"`;
 		else if (achItem.rewardType.startsWith("color")) {
 			let col = colors[achItem.rewardID];
 			let colType = achItem.rewardType.slice(5);
-			iconImg = `/assets/col${colType}.png" class="colorCircle" width="80%" title="${colType == "1" ? "Primary" : "Secondary"} Color ${achItem.rewardID}" style="background-color: rgb(${col.r}, ${col.g}, ${col.b})"`;
+			iconImg = `/assets/col${colType}.png" class="colorCircle" title="${colType == "1" ? "Primary" : "Secondary"} Color ${achItem.rewardID}" style="width: 80%; background-color: rgb(${col.r}, ${col.g}, ${col.b})"`;
 		}
-		else if (achItem.rewardType == "deathEffect") iconImg = `/assets/deatheffects/${achItem.rewardID}.png" width="85%" title="Death Effect ${achItem.rewardID}"`;
-		else if (achItem.rewardType == "trail") iconImg = `/assets/trails/${achItem.rewardID}.png" width="85%" title="Trail ${achItem.rewardID}"`;
-		else if (achItem.rewardType == "misc") iconImg = `/assets/coin.png" width="85%"`;
+		else if (achItem.rewardType == "deathEffect") iconImg = `/assets/deatheffects/${achItem.rewardID}.png" style="width: 85%" title="Death Effect ${achItem.rewardID}"`;
+		else if (achItem.rewardType == "trail") iconImg = `/assets/trails/${achItem.rewardID}.png" style="width: 85%" title="Trail ${achItem.rewardID}"`;
+		else if (achItem.rewardType == "misc") iconImg = `/assets/coin.png" style="width: 85%"`;
 
 		$('#searchBox').append(`<div class="flex searchResult leaderboardSlot" style="align-items: center; height: 18%; width: 92%; padding-left: 3%; padding-top: 0%; overflow: hidden">
 			<div class="flex" style="width: 8%; margin-right: 2%"><img src="${iconImg}></div>

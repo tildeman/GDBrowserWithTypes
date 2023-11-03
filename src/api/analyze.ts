@@ -97,16 +97,16 @@ interface CopiedHSV {
  * Object color data.
  */
 interface ColorObject {
-	channel: string,
-	pColor?: string,
-	opacity: number,
-	blending?: boolean | string,
-	copiedChannel?: number,
-	copiedHSV?: string | CopiedHSV;
-	copyOpacity?: boolean | number,
-	r: number, // TODO: Check if they're actually numbers
-	g: number,
-	b: number
+	channel: string;
+	pColor?: string;
+	opacity: number;
+	blending?: boolean;
+	copiedChannel?: number;
+	copiedHSV?: CopiedHSV;
+	copyOpacity?: boolean;
+	r: number;
+	g: number;
+	b: number;
 }
 
 /**
@@ -471,31 +471,36 @@ function parse_header(header: string) {
 				// if a level has a legacy color, we can assume that it does not have a kS38 at all
 				const color = parse_obj(property, "_", colorStuff.properties);
 
-				let colorObj = color as unknown as ColorObject;
-
 				// so here we parse the color to something understandable by the rest
 				// slightly smart naming but it is also pretty gross
 				// in a sense - the name would be something like legacy-G -> G
-				const colorVal = name.split("-").pop()
+				const colorVal = name.split("-").pop();
 
-				colorObj.channel = colorVal || "";
+				// let colorObj = color as unknown as ColorObject;
+				const colorObj: ColorObject = {
+					channel: colorVal || "",
+					pColor: color.pColor,
+					opacity: 1, // 1.9 colors don"t have this!
+					r: +color.r || 0,
+					g: +color.g || 0,
+					b: +color.b || 0
+				};
 
 				// from here stuff can continue as normal, ish
 				if (colorObj.pColor == "-1" || colorObj.pColor == "0") delete colorObj.pColor;
-				colorObj.opacity = 1; // 1.9 colors don"t have this!
-				if (colorObj.blending && colorObj.blending == "1") colorObj.blending = true; // 1.9 colors manage to always think they"re blending - they"re not
+				if (color.blending && color.blending == "1") colorObj.blending = true; // 1.9 colors manage to always think they"re blending - they"re not
 				else delete colorObj.blending;
 
-				if (colorVal == "3DL") {
+				if (colorVal == "3DL") { // hardcode the position of 3DL, it typically goes at the end due to how RobTop makes the headers
 					response.colors.splice(4, 0, colorObj);
-				} // hardcode the position of 3DL, it typically goes at the end due to how RobTop makes the headers
-				else if (colorVal == "Line") {
+				}
+				else if (colorVal == "Line") {  // in line with 2.1 behavior
 					colorObj.blending = true;
 					response.colors.push(colorObj);
-				}  // in line with 2.1 behavior
-				else {
+				}
+				else { // bruh whatever was done to make the color list originally was long
 					response.colors.push(colorObj);
-				} // bruh whatever was done to make the color list originally was long
+				}
 				break;
 			}
 			case "colors": {
@@ -503,7 +508,24 @@ function parse_header(header: string) {
 				let colorList2: ColorObject[] = [];
 				colorList.forEach((colorItem, colorIndex) => {
 					const color = parse_obj(colorItem, "_", colorStuff.properties);
-					let colorObj = color as unknown as ColorObject;
+					const raw_hsv_value: string[] | undefined = color.copiedHSV?.split("a");
+					const colorObj: ColorObject = {
+						channel: color.channel || "",
+						pColor: color.pColor,
+						opacity: Math.round((+color.opacity || 0) * 100) / 100,
+						copiedChannel: +color.copiedChannel,
+						copyOpacity:  color.copyOpacity == "1",
+						r: +color.r || 0,
+						g: +color.g || 0,
+						b: +color.b || 0
+					};
+					if (raw_hsv_value) colorObj.copiedHSV = {
+						h: +raw_hsv_value[0],
+						s: +raw_hsv_value[1],
+						v: +raw_hsv_value[2],
+						"s-checked": raw_hsv_value[3] == "1",
+						"v-checked": raw_hsv_value[4] == "1"
+					}
 					if (!colorObj.channel) return colorList = colorList.filter((color, index) => colorIndex != index);
 
 					if (colorStuff.channels[colorObj.channel]) {
@@ -515,19 +537,8 @@ function parse_header(header: string) {
 					}
 					if ((colorObj.copiedChannel || 0) > 1000) delete colorObj.copiedChannel;
 					if (colorObj.pColor == "-1") delete colorObj.pColor;
-					if (colorObj.blending) colorObj.blending = true;
-					if (colorObj.copiedHSV) {
-						let hsv: string[] = [];
-						if (typeof(colorObj.copiedHSV) == "string") hsv = colorObj.copiedHSV.split("a");
-						colorObj.copiedHSV = {};
-						hsv.forEach((colorValue, colorIndex) => {
-							colorObj.copiedHSV![colorStuff.hsv[colorIndex]] = colorValue;
-						})
-						colorObj.copiedHSV["s-checked"] = colorObj.copiedHSV["s-checked"] == 1;
-						colorObj.copiedHSV["v-checked"] = colorObj.copiedHSV["v-checked"] == 1;
-						if (colorObj.copyOpacity == 1) colorObj.copyOpacity = true;
-					}
-					colorObj.opacity = +Number(colorObj.opacity).toFixed(2);
+					if (color.blending) colorObj.blending = true;
+					// colorObj.opacity = +Number(colorObj.opacity).toFixed(2);
 					colorList2.push(colorObj);
 				});
 				// we assume this is only going to be run once so... some stuff can go here

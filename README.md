@@ -11,7 +11,7 @@ If you're just here to use GDBrowser locally because the site is down or outdate
 To run GDBrowser locally:
 1) Install [node.js](https://nodejs.org/en/download/) if you don't already have it
 2) Clone/download this repository
-3) Open cmd/powershell/terminal in the main folder (with index.js)
+3) Open cmd/powershell/terminal in the main folder (with `package.json`)
 4) Type `npm i` to flood your hard drive with code that's 99% useless
 5) Type `npm run build` to transpile all the code into something node.js can actually understand.
 6) Type `cd out && node index` to run the web server
@@ -42,9 +42,9 @@ There's also a few optional values for fine-tuning. I'll add more over time
 | `timestampSuffix`   | A string to append at the end of timestamps. Vanilla GD uses " ago"                                                                        | `string`                 |
 | `demonList`         | The URL of the server's Demon List API, if it has one (e.g. `http://pointercrate.com/` - make sure it ends with a slash!)                  | `string`                 |
 | `disabled`          | An array of menu buttons to "disable" (mappacks, gauntlets, daily, weekly, etc). They appear greyed out but are still clickable.           | `string[]`               |
-| `pinned`            | "Pins" the server to the top of the GDPS list. It appears above all unpinned servers and is not placed in alphabetical order.              | `bool`                   |
-| `onePointNine`      | Makes a bunch of fancy changes to better fit 1.9 servers. (removes orbs/diamonds, hides some pointless buttons, etc)                       | `bool`                   |
-| `weeklyLeaderboard` | Enables the lost but not forgotten Weekly Leaderboard, for servers that still milk it                                                      | `bool`                   |
+| `pinned`            | "Pins" the server to the top of the GDPS list. It appears above all unpinned servers and is not placed in alphabetical order.              | `boolean`                |
+| `onePointNine`      | Makes a bunch of fancy changes to better fit 1.9 servers. (removes orbs/diamonds, hides some pointless buttons, etc)                       | `boolean`                |
+| `weeklyLeaderboard` | Enables the lost but not forgotten Weekly Leaderboard, for servers that still milk it                                                      | `boolean`                |
 | `substitutions`     | A list of parameter substitutions, because some servers rename/obfuscate them. (e.g. `{ "levelID": "oiuyhxp4w9I" }`)                       | `Record<string, string>` |
 | `overrides`         | A list of endpoint substitutions, because some servers use renamed or older versions. (e.g. `{ "getGJLevels21": "dorabaeChooseLevel42" }`) | `Record<string, string>` |
 
@@ -78,7 +78,7 @@ I'd explain what's in all the subfolders but it's pretty obvious. I tried my bes
 
 What's a class you ask? Good question.
 
-I guess the best way to put it is uh... **representations** of data capsules that do things???
+I guess the best way to put it is uh... **representations** of stuff???
 
 `Level.ts` and `Player.ts` parse the server's disgusting response and sends back a nice object with all the relevant info.
 
@@ -120,11 +120,11 @@ When you're working on a project the size and scale of GDBrowser, there has to b
 
 | Name                    | Description                                                                                                           |
 |:-----------------------:|:---------------------------------------------------------------------------------------------------------------------:|
-| `achievements.json`     | List of all GD/meltdown/subzero/etc achievements. `parseAchievementPlist.js` automatically creates this file          |
+| `achievements.json`     | List of all GD/meltdown/subzero/etc achievements. `parseAchievementPlist.ts` automatically creates this file          |
 | `achievementTypes.json` | An object containing different categories of achievements (stars, shards, vault, etc) and how to identify them        |
 | `credits.json`          | Credits! (shown on the homepage)                                                                                      |
-| `dragscroll.js`         | Used on several pages for drag scrolling                                                                              |
-| `global.js`             | Excecuted on most pages. Used for the 'page isn't wide enough' message, back button, icons, and a few other things    |
+| `dragscroll.ts`         | Used on several pages for drag scrolling                                                                              |
+| `global.ts`             | Excecuted on most pages. Used for the 'page isn't wide enough' message, back button, icons, and a few other things    |
 | `music.json`            | An array of the official GD tracks (name, artist)                                                                     |
 | `sampleIcons.json`      | A pool of icons, one of which will randomly appear when visiting the icon kit. Syntax is [Name, ID, Col1, Col2, Glow] |
 | `secretStuff.json`      | GJP goes here, needed for level leaderboards. A sample is included for convenience.                                   |
@@ -197,7 +197,7 @@ These templates (written in [Pug](https://pugjs.org)) are designed to address th
 
 ## Roadmap
 
-- [ ] Complete all the TODOs (36).
+- [ ] Complete all the TODOs (44).
 - [ ] Implement 2.2 features once the release is out.
 - [ ] Write JSDoc for all the types and interfaces in code.
 - [ ] Fix glaring formatting errors.

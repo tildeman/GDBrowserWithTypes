@@ -568,7 +568,7 @@ fetch('/api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 		});
 
 		$("#getUserIcon").click(function() {
-			$(`.copyForm[form=${currentForm}]`).trigger('click')
+			$(`.copyForm[form=${currentForm}]`).trigger('click');
 			$('#steal').show();
 			$('#playerName').focus();
 			$('#playerName').select();
@@ -674,14 +674,18 @@ fetch('/api/icons').then(res => res.json()).then((sacredTexts: IconData) => {
 
 $("#fetchUser").click(async function() {
 	let user = $("#playerName").val();
-	if (!user || typeof(user) == "number" || !user.length) return $("#steal").hide();
+	if (!user || typeof(user) == "number" || !user.length) {
+		return $("#steal").hide();
+	}
 
 	$(`.iconTabButton[form=${formCopy}]`).trigger('click');
 	$('#glow').attr('src', '/assets/iconkitbuttons/streak_off.png');
 	$("#steal").hide();
 	enableGlow = 0;
 
-	let info = await fetch('/api/profile/' + user).then(res => res.json()).catch(e => {});
+	let info = await fetch('/api/profile/' + user).then(res => res.json()).catch(e => {
+		console.error(e.message);
+	});
 	if (info == "-1") info = {};
 
 	$(`#${formCopy}-${Math.min(info[formCopy] || 1, $(`.iconButton[form=${formCopy}]`).length)}`).trigger('click');

@@ -130,10 +130,10 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		count: amount,
 	}
 	if (req.query.diff) filters.diff = req.query.diff.toString();
-	if (req.query.demonFilter) filters.diff = req.query.demonFilter.toString();
-	if (req.query.len) filters.diff = req.query.len.toString();
-	if (req.query.song) filters.diff = req.query.song.toString();
-	if (req.query.followed) filters.diff = req.query.followed.toString();
+	if (req.query.demonFilter) filters.demonFilter = req.query.demonFilter.toString();
+	if (req.query.len) filters.len = req.query.len.toString();
+	if (req.query.songID) filters.song = req.query.songID.toString();
+	if (req.query.creators) filters.followed = req.query.creators.toString();
 
 
 	if (req.query.type) {

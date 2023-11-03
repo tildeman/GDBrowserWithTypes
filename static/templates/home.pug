@@ -31,7 +31,7 @@ html(lang="en")
 				img.cornerPiece(src="/assets/corner.png", style={ width: "7%", transform: "scaleY(-1)" })
 
 			div(style={ position: "absolute", top: "1.7%", right: "2%", width: "10%", "text-align": "right"})
-				img#creditsButton.gdButton(src="/assets/credits.png", width="60%")
+				img#creditsButton.gdButton(src="/assets/credits.png", style={ width: "60%" })
 
 			//- TODO: This is kludgy
 			div(class=(isOnePointNine && onePointNineDisabled.includes("achievements")) || (serverDisabled.includes("achievements")) || (isDownloadDisabled && downloadDisabled.includes("achievements")) ? "menuDisabled" : "menu-achievements", style={ position: "absolute", top: "5.5%", left: "3%", width: "12%"})
@@ -44,7 +44,7 @@ html(lang="en")
 
 			div(style={ position: "absolute", top: "-1.5%", right: "10%", width: "10%", "text-align": "right" })
 				a(href="/iconkit")
-					img.iconRope(src="/assets/iconrope.png", width="40%")
+					img.iconRope(src="/assets/iconrope.png", style={ width: "40%" })
 
 			if (isDownloadDisabled)
 				#dl(style={ position: "absolute", top: "15%", right: "0.5%", "text-align": "center", width: "17%" })
@@ -72,7 +72,7 @@ html(lang="en")
 						| and on
 						|
 						ca
-							a.underline(href="../gdps") private servers
+							a.underline(href="/gdps") private servers
 
 			#menuButtons.supercenter.center(style={ bottom: "5%" })
 				table
@@ -122,7 +122,7 @@ html(lang="en")
 				a(href="/gdps", title="GD Private Servers")
 					img.gdButton(src="/assets/basement.png", style={ width: "40%" })
 
-			.center(width="100%", style={ "margin-top": "2%", height: "100%" })
+			.center(style={ "margin-top": "2%", width: "100%", height: "100%" })
 				img(src=isGDPS ? ("/assets/gdps/" + serverID + "_logo.png") : "/assets/gdlogo.png", style={ height: "11.5%" })
 				br
 				img#browserlogo(src="/assets/browser.png", style={ height: "7%", margin: "0.5% 0% 0% 30%" })

@@ -13,7 +13,7 @@ const accountModerator: string = $('#dataBlock').data('moderator');
  * @returns The sanitized text that is safe to display.
  */
 function clean(text: string | number | undefined) {
-	return (text || "").toString()
+	return String(text)
 		.replace(/&/g, "&#38;")
 		.replace(/</g, "&#60;")
 		.replace(/>/g, "&#62;")
@@ -134,7 +134,7 @@ $('#submitComment').click(function () {
 	$('#message').text("Posting...");
 	$('.postbutton').hide();
 	allowEsc = false;
-	$.post("../postProfileComment", { comment, username, password, accountID, color: true })
+	$.post("/postProfileComment", { comment, username, password, accountID, color: true })
 		.done(x => {
 			$('#content').val("");
 			$('#leavePost').hide();
@@ -201,7 +201,7 @@ $('#submitVote').click(function() {
 	$('.postbutton').hide();
 	allowEsc = false;
 
-	Fetch(`../api/profile/${username}`).then(res => {
+	Fetch(`/api/profile/${username}`).then(res => {
 		if (!res || res == "-1") {
 			allowEsc = true;
 			$('.postbutton').show();
@@ -209,7 +209,7 @@ $('#submitVote').click(function() {
 		}
 		else accountID = res.accountID;
 
-		$.post("../like",  { ID, accountID, password, like: likeType, type: 3, extraID: "[[ACCOUNTID]]" })
+		$.post("/like",  { ID, accountID, password, like: likeType, type: 3, extraID: "[[ACCOUNTID]]" })
 			.done(x => {
 				let newCount = parseInt(likeCount.text()) + (like ? 1 : -1);
 				likeCount.text(newCount);

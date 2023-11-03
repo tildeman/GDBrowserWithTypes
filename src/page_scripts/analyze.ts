@@ -11,16 +11,16 @@ interface CopiedHSV {
 }
 
 interface AnalysisColorObject {
+	channel: string;
+	pColor?: string;
+	opacity: number;
+	blending?: boolean;
+	copiedChannel?: number;
+	copiedHSV?: CopiedHSV;
+	copyOpacity?: boolean;
 	r: number;
 	g: number;
 	b: number;
-	channel?: string;
-	opacity?: number;
-	copiedHSV?: CopiedHSV;
-	pColor?: number;
-	blending?: number;
-	copiedChannel?: number;
-	copyOpacity?: number;
 }
 
 interface AnalysisResult {
@@ -80,7 +80,7 @@ interface AnalysisResult {
  * @returns The sanitized text that is safe to display.
  */
 function clean(text: string | number | undefined) {
-	return (text || "").toString()
+	return String(text)
 		.replace(/&/g, "&#38;")
 		.replace(/</g, "&#60;")
 		.replace(/>/g, "&#62;")
@@ -97,7 +97,7 @@ const sizePortals = ['mini', 'big'];
 const dualPortals = ['dual', 'single'];
 const mirrorPortals = ['mirrorOn', 'mirrorOff'];
 
-fetch(`../api${window.location.pathname}`).then(res => res.json()).then((res: (AnalysisResult | -1 | -2 | -3)) => {
+fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (AnalysisResult | -1 | -2 | -3)) => {
 	if (typeof(res) != "object") {
 		switch(res) {
 			case -1:
@@ -159,10 +159,10 @@ function commafy(num: string | number) {
 	function appendPortals() {
 		if (typeof(res) != "object") return;
 		$('#portals').html("");
-		if (res.settings.gamemode && res.settings.gamemode != "cube" && !disabledPortals.includes('form')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='../assets/objects/portals/${res.settings.gamemode}.png'><h3>Start</h3></div><img class="divider portalImage" src="../assets/divider.png" style="margin: 1.3% 0.8%">`);
-		if (res.settings.startMini && !disabledPortals.includes('size')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='../assets/objects/portals/mini.png'><h3>Start</h3></div><img class="divider portalImage" src="../assets/divider.png" style="margin: 1.3% 0.8%">`);
-		if (res.settings.speed && res.settings.speed != "1x" && !disabledPortals.includes('speed')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage speedPortal" src='../assets/objects/portals/${res.settings.speed}.png'><h3>Start</h3></div><img class="divider portalImage" src="../assets/divider.png" style="margin: 1.3% 0.8%">`);
-		if (res.settings.startDual && !disabledPortals.includes('dual')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='../assets/objects/portals/dual.png'><h3>Start</h3></div><img class="divider portalImage" src="../assets/divider.png" style="margin: 1.3% 0.8%">`);
+		if (res.settings.gamemode && res.settings.gamemode != "cube" && !disabledPortals.includes('form')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='/assets/objects/portals/${res.settings.gamemode}.png'><h3>Start</h3></div><img class="divider portalImage" src="/assets/divider.png" style="margin: 1.3% 0.8%">`);
+		if (res.settings.startMini && !disabledPortals.includes('size')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='/assets/objects/portals/mini.png'><h3>Start</h3></div><img class="divider portalImage" src="/assets/divider.png" style="margin: 1.3% 0.8%">`);
+		if (res.settings.speed && res.settings.speed != "1x" && !disabledPortals.includes('speed')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage speedPortal" src='/assets/objects/portals/${res.settings.speed}.png'><h3>Start</h3></div><img class="divider portalImage" src="/assets/divider.png" style="margin: 1.3% 0.8%">`);
+		if (res.settings.startDual && !disabledPortals.includes('dual')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='/assets/objects/portals/dual.png'><h3>Start</h3></div><img class="divider portalImage" src="/assets/divider.png" style="margin: 1.3% 0.8%">`);
 
 		let dividerCount = $('.divider').length - 1;
 
@@ -172,7 +172,7 @@ function commafy(num: string | number) {
 
 		portals.forEach(portalItem => {
 			if (!portalItem || portalItem[0] == "") return;
-			$('#portals').append(`<div class="inline portalDiv"><img class="portalImage ${(portalItem[0] || "").match(/[0-9]x/) ? "speedPortal" : ""}" src='../assets/objects/portals/${portalItem[0]}.png'><h3>${portalItem[1]}</h3></div>`);
+			$('#portals').append(`<div class="inline portalDiv"><img class="portalImage ${(portalItem[0] || "").match(/[0-9]x/) ? "speedPortal" : ""}" src='/assets/objects/portals/${portalItem[0]}.png'><h3>${portalItem[1]}</h3></div>`);
 		});
 	}
 
@@ -201,13 +201,13 @@ function commafy(num: string | number) {
 	else {
 		$('#coinText').text(`User Coins (${res.coins.length})`);
 		res.coins.forEach(coinPos => {
-			$('#coins').append(`<div class="inline orbDiv"><img style="height: 10vh;" src='../assets/objects/${res.coinsVerified ? "coin" : "browncoin"}.png'><h3 style="padding-top: 7%">${coinPos}%</h3></div>`);
+			$('#coins').append(`<div class="inline orbDiv"><img style="height: 10vh;" src='/assets/objects/${res.coinsVerified ? "coin" : "browncoin"}.png'><h3 style="padding-top: 7%">${coinPos}%</h3></div>`);
 		});
 	}
 
 	triggerList.forEach(triggerType => {
 		if (triggerType == "total") $('#triggerText').text(`Triggers (${commafy(res.triggers[triggerType])})`);
-		else $('#triggers').append(`<div class="inline triggerDiv"><img style="height: 10vh;" src='../assets/objects/triggers/${triggerType}.png'><h3 style="padding-top: 7%">x${commafy(res.triggers[triggerType])}</h3></div>`);
+		else $('#triggers').append(`<div class="inline triggerDiv"><img style="height: 10vh;" src='/assets/objects/triggers/${triggerType}.png'><h3 style="padding-top: 7%">x${commafy(res.triggers[triggerType])}</h3></div>`);
 	});
 
 	if (res.invisibleGroup) {
@@ -217,21 +217,21 @@ function commafy(num: string | number) {
 
 	orbList.forEach(orbType => {
 		if (orbType == "total") $('#orbText').text(`Jump Rings (${commafy(res.orbs[orbType])})`);
-		else $('#orbs').append(`<div class="inline orbDiv"><img style="height: 10vh;" src='../assets/objects/orbs/${orbType}.png'><h3 style="padding-top: 7%">x${commafy(res.orbs[orbType])}</h3></div>`);
+		else $('#orbs').append(`<div class="inline orbDiv"><img style="height: 10vh;" src='/assets/objects/orbs/${orbType}.png'><h3 style="padding-top: 7%">x${commafy(res.orbs[orbType])}</h3></div>`);
 	});
 
 	blockList.forEach(blockType => {
-		$('#blocks').append(`<div class="inline blockDiv"><img style="height: 9vh;" src='../assets/objects/blocks/${blockType}.png'><h3 style="padding-top: 15%">x${commafy(res.blocks[blockType])}</h3></div>`);
+		$('#blocks').append(`<div class="inline blockDiv"><img style="height: 9vh;" src='/assets/objects/blocks/${blockType}.png'><h3 style="padding-top: 15%">x${commafy(res.blocks[blockType])}</h3></div>`);
 	});
 
 	miscList.forEach(itemType => {
 		if (itemType == "objects") return;
-		else $('#misc').append(`<div class="inline miscDiv"><img style="height: 8vh;" src='../assets/objects/${itemType.slice(0, -1)}.png'><h3 style="padding-top: 15%">x${commafy(res.misc[itemType][0])}<br>${res.misc[itemType][1]}</h3></div>`);
+		else $('#misc').append(`<div class="inline miscDiv"><img style="height: 8vh;" src='/assets/objects/${itemType.slice(0, -1)}.png'><h3 style="padding-top: 15%">x${commafy(res.misc[itemType][0])}<br>${res.misc[itemType][1]}</h3></div>`);
 	});
 
 
-	let bgCol = res.colors.find(x => x.channel == "BG");
-	let grCol = res.colors.find(x => x.channel == "G");
+	let bgCol: Color3B | undefined = res.colors.find(x => x.channel == "BG");
+	let grCol: Color3B | undefined = res.colors.find(x => x.channel == "G");
 
 	if (!bgCol) bgCol = {r: 40, g: 125, b: 255};
 	else if (+bgCol.r < 35 && bgCol.g < 35 && bgCol.b < 35) bgCol = {r: 75, g: 75, b: 75};
@@ -239,12 +239,12 @@ function commafy(num: string | number) {
 	if (!grCol) grCol = {r: 0, g: 102, b: 255};
 	else if (grCol.r < 35 && grCol.g < 35 && grCol.b < 35) grCol = {r: 75, g: 75, b: 75};
 
-	$('#style').append(`<div class="inline styleDiv styleBG" style='background-color: rgb(${clean(bgCol.r)}, ${clean(bgCol.g)}, ${clean(bgCol.b)})'><img style="height: 12vh;" src='../assets/levelstyle/bg-${res.settings.background}.png'></div>`);
-	$('#style').append(`<div class="inline styleDiv styleBG" style='background-color: rgb(${clean(grCol.r)}, ${clean(grCol.g)}, ${clean(grCol.b)})'><img style="height: 12vh;" src='../assets/levelstyle/gr-${res.settings.ground}.png'></div>`);
-	$('#style').append(`<div class="inline styleDiv"><img style="height: 11vh;" src='../assets/levelstyle/font-${res.settings.font}.png'></div>`);
-	$('#style').append(`<div class="inline styleDiv"><img style="height: 12vh;" src='../assets/levelstyle/line-${res.settings.alternateLine ? 2 : 1}.png'></div>`);
+	$('#style').append(`<div class="inline styleDiv styleBG" style='background-color: rgb(${clean(bgCol.r)}, ${clean(bgCol.g)}, ${clean(bgCol.b)})'><img style="height: 12vh;" src='/assets/levelstyle/bg-${res.settings.background}.png'></div>`);
+	$('#style').append(`<div class="inline styleDiv styleBG" style='background-color: rgb(${clean(grCol.r)}, ${clean(grCol.g)}, ${clean(grCol.b)})'><img style="height: 12vh;" src='/assets/levelstyle/gr-${res.settings.ground}.png'></div>`);
+	$('#style').append(`<div class="inline styleDiv"><img style="height: 11vh;" src='/assets/levelstyle/font-${res.settings.font}.png'></div>`);
+	$('#style').append(`<div class="inline styleDiv"><img style="height: 12vh;" src='/assets/levelstyle/line-${res.settings.alternateLine ? 2 : 1}.png'></div>`);
 	if (res.settings.twoPlayer) {
-		$('#style').append(`<div class="inline styleDiv"><img style="height: 12vh;" src='../assets/levelstyle/mode-2p.png'></div>`);
+		$('#style').append(`<div class="inline styleDiv"><img style="height: 12vh;" src='/assets/levelstyle/mode-2p.png'></div>`);
 	}
 
 	colorList.forEach((x, y) => {
@@ -327,8 +327,8 @@ function commafy(num: string | number) {
 			</div>
 			<br>
 			<div class="colorSection2" style="width: 40%; ${col!.copiedChannel ? "" : "margin-right:55.4%"}">
-				<div class="colorCheckbox"><h3><input ${col!.pColor == 1 ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 1</h3></div>
-				<div class="colorCheckbox"><h3><input ${col!.pColor == 2 ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 2</h3></div>
+				<div class="colorCheckbox"><h3><input ${col!.pColor == "1" ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 1</h3></div>
+				<div class="colorCheckbox"><h3><input ${col!.pColor == "2" ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 2</h3></div>
 				<div class="colorCheckbox"><h3><input ${col!.blending ? "checked" : ""} type="checkbox"> <label class="gdcheckbox gdButton"></label>Blending</h3></div>
 				<div class="colorCheckbox"><h3><input ${col!.copiedChannel ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Copy Color</h3></div>
 				<div class="colorCheckbox"><h3><input ${col!.copyOpacity ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Copy Opacity</h3></div>
@@ -353,7 +353,7 @@ function commafy(num: string | number) {
 				</div>
 			</div>`
 			: `<div class="colorBox" style="background-color: rgba(${clean(col!.r)}, ${clean(col!.g)}, ${clean(col!.b)}, ${clean(col!.opacity)}); border-color: ${hex}"></div>`}
-			<br><img src="../assets/ok.png" width=14%; style="margin-top: 4%" class="gdButton center" onclick="$('.popup').hide()">`);
+			<br><img src="/assets/ok.png" style="width: 14%; margin-top: 4%" class="gdButton center" onclick="$('.popup').hide()">`);
 		$('#colorInfo').show();
 	});
 

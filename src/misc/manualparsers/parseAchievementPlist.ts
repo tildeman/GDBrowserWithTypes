@@ -2,13 +2,13 @@
  * @fileoverview Independent script to parse property lists for achievements.
  */
 
-let path = "../extra/";
+const path = "/extra/";
 
-let files = ["AchievementsDesc", "AchievementsDescMD", null, "AchievementsDescSZ"];
-let gameNames = ["gd", "meltdown", "world", "subzero"];
-let achString = "geometry.ach.";
-let rewardTypes = { color: "color1", icon: "cube", bird: "ufo", dart: "wave", special: "trail", death: "deathEffect" };
-let games = { "md": "meltdown", "world.": "world", "subzero.": "subzero" };
+const files = ["AchievementsDesc", "AchievementsDescMD", null, "AchievementsDescSZ"];
+const gameNames = ["gd", "meltdown", "world", "subzero"];
+const achString = "geometry.ach.";
+const rewardTypes = { color: "color1", icon: "cube", bird: "ufo", dart: "wave", special: "trail", death: "deathEffect" };
+const games = { "md": "meltdown", "world.": "world", "subzero.": "subzero" };
 
 import plist from 'plist';
 import fs from 'node:fs';
@@ -21,11 +21,11 @@ files.forEach((file, fileNum) => {
 
 	console.log(`Converting ${file}.plist...`)
 
-	for (let key in (data as any)) {
+	for (const key in (data as any)) {
 		if (!achArray.find(x => x.trueID == key)) {
-			let fileData = data[key];
-			let reward = fileData.icon ? fileData.icon.split("_") : [];
-			let achObj = {
+			const fileData = data[key];
+			const reward = fileData.icon ? fileData.icon.split("_") : [];
+			const achObj = {
 				id: key.slice(achString.length),
 				game: gameNames[fileNum],
 				name: fileData.title,

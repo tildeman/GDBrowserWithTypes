@@ -15,7 +15,7 @@ const userMode = url.searchParams.get('user');
 const type = url.searchParams.get('type') || "";
 const list = url.searchParams.get('list');
 const count = url.searchParams.get('count');
-let header = url.searchParams.get('header');
+const rawHeader = url.searchParams.get('header');
 const demonList = ["demonList", "demonlist"].some(linkName => typeof url.searchParams.get(linkName) == "string" || type == linkName);
 let loading = false;
 const gauntlets = [
@@ -41,7 +41,7 @@ let searchFilters = `/api/search/${type == 'saved' ? JSON.parse(localStorage.get
  * @returns The sanitized text that is safe to display.
  */
 function clean(text: string | number | undefined) {
-	return (text || "").toString()
+	return String(text)
 		.replace(/&/g, "&#38;")
 		.replace(/</g, "&#60;")
 		.replace(/>/g, "&#62;")
@@ -80,6 +80,7 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 	if (currentPage == (pages - 1)) $('#lastPage').addClass('grayscale').find('img').removeClass('gdButton');
 	else $('#lastPage').removeClass('grayscale').find('img').addClass('gdButton');
 
+	console.log(searchFilters.replace("[PAGE]", currentPage.toString()));
 	if (!noCache && pageCache[currentPage]) appendLevels(pageCache[currentPage]);
 	else Fetch(searchFilters.replace("[PAGE]", currentPage.toString())).then(appendLevels).catch(e => $('#loading').hide());
 
@@ -178,29 +179,29 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 
 Append(true);
 
-$('#pageUp').click(function() {
+$('#pageUp').on("click", function() {
 	currentPage += 1;
 	if (!loading) Append();
 });
-$('#pageDown').click(function() {
+$('#pageDown').on("click", function() {
 	currentPage -= 1;
 	if (!loading) Append();
 });
-$('#lastPage').click(function() {
+$('#lastPage').on("click", function() {
 	currentPage = (pages - 1);
 	if (!loading) Append();
 });
-$('#pageJump').click(function() {
+$('#pageJump').on("click", function() {
 	if (loading) return;
 	currentPage = parseInt($('#pageSelect').val()?.toString() || "1") - 1;
 	Append();
 });
-$('#refreshPage').click(function() {
+$('#refreshPage').on("click", function() {
 	Append(false, true);
 });
 
-if (header) {
-	header = header.slice(0, 32) || "Level Search";
+if (rawHeader) {
+	const header = rawHeader.slice(0, 32) || "Level Search";
 	$('#header').text(header);
 	document.title = header;
 }
@@ -213,12 +214,17 @@ else {
 	if (type == "7" || type == 'magic') $('#header').text("Magic Levels");
 	if (type == "11" || type == 'awarded' || type == 'starred') $('#header').text("Awarded Levels");
 	if (type == "16" || type == 'halloffame' || type == 'hof') $('#header').text("Hall of Fame");
-	if (type == "17" || type == 'gdw' || type == 'gdworld') { $('#header').text("Featured (GD World)"); $('#normalGD').show() };
+	if (type == "17" || type == 'gdw' || type == 'gdworld') {
+		$('#header').text("Featured (GD World)");
+		$('#normalGD').show();
+	}
 	if (path != "*" && (type == "10" || list != null)) $('#header').text("Custom List");
 	if (type == 'followed') $('#header').text("Followed Creators");
 	document.title = $('#header').text() || "Level Search";
 	$('#meta-title').attr('content', $('#header').text() || "Level Search");
-	if ($('#header').text()) $('#meta-desc').attr('content',  `View Geometry Dash's ${$('#header').text()}${$('#header').text() == "Hall of Fame" ? "" : "list"}!`);
+	if ($('#header').text()) {
+		$('#meta-desc').attr('content',  `View Geometry Dash's ${$('#header').text()}${$('#header').text() == "Hall of Fame" ? "" : "list"}!`);
+	}
 }
 
 if (type == 'saved') {
@@ -311,7 +317,7 @@ $('#shuffle').click(function() {
 	else return $('#shuffleDiv').show();
 });
 
-$(document).keydown(function(k) {
+$(document).on("keydown", function(k) {
 	if (loading) return;
 
 	if ($('#pageDiv').is(':visible')) {

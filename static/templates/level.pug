@@ -102,7 +102,7 @@ html(lang="en")
 						a.youCanClickThis2(style={ color: "lime" }, href="/search/levels?type=saved") saved levels
 						|
 						| list.
-					img.gdButton.center(src="/assets/ok.png", style={ width: "20%" }, onclick="savedLevel()")
+					img#checkSaved.gdButton.center(src="/assets/ok.png", style={ width: "20%" })
 
 			#deleteDiv.popup
 				.fancybox.bounce.center.supercenter(style={ width: "60vh", height: "28%" })
@@ -118,7 +118,7 @@ html(lang="en")
 						|
 						| list?
 					img.gdButton.center.closeWindow(src="/assets/btn-no.png", style={ height: "25%" })
-					img.gdButton.center.sideSpaceB(src="/assets/btn-yes.png", style={ height: "25%" }, onclick="deleteLevel()")
+					img#confirmDelete.gdButton.center.sideSpaceB(src="/assets/btn-yes.png", style={ height: "25%" })
 
 			#analyzeDisabled.popup
 				.fancybox.bounce.center.supercenter
@@ -158,39 +158,39 @@ html(lang="en")
 						a#authorLink.linkButton(href="/search/" + level.playerID + "?user")= "By " + level.author
 				h2.inline.slightlySmaller.normalCursor.sideSpaceC
 					if level.copiedID > 0
-						img#copiedBadge.inline.valign(style={ height: "3vh", "margin-left": "2vh", cursor: "help" }, src="../assets/copied.png", title="Level is a copy or a collaboration")
+						img#copiedBadge.inline.valign(style={ height: "3vh", "margin-left": "2vh", cursor: "help" }, src="/assets/copied.png", title="Level is a copy or a collaboration")
 					if level.large
-						img#largeBadge.inline.valign(style={ height: "3vh", "margin-left": "2vh", cursor: "help" }, src="../assets/large.png", title="Contains more than 40,000 objects")
+						img#largeBadge.inline.valign(style={ height: "3vh", "margin-left": "2vh", cursor: "help" }, src="/assets/large.png", title="Contains more than 40,000 objects")
 					if level.twoPlayer
-						img#2pBadge.inline.valign(style={ height: "3vh", "margin-left": "2vh", cursor: "help" }, src="../assets/twoPlayer.png", title="Two player level")
+						img#2pBadge.inline.valign(style={ height: "3vh", "margin-left": "2vh", cursor: "help" }, src="/assets/twoPlayer.png", title="Two player level")
 				br
 				if level.dailyNumber
-					img#dailyIcon.inline.spaced.dailyLevel(src="../assets/crown-" + (level.weekly ? "weekly" : "daily") + ".png", style={ height: "90%", "margin-right": "0.5%", "margin-top": "0.4%", "vertical-align": "middle" })
+					img#dailyIcon.inline.spaced.dailyLevel(src="/assets/crown-" + (level.weekly ? "weekly" : "daily") + ".png", style={ height: "90%", "margin-right": "0.5%", "margin-top": "0.4%", "vertical-align": "middle" })
 					h1.inline.smallerer.spaced.dailyLevel(style={ margin: "0" })
 						= "#" + (level.dailyNumber || 0)
 						span.h3Size#dailyTime(style={ "font-size": "2.5vh", "vertical-align": "middle" })
 
 			.center.valign(style={ position: "absolute", top: "10.5%", left: "27%", transform: "scale(0.8)", height: "100%", width: "20%" })
-				img.spaced(src="../assets/difficulties/" + level.difficultyFace + ".png", style={ height: "15%", "margin-bottom": "0%" })
+				img.spaced(src="/assets/difficulties/" + level.difficultyFace + ".png", style={ height: "15%", "margin-bottom": "0%" })
 				h1#difficultytext.smaller(style={ transform: "scale(0.9)" })= level.difficulty
 				if level.stars != 0
 					h1#difficultytext.smaller.inline.stars(style={ transform: "scale(0.9)" })= level.stars
-					img.inline.stars(src="../assets/star.png", style={ height: "4%", transform: "translateY(-12%)" })
+					img.inline.stars(src="/assets/star.png", style={ height: "4%", transform: "translateY(-12%)" })
 					br.stars
 				if level.demonList
 					h1#difficultytext.smaller.inline.demonList(style={ transform: "scale(0.9)" })= level.demonList
-					img.inline.demonList(src="../assets/demon.png", style={ height: "4.5%", transform: "translateY(-7%)", "margin-left": "1.5%" })
+					img.inline.demonList(src="/assets/demon.png", style={ height: "4.5%", transform: "translateY(-7%)", "margin-left": "1.5%" })
 				else if level.diamonds != 0
 					h1#difficultytext.smaller.inline.diamonds(style={ transform: "scale(0.9)" })= level.diamonds
-					img.inline.diamonds(src="../assets/diamond.png", style={ height: "4%", transform: "translateY(-12%)" })
+					img.inline.diamonds(src="/assets/diamond.png", style={ height: "4%", transform: "translateY(-12%)" })
 				#coins(style={ "margin-top": "3%" })
 					if (level.coins)
 						if (level.coins > 0)
-							img(src="../assets/" + coinColor + ".png", style={ height: "5vh" })
+							img(src="/assets/" + coinColor + ".png", style={ height: "5vh" })
 						if (level.coins > 1)
-							img.squeeze(src="../assets/" + coinColor + ".png", style={ height: "5vh" })
+							img.squeeze(src="/assets/" + coinColor + ".png", style={ height: "5vh" })
 						if (level.coins > 2)
-							img.squeeze(src="../assets/" + coinColor + ".png", style={ height: "5vh" })
+							img.squeeze(src="/assets/" + coinColor + ".png", style={ height: "5vh" })
 
 			//- Another div, another styling hellhole
 			div(style={ position: "absolute", top: "20%", right: "0", height: "38%", width: "40%", "line-height": "8.5vh" })
@@ -221,7 +221,7 @@ html(lang="en")
 						a.songLink(href="https://" + level.songAuthor + ".newgrounds.com", target="_blank")
 							img#moreSongs.gdButton.valign(src="/assets/more.png", style={ width: "12%" })
 					if (!level.songID.toString().startsWith("Level") && !level.gdps)
-						img#checkSong.gdButton.valign(style={ width: "16%", "margin-top": "1%" }, title="Check song verification", src="../assets/btn-check.png")
+						img#checkSong.gdButton.valign(style={ width: "16%", "margin-top": "1%" }, title="Check song verification", src="/assets/btn-check.png")
 					h3#songLoading(style={ display: "none", "margin-top": "0.5%" }) Loading...
 					h3#songAllowed(style={ display: "none", "margin-top": "0.5%", color: "lime" }) Song is allowed for use
 					h3#songNotAllowed(style={ display: "none", "margin-top": "0.5%", color: "red" }) Song is not allowed for use
@@ -240,9 +240,9 @@ html(lang="en")
 				img#playButton.gdButton.yesClick(src="/assets/play.png", style={ height: "24vh" })
 
 			.levelButtons(style={ position: "absolute", top: "46%", right: "3.5%", transform: "translateY(-50%)", height: "75%" })
-				img#saveButton.gdButton.sideButton(title="Save level", src="/assets/plus.png", onclick="$('#saveDiv').show(); saveLevel()")
+				img#saveButton.gdButton.sideButton(title="Save level", src="/assets/plus.png")
 				br
-				img#infoButton.gdButton.sideButton(title="Level Info", src="/assets/info.png", onclick="$('#infoDiv').show()")
+				img#infoButton.gdButton.sideButton(title="Level Info", src="/assets/info.png")
 				br
 				//- There used to be a like button here, but it got disabled for "evil" reasons
 				a#analyzeLink(href="/analyze/" + level.id)
@@ -269,4 +269,4 @@ html(lang="en")
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
 		script(src="/global.js?v=1")
-		script(src="/page_scripts/level.js")
+		script(type="module", src="/page_scripts/level.js")

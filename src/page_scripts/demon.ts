@@ -43,7 +43,7 @@ Fetch(`/api/gdps?current=1`).then((server: ServerInfo) => {
 
 					<h2 class="center" style="width: 12%; margin: 0% 0% 0% 0.5%; transform: scale(${1 - (Math.max(0, String(recordIndex + 1).length - 1) * 0.2)}">${recordIndex + 1}</h2>
 					<img class="inline spaced" src="/assets/trophies/${trophies.findIndex(z => recordIndex+1 <= z) + 1}.png" style="margin-bottom: 0%; height: 80%;">
-					<h2 class="small gdButton" style="font-size: 6.5vh; margin-right: 3%; margin-left: 3%"><a href="../u/${demonEntry.player.name}">${demonEntry.player.name}</a></h2>
+					<h2 class="small gdButton" style="font-size: 6.5vh; margin-right: 3%; margin-left: 3%"><a href="/u/${demonEntry.player.name}">${demonEntry.player.name}</a></h2>
 					<h3 class="lessSpaced" style="font-size: 4vh; margin-top: 1.3%; margin-right: 2%">${demonEntry.progress}%</h3>
 
 					<div style="${!demonEntry.video ? "display: none; " : ""}position:absolute; margin-top: 1.5%; width: 12.5%; height: 90%; right: 0%;">

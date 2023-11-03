@@ -46,9 +46,9 @@ Fetch(`./api/credits`).then(async (res: any) => {
 
 			<div class="creditsIcon" ign="${x.ign || x.name}"></div>
 
-			<a target=_blank href="${x.youtube[0]}" title="YouTube"><img src="/assets/${x.youtube[1]}.png" width="11%" class="gdButton"></a>
-			<a target=_blank href="${x.twitter[0]}" title="Twitter"><img src="/assets/${x.twitter[1]}.png" width="11%" class="sideSpace gdButton"></a>
-			<a target=_blank href="${x.github[0]}" title="GitHub"><img src="/assets/${x.github[1]}.png" width="11%" class="sideSpace gdButton"></a>
+			<a target=_blank href="${x.youtube[0]}" title="YouTube"><img src="/assets/${x.youtube[1]}.png" style="width: 11%" class="gdButton"></a>
+			<a target=_blank href="${x.twitter[0]}" title="Twitter"><img src="/assets/${x.twitter[1]}.png" style="width: 11%" class="sideSpace gdButton"></a>
+			<a target=_blank href="${x.github[0]}" title="GitHub"><img src="/assets/${x.github[1]}.png" style="width: 11%" class="sideSpace gdButton"></a>
 			<br>
 		</div>
 		<img class="gdButton creditsNextPage" src="/assets/arrow-right.png" style="position: absolute; top: 45%; left: 75%; width: 4.5%" tabindex="0">
@@ -72,9 +72,14 @@ Fetch(`./api/credits`).then(async (res: any) => {
 
 
 	$('#credits').append(`<div id="closeCredits" class="center supercenter" style="z-index: 10; width: 80vh; height: ${xButtonPos}%; pointer-events: none;">
-	<img class="closeWindow gdButton" src="/assets/close.png" width="14%" style="position: absolute; top: -24%; left: -7vh; pointer-events: all;" tabindex="0" onclick="$('#credits').hide(); page = 1;" title="Close"></div>`);
+	<img class="closeWindow gdButton" src="/assets/close.png" style="position: absolute; top: -24%; left: -7vh; width: 14%; pointer-events: all;" tabindex="0" title="Close"></div>`);
 
-	$(document).keydown(function(k) {
+	$("#closeCredits").on("click", function() {
+		$('#credits').hide();
+		page = 1;
+	});
+
+	$(document).on("keydown",function(k) {
 		if ($('#credits').is(':hidden')) return;
 
 		if (k.which == 37 && page > 1) { //left
