@@ -18,7 +18,7 @@ html(lang="en")
 		meta(id="meta-desc", property="og:description", content="View the list of achievements in Geometry Dash!")
 		meta(id="meta-image", name="og:image", content="/assets/trophies/1.png", itemprop="image")
 		meta(name="twitter:card", content="summary")
-	body.levelBG(onbeforeunload="saveUrl()")
+	body.levelBG
 		#everything(style={ overflow: "auto" })
 			#filters.popup
 				.brownBox.bounce.center.supercenter(style={ width: "110vh", height: "75%", "padding-top": "0.3%", "padding-bottom": "3.5%" })
@@ -58,6 +58,7 @@ html(lang="en")
 				img#check.gdButton(style={ "margin-bottom": "15%", width: "12vh" }, src="/assets/check-off.png")
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
-		script(type="module", src="/global.js")
-		script(src="/dragscroll.js")
+		script(type="module", src="/vendor/index.js")
+		script(type="module", src="/misc/global.js")
+		script(type="module", src="/dragscroll.js")
 		script(type="module", src="/page_scripts/achievements.js")

@@ -46,7 +46,7 @@ let animated = false;
 let freeze = false;
 let dailyTime = Number(levelNextDaily) || 0;
 
-$('#playButton').click(function () {
+$('#playButton').on("click", function () {
 	if (!($('#copied').is(':animated')) && !animated) {
 		animated = true;
 		copies += 1;
@@ -66,7 +66,7 @@ $('#playButton').click(function () {
 	temp.remove();
 });
 
-$('.closeWindow').click(function () {
+$('.closeWindow').on("click", function () {
 	if (!freeze) {
 		$(".popup").attr('style', 'display: none;');
 	}
@@ -82,7 +82,7 @@ if (dailyTime) {
 
 if ($("#additional").hasClass('downloadDisabled')) {
 	$('#analyzeLink').removeAttr('href');
-	$('#analyzeBtn').click(function() {
+	$('#analyzeBtn').on("click", function() {
 		$('#analyzeDisabled').show();
 	});
 }
@@ -139,7 +139,7 @@ function deleteLevel() {
 	levelSaved = false;
 }
 
-$('#checkSong').click(function() {
+$('#checkSong').on("click", function() {
 	$('#checkSong').hide();
 	$('#songLoading').show();
 	fetch(`/api/song/${ levelSongID }`).then(res => res.json()).then(info => {

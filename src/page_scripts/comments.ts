@@ -5,7 +5,7 @@
 import { Level } from "../classes/Level.js";
 import { Player, PlayerIcon } from "../classes/Player.js";
 import { renderIcons } from "../iconkit/icon.js";
-import { Color3B, Fetch } from "../misc/global.js";
+import { Color3B, Fetch, toggleEscape } from "../misc/global.js";
 
 interface CommentItem {
 	content: string;
@@ -44,7 +44,7 @@ let like = true;
 let lastPage = 0;
 let auto = false;
 let interval: null | NodeJS.Timeout = null;
-let commentCache = {};
+let commentCache: Record<number, CommentItem[]> = {};
 
 let target = `/api/level/${lvlID}`;
 if (+lvlID > 999999999 || +lvlID < -999999999) {
@@ -162,12 +162,17 @@ function buildComments(lvl: Level | Player) {
 			return res.json();
 		}).then(addComments);
 
+		/**
+		 * Append comments to the display
+		 * @param res A list of comments, or `-1`
+		 */
 		function addComments(res: -1 | CommentItem[]) {
 			if (("commentHistory" in lvl) && history && lvl.commentHistory != "all") $('#pageUp').hide();
 
 			if (res == -1 || (("commentHistory" in lvl) && history && lvl.commentHistory != "all")) {
 				loadingComments = false;
-				return $('#loading').hide();
+				$('#loading').hide();
+				return;
 			}
 
 			commentCache[page] = res;
@@ -188,8 +193,8 @@ function buildComments(lvl: Level | Player) {
 
 				if (comment.pages) {
 					lastPage = comment.pages;
-					$('#pagenum').html(`Page ${page+1} of ${comment.pages}`);
-					if (page+1 >= comment.pages) $('#pageUp').hide();
+					$('#pagenum').html(`Page ${page + 1} of ${comment.pages}`);
+					if (page + 1 >= comment.pages) $('#pageUp').hide();
 					else $('#pageUp').show();
 				}
 
@@ -200,7 +205,7 @@ function buildComments(lvl: Level | Player) {
 						<div class="comment" commentID="${comment.ID}">
 							<div class="commentRow">
 								<gdicon class="commentIcon inline" cacheID=${comment.playerID} iconID=${comment.icon.icon} iconForm="${comment.icon.form}" col1="${comment.icon.col1}" col2="${comment.icon.col2}" glow="${comment.icon.glow}"></gdicon>
-								<a href=/${comment.accountID == "0" ? `search/${comment.playerID}?user` : `/u/${comment.accountID}.`}>
+								<a href=/${comment.accountID == "0" ? `search/${comment.playerID}?user` : `u/${comment.accountID}.`}>
 								<h2 class="inline gdButton ${(!comment.accountID || comment.accountID == "0") ? "green unregistered" : ""}">${userName}</h2></a>
 								${modNumber > 0 ? `<img class="inline" src="/assets/mod${modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : ""}.png" style="margin-left: 1%; width: 3.5%">` : ""}
 								<p class="commentPercent inline">${comment.percent ? comment.percent + "%" : ""}</p>
@@ -261,24 +266,23 @@ function buildComments(lvl: Level | Player) {
 			renderIcons();
 			$('#loading').hide();
 			loadingComments = false;
-			return;
 		}
 	}
 
 	loadingComments = false;
 	appendComments();
 
-	$('#pageUp').click(function() {
+	$('#pageUp').on("click", function() {
 		if (loadingComments) return;
 		page += 1;
 		appendComments();
 	});
-	$('#pageDown').click(function() {
+	$('#pageDown').on("click", function() {
 		if (loadingComments) return;
 		page -= 1;
 		appendComments();
 	});
-	$('#lastPage').click(function() {
+	$('#lastPage').on("click", function() {
 		if (loadingComments || auto) return;
 		page = lastPage - 1;
 		appendComments();
@@ -293,7 +297,7 @@ function buildComments(lvl: Level | Player) {
 		$('#autoMode').attr('src', `/assets/playbutton.png`);
 	}
 
-	$('#topSort').click(function() {
+	$('#topSort').on("click", function() {
 		if (mode == "top" || loadingComments) return;
 		resetSort();
 		mode = "top";
@@ -302,7 +306,7 @@ function buildComments(lvl: Level | Player) {
 		appendComments();
 	});
 
-	$('#timeSort').click(function() {
+	$('#timeSort').on("click", function() {
 		if (mode == "time" || loadingComments) return;
 		resetSort();
 		mode = "time";
@@ -311,7 +315,7 @@ function buildComments(lvl: Level | Player) {
 		appendComments();
 	});
 
-	$('#compactMode').click(function() {
+	$('#compactMode').on("click", function() {
 		if (loadingComments) return;
 		compact = !compact;
 		lastPage = 0;
@@ -320,7 +324,7 @@ function buildComments(lvl: Level | Player) {
 		appendComments();
 	});
 
-	$('#autoMode').click(function() {
+	$('#autoMode').on("click", function() {
 		if (loadingComments) return;
 		auto = !auto;
 		mode = "time";
@@ -357,7 +361,7 @@ function buildComments(lvl: Level | Player) {
 		$('#charcount').text(remaining);
 	});
 
-	$('#submitComment').click(function() {
+	$('#submitComment').on("click", function() {
 		const comment = $('#content').val();
 		const username = $('#username').val();
 		const password = $('#password').val();
@@ -371,11 +375,11 @@ function buildComments(lvl: Level | Player) {
 
 		$('#message').text("Posting comment...");
 		$('.postbutton').hide();
-		// allowEsc = false;
+		toggleEscape(false);
 
 		fetch(`/api/profile/${username}`).then(res => res.json()).then(res => {
 			if (!res || res == "-1") {
-				// allowEsc = true;
+				toggleEscape(true);
 				$('.postbutton').show();
 				return $('#message').text("The username you provided doesn't exist!");
 			}
@@ -388,12 +392,12 @@ function buildComments(lvl: Level | Player) {
 				$('#message').html(messageText);
 				$('#timeSort').attr('src', "/assets/sort-time-on.png");
 				$('#topSort').attr('src', "/assets/sort-likes.png");
-				// allowEsc = true;
+				toggleEscape(true);
 				mode = "time";
 				page = 0;
 				appendComments();
 			}).fail(e => {
-				// allowEsc = true;
+				toggleEscape(true);
 				$('.postbutton').show();
 				$('#message').text(e.responseText.includes("DOCTYPE") ? "Something went wrong..." : e.responseText);
 			});
@@ -401,13 +405,13 @@ function buildComments(lvl: Level | Player) {
 	});
 
 	// Man, Colon's addicted to that random TheFatRat song.
-	$('#likebtn').click(function() {
+	$('#likebtn').on("click", function() {
 		$('#likebtn').removeClass('youAreNotTheOne');
 		$('#dislikebtn').addClass('youAreNotTheOne');
 		like = true;
 	});
 
-	$('#dislikebtn').click(function() {
+	$('#dislikebtn').on("click", function() {
 		$('#likebtn').addClass('youAreNotTheOne');
 		$('#dislikebtn').removeClass('youAreNotTheOne');
 		like = false;
@@ -431,7 +435,7 @@ function buildComments(lvl: Level | Player) {
 		$('#likeComment').show();
 	});
 
-	$('#submitVote').click(function() {
+	$('#submitVote').on("click", function() {
 		// The thing is: this is insecure. But the game itself also does this.
 		if (likedComments.includes(commentID)) {
 			return $('#likeMessage').text("You've already liked/disliked this comment!");
@@ -450,11 +454,11 @@ function buildComments(lvl: Level | Player) {
 
 		$('#likeMessage').text(like ? "Liking..." : "Disliking... :(");
 		$('.postbutton').hide();
-		// allowEsc = false;
+		toggleEscape(false);
 
 		fetch(`/api/profile/${username}`).then(res => res.json()).then(res => {
 			if (!res || res == "-1") {
-				// allowEsc = true;
+				toggleEscape(true);
 				$('.postbutton').show();
 				return $('#likeMessage').text("The username you provided doesn't exist!");
 			}
@@ -469,11 +473,11 @@ function buildComments(lvl: Level | Player) {
 				$('#likebtn').trigger('click');
 				$('.postbutton').show();
 				$('#likeMessage').html(messageText.replace("posting", "liking").replace("postComment", "like"));
-				// allowEsc = true;
+				toggleEscape(true);
 				likedComments.push(commentID);
 				localStorage.setItem('likedComments', JSON.stringify(likedComments));
 			}).fail(e => {
-				// allowEsc = true;
+				toggleEscape(true);
 				$('.postbutton').show();
 				$('#likeMessage').text(e.responseText.includes("DOCTYPE") ? "Something went wrong..." : e.responseText);
 			});
@@ -488,7 +492,7 @@ function buildComments(lvl: Level | Player) {
 		$('#content').val($('#content').val()!.toString().replace(/[^\S ]+/g, ""));
 	});
 
-	$(document).keydown(function(k) {
+	$(document).on("keydown", function(k) {
 		if ($('#content').is(':visible')) {
 			if (k.which == 13) k.preventDefault(); //enter
 		}

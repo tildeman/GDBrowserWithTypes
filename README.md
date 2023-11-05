@@ -13,9 +13,10 @@ To run GDBrowser locally:
 2) Clone/download this repository
 3) Open cmd/powershell/terminal in the main folder (with `package.json`)
 4) Type `npm i` to flood your hard drive with code that's 99% useless
-5) Type `npm run build` to transpile all the code into something node.js can actually understand.
-6) Type `cd out && node index` to run the web server
-7) GDBrowser is now running locally at http://localhost:2000
+5) Type `npm run buildDeps` to bundle dependendencies into browser code
+6) Type `npm run build` to transpile all the code into something node.js can actually understand.
+7) Type `cd out && node index` to run the web server
+8) GDBrowser is now running locally at http://localhost:2000
 
 If you want to disable rate limits, ip forwarding, etc you can do so by modifying `settings.js`. Doing this is probably a good idea if you feel like obliterating Rob's servers for some reason. (please don't)
 
@@ -23,14 +24,14 @@ If you want to disable rate limits, ip forwarding, etc you can do so by modifyin
 
 I mean, sure. Why not.
 
-As this is nothing more than a side project. Yes, you can add your own server into your own magical little fork by adding it to **servers.json**. Simply add a new object to the array with the following information:
+As this is nothing more than a side project, yes, you can add your own server into your own magical little fork by adding it to **servers.json**. Simply add a new object to the array with the following information:
 
 | Identifier       | Description                                                                                                                |
 |:----------------:|:--------------------------------------------------------------------------------------------------------------------------:|
 | `name`           | The display name of the server                                                                                             |
 | `link`           | The server's website URL (unrelated to the actual endpoint)                                                                |
 | `author`         | The creator(s) of the server                                                                                               |
-| `authorLink`     |  The URL to open when clicking on the creator's name                                                                       |
+| `authorLink`     | The URL to open when clicking on the creator's name                                                                        |
 | `id`             | An ID for the server, also used as the subdomain (e.g. `something` would become `something.gdbrowser.com`)                 |
 | `endpoint`       | The actual endpoint to ~~spam~~ send requests to (e.g. `http://boomlings.com/database/` - make sure it ends with a slash!) |
 
@@ -203,7 +204,7 @@ These templates (written in [Pug](https://pugjs.org)) are designed to address th
 
 ## Roadmap
 
-- [ ] Complete all the TODOs (44).
+- [ ] Complete all the TODOs (39).
 - [ ] Implement 2.2 features once the release is out.
 - [ ] Write JSDoc for all the types and interfaces in code.
 - [ ] Fix glaring formatting errors.

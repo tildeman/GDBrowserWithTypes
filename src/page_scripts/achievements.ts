@@ -52,7 +52,7 @@ function append(reset: boolean = true) {
 	if (reset) $('#searchBox').scrollTop(0);
 }
 
-fetch('./api/achievements').then(res => res.json()).then((ach: AchievementAPIResponse) => {
+fetch('/api/achievements').then(res => res.json()).then((ach: AchievementAPIResponse) => {
 	Object.keys(ach.types).forEach(achType => {
 		$('#types').append(`<img class="gdButton achFilter typeFilter" filter="${ach.types[achType][1].join(" ")}" src="/assets/achievements/${achType}.png" title="${ach.types[achType][0]}"  style="margin: 0.6% 0.4%; height:6vh">`);
 	});
@@ -73,7 +73,7 @@ fetch('./api/achievements').then(res => res.json()).then((ach: AchievementAPIRes
 			$(labelID).text($(labelID).attr('text') || "").removeClass("labelHover");
 		});
 
-		$(labelFilter).click(function() {
+		$(labelFilter).on("click", function() {
 			let filters = $(this).attr('filter')!.split(" ")
 			if (!$(this).hasClass('achDeselected')) {
 				$(this).addClass('achDeselected');
@@ -107,7 +107,7 @@ fetch('./api/achievements').then(res => res.json()).then((ach: AchievementAPIRes
 		$('#selectAll').hide();
 	});
 
-	$('#submitFilters').click(function() {
+	$('#submitFilters').on("click", function() {
 		$('.popup').hide();
 
 		if (!$('.rewardFilter:not(.achDeselected)').length) $('#rewardLabel .selectAll').trigger('click');
@@ -121,7 +121,7 @@ fetch('./api/achievements').then(res => res.json()).then((ach: AchievementAPIRes
 		append();
 	});
 
-	$('#check').click(function() {
+	$('#check').on("click", function() {
 		completed = !completed;
 		if (completed) $('#check').attr('src', '/assets/check-on.png');
 		else $('#check').attr('src', '/assets/check-off.png');

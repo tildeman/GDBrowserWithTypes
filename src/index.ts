@@ -66,11 +66,13 @@ app.set("views", "./templates");
 
 // ASSETS
 
-app.use("/assets", assetRoutes);
-app.use('/iconkit', express.static('iconkit'));
-app.get("/global.js", fetchStaticFile("misc/global.js"));
 app.get("/dragscroll.js", fetchStaticFile("misc/dragscroll.js"));
+app.get("/vendor/index.js", fetchStaticFile("vendor/index.js"));
+app.get("/global.js", fetchStaticFile("misc/global.js"));
+app.get("/misc/global.js", fetchStaticFile("misc/global.js"));
 app.use("/page_scripts", express.static("page_scripts"));
+app.use('/iconkit', express.static('iconkit'));
+app.use("/assets", assetRoutes);
 
 // ROUTES
 

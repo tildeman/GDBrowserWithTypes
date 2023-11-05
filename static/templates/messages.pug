@@ -9,7 +9,7 @@ html(lang="en")
 		meta(id="meta-desc", property="og:description", content="Read, write, and manage your Geometry Dash messages!")
 		meta(id="meta-image", name="og:image", content="/assets/messages.png", itemprop="image")
 		meta(name="twitter:card", content="summary")
-	body.levelBG(onbeforeunload="saveUrl()")
+	body.levelBG
 		#everything
 			#access
 				.brownBox.center.supercenter(style={ height: "65%", width: "110vh" })
@@ -157,5 +157,6 @@ html(lang="en")
 				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
-		script(type="module", src="/global.js")
+		script(type="module", src="/vendor/index.js")
+		script(type="module", src="/misc/global.js")
 		script(type="module", src="/page_scripts/messages.js")

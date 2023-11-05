@@ -32,7 +32,6 @@ $('body').append(`
 	</div>
 `);
 
-// TODO: fix this deprecated usage
 $(window).on("resize", function () {
 	if (window.innerHeight > window.innerWidth - 75) {
 		$('#everything').hide();
@@ -90,7 +89,16 @@ export async function Fetch(link: RequestInfo | URL) {
 let allowEsc = true;
 let popupEsc = true;
 
-// TODO: fix this deprecated usage
+/**
+ * Toggle the `Esc` keyboard functionality.
+ * @param state The state of whether to allow using the `Esc` key.
+ * @param popup Whether the state is to escape popups.
+ */
+export function toggleEscape(state: boolean, popup?: boolean) {
+	if (popup) popupEsc = state;
+	else allowEsc = state;
+}
+
 $(document).on("keydown", function(k) {
 	if (k.keyCode == 27) { //esc
 		if (!allowEsc) return
@@ -105,8 +113,7 @@ while ($(window).scrollTop() != 0) {
 	$(window).scrollTop(0);
 }
 
-// TODO: fix this deprecated usage
-$(document).ready(function() {
+$(document).on("ready", function() {
 	$(window).trigger('resize');
 });
 
@@ -128,7 +135,7 @@ window.addEventListener("keydown", e => {
   const active = document.activeElement;
   if (!active) return;
   const isUnsupportedLink = active.hasAttribute('tabindex'); // Only click on links that aren't already natively supported to prevent double clicking
-  if(isUnsupportedLink) (active as HTMLAnchorElement).click();
+  if (isUnsupportedLink) (active as HTMLAnchorElement).click();
 });
 
 // stolen from stackoverflow
@@ -144,3 +151,6 @@ export function isInViewport(that: JQuery<HTMLElement>) {
 	let viewportBottom = viewportTop + ($(window).height() || 0);
 	return elementBottom > viewportTop && elementTop < viewportBottom;
 };
+
+$("body").on("beforeunload", saveUrl);
+$("#backButton").on("click", backButton);

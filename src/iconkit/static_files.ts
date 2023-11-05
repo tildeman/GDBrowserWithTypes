@@ -9,6 +9,9 @@ import iconCredits from "./extradata/iconCredits.json" assert { type: "json" }
 import shops from "./extradata/shops.json" assert { type: "json" }
 
 import fs from "node:fs";
+import { IconData } from "./icon.js"
+// TODO: Move ExtraData out of `page_scripts`
+import { ExtraData } from "../page_scripts/iconkit.js"
 
 const previewIcons = fs.readdirSync('./iconkit/premade');
 const newPreviewIcons = fs.readdirSync('./iconkit/newpremade');

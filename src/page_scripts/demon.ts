@@ -63,7 +63,7 @@ Fetch(`/api/gdps?current=1`).then((server: ServerInfo) => {
 	}).catch(e => $('#loading').hide());
 });
 
-$(document).keydown(function(k) {
+$(document).on("keydown", function(k) {
 	if (k.which == 37 && demonID > 1) window.location.href = $('#pageDown').attr('href') || "";	// left
 	if (k.which == 39 && demonID < max) window.location.href = $('#pageUp').attr('href') || "";	// right
 });

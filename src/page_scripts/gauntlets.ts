@@ -1,5 +1,5 @@
 /**
- * @fileoverview Site-specific script for the map pack listing page.
+ * @fileoverview Site-specific script for the gauntlet listing page.
  */
 
 // TODO: Separate types from API files

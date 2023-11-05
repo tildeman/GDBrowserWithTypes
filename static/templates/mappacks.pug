@@ -10,7 +10,7 @@ html(lang="en")
 		meta(id="meta-desc", property="og:description", content="Collections of terrible Geometry Dash levels that people only play because of the absurd number of icons they unlock.")
 		meta(id="meta-image", name="og:image", content="/assets/folder.png", itemprop="image")
 		meta(name="twitter:card", content="summary")
-	body.levelBG(onbeforeunload="saveUrl()", style={ "overflow-y": "auto" })
+	body.levelBG(style={ "overflow-y": "auto" })
 		#everything.center
 			.center(style={ margin: "2.5% auto 2% auto", width: "50%" })
 				h1(style={ transform: "scale(1.2)" }) Map Packs
@@ -24,5 +24,6 @@ html(lang="en")
 				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
-		script(type="module", src="/global.js")
+		script(type="module", src="/vendor/index.js")
+		script(type="module", src="/misc/global.js")
 		script(type="module", src="/page_scripts/mappacks.js")

@@ -72,7 +72,6 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	params.chk = chk;
 
 	reqBundle.gdRequest('uploadGJComment21', params, function (err, resp, body) {
-		// TODO: Determine the last time the like worked
 		if (err) return res.status(400).send(`The Geometry Dash servers rejected your comment! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
 		if (body?.startsWith("temp")) {
 			let banStuff = body.split("_");

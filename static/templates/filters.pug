@@ -9,7 +9,7 @@ html(lang="en")
 		meta(id="meta-desc", property="og:description", content="Search for Geometry Dash levels, and filter by length, difficulty, song + more!")
 		meta(id="meta-image", name="og:image", content="/assets/coin.png", itemprop="image")
 		meta(name="twitter:card", content="summary")
-	body.levelBG(onbeforeunload="saveUrl()")
+	body.levelBG
 		#everything
 			#filters.popup
 				#filterStuff.brownBox.bounce.center.supercenter(style={ width: "101vh", height: "50%", padding: "0.3% 0 3.5% 1%" })
@@ -187,5 +187,6 @@ html(lang="en")
 				img.gdButton(src="/assets/listbutton.png", style={ width: "60%" }, onclick="$('#customlist').show()")
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
-		script(type="module", src="/global.js")
+		script(type="module", src="/vendor/index.js")
+		script(type="module", src="/misc/global.js")
 		script(type="module", src="/page_scripts/filters.js")

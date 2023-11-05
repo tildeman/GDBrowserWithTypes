@@ -39,7 +39,7 @@ html(lang="en")
 		//- TODO: Nothing better to say than "fix this"
 		meta(id="meta-image", name="og:image", content="/coin.png", itemprop="image")
 		meta(name="twitter:card", content="summary")
-	body.levelBG(onbeforeunload="saveUrl()")
+	body.levelBG
 		#dataBlock(data-accountid=player.accountID, data-username=player.username, data-moderator=(player.moderator || 0))
 		#everything
 			#leavePost.popup
@@ -192,7 +192,6 @@ html(lang="en")
 							img.gdButton.socialButton(src="/assets/youtube.png")
 					if player.twitter
 						a#twitter(target="_blank", href="https://x.com/" + player.twitter)
-							//- TODO: Use the X logo
 							img.gdButton.socialButton(src="/assets/twitter.png")
 					if player.twitch
 						a#twitch(target="_blank", href="https://twitch.tv/" + player.twitch)
@@ -209,7 +208,8 @@ html(lang="en")
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
-		script(src="/iconkit/icon.js")
-		script(type="module", src="/global.js")
-		script(src="/dragscroll.js")
+		script(type="module", src="/iconkit/icon.js")
+		script(type="module", src="/vendor/index.js")
+		script(type="module", src="/misc/global.js")
+		script(type="module", src="/dragscroll.js")
 		script(type="module", src="/page_scripts/profile.js")

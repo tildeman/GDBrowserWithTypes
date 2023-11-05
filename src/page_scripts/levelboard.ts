@@ -2,7 +2,7 @@
  * @fileoverview Site-specific script for the level leaderboard page.
  */
 
-import { renderIcons } from "../iconkit/icon.js";
+import { buildIcon } from "../iconkit/icon.js";
 import { isInViewport } from "../misc/global.js";
 
 let loading = false;
@@ -32,7 +32,7 @@ function leaderboard() {
 		$('#meta-desc').attr('content', 'View the leaderboard for ' + lvl.name + ' by ' + lvl.author + '!');
 	});
 
-	// TODO: add better types
+	// TODO: Add better types
 	fetch(`/api/leaderboardLevel/${lvlID}?count=200${weekly ? "&week" : ""}`).then(res => res.json()).then(res => {
 		if (!res || res.error || res == "-1") {
 			loading = false;
@@ -68,7 +68,7 @@ function leaderboard() {
 let weekly = false;
 leaderboard();
 
-$('#topMode').click(function() {
+$('#topMode').on("click", function() {
 	if (!weekly || loading) return;
 	weekly = false;
 	leaderboard();
@@ -76,7 +76,7 @@ $('#topMode').click(function() {
 	$('#topMode').addClass('darken');
 });
 
-$('#weekMode').click(function() {
+$('#weekMode').on("click", function() {
 	if (weekly || loading) return;
 	weekly = true;
 	leaderboard();
@@ -84,17 +84,16 @@ $('#weekMode').click(function() {
 	$('#weekMode').addClass('darken');
 });
 
+/**
+ * Get rid of the `dontload` attribute on icons that have it and load them anyway.
+ */
 function lazyLoadIcons() {
-	let newIconFound = false;
 	$('gdicon[dontload]').each(function() {
 		if (isInViewport($(this))) {
 			$(this).removeAttr('dontload');
-			newIconFound = true;
+			buildIcon($(this));
 		}
 	});
-	if (newIconFound) renderIcons();
 }
 
-$('#searchBox').scroll(lazyLoadIcons);
-
-export {};
+$('#searchBox').on("scroll",lazyLoadIcons);

@@ -262,11 +262,11 @@ if (!$('#header').text() && typeof userMode != "string") {
 }
 
 
-$('.closeWindow').click(function() {
+$('.closeWindow').on("click", function() {
 	$(".popup").attr('style', 'display: none;');
 });
 
-$('#purgeSaved').click(function() {
+$('#purgeSaved').on("click", function() {
 	localStorage.removeItem('saved');
 	location.reload();
 });
@@ -288,7 +288,7 @@ $('#pageSelect').on('blur', function () {
 	}
 });
 
-$('#shuffle').click(function() {
+$('#shuffle').on("click", function() {
 	if (superSearch) {
 		$('#searchBox').html('<div style="height: 4.5%"></div>');
 		$('#loading').show();

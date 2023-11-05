@@ -3,6 +3,7 @@
  */
 
 import { Player } from "../classes/Player";
+import { toggleEscape } from "../misc/global";
 
 // TODO: Avoid duplicate interface declarations
 interface MessageOverview {
@@ -207,15 +208,14 @@ $(document).on('click', '.gdMessage', function () {
 });
 
 $('#deleteCurrentMessage').on("click", function() {
-	// TODO: Getters and setters for these variables
-	// allowEsc = false;
+	toggleEscape(false);
 	$('#preDelete').hide();
 	$('#deleting').show();
 
 	$.post("/deleteMessage/", { password, accountID, id: messageID }).done(msg => {
 			messages = messages.filter(messageItem => messageItem.id != messageID);
 			appendMessages(true);
-			// allowEsc = true;
+			toggleEscape(true);
 			$('#selectedMessage').hide();
 			$('#confirmDelete').hide();
 			$('#preDelete').show();
@@ -236,7 +236,7 @@ $('#purge').on("click", function() {
 });
 
 $('#bulkDeleteMessages').on("click", function() {
-	// allowEsc = false;
+	toggleEscape(false);
 	const msgIDs: string[] = [];
 	$('.chk:checked').each(function () {
 		msgIDs.push($(this).attr('messageID') || "");
@@ -250,7 +250,7 @@ $('#bulkDeleteMessages').on("click", function() {
 			messages = messages.filter(messageItem => !msgIDs.includes(messageItem.id));
 			appendMessages(true);
 		}
-		// allowEsc = true;
+		toggleEscape(true);
 		$('#bulkDelete').hide();
 		$('#bulkDeleting').hide();
 		$('#preBulkDelete').show();
@@ -280,7 +280,7 @@ $('#postMessage').on("click", function() {
 	const subject = $('#postSubject').val();
 	const message = $('#postContent').val();
 	if (!subject || !message || !messageStatus[playerID] || messageStatus[playerID][0] == "off") return;
-	// allowEsc = false;
+	toggleEscape(false);
 	$('#reply-loading').show();
 	$('#reply-sent').hide();
 	$('#reply-error').hide();
@@ -289,11 +289,11 @@ $('#postMessage').on("click", function() {
 	$.post("/sendMessage/", { password, accountID, subject, message, targetID: playerID, color: true }).done(msg => {
 		$('#reply-loading').hide();
 		$('#reply-sent').show();
-		// allowEsc = true;
+		toggleEscape(true);
 	}).fail(e => {
 		$('#reply-loading').hide();
 		$('#reply-error').show();
-		// allowEsc = true;
+		toggleEscape(true);
 	});
 });
 

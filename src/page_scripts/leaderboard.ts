@@ -3,7 +3,7 @@
  */
 
 import { Player } from "../classes/Player.js";
-import { renderIcons } from "../iconkit/icon.js";
+import { buildIcon } from "../iconkit/icon.js";
 import { Fetch, isInViewport } from "../misc/global.js";
 
 /**
@@ -341,14 +341,12 @@ $("#topTabOff").trigger('click');
  * Get rid of the `dontload` attribute on icons that have it and load them anyway.
  */
 function lazyLoadIcons() {
-	let newIconFound = false;
 	$('gdicon[dontload]').each(function() {
 		if (isInViewport($(this))) {
 			$(this).removeAttr('dontload');
-			newIconFound = true;
+			buildIcon($(this));
 		}
 	});
-	if (newIconFound) renderIcons();
 }
 
 $('#searchBox').on("scroll", lazyLoadIcons);

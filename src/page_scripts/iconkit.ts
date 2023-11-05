@@ -7,7 +7,7 @@ import { AnimationObject, Icon, IconConfiguration, IconData, iconData, loadIconL
 import { PIXI } from "../vendor/index.js";
 import { AchievementAPIResponse, AchievementItem, Color3B } from "../misc/global.js";
 
-interface ExtraData {
+export interface ExtraData {
 	colorOrder: number[];
 	hardcodedUnlocks: {
 		form: string;
@@ -71,8 +71,8 @@ let formCopy: string;
 let icon: Icon | null = null;
 
 const iconCanvas = document.getElementById('result') as HTMLCanvasElement;
-// TODO: find a better type
-let app: any = new PIXI.Application({
+
+let app = new PIXI.Application({
 	view: iconCanvas,
 	width: 300,
 	height: 300,
@@ -92,7 +92,7 @@ iconSettings.forEach(setting => {
  * @returns The converted string.
  */
 function capitalize(str: string) {
-	return str[0].toUpperCase() + str.substr(1);
+	return str[0].toUpperCase() + str.slice(1);
 }
 
 /**
@@ -433,7 +433,7 @@ $(document).on('click', '.iconTabButton', function() {
 
 $('#iconTabs').find('.iconTabButton').first().children().first().attr('src', $('.iconTabButton').first().children().first().attr('src')!.replace('_off', '_on'));
 
-$("#randomIcon").click(function() {
+$("#randomIcon").on("click", function() {
 	let iconPool = iconStuff.previewIcons.concat(enableSpoilers ? iconStuff.newPreviewIcons : []);
 	let pickedIcon = iconPool[Math.floor(Math.random() * iconPool.length)].split(".")[0].split("_");
 	let [randomForm, randomID] = pickedIcon;
@@ -461,7 +461,7 @@ $("#randomIcon").click(function() {
 	else $("#glow").attr('src', $("#glow").attr('src')!.replace('_on', '_off'));
 });
 
-$('#glowbtn').click(function () {
+$('#glowbtn').on("click", function () {
 	if (enableGlow) {
 		$("#glow").attr('src', $("#glow").attr('src')!.replace('_on', '_off'));
 		enableGlow = 0;
@@ -587,14 +587,14 @@ $("#cpU").on('input change', function() {
 	setColor("u", selectedColU);
 });
 
-$("#getUserIcon").click(function() {
+$("#getUserIcon").on("click", function() {
 	$(`.copyForm[form=${currentForm}]`).trigger('click');
 	$('#steal').show();
 	$('#playerName').focus();
 	$('#playerName').select();
 });
 
-$('#copyToClipboard').click(function() {
+$('#copyToClipboard').on("click", function() {
 	if ($(this).hasClass('greyedOut')) return;
 	icon!.copyToClipboard();
 	let copyIcon = $(this).find('img');
@@ -651,7 +651,7 @@ $(document).on('change', '.iconsetting', function(e) {
 	localStorage.iconkit = checkedSettings.join(",");
 });
 
-$('#unlockIcon').click(function() {
+$('#unlockIcon').on("click", function() {
 	if (!achievements.length) {
 		fetch('/api/achievements').then(res => {
 			res.json().then((achievementsItem: AchievementAPIResponse) => {
@@ -778,7 +778,7 @@ $('#animationSpeedBox').change(function() {
 	if (icon?.complex) icon.animationSpeed = animationMultiplier;
 });
 
-$(document).keydown(function(k) {
+$(document).on("keydown", function(k) {
 	if (k.keyCode == 13) { // enter
 		if ($("#steal").is(":visible")) $("#fetchUser").trigger('click');
 		else if ($(".popup").is(":visible")) return;
@@ -819,5 +819,3 @@ $("#revealSpoilers").on("click", function() {
 	toggleSpoilers();
 	$('#spoilerWarning').hide();
 });
-
-export {};

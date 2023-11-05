@@ -3,7 +3,7 @@
  */
 
 import { renderIcons } from "../iconkit/icon.js";
-import { Fetch } from "../misc/global.js";
+import { Fetch, toggleEscape } from "../misc/global.js";
 
 const accountID: string = $('#dataBlock').data('accountid');
 const accountUsername: string = $('#dataBlock').data('username');
@@ -136,19 +136,19 @@ $('#submitComment').on("click", function () {
 	if (!comment || !password || loadingComments) return $('#leavePost').hide();
 	$('#message').text("Posting...");
 	$('.postbutton').hide();
-	// allowEsc = false;
+	toggleEscape(false);
 	$.post("/postProfileComment", { comment, username, password, accountID, color: true })
 		.done(x => {
 			$('#content').val("");
 			$('#leavePost').hide();
 			$('.postbutton').show();
 			$('#message').html(messageTextA);
-			// allowEsc = true;
+			toggleEscape(true);
 			profilePage = 0;
 			appendComments();
 		})
 		.fail(e => {
-			// allowEsc = true;
+			toggleEscape(true);
 			$('.postbutton').show();
 			$('#message').text(e.responseText.includes("DOCTYPE") ? "Something went wrong..." : e.responseText);
 		});
@@ -202,11 +202,11 @@ $('#submitVote').on("click", function() {
 
 	$('#likeMessage').text(like ? "Liking..." : "Disliking... :(");
 	$('.postbutton').hide();
-	// allowEsc = false;
+	toggleEscape(false);
 
 	Fetch(`/api/profile/${username}`).then(res => {
 		if (!res || res == "-1") {
-			// allowEsc = true;
+			toggleEscape(true);
 			$('.postbutton').show();
 			return $('#likeMessage').text("The username you provided doesn't exist!");
 		}
@@ -222,12 +222,12 @@ $('#submitVote').on("click", function() {
 				$('#likebtn').trigger('click');
 				$('.postbutton').show();
 				$('#likeMessage').html(messageTextA.replace("profile posts", "liking posts").replace("postProfileComment", "like"));
-				// allowEsc = true;
+				toggleEscape(true);
 				likedComments.push(commentID);
 				localStorage.setItem('likedComments', JSON.stringify(likedComments));
 			})
 			.fail(e => {
-				// allowEsc = true;
+				toggleEscape(true);
 				$('.postbutton').show();
 				$('#likeMessage').text(e.responseText.includes("DOCTYPE") ? "Something went wrong..." : e.responseText);
 			});
@@ -256,7 +256,7 @@ $('#leavePost').on("change keyup keydown paste click", "textarea", function () {
 	$('#content').val($('#content').val()!.toString().replace(/[^\S ]+/g, ""));
 });
 
-$(document).keydown(function(k) {
+$(document).on("keydown", function(k) {
 	if ($('#content').is(':visible')) {
 			if (k.which == 13) k.preventDefault(); //enter
 	}

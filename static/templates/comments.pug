@@ -9,7 +9,7 @@ html(lang="en")
 		meta(id="meta-desc", property="og:description", content="View the comments of a Geometry Dash level!")
 		meta(id="meta-image", name="og:image", content="/assets/like.png", itemprop="image")
 		meta(name="twitter:card", content="summary")
-	body.levelBG(onbeforeunload="saveUrl()")
+	body.levelBG
 		#everything
 			#postComment.popup
 				.brownBox.bounce.center.supercenter(style={ height: "80%", width: "110vh" })
@@ -99,7 +99,8 @@ html(lang="en")
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
-		script(src="/iconkit/icon.js")
-		script(type="module", src="/global.js")
-		script(src="/dragscroll.js")
+		script(type="module", src="/iconkit/icon.js")
+		script(type="module", src="/vendor/index.js")
+		script(type="module", src="/misc/global.js")
+		script(type="module", src="/dragscroll.js")
 		script(type="module", src="/page_scripts/comments.js")

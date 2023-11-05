@@ -170,12 +170,11 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		filters.type = 10;
 		// never handle filters.str dynamically
 		let filtersStrArr: string[] = demonMode ? demonList[reqBundle.id].list : filters.str!.split(",");
-		listSize = filtersStrArr!.length;
-		filtersStrArr = filtersStrArr!.slice((filters.page || 0) * amount, (filters.page || 0) * amount + amount);
+		listSize = filtersStrArr.length;
+		filtersStrArr = filtersStrArr.slice((filters.page || 0) * amount, (filters.page || 0) * amount + amount);
 		if (!filtersStrArr.length) return sendError(400);
-		// TODO: Make a "map" for strings
-		filters.str = filtersStrArr.map(levelData => String(Number(levelData) + +(req.query.len || 0))).join()
-		filters.page = 0
+		filters.str = filtersStrArr.map(levelData => String(Number(levelData) + +(req.query.len || 0))).join();
+		filters.page = 0;
 	}
 
 	if (reqBundle.isGDPS && filters.diff && !filters.len) filters.len = "-";

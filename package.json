@@ -6,6 +6,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "buildDeps": "node --loader ts-node/esm node_modules/webpack-cli/bin/cli.js --config webpack.config.ts",
     "build": "copyfiles --up 1 \"static/**/*\" out && tsc",
     "dev": "node out/index.js"
   },

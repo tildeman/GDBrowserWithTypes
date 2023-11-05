@@ -11,7 +11,7 @@ html(lang="en")
 		meta(id="meta-image", name="og:image", content="/assets/difficulties/" + level.difficultyFace + ".png", itemprop="image")
 		meta(name="twitter:card", content="summary")
 
-	body.levelBG(onbeforeunload="saveUrl()")
+	body.levelBG
 		#dataBlock(data-id=level.id, data-dailynumber=(level.dailyNumber || 0), data-nextdaily=(level.nextDaily || 0), data-songid=level.songID)
 		#everything
 			#infoDiv.popup
@@ -268,5 +268,6 @@ html(lang="en")
 					h1#copiedText.smaller.noSelect ID copied to clipboard
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
-		script(type="module", src="/global.js")
+		script(type="module", src="/vendor/index.js")
+		script(type="module", src="/misc/global.js")
 		script(type="module", src="/page_scripts/level.js")

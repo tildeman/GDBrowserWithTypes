@@ -2,7 +2,8 @@
  * @fileoverview Site-specific script for the home page.
  */
 
-import { renderIcons } from "../iconkit/icon.js";
+import { Player } from "../classes/Player.js";
+import { buildIcon } from "../iconkit/icon.js";
 import { Fetch } from "../misc/global.js";
 
 let page = 1;
@@ -29,16 +30,16 @@ function loadCredits() {
 	$('#credits').show();
 	if (page == lastPage) $('#closeCredits').css('height', '52%');
 	else $('#closeCredits').css('height', xButtonPos);
-	$('.creditsIcon:not(".creditLoaded"):visible').each(async function() { // only load icons when necessary
+	$('.creditsIcon:not(".creditLoaded"):visible').each(async function(this: HTMLElement) { // only load icons when necessary
 		$(this).addClass('creditLoaded');
-		let profile: any = await Fetch(`./api/profile/${$(this).attr('ign')}?forceGD=1`).catch(e => {}) || {};
+		let profile: Player = await Fetch(`/api/profile/${$(this).attr('ign')}?forceGD=1`).catch(e => {}) || {};
 		$(this).append(`<gdicon cacheID=${profile.playerID} iconID=${profile.icon} col1="${profile.col1}" col2="${profile.col2}" glow="${profile.glow}"></gdicon>`);
-		renderIcons();
+		buildIcon($(`gdicon[cacheID=${profile.playerID}]`));
 	} as any);
 }
 
 
-Fetch(`./api/credits`).then(async (res: any) => {
+Fetch(`/api/credits`).then(async (res: any) => {
 	lastPage = res.credits.length + 1;
 	res.credits.forEach(async (x, y) => {
 		$('#credits').append(`<div id="credits${y+1}" class="subCredits" style="display: none;">

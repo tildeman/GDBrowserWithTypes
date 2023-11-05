@@ -2,7 +2,7 @@
  * @fileoverview Site-specific script for the level analysis page.
  */
 
-import { Color3B } from "../misc/global.js";
+import { Color3B, toggleEscape } from "../misc/global.js";
 
 interface CopiedHSV {
 	h: number | string;
@@ -112,7 +112,7 @@ fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (Ana
 				$('#errorMessage').html("This level's data could not be obtained because <ca>RobTop</ca> has disabled <cg>level downloading</cg>.");
 				break;
 		}
-		// popupEsc = false;
+		toggleEscape(false, true);
 		$('#analyzeError').show();
 		return $('#loadingDiv').hide();
 	}
@@ -263,13 +263,13 @@ function commafy(num: string | number) {
 		$('#colorDiv').append('<h3 style="margin-top: 7vh">Could not get color info!</h3>');
 	}
 
-	$('#triggerSort').click(function() {
+	$('#triggerSort').on("click", function() {
 		altTriggerSort = !altTriggerSort;
 		$('#triggerSort').text(altTriggerSort ? "Most Used" : "Ascending");
 		appendTriggerGroups();
 	});
 
-	$(".portalToggle").click(function() {
+	$(".portalToggle").on("click", function() {
 		if ($(this).prop('checked')) disabledPortals = disabledPortals.filter(portal => portal != $(this).attr('portal'));
 		else disabledPortals.push($(this).attr('portal') || "");
 
@@ -295,7 +295,7 @@ function commafy(num: string | number) {
 
 	$('#codeLength').html(`${commafy(res.dataLength)} characters (${dataSize.join(" ")})`);
 
-	$('#revealCode').click(function() {
+	$('#revealCode').on("click", function() {
 		$('#levelCode').html('<p>Loading...</p>');
 
 		window.setTimeout(function () { //small delay so "loading" message appears
@@ -306,40 +306,40 @@ function commafy(num: string | number) {
 
 	$(document).on('click', '.color', function() {
 		// TODO: This is kludgy.
-		const col = res.colors.find(colorObject => colorObject.channel == $(this).attr('channel'));
-		const hsv = col!.copiedHSV;
+		const col = res.colors.find(colorObject => colorObject.channel == $(this).attr('channel')) as AnalysisColorObject;
+		const hsv = col.copiedHSV;
 		if (hsv) {
 			hsv.s = Number(hsv.s).toFixed(2);
 			hsv.v = Number(hsv.v).toFixed(2);
 		}
-		const hex = "#" + ((1 << 24) + (+col!.r << 16) + (+col!.g << 8) + +col!.b).toString(16).slice(1);
+		const hex = "#" + ((1 << 24) + (+col.r << 16) + (+col.g << 8) + +col.b).toString(16).slice(1);
 		$('#colorStuff').html(`
-		<h2 class="slightlySmaller">${isNaN(+(col!.channel || "")) ? col!.channel : "Color " + col!.channel}</h2>
+		<h2 class="slightlySmaller">${isNaN(+(col.channel || "")) ? col.channel : "Color " + col.channel}</h2>
 			<div class="colorSection">
 				<h3>Hex Code</h3>
 				<p>${hex}</p>
 			</div>
 			<div class="colorSection">
 				<h3>RGB</h3>
-				<p>${clean(col!.r)}, ${clean(col!.g)}, ${clean(col!.b)}</p>
+				<p>${clean(col.r)}, ${clean(col.g)}, ${clean(col.b)}</p>
 			</div>
 			<div class="colorSection">
 				<h3>Opacity</h3>
-				<p>${Number(col!.opacity).toFixed(2)}</p>
+				<p>${Number(col.opacity).toFixed(2)}</p>
 			</div>
 			<br>
-			<div class="colorSection2" style="width: 40%; ${col!.copiedChannel ? "" : "margin-right:55.4%"}">
-				<div class="colorCheckbox"><h3><input ${col!.pColor == "1" ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 1</h3></div>
-				<div class="colorCheckbox"><h3><input ${col!.pColor == "2" ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 2</h3></div>
-				<div class="colorCheckbox"><h3><input ${col!.blending ? "checked" : ""} type="checkbox"> <label class="gdcheckbox gdButton"></label>Blending</h3></div>
-				<div class="colorCheckbox"><h3><input ${col!.copiedChannel ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Copy Color</h3></div>
-				<div class="colorCheckbox"><h3><input ${col!.copyOpacity ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Copy Opacity</h3></div>
+			<div class="colorSection2" style="width: 40%; ${col.copiedChannel ? "" : "margin-right:55.4%"}">
+				<div class="colorCheckbox"><h3><input ${col.pColor == "1" ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 1</h3></div>
+				<div class="colorCheckbox"><h3><input ${col.pColor == "2" ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 2</h3></div>
+				<div class="colorCheckbox"><h3><input ${col.blending ? "checked" : ""} type="checkbox"> <label class="gdcheckbox gdButton"></label>Blending</h3></div>
+				<div class="colorCheckbox"><h3><input ${col.copiedChannel ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Copy Color</h3></div>
+				<div class="colorCheckbox"><h3><input ${col.copyOpacity ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Copy Opacity</h3></div>
 			</div>
-			${col!.copiedChannel ? `
+			${col.copiedChannel ? `
 			<div class="colorSection2">
 				<div class="colorSection copyDetails">
 					<h3>Copied</h3>
-					<p>${isNaN(col!.copiedChannel) ? col!.copiedChannel : "Col " + col!.copiedChannel}</p>
+					<p>${isNaN(col.copiedChannel) ? col.copiedChannel : "Col " + col.copiedChannel}</p>
 				</div>
 				<div class="colorSection copyDetails">
 					<h3>Hue</h3>
@@ -354,7 +354,7 @@ function commafy(num: string | number) {
 					<p>${!hsv ? "x1.00" : !hsv['v-checked'] ? "x" + hsv.v : +hsv.v > 0 ? "+" + hsv.v : hsv.v}</p>
 				</div>
 			</div>`
-			: `<div class="colorBox" style="background-color: rgba(${clean(col!.r)}, ${clean(col!.g)}, ${clean(col!.b)}, ${clean(col!.opacity)}); border-color: ${hex}"></div>`}
+			: `<div class="colorBox" style="background-color: rgba(${clean(col.r)}, ${clean(col.g)}, ${clean(col.b)}, ${clean(col.opacity)}); border-color: ${hex}"></div>`}
 			<br><img src="/assets/ok.png" style="width: 14%; margin-top: 4%" class="gdButton center" onclick="$('.popup').hide()">`);
 		$('#colorInfo').show();
 	});
