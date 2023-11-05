@@ -3,6 +3,7 @@
  */
 
 import { SearchQueryLevel } from "../classes/Level";
+import { Fetch } from "../misc/global.js";
 
 $('#pageDown').hide();
 $('#pageUp').hide();
@@ -61,6 +62,7 @@ if (hostMatch && hostMatch.length > 1) { // gdps check
 	$('#gdWorld').remove();
 	$('#normalGD').remove();
 }
+const onePointNine = false;
 
 /**
  * Append results to the selection box

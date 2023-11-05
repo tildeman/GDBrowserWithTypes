@@ -2,6 +2,7 @@
  * @fileoverview Site-specific script for the demon leaderboard page.
  */
 
+import { Fetch } from "../misc/global.js";
 import { ServerInfo } from "../types";
 
 const max = 250;

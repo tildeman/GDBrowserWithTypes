@@ -195,6 +195,12 @@ These templates (written in [Pug](https://pugjs.org)) are designed to address th
 
 **A**: This project was originally written for Node.js, and the ecosystem surrounding it is more stable and reliable than that of some other JS/TS runtimes. Brand-new projects from me without Node-specific dependencies may use them, but I'll never know for sure.
 
+
+
+**Q**: Why don't you credit yourself here?
+
+**A**: It's not worth it.
+
 ## Roadmap
 
 - [ ] Complete all the TODOs (44).

@@ -4,6 +4,8 @@
 
 import { Level } from "../classes/Level.js";
 import { Player, PlayerIcon } from "../classes/Player.js";
+import { renderIcons } from "../iconkit/icon.js";
+import { Color3B, Fetch } from "../misc/global.js";
 
 interface CommentItem {
 	content: string;
@@ -25,6 +27,9 @@ interface CommentItem {
 	percent?: number;
 	browserColor?: boolean;
 }
+
+// TODO: GDPS check missing
+const gdps = "";
 
 let {mode, compact} = JSON.parse(localStorage.getItem('commentPreset') || '{"mode": "top", "compact": true}');
 let messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for posting a comment <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postComment.js">here</a>.';
@@ -366,11 +371,11 @@ function buildComments(lvl: Level | Player) {
 
 		$('#message').text("Posting comment...");
 		$('.postbutton').hide();
-		allowEsc = false;
+		// allowEsc = false;
 
 		fetch(`/api/profile/${username}`).then(res => res.json()).then(res => {
 			if (!res || res == "-1") {
-				allowEsc = true;
+				// allowEsc = true;
 				$('.postbutton').show();
 				return $('#message').text("The username you provided doesn't exist!");
 			}
@@ -383,12 +388,12 @@ function buildComments(lvl: Level | Player) {
 				$('#message').html(messageText);
 				$('#timeSort').attr('src', "/assets/sort-time-on.png");
 				$('#topSort').attr('src', "/assets/sort-likes.png");
-				allowEsc = true;
+				// allowEsc = true;
 				mode = "time";
 				page = 0;
 				appendComments();
 			}).fail(e => {
-				allowEsc = true;
+				// allowEsc = true;
 				$('.postbutton').show();
 				$('#message').text(e.responseText.includes("DOCTYPE") ? "Something went wrong..." : e.responseText);
 			});
@@ -445,11 +450,11 @@ function buildComments(lvl: Level | Player) {
 
 		$('#likeMessage').text(like ? "Liking..." : "Disliking... :(");
 		$('.postbutton').hide();
-		allowEsc = false;
+		// allowEsc = false;
 
 		fetch(`/api/profile/${username}`).then(res => res.json()).then(res => {
 			if (!res || res == "-1") {
-				allowEsc = true;
+				// allowEsc = true;
 				$('.postbutton').show();
 				return $('#likeMessage').text("The username you provided doesn't exist!");
 			}
@@ -464,11 +469,11 @@ function buildComments(lvl: Level | Player) {
 				$('#likebtn').trigger('click');
 				$('.postbutton').show();
 				$('#likeMessage').html(messageText.replace("posting", "liking").replace("postComment", "like"));
-				allowEsc = true;
+				// allowEsc = true;
 				likedComments.push(commentID);
 				localStorage.setItem('likedComments', JSON.stringify(likedComments));
 			}).fail(e => {
-				allowEsc = true;
+				// allowEsc = true;
 				$('.postbutton').show();
 				$('#likeMessage').text(e.responseText.includes("DOCTYPE") ? "Something went wrong..." : e.responseText);
 			});

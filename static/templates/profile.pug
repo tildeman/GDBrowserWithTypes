@@ -112,7 +112,7 @@ html(lang="en")
 				img.cornerPiece(src="/assets/corner.png", style={ width: "7%", transform: "scaleX(-1)" })
 
 			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
-				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
 
 			.brownBox.center.supercenter(style={ width: "135vh", height: "82%", "margin-top": "-0.7%" })
 				if player.rank
@@ -210,6 +210,6 @@ html(lang="en")
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.2/browser/pixi.js")
 		script(src="/iconkit/icon.js")
-		script(src="/global.js?v=1")
+		script(type="module", src="/global.js")
 		script(src="/dragscroll.js")
 		script(type="module", src="/page_scripts/profile.js")

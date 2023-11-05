@@ -2,6 +2,9 @@
  * @fileoverview Site-specific script for the user profile page.
  */
 
+import { renderIcons } from "../iconkit/icon.js";
+import { Fetch } from "../misc/global.js";
+
 const accountID: string = $('#dataBlock').data('accountid');
 const accountUsername: string = $('#dataBlock').data('username');
 const accountModerator: string = $('#dataBlock').data('moderator');
@@ -46,7 +49,7 @@ if (followed.includes(accountID)) {
 	$('#followOn').show();
 }
 
-$('#followOff').click(function() {
+$('#followOff').on("click", function() {
 	followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
 	followed.push(accountID);
 	localStorage.followed = JSON.stringify(followed);
@@ -54,7 +57,7 @@ $('#followOff').click(function() {
 	$('#followOn').show();
 });
 
-$('#followOn').click(function() {
+$('#followOn').on("click", function() {
 	followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
 	localStorage.followed = JSON.stringify(followed.filter(x => x != accountID));
 	$('#followOff').show();
@@ -126,26 +129,26 @@ $('#content').on('input', function() {
 	$('#charcount').text(remaining);
 });
 
-$('#submitComment').click(function () {
+$('#submitComment').on("click", function () {
 	const comment = $('#content').val();
 	const username = accountUsername;
 	const password = $('#password').val();
 	if (!comment || !password || loadingComments) return $('#leavePost').hide();
 	$('#message').text("Posting...");
 	$('.postbutton').hide();
-	allowEsc = false;
+	// allowEsc = false;
 	$.post("/postProfileComment", { comment, username, password, accountID, color: true })
 		.done(x => {
 			$('#content').val("");
 			$('#leavePost').hide();
 			$('.postbutton').show();
 			$('#message').html(messageTextA);
-			allowEsc = true;
+			// allowEsc = true;
 			profilePage = 0;
 			appendComments();
 		})
 		.fail(e => {
-			allowEsc = true;
+			// allowEsc = true;
 			$('.postbutton').show();
 			$('#message').text(e.responseText.includes("DOCTYPE") ? "Something went wrong..." : e.responseText);
 		});
@@ -156,13 +159,13 @@ let likeCount: JQuery<HTMLElement>, likeImg: JQuery<HTMLImageElement>;
 let likedComments: number[];
 let like = true;
 
-$('#likebtn').click(function() {
+$('#likebtn').on("click", function() {
 	$('#likebtn').removeClass('youAreNotTheOne');
 	$('#dislikebtn').addClass('youAreNotTheOne');
 	like = true;
 });
 
-$('#dislikebtn').click(function() {
+$('#dislikebtn').on("click", function() {
 	$('#likebtn').addClass('youAreNotTheOne');
 	$('#dislikebtn').removeClass('youAreNotTheOne');
 	like = false;
@@ -180,7 +183,7 @@ $(document).on('click', '.likeComment', function(cmnt) {
 	$('#likeComment').show();
 });
 
-$('#submitVote').click(function() {
+$('#submitVote').on("click", function() {
 	// This is how the game itself identifies voters. It's insecure.
 	if (likedComments.includes(commentID)) {
 		return $('#likeMessage').text("You've already liked/disliked this comment!");
@@ -199,11 +202,11 @@ $('#submitVote').click(function() {
 
 	$('#likeMessage').text(like ? "Liking..." : "Disliking... :(");
 	$('.postbutton').hide();
-	allowEsc = false;
+	// allowEsc = false;
 
 	Fetch(`/api/profile/${username}`).then(res => {
 		if (!res || res == "-1") {
-			allowEsc = true;
+			// allowEsc = true;
 			$('.postbutton').show();
 			return $('#likeMessage').text("The username you provided doesn't exist!");
 		}
@@ -219,12 +222,12 @@ $('#submitVote').click(function() {
 				$('#likebtn').trigger('click');
 				$('.postbutton').show();
 				$('#likeMessage').html(messageTextA.replace("profile posts", "liking posts").replace("postProfileComment", "like"));
-				allowEsc = true;
+				// allowEsc = true;
 				likedComments.push(commentID);
 				localStorage.setItem('likedComments', JSON.stringify(likedComments));
 			})
 			.fail(e => {
-				allowEsc = true;
+				// allowEsc = true;
 				$('.postbutton').show();
 				$('#likeMessage').text(e.responseText.includes("DOCTYPE") ? "Something went wrong..." : e.responseText);
 			});
@@ -232,7 +235,7 @@ $('#submitVote').click(function() {
 });
 
 let compactMode = false;
-$('#compactMode').click(function() {
+$('#compactMode').on("click", function() {
 	compactMode = !compactMode;
 	if (compactMode) {
 		$('.profilePostHide').hide();

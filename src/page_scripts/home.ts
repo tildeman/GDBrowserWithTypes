@@ -2,6 +2,9 @@
  * @fileoverview Site-specific script for the home page.
  */
 
+import { renderIcons } from "../iconkit/icon.js";
+import { Fetch } from "../misc/global.js";
+
 let page = 1;
 $('#browserlogo').css('filter', `hue-rotate(${Math.floor(Math.random() * (330 - 60)) + 60}deg) saturate(${Math.floor(Math.random() * (150 - 100)) + 100}%)`);
 

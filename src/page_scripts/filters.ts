@@ -2,11 +2,17 @@
  * @fileoverview Site-specific script for the search page.
  */
 
+import { Fetch } from "../misc/global.js";
+
 let filters: string[] = [];
 let demons = [];
 let demonMode = false;
 let customSong = true;
 let officialSong = 1;
+
+// TODO: Use a better check for GDPSes.
+const gdps = false;
+const onePointNine = false;
 
 /**
  * Remove duplicate entries in an array.
@@ -19,12 +25,12 @@ function undupe<T>(array: T[]) {
 }
 
 // TODO: Remove this deprecated usage
-$('#userSearch').click(function() {
+$('#userSearch').on("click", function() {
 	const query = encodeURIComponent(($('#levelName').val() || "").toString()).replace(/%2F/gi, "");
 	if (query) window.location.href = "./u/" + query;
 });
 
-$('.levelSearch').click(function() {
+$('.levelSearch').on("click", function() {
 	let url = "/search/" + (encodeURIComponent(($('#levelName').val() || "").toString()) || "*") + "?type=" + $(this).attr('search');
 	if ($(this).attr('search') == "featured") return window.location.href = url;
 
@@ -99,7 +105,7 @@ function hideDemonDiffs() {
 	demonMode = false;
 }
 
-$('.diffDiv').click(function() {
+$('.diffDiv').on("click", function() {
 	if ($(this).hasClass('goBack')) {
 		$('#demonBtn').removeClass('selectedFilter');
 		$('.demonDiff').removeClass('selectedFilter');
@@ -125,14 +131,14 @@ $('.diffDiv').click(function() {
 	if ($(this).attr('diff') == "-2") showDemonDiffs();
 });
 
-$('.lengthDiv').click(function() {
+$('.lengthDiv').on("click", function() {
 	$(this).toggleClass('selectedFilter');
 	savedFilters.len = $('.lengthDiv.selectedFilter').map(function() { return $(this).attr('len') }).toArray();
 	savedFilters.starred = $('#starCheck').hasClass('selectedFilter');
 	if (!savedFilters.starred) delete savedFilters.starred;
 });
 
-$(document).keydown(function(k) {
+$(document).on("keydown", function(k) {
 	let searchFocus = $(':focus-visible').length == 1 && $(':focus-visible').first().attr('id') == "levelName";
 	if ((!$(':focus-visible').length || searchFocus) && k.which == 13) { // enter
 		if (!$('#customlist').is(':hidden')) k.preventDefault();
@@ -181,7 +187,7 @@ $(document).on('change', 'input[url]', function () {
 	checkExtraFilters();
 });
 
-$('#normalSong').click(function() {
+$('#normalSong').on("click", function() {
 	customSong = false;
 	savedFilters.defaultSong = true;
 	savedFilters.song = officialSong;
@@ -192,7 +198,7 @@ $('#normalSong').click(function() {
 	checkExtraFilters();
 });
 
-$('#customSong').click(function() {
+$('#customSong').on("click", function() {
 	customSong = true;
 	delete savedFilters.defaultSong;
 	savedFilters.song = Number(($('#songID').val() || "").toString().slice(0, 16)) || 0;
@@ -223,7 +229,7 @@ function clearFilters() {
 	$('input[url]').prop('checked', false);
 	$('#songID').val("");
 	$('#levelName').val("");
-	$('#customSong').click();
+	$('#customSong').trigger("click");
 	hideDemonDiffs();
 	officialSong = 1;
 	savedFilters = { diff: [], len: [], checked: [] };
@@ -291,7 +297,7 @@ Fetch(`/api/music`).then((music: any) => {
 		$('.songChange').trigger('click');
 	}
 
-	$(document).keydown(function(k) {
+	$(document).on("keydown", function(k) {
 		if (customSong) return;
 		if (k.which == 37) $('#songDown').trigger('click'); // left
 		if (k.which == 39) $('#songUp').trigger('click');   // right

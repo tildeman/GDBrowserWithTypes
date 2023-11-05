@@ -2,7 +2,11 @@
  * @fileoverview Site-specific script for the private server listing page.
  */
 
+import { Fetch } from "../misc/global.js";
 import { ServerInfo } from "../types";
+
+// TODO: Use a better check for GDPS servers
+const gdps = "";
 
 let pageSize = 20;
 let page = 1;
@@ -47,17 +51,17 @@ Fetch('/api/gdps').then((servers: ServerInfo[]) => {
 
 	listServers();
 
-	$('#pageUp').click(function() {
+	$('#pageUp').on("click", function() {
 		page++;
 		listServers();
 	});
-	$('#pageDown').click(function() {
+	$('#pageDown').on("click", function() {
 		page--;
 		listServers();
 	});
 	$('#loading').hide();
 
-	$(document).keydown(function(k) {
+	$(document).on("keydown", function(k) {
 		if (k.which == 37 && $('#pageDown').is(":visible")) $('#pageDown').trigger('click');   // left
 		if (k.which == 39 && $('#pageUp').is(":visible")) $('#pageUp').trigger('click');       // right
 	});

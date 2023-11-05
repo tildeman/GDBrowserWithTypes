@@ -1,12 +1,197 @@
-/// <reference path="pixi_minimal_headers.d.ts"/>
+/**
+ * @fileoverview Handle icons & renderings
+ */
 
-declare const agPsd: any; // TODO: add proper typedefs
-declare const Ease: any;
+import { Color3B, Fetch } from "../misc/global.js";
+import { PIXI, agPsd, Ease } from "../vendor/index.js";
+
+
+/**
+ * For robots and spiders, this determines the position of the icon parts
+ */
+interface PartForSpecialIcons {
+	part: number;
+	pos: number[];
+	scale: number[];
+	rotation: number;
+	flipped: boolean[];
+	z: number;
+	name?: string;
+}
+
+
+interface ExtraSettings {
+	new?: boolean;
+	noDome?: boolean;
+	ignoreGlow?: boolean;
+}
+
+export interface AnimationObject {
+	/**
+	 * Information about the animation.
+	 */
+	info: {
+		/**
+		 * How long the animation should last.
+		 */
+		duration: number;
+		/**
+		 * If the animation ends, should it replay from the beginning?
+		 */
+		loop?: boolean;
+	};
+	/**
+	 * The frame data for the animation.
+	 */
+	frames: PartForSpecialIcons[][];
+}
+
+interface IconColor {
+	/**
+	 * Primary color.
+	 */
+	1: number;
+	/**
+	 * Secondary color.
+	 */
+	2: number;
+	/**
+	 * Glow outline.
+	 */
+	g: number;
+	/**
+	 * Values that (should be) always white.
+	 */
+	w: number;
+	/**
+	 * UFO dome color.
+	 */
+	u: number;
+}
+
+interface IconPartSection {
+	glow?: IconLayer;
+	ufo?: IconLayer;
+	col1?: IconLayer;
+	col2?: IconLayer;
+	white?: IconLayer
+}
+
+/**
+ * Data for all the icons and their properties.
+ */
+export interface IconData {
+	/**
+	 * The (internal) form names of each icon.
+	 */
+	forms: Record<string, {
+		/**
+		 * The index of the form.
+		 * Either -1 or more than 20.
+		 */
+		index: number;
+		/**
+		 * The internal name of the form (dart).
+		 */
+		form: string;
+		/**
+		 * The user-visible name of the form (wave).
+		 */
+		name: string;
+		/**
+		 * Whether this form contains extra animations.
+		 */
+		spicy?: boolean;
+	}>;
+	/**
+	 * Animations for "spicy" forms.
+	 */
+	robotAnimations: {
+		/**
+		 * Information about each part of the animation.
+		 */
+		info: Record<string, {
+			/**
+			 * The name of the part.
+			 */
+			names: string[];
+			/**
+			 * A tint value.
+			 * Its use is unknown.
+			 */
+			tints: Record<string, number>;
+		}>;
+		/**
+		 * The actual keyframes that define the animation.
+		 */
+		animations: Record<string, Record<string, AnimationObject>>;
+	};
+	/**
+	 * A list of colors in RGB format.
+	 */
+	colors: Record<string, Color3B>;
+	/**
+	 * The number of icons for each gamemode.
+	 */
+	iconCounts?: Record<string, number>;
+	/**
+	 * The number of 2.2 icons for each gamemode.
+	 * The trailer says around 800.
+	 */
+	newIconCounts: Record<string, number>;
+	/**
+	 * The position of icon parts in the game sheet.
+	 */
+	gameSheet: Record<string, {
+		/**
+		 * The offset x and y values for the icon part.
+		 */
+		spriteOffset: number[];
+		/**
+		 * The size of the icon part.
+		 */
+		spriteSize: number[];
+	}>;
+	/**
+	 * A list of all the new icons.
+	 */
+	newIcons: string[];
+}
+
+export interface IconConfiguration {
+	id: number;
+	form: string;
+	col1: number;
+	col2: number;
+	colG?: number;
+	colW?: number;
+	colU?: number;
+	colg?: number;
+	colw?: number;
+	colu?: number;
+	glow: boolean;
+	app: PIXI.Application | null;
+	new?: boolean;
+	noUFODome?: boolean;
+	animationSpeed?: number;
+	animation?: string;
+	animationForm?: string;
+}
+
+export const iconData: IconData = await Fetch("/api/icons");
+let iconCanvas: HTMLCanvasElement = document.createElement('canvas');
+let iconRenderer: PIXI.Application | null = null;
+let overrideLoader = false;
+let renderedIcons: Record<string, {
+	name: string,
+	data: string
+}> = {};
 
 /**
  * The color value for white.
  */
 const WHITE = 0xffffff;
+
 /**
  * The color names, used in annotation.
  */
@@ -26,10 +211,9 @@ const formNames = {
 	bird: "ufo",
 	dart: "wave"
 };
-// TODO: use a better typedef
-const loader: any = PIXI.Loader.shared;
 
-const loadedNewIcons = {};
+const loadedNewIcons: Record<string, PIXI.Texture> = {};
+let loadedOldIcons: Record<string, PIXI.Texture> = {};
 
 let positionMultiplier = 4;
 
@@ -42,7 +226,7 @@ let positionMultiplier = 4;
  * @param isNew Whether the icon is in 2.2.
  * @param isGlow Whether glow is enabled.
  */
-function positionPart(part: PartForSpecialIcons, partIndex: number, layer, formName: string, isNew: boolean, isGlow?: boolean) {
+function positionPart(part: PartForSpecialIcons, partIndex: number, layer: PIXI.Container, formName: string, isNew: boolean, isGlow?: boolean) {
 	layer.position.x += (part.pos[0] * positionMultiplier * (isNew ? 0.5 : 1));
 	layer.position.y -= (part.pos[1] * positionMultiplier * (isNew ? 0.5 : 1));
 	layer.scale.x = part.scale[0];
@@ -53,11 +237,11 @@ function positionPart(part: PartForSpecialIcons, partIndex: number, layer, formN
 	layer.zIndex = part.z;
 
 	if (!isGlow) {
-		let tintInfo = iconData!.robotAnimations.info[formName].tints;
-		let foundTint = tintInfo[partIndex];
+		const tintInfo = iconData!.robotAnimations.info[formName].tints;
+		const foundTint = tintInfo[partIndex];
 		if (foundTint > 0) {
 			// TODO: fix this deprecated usage
-			let darkenFilter = new PIXI.filters.ColorMatrixFilter();
+			const darkenFilter = new PIXI.ColorMatrixFilter();
 			darkenFilter.brightness(0, false);
 			darkenFilter.alpha = (255 - foundTint) / 255;
 			layer.filters = [darkenFilter];
@@ -72,7 +256,7 @@ function positionPart(part: PartForSpecialIcons, partIndex: number, layer, formN
  * @returns The value cast to a number, or the fallback if not possible.
  */
 function validNum(val: any, defaultVal: number | null) {
-	let colVal = +val;
+	const colVal = +val;
 	return (isNaN(colVal) ? defaultVal : colVal) || 0;
 }
 
@@ -104,10 +288,10 @@ function validateIconID(id: number, form: string) {
  * @param col The color as a string or a number.
  * @returns The converted color in number format.
  */
-function parseIconColor(col: string | number | null) {
+export function parseIconColor(col: string | number | null) {
 	if (!col) return WHITE;
 	else if (typeof col == "string" && col.length >= 6) return parseInt(col, 16);
-	let rgb = iconData?.colors[col];
+	const rgb = iconData?.colors[col];
 	return rgb ? rgbToDecimal(rgb) : WHITE;
 }
 
@@ -116,7 +300,7 @@ function parseIconColor(col: string | number | null) {
  * @param form The form to be parsed.
  * The detected form, or `player` if none is found.
  */
-function parseIconForm(form: string) {
+export function parseIconForm(form: string) {
 	let foundForm = iconData?.forms[form];
 	return foundForm ? foundForm.form : "player";
 }
@@ -128,46 +312,44 @@ function parseIconForm(form: string) {
  * @param cb The callback once the icons are loaded.
  * @returns The return value of the callback.
  */
-function loadIconLayers(form: string, id: number, cb: (...arguments: any) => any) {
-	let iconStr = `${form}_${padZero(validateIconID(id, form))}`;
-	let texturesToLoad = Object.keys(iconData?.gameSheet || {}).filter(x => x.startsWith(iconStr + "_"));
+export async function loadIconLayers(form: string, id: number): Promise<boolean> {
+	const iconStr = `${form}_${padZero(validateIconID(id, form))}`;
+	const pendingTexturesToLoad = Object.keys(iconData?.gameSheet || {}).filter(x => x.startsWith(iconStr + "_"));
 
-	if (loadedNewIcons[texturesToLoad[0]]) return cb(loader, loader.resources, true);
+	if (loadedNewIcons[pendingTexturesToLoad[0]]) return true;
 
-	else if (!texturesToLoad.length) {
-		if (iconData?.newIcons.includes(iconStr)) return loadNewIcon(iconStr, cb);
+	else if (!pendingTexturesToLoad.length) {
+		if (iconData?.newIcons.includes(iconStr)) return await loadNewIcon(iconStr);
 	}
 
-	loader.add(texturesToLoad.filter(x => !loader.resources[x]).map(x => ({ name: x, url: `/iconkit/icons/${x}` })));
-	loader.load(cb); // no params
+	const texturesToLoad = pendingTexturesToLoad.map(x => ({ alias: x, src: `/iconkit/icons/${x}` }));
+	loadedOldIcons = await PIXI.Assets.load(texturesToLoad);
+	return true;
 }
 
 // 2.2 icon spritesheets
 /**
- * Load 2.2 icons.
+ * Load 2.2 icon spritesheets.
  * @param iconStr The icon name to load.
  * @param cb The callback once the icons are loaded.
  * @returns This function does not return.
  */
-function loadNewIcon(iconStr: string, cb: (...arguments: any) => any) {
-	fetch(`/iconkit/newicons/${iconStr}-hd.plist`).then(pl => pl.text()).then(plist => {
-		let data = parseNewPlist(plist);
-		let sheetName = iconStr + "-sheet";
-		loader.add({ name: sheetName, url: `/iconkit/newicons/${iconStr}-hd.png` });
-		loader.load((l, resources) => {
-			let texture = resources[sheetName].texture;
-			Object.keys(data).forEach(x => {
-				let bounds = data[x];
-				let textureRect = new PIXI.Rectangle(bounds.pos[0], bounds.pos[1], bounds.size[0], bounds.size[1]);
-				let partTexture = new PIXI.Texture(texture, textureRect);
-				loadedNewIcons[x] = partTexture;
-			});
-			cb(l, resources, true);
-		});
+async function loadNewIcon(iconStr: string): Promise<boolean> {
+	const rawIconPlist = await fetch(`/iconkit/newicons/${iconStr}-hd.plist`);
+	const plist = await rawIconPlist.text()
+	const data = parseNewPlist(plist);
+	const sheetName = iconStr + "-sheet";
+	const texture = await PIXI.Assets.load({ alias: sheetName, src: `/iconkit/newicons/${iconStr}-hd.png` });
+	Object.keys(data).forEach(x => {
+		const bounds = data[x];
+		const textureRect = new PIXI.Rectangle(bounds.pos[0], bounds.pos[1], bounds.size[0], bounds.size[1]);
+		const partTexture = new PIXI.Texture(texture, textureRect);
+		loadedNewIcons[x] = partTexture;
 	});
+	return true;
 }
 
-let dom_parser = new DOMParser();
+const dom_parser = new DOMParser();
 
 /**
  * Parse a specialized property list
@@ -175,12 +357,12 @@ let dom_parser = new DOMParser();
  * @returns The position data of the property list
  */
 function parseNewPlist(data: string) {
-	let plist = dom_parser.parseFromString(data, "text/xml");
-	let iconFrames = plist.children[0].children[0].children[1].children;
-	let positionData = {};
+	const plist = dom_parser.parseFromString(data, "text/xml");
+	const iconFrames = plist.children[0].children[0].children[1].children;
+	const positionData = {};
 	for (let i = 0; i < iconFrames.length; i += 2) {
-		let frameName = iconFrames[i].innerHTML;
-		let frameData = iconFrames[i + 1].children;
+		const frameName = iconFrames[i].innerHTML;
+		const frameData = iconFrames[i + 1].children;
 		let isRotated = false;
 		iconData!.gameSheet[frameName] = {
 			spriteOffset: [0, 0],
@@ -189,8 +371,8 @@ function parseNewPlist(data: string) {
 		positionData[frameName] = {};
 
 		for (let n = 0; n < frameData.length; n += 2) {
-			let keyName = frameData[n].innerHTML;
-			let keyData = frameData[n + 1].innerHTML
+			const keyName = frameData[n].innerHTML;
+			const keyData = frameData[n + 1].innerHTML
 			if (["spriteOffset", "spriteSize", "spriteSourceSize"].includes(keyName)) {
 				iconData!.gameSheet[frameName][keyName] = parseWeirdArray(keyData);
 			}
@@ -201,7 +383,7 @@ function parseNewPlist(data: string) {
 			}
 
 			else if (keyName == "textureRect") {
-				let textureArr = keyData.slice(1, -1).split("},{").map(x => parseWeirdArray(x));
+				const textureArr = keyData.slice(1, -1).split("},{").map(x => parseWeirdArray(x));
 				positionData[frameName].pos = textureArr[0];
 				positionData[frameName].size = textureArr[1];
 			}
@@ -237,14 +419,89 @@ function padZero(num: number) {
  * @param rgb An object containing red, green and blue.
  * @returns The RGB value as a number instead.
  */
-function rgbToDecimal(rgb: Color3B): number {
+export function rgbToDecimal(rgb: Color3B): number {
 	return (rgb.r << 16) + (rgb.g << 8) + rgb.b;
+}
+
+// very shitty code :) i suck at this stuff
+
+/**
+ * Render the selected icon.
+ * @returns A promise that resolves to void.
+ */
+export function renderIcons() {
+	// if (overrideLoader) return;
+	const iconsToRender = $('gdicon:not([rendered], [dontload])');
+	if (iconsToRender.length < 1) return; // There are no icons to render
+	if (!iconRenderer) iconRenderer = new PIXI.Application({
+		view: iconCanvas,
+		width: 300,
+		height: 300,
+		backgroundAlpha: 0
+	});
+	// if (loader.loading) return overrideLoader = true;
+	buildIcon(iconsToRender, 0);
+}
+
+/**
+ * Auxiliary function to render icons in a page.
+ * @param elements The list of GDIcon elements.
+ * @param current The current index of the element.
+ */
+async function buildIcon(elements: JQuery<HTMLElement>, current: number) {
+	if (current >= elements.length) return;
+	const currentIcon = elements.eq(current);
+
+	const cacheID = currentIcon.attr('cacheID');
+	const foundCache = renderedIcons[cacheID || ""];
+	if (foundCache) {
+		finishIcon(currentIcon, foundCache.name, foundCache.data);
+		return buildIcon(elements, current + 1);
+	}
+
+	const iconConfig: IconConfiguration = {
+		id: +(currentIcon.attr('iconID') || "0"),
+		form: parseIconForm(currentIcon.attr('iconForm') || ""),
+		col1: parseIconColor(currentIcon.attr('col1') || ""),
+		col2: parseIconColor(currentIcon.attr('col2') || ""),
+		glow: currentIcon.attr('glow') == "true",
+		app: iconRenderer
+	};
+
+	const c = await loadIconLayers(iconConfig.form, iconConfig.id);
+	if (c) iconConfig.new = true;
+	new Icon(iconConfig, function(icon: Icon) {
+		if (!iconData) {
+			return;
+		}
+		let dataURL = icon.toDataURL();
+		let titleStr = `${Object.values(iconData.forms).find(formItem => formItem.form == icon.form)?.name} ${icon.id}`;
+		if (cacheID) renderedIcons[cacheID] = {name: titleStr, data: dataURL};
+		finishIcon(currentIcon, titleStr, dataURL);
+		// if (overrideLoader) {
+		// 	overrideLoader = false;
+		//  renderIcons();
+		// }
+		/* else */
+		buildIcon(elements, current + 1);
+	});
+}
+
+/**
+ * Finish the icon render.
+ * @param currentIcon The icon to be displayed.
+ * @param name The name of the icon.
+ * @param data The icon image in Base64 format.
+ */
+function finishIcon(currentIcon, name, data) {
+	currentIcon.append(`<img title="${name}" style="${currentIcon.attr("imgStyle") || ""}" src="${data}">`)
+	currentIcon.attr("rendered", "true")
 }
 
 /**
  * Class for an icon in render.
  */
-class Icon {
+export class Icon {
 	app: any;
 	sprite: any;
 	form: string;
@@ -319,7 +576,7 @@ class Icon {
 			let fullGlow = new PIXI.Container();
 			this.glowLayers.forEach(x => fullGlow.addChild(x.sprite));
 			this.sprite.addChildAt(fullGlow, 0);
-			if (typeof Ease !== "undefined") this.ease = new Ease.Ease();
+			if (typeof Ease !== "undefined") this.ease = new Ease.Ease({});
 			this.animationSpeed = Math.abs(Number(data.animationSpeed) || 1);
 			if (data.animation) this.setAnimation(data.animation, data.animationForm || "");
 		}
@@ -632,9 +889,9 @@ class IconPart {
 	constructor(form: string, id: number, colors: IconColor, glow: boolean, misc: Record<string, any> = {}) {
 		if (colors["1"] == 0 && !misc.skipGlow) glow = true; // add glow if p1 is black
 
-		let iconPath = `${form}_${padZero(id)}`;
-		let partString = misc.part ? "_" + padZero(misc.part.part) : "";
-		let sections: IconPartSection = {};
+		const iconPath = `${form}_${padZero(id)}`;
+		const partString = misc.part ? "_" + padZero(misc.part.part) : "";
+		const sections: IconPartSection = {};
 		if (misc.part) this.part = misc.part;
 
 		this.sprite = new PIXI.Container();
@@ -661,7 +918,7 @@ class IconPart {
 		}
 
 		// TODO: use a more rigorous method instead of casting
-		let layerOrder = ["glow", "ufo", "col2", "col1", "white"].map((x: "glow" | "ufo" | "col1" | "col2" | "white") => sections[x]).filter(x => x) as IconLayer[];
+		const layerOrder = ["glow", "ufo", "col2", "col1", "white"].map((x: "glow" | "ufo" | "col1" | "col2" | "white") => sections[x]).filter(x => x) as IconLayer[];
 		layerOrder.forEach(x => {
 			this.sections.push(x);
 			this.sprite.addChild(x.sprite);
@@ -681,16 +938,15 @@ class IconLayer {
 	color: any;
 
 	/**
-	 *
 	 * @param path The path of the icon layer.
 	 * @param color The color of the icon layer, as a string or a number.
 	 * @param colorType The color type of the icon layer.
 	 * @param isNew If the icon is released in 2.2.
 	 */
 	constructor(path: string, color: string | number, colorType: string, isNew: boolean) {
-		let loadedTexture = isNew ? loadedNewIcons[path] : loader.resources[path];
+		const loadedTexture = isNew ? loadedNewIcons[path] : loadedOldIcons[path];
 		this.offsets = iconData?.gameSheet[path] || { spriteOffset: [0, 0] };
-		this.sprite = new PIXI.Sprite(loadedTexture ? isNew ? loadedTexture : loadedTexture.texture : PIXI.Texture.EMPTY);
+		this.sprite = new PIXI.Sprite(loadedTexture || PIXI.Texture.EMPTY);
 
 		this.colorType = colorType;
 		this.colorName = colorNames[colorType];

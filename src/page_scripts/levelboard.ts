@@ -2,6 +2,9 @@
  * @fileoverview Site-specific script for the level leaderboard page.
  */
 
+import { renderIcons } from "../iconkit/icon.js";
+import { isInViewport } from "../misc/global.js";
+
 let loading = false;
 const lvlID = Math.round(+window.location.pathname.split('/')[2]);
 

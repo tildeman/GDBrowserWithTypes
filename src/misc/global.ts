@@ -1,213 +1,10 @@
-type Color3B = {
-	r: number,
-	g: number,
-	b: number
+export type Color3B = {
+	r: number;
+	g: number;
+	b: number;
 }
 
-interface IconColor {
-	/**
-	 * Primary color.
-	 */
-    1: number;
-	/**
-	 * Secondary color.
-	 */
-    2: number;
-	/**
-	 * Glow outline.
-	 */
-    g: number;
-	/**
-	 * Values that (should be) always white.
-	 */
-    w: number;
-	/**
-	 * UFO dome color.
-	 */
-    u: number;
-}
-
-interface IconPartSection {
-	glow?: IconLayer;
-	ufo?: IconLayer;
-	col1?: IconLayer;
-	col2?: IconLayer;
-	white?: IconLayer
-}
-
-interface IconConfiguration {
-	id: number;
-	form: string;
-	col1: number;
-	col2: number;
-	colG?: number;
-	colW?: number;
-	colU?: number;
-	colg?: number;
-	colw?: number;
-	colu?: number;
-	glow: boolean;
-	app: PIXI.Application | null;
-	new?: boolean;
-	noUFODome?: boolean;
-	animationSpeed?: number;
-	animation?: string;
-	animationForm?: string;
-}
-
-/**
- * For robots and spiders, this determines the position of the icon parts
- */
-interface PartForSpecialIcons {
-	part: number;
-	pos: number[];
-	scale: number[];
-	rotation: number;
-	flipped: boolean[];
-	z: number;
-	name?: string;
-}
-
-interface ExtraSettings {
-	new?: boolean;
-	noDome?: boolean;
-	ignoreGlow?: boolean;
-}
-
-interface AnimationObject {
-	/**
-	 * Information about the animation.
-	 */
-	info: {
-		/**
-		 * How long the animation should last.
-		 */
-		duration: number;
-		/**
-		 * If the animation ends, should it replay from the beginning?
-		 */
-		loop?: boolean;
-	};
-	/**
-	 * The frame data for the animation.
-	 */
-	frames: PartForSpecialIcons[][];
-}
-
-/**
- * Data for all the icons and their properties.
- */
-interface IconData {
-	/**
-	 * The (internal) form names of each icon.
-	 */
-	forms: Record<string, {
-		/**
-		 * The index of the form.
-		 * Either -1 or more than 20.
-		 */
-		index: number;
-		/**
-		 * The internal name of the form (dart).
-		 */
-		form: string;
-		/**
-		 * The user-visible name of the form (wave).
-		 */
-		name: string;
-		/**
-		 * Whether this form contains extra animations.
-		 */
-		spicy?: boolean;
-	}>;
-	/**
-	 * Animations for "spicy" forms.
-	 */
-	robotAnimations: {
-		/**
-		 * Information about each part of the animation.
-		 */
-		info: Record<string, {
-			/**
-			 * The name of the part.
-			 */
-			names: string[];
-			/**
-			 * A tint value.
-			 * Its use is unknown.
-			 */
-			tints: Record<string, number>;
-		}>;
-		/**
-		 * The actual keyframes that define the animation.
-		 */
-		animations: Record<string, Record<string, AnimationObject>>;
-	};
-	/**
-	 * A list of colors in RGB format.
-	 */
-	colors: Record<string, Color3B>;
-	/**
-	 * The number of icons for each gamemode.
-	 */
-	iconCounts?: Record<string, number>;
-	/**
-	 * The number of 2.2 icons for each gamemode.
-	 * The trailer says around 800.
-	 */
-	newIconCounts: Record<string, number>;
-	/**
-	 * The position of icon parts in the game sheet.
-	 */
-	gameSheet: Record<string, {
-		/**
-		 * The offset x and y values for the icon part.
-		 */
-		spriteOffset: number[];
-		/**
-		 * The size of the icon part.
-		 */
-		spriteSize: number[];
-	}>;
-	/**
-	 * A list of all the new icons.
-	 */
-	newIcons: string[];
-}
-
-interface ExtraData {
-	colorOrder: number[];
-	hardcodedUnlocks: {
-		form: string;
-		id: number;
-		type?: string;
-		keys?: number;
-		chests?: number;
-		unlock?: string;
-		gauntlet?: string;
-	}[];
-	iconCredits: {
-		name: string;
-		form: string;
-		id: number;
-	}[];
-	shops: {
-		icon: number;
-		type: string;
-		price: number;
-		shop: number;
-	}[];
-	previewIcons: string[];
-	newPreviewIcons: string[];
-}
-
-interface IconKitAPIResponse extends ExtraData {
-	sample: string[];
-	server?: string;
-	noCopy?: boolean;
-}
-
-interface AchievementItem {
+export interface AchievementItem {
 	id: string;
 	game: string;
 	name: string;
@@ -218,7 +15,7 @@ interface AchievementItem {
 	trueID: string;
 }
 
-interface AchievementAPIResponse {
+export interface AchievementAPIResponse {
 	achievements: AchievementItem[];
 	types: Record<string, [string, string[]]>;
 	colors: Record<number, Color3B>;
@@ -236,7 +33,7 @@ $('body').append(`
 `);
 
 // TODO: fix this deprecated usage
-$(window).resize(function () {
+$(window).on("resize", function () {
 	if (window.innerHeight > window.innerWidth - 75) {
 		$('#everything').hide();
 		$('#tooSmall').show();
@@ -277,7 +74,7 @@ let onePointNine = false;
  * @param link The URL to fetch data from.
  * @returns The JSON data.
  */
-async function Fetch(link: RequestInfo | URL) {
+export async function Fetch(link: RequestInfo | URL) {
 	const resp = await fetch(link);
 	if (!resp.ok) throw Error("Malformed response");
 	gdps = resp.headers.get('gdps');
@@ -294,7 +91,7 @@ let allowEsc = true;
 let popupEsc = true;
 
 // TODO: fix this deprecated usage
-$(document).keydown(function(k) {
+$(document).on("keydown", function(k) {
 	if (k.keyCode == 27) { //esc
 		if (!allowEsc) return
 		k.preventDefault()
@@ -303,105 +100,9 @@ $(document).keydown(function(k) {
 	}
 });
 
-let iconData: null | IconData = null;
-let iconCanvas: HTMLCanvasElement | null = null;
-let iconRenderer: PIXI.Application | null = null;
-let overrideLoader = false;
-let renderedIcons: {
-	[cacheID: string]: {
-		name: string,
-		data: string
-	}
-} = {};
-
-// very shitty code :) i suck at this stuff
-
-/**
- * Render the selected icon.
- * @returns A promise that resolves to void.
- */
-async function renderIcons() {
-	if (overrideLoader) return;
-	const iconsToRender = $('gdicon:not([rendered], [dontload])');
-	if (iconsToRender.length < 1) return;
-	if (!iconData) iconData = await Fetch("/api/icons");
-	if (!iconCanvas) iconCanvas = document.createElement('canvas');
-	if (!iconRenderer) iconRenderer = new PIXI.Application({ view: iconCanvas, width: 300, height: 300, backgroundAlpha: 0});
-	if (loader.loading) return overrideLoader = true;
-	buildIcon(iconsToRender, 0);
-}
-
-/**
- * Auxiliary function to render icons in a page.
- * @param elements The list of GDIcon elements.
- * @param current The current index of the element.
- */
-function buildIcon(elements: JQuery<HTMLElement>, current: number) {
-	if (current >= elements.length) return;
-	const currentIcon = elements.eq(current);
-
-	const cacheID = currentIcon.attr('cacheID');
-	const foundCache = renderedIcons[cacheID || ""];
-	if (foundCache) {
-		finishIcon(currentIcon, foundCache.name, foundCache.data);
-		return buildIcon(elements, current + 1);
-	}
-
-	const iconConfig: IconConfiguration = {
-		id: +(currentIcon.attr('iconID') || "0"),
-		form: parseIconForm(currentIcon.attr('iconForm') || ""),
-		col1: parseIconColor(currentIcon.attr('col1') || ""),
-		col2: parseIconColor(currentIcon.attr('col2') || ""),
-		glow: currentIcon.attr('glow') == "true",
-		app: iconRenderer
-	};
-
-	loadIconLayers(iconConfig.form, iconConfig.id, function(a: unknown, b: unknown, c: boolean) {
-		if (c) iconConfig.new = true;
-		if (!iconData) {
-			iconData = {
-				forms: {},
-				robotAnimations: {
-					info: {},
-					animations: {}
-				},
-				colors: {},
-				newIconCounts: {},
-				gameSheet: {},
-				newIcons: []
-			};
-		}
-		new Icon(iconConfig, function(icon: Icon) {
-			if (!iconData) {
-				return;
-			}
-			let dataURL = icon.toDataURL();
-			let titleStr = `${Object.values(iconData.forms).find(formItem => formItem.form == icon.form)?.name} ${icon.id}`;
-			if (cacheID) renderedIcons[cacheID] = {name: titleStr, data: dataURL};
-			finishIcon(currentIcon, titleStr, dataURL);
-			if (overrideLoader) {
-				overrideLoader = false;
-				renderIcons();
-			}
-			else buildIcon(elements, current + 1);
-		});
-	});
-}
-
-/**
- * Finish the icon render.
- * @param currentIcon The icon to be displayed.
- * @param name The name of the icon.
- * @param data The icon image in Base64 format.
- */
-function finishIcon(currentIcon, name, data) {
-	currentIcon.append(`<img title="${name}" style="${currentIcon.attr("imgStyle") || ""}" src="${data}">`)
-	currentIcon.attr("rendered", "true")
-}
-
 // reset scroll
-while ($(this).scrollTop() != 0) {
-	$(this).scrollTop(0);
+while ($(window).scrollTop() != 0) {
+	$(window).scrollTop(0);
 }
 
 // TODO: fix this deprecated usage
@@ -436,11 +137,10 @@ window.addEventListener("keydown", e => {
  * @param that The jQuery selection.
  * @returns A boolean indicating the visibility of the element in the viewport.
  */
-function isInViewport(that: JQuery<HTMLElement>) {
+export function isInViewport(that: JQuery<HTMLElement>) {
 	let elementTop = $(that).offset()?.top || 0;
 	let elementBottom = (elementTop || 0) + ($(that).outerHeight() || 0);
 	let viewportTop = $(window).scrollTop() || 0;
 	let viewportBottom = viewportTop + ($(window).height() || 0);
 	return elementBottom > viewportTop && elementTop < viewportBottom;
 };
-

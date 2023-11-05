@@ -2,6 +2,8 @@
  * @fileoverview Site-specific script for the level analysis page.
  */
 
+import { Color3B } from "../misc/global.js";
+
 interface CopiedHSV {
 	h: number | string;
 	s: number | string;
@@ -110,7 +112,7 @@ fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (Ana
 				$('#errorMessage').html("This level's data could not be obtained because <ca>RobTop</ca> has disabled <cg>level downloading</cg>.");
 				break;
 		}
-		popupEsc = false;
+		// popupEsc = false;
 		$('#analyzeError').show();
 		return $('#loadingDiv').hide();
 	}

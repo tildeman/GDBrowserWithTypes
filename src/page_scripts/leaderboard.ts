@@ -2,7 +2,9 @@
  * @fileoverview Site-specific script for the leaderboard page.
  */
 
-import { Player } from "../classes/Player";
+import { Player } from "../classes/Player.js";
+import { renderIcons } from "../iconkit/icon.js";
+import { Fetch, isInViewport } from "../misc/global.js";
 
 /**
  * Weekly progress data (for 1.9 servers that use the weekly leaderboard).
@@ -21,6 +23,10 @@ interface CosmeticsData {
 	bgColor: number[];
 	nameColor: number[];
 }
+
+// TODO: Check for GDPS during preprocessing
+let onePointNine = false;
+let gdps = false;
 
 let type: string;
 let sort = "stars";
@@ -211,7 +217,7 @@ $(document).on('click', '.sortButton', function () {
 	return leaderboard("accurate");
 });
 
-$('#topTabOff').click(function() {
+$('#topTabOff').on("click", function() {
 	if (type == "top") return;
 	type = "top";
 	leaderboard(type);
@@ -224,7 +230,7 @@ $('#topTabOff').click(function() {
 	$('#relativeUser').show();
 });
 
-$('#accurateTabOff').click(function() {
+$('#accurateTabOff').on("click", function() {
 	if (type == "accurate") return;
 	type = "accurate";
 	leaderboard(type);
@@ -237,7 +243,7 @@ $('#accurateTabOff').click(function() {
 	$('#relativeUser').hide();
 });
 
-$('#weeklyTabOff').click(function() {
+$('#weeklyTabOff').on("click", function() {
 	if (type == "weekly" || !gdps) return;
 	type = "weekly";
 	leaderboard(type);
@@ -249,7 +255,7 @@ $('#weeklyTabOff').click(function() {
 	$('.sortDiv').hide();
 });
 
-$('#creatorTabOff').click(function() {
+$('#creatorTabOff').on("click", function() {
 	if (type == "creator") return;
 	type = "creator";
 	leaderboard(type);
@@ -261,7 +267,7 @@ $('#creatorTabOff').click(function() {
 	$('.sortDiv').hide();
 });
 
-$('#modSort').click(function() {
+$('#modSort').on("click", function() {
 	modMode = !modMode;
 	$(this).attr('src', `/assets/sort-mod${modMode ? "-on" : ""}.png`);
 	if (modMode) {
@@ -285,20 +291,20 @@ function weeklyAdjust() {
 	$('.weeklyStuff').css('display', weekEnabled ? 'block' : 'none');
 }
 
-$('#weeklyStats').click(function() {
+$('#weeklyStats').on("click", function() {
 	showWeek = !showWeek;
 	localStorage.weeklyStats = +showWeek;
 	$(this).attr('src', `/assets/sort-week${showWeek ? "-on" : ""}.png`);
 	weeklyAdjust();
 });
 
-$('#findRelative').click(function() {
+$('#findRelative').on("click", function() {
 	$('#userSearch').show();
 	$('#relativeName').focus().select();
 });
 
 let relativeLoading = false;
-$('#relativeSearch').click(function() {
+$('#relativeSearch').on("click", function() {
 	const relativeUsername = $('#relativeName').val();
 	if (relativeLoading || !relativeUsername) return;
 	relativeLoading = true;
@@ -321,11 +327,11 @@ $('#relativeSearch').click(function() {
 	});
 });
 
-$('#clearRelative').click(function() {
+$('#clearRelative').on("click", function() {
 	$('#topTabOff').trigger('click');
 });
 
-$(document).keydown(function(k) {
+$(document).on("keydown", function(k) {
 	if ($('#userSearch').is(':visible') && k.which == 13 && !relativeLoading) $('#relativeSearch').trigger('click'); //enter
 });
 
@@ -345,4 +351,4 @@ function lazyLoadIcons() {
 	if (newIconFound) renderIcons();
 }
 
-$('#searchBox').scroll(lazyLoadIcons);
+$('#searchBox').on("scroll", lazyLoadIcons);

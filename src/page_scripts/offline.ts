@@ -13,7 +13,7 @@ const dialogue = [
 	"I'm just gonna repeat myself", "*ahem*"
 ];
 
-$("#glubfub").click(function() {
+$("#glubfub").on("click", function() {
 	const msg = dialogue[line];
 	$("#msg").text(msg);
 	line++;

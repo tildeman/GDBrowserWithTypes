@@ -19,7 +19,7 @@ html(lang="en")
 				img.spin.noSelect(src="/assets/loading.png", style={ height: "105%" })
 
 			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
-				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" }, onclick="backButton()")
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
 
 			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
 				img.cornerPiece(src="/assets/corner.png", style={ width: "7%" })
@@ -29,6 +29,6 @@ html(lang="en")
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
 		script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.min.js")
-		script(src="/global.js?v=1")
+		script(type="module", src="/global.js")
 		script(src="/dragscroll.js")
 		script(type="module", src="/page_scripts/boomlings.js")
