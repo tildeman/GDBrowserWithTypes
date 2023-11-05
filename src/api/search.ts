@@ -180,15 +180,15 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	if (reqBundle.isGDPS && filters.diff && !filters.len) filters.len = "-";
 
 	if (filters.str == "*") delete filters.str;
-	reqBundle.gdRequest('getGJLevels21', reqBundle.gdParams(filters as any), function(err, resp, body) {
-		if (err) return sendError();
-		let splitBody = body?.split('#') || [];
-		let preRes = splitBody[0].split('|');
-		let authorList = {};
-		let songList = {};
-		let authors = splitBody[1].split('|');
-		let songString = splitBody[2];
-		let songs = songString.split('~:~').map(songResponse => parseResponse(`~${songResponse}~`, '~|~'));
+	try {
+		const body = await reqBundle.gdRequest('getGJLevels21', reqBundle.gdParams(filters as any));
+		const splitBody = body?.split('#') || [];
+		const preRes = splitBody[0].split('|');
+		const authorList = {};
+		const songList = {};
+		const authors = splitBody[1].split('|');
+		const songString = splitBody[2];
+		const songs = songString.split('~:~').map(songResponse => parseResponse(`~${songResponse}~`, '~|~'));
 		songs.forEach(songEntry => {
 			songList[songEntry['~1']] = songEntry['2'];
 		});
@@ -199,14 +199,13 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			authorList[arr[0]] = [arr[1], arr[2]];
 		});
 
-		let levelArray = preRes.map(levelResponse => parseResponse(levelResponse)).filter(levelResponse => levelResponse[1]);
+		const levelArray = preRes.map(levelResponse => parseResponse(levelResponse)).filter(levelResponse => levelResponse[1]);
 		let parsedLevels: SearchQueryLevel[] = [];
 
 		levelArray.forEach((levelData, levelIndex) => {
+			const songSearch = songs.find(songItem => songItem['~1'] == levelData[35]) || [];
 
-			let songSearch = songs.find(songItem => songItem['~1'] == levelData[35]) || [];
-
-			let level = new SearchQueryLevel(levelData, reqBundle.server, null, {}).getSongInfo(songSearch);
+			const level = new SearchQueryLevel(levelData, reqBundle.server, null, {}).getSongInfo(songSearch);
 			if (!level.id) sendError();
 			level.author = authorList[levelData[6]] ? authorList[levelData[6]][0] : "-";
 			level.accountID = authorList[levelData[6]] ? authorList[levelData[6]][1] : "0";
@@ -238,9 +237,12 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			}
 
 			parsedLevels[levelIndex] = level;
-		})
+		});
 
 		if (filters.type == 10) parsedLevels = parsedLevels.slice(+(filters.page || 0) * amount, (+(filters.page || 0) + 1) * amount);
 		return res.send(parsedLevels);
-	});
+	}
+	catch (err) {
+		return sendError();
+	}
 }

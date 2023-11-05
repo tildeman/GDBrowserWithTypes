@@ -50,10 +50,10 @@ export default async function(req: Request, res: Response, cacheGauntlets: boole
 		return res.send(cached.data); // half hour cache
 	}
 
-	reqBundle.gdRequest('getGJGauntlets21', {}, function (err, resp, body) {
+	try {
+		const body = await reqBundle.gdRequest('getGJGauntlets21', {});
 
-		if (err) return sendError();
-		let gauntlets = body?.split('#')[0].split('|').map(gauntletResponse => parseResponse(gauntletResponse)).filter(gauntletResponse => gauntletResponse[3]) || [];
+		let gauntlets = body.split('#')[0].split('|').map(gauntletResponse => parseResponse(gauntletResponse)).filter(gauntletResponse => gauntletResponse[3]) || [];
 		let gauntletList: GauntletEntry[] = gauntlets.map((gauntletItem) => ({
 			id: +gauntletItem[1],
 			name: gauntletNames[+gauntletItem[1] - 1] || "Unknown",
@@ -65,5 +65,8 @@ export default async function(req: Request, res: Response, cacheGauntlets: boole
 			indexed: Date.now()
 		};
 		res.send(gauntletList);
-	});
+	}
+	catch (err) {
+		return sendError();
+	}
 }

@@ -25,11 +25,14 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		gjp: XOR.encrypt(req.body.password, 37526),
 	};
 
-	reqBundle.gdRequest('getGJUserInfo20', params, function (err, resp, body) {
-		if (err) return res.status(400).send(`Error counting messages! Messages get blocked a lot so try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
-		else userCacheHandle.trackSuccess(reqBundle.id);
+	try {
+		const body = await reqBundle.gdRequest('getGJUserInfo20', params);
+		userCacheHandle.trackSuccess(reqBundle.id);
 		let count = parseResponse(body || "")[38];
 		if (!count) return res.status(400).send("Error fetching unread messages!");
 		else res.send(count);
-	});
+	}
+	catch (err) {
+		return res.status(400).send(`Error counting messages! Messages get blocked a lot so try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
+	}
 }

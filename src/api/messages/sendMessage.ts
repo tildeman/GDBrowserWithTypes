@@ -20,21 +20,20 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	if (!req.body.accountID) return res.status(400).send("No account ID provided!");
 	if (!req.body.password) return res.status(400).send("No password provided!");
 
-	let subject = Buffer.from(req.body.subject ? (req.body.color ? "☆" : "") + (req.body.subject.slice(0, 50)) : (req.body.color ? "☆" : "") + "No subject").toString('base64').replace(/\//g, '_').replace(/\+/g, "-");
-	let body = XOR.encrypt(req.body.message.slice(0, 300), 14251);
+	const subject = Buffer.from(req.body.subject ? (req.body.color ? "☆" : "") + (req.body.subject.slice(0, 50)) : (req.body.color ? "☆" : "") + "No subject").toString('base64').replace(/\//g, '_').replace(/\+/g, "-");
+	const msgBody = XOR.encrypt(req.body.message.slice(0, 300), 14251);
 
-	let params = reqBundle.gdParams({
+	const params = reqBundle.gdParams({
 		accountID: req.body.accountID,
 		gjp: XOR.encrypt(req.body.password, 37526),
 		toAccountID: req.body.targetID,
-		subject, body,
+		subject, msgBody,
 	});
 
-	reqBundle.gdRequest('uploadGJMessage20', params, function (err, resp, body) {
-		if (body != "1") {
-			return res.status(400).send(`The Geometry Dash servers refused to send the message! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
-		}
-		else res.send('Message sent!');
-		userCacheHandle.trackSuccess(reqBundle.id);
-	});
+	const body = await reqBundle.gdRequest('uploadGJMessage20', params);
+	if (body != "1") {
+		return res.status(400).send(`The Geometry Dash servers refused to send the message! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
+	}
+	else res.send('Message sent!');
+	userCacheHandle.trackSuccess(reqBundle.id);
 }

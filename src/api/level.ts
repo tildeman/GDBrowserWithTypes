@@ -36,9 +36,10 @@ export default async function(req: Request, res: Response, api: boolean, analyze
 
 	if (analyze || req.query.hasOwnProperty("download")) return downloadController(req, res, api, levelID, analyze, userCacheHandle);
 
-	reqBundle.gdRequest('getGJLevels21', { str: levelID, type: 0 }, async function (err, resp, body) {
-		if (err || body?.startsWith("##")) return rejectLevel();
-		body = body || "";
+	try {
+		const body = await reqBundle.gdRequest('getGJLevels21', { str: levelID, type: 0 });
+
+		if (body?.startsWith("##")) throw Error("Malformed level response.");
 
 		const preRes = body.split('#')[0].split('|', 10);
 		const author = body.split('#')[1].split('|')[0].split(':');
@@ -47,7 +48,7 @@ export default async function(req: Request, res: Response, api: boolean, analyze
 
 		const levelInfo = parseResponse(preRes.find(x => x.startsWith(`1:${levelID}`)) || preRes[0]);
 		const level = new SearchQueryLevel(levelInfo, reqBundle.server, false, ["", author[1] || "", (+author[2] || 0).toString()]).getSongInfo(song);
-		if (!level.id) return rejectLevel();
+		if (!level.id) throw Error("No level ID provided!");
 
 		if (reqBundle.isGDPS) level.gdps = (reqBundle.onePointNine ? "1.9/" : "") + reqBundle.server.id;
 		if (level.author != "-") userCacheHandle.userCache(reqBundle.id, level.accountID.toString(), level.playerID.toString(), level.author);
@@ -67,7 +68,7 @@ export default async function(req: Request, res: Response, api: boolean, analyze
 			});
 		}
 
-		if (reqBundle.server.demonList && level.difficulty == "Extreme Demon") {
+		if (reqBundle.server.demonList && level.difficulty == "Extreme Demon") { // Edge cases may contain Insane Demons, those are all legacy list levels.
 			try {
 				const demon = (await request.get(reqBundle.server.demonList + 'api/v2/demons/?name=' + level.name.trim())).data;
 				if (demon[0] && demon[0].position) level.demonList = demon[0].position;
@@ -77,5 +78,8 @@ export default async function(req: Request, res: Response, api: boolean, analyze
 			}
 		}
 		return sendLevel();
-	});
+	}
+	catch (err) {
+		return rejectLevel();
+	}
 }

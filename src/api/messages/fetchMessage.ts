@@ -25,11 +25,9 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		messageID: req.params.id,
 	});
 
-	reqBundle.gdRequest('downloadGJMessage20', params, function (err, resp, body) {
-		if (err) {
-			return res.status(400).send(`Error fetching message! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
-		}
-		else userCacheHandle.trackSuccess(reqBundle.id);
+	try {
+		const body = await reqBundle.gdRequest('downloadGJMessage20', params);
+		userCacheHandle.trackSuccess(reqBundle.id);
 
 		let colon_separated_response = parseResponse(body || "");
 		let msg = {
@@ -50,5 +48,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		}
 
 		return res.send(msg);
-	});
+	}
+	catch (err) {
+		return res.status(400).send(`Error fetching message! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
+	}
 }

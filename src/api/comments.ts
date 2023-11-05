@@ -55,12 +55,12 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	if (count > 1000) count = 1000;
 
 	let params: ICommentParams = {
-			userID : req.params.id,
-			accountID : req.params.id,
-			levelID: req.params.id,
-			page: +(req.query.page || 0),
-			count,
-			mode: req.query.hasOwnProperty("top") ? "1" : "0",
+		userID : req.params.id,
+		accountID : req.params.id,
+		levelID: req.params.id,
+		page: +(req.query.page || 0),
+		count,
+		mode: req.query.hasOwnProperty("top") ? "1" : "0",
 	};
 
 	let path = "getGJComments21";
@@ -70,9 +70,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	}
 	else if (req.query.type == "profile") path = "getGJAccountComments20";
 
-	reqBundle.gdRequest(path, reqBundle.gdParams(params as any), function(err, resp, body) {
-
-		if (err) return sendError();
+	try {
+		const body = await reqBundle.gdRequest(path, reqBundle.gdParams(params as any));
 
 		const split_bars = body?.split('|') || [];
 		const split_colons = split_bars.map(commentInfo => commentInfo.split(':'));
@@ -101,7 +100,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			};
 			if (comment.content.endsWith("⍟") || comment.content.endsWith("☆")) {
 				comment.content = comment.content.slice(0, -1);
-				comment.browserColor = true ;
+				comment.browserColor = true;
 			}
 
 			if (req.query.type != "profile") {
@@ -109,7 +108,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 				// TODO: Make a cleaner data transfer
 				Object.keys(commentUser).forEach(k => {
 					comment[k] = commentUser[k];
-				})
+				});
 				comment.levelID = commentInfo[1] || req.params.id;
 				comment.playerID = commentInfo[3] || "0";
 				comment.color = (comment.playerID == "16" ? "50,255,255" : commentInfo[12] || "255,255,255");
@@ -125,9 +124,11 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			}
 
 			commentArray.push(comment);
-
-		})
+		});
 
 		return res.send(commentArray);
-	});
+	}
+	catch (err) {
+		return sendError();
+	}
 }

@@ -59,20 +59,19 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 	/**
 	 * Loads map packs (possibly page-by-page), until all of them are collected.
 	 */
-	function mapPackLoop() {
-		reqBundle.gdRequest('getGJMapPacks21', params, function (err, resp, body) {
-
-			if (err) return sendError();
-
+	async function mapPackLoop() {
+		try {
+			const body = await reqBundle.gdRequest('getGJMapPacks21', params);
+			
 			let newPacks = body?.split('#')[0].split('|').map(mapPackResponse => parseResponse(mapPackResponse)).filter(mapPackResponse => mapPackResponse[2]) || [];
 			packs = packs.concat(newPacks);
-
+			
 			// not all GDPS'es support the count param, which means recursion time!!!
 			if (newPacks.length == 10) {
 				params.page++;
-				return mapPackLoop();
+				return await mapPackLoop();
 			}
-
+			
 			let mappacks: MapPackEntry[] = packs.map(mapPackEntry => ({ // "packs.map()" laugh now please
 				id: +mapPackEntry[1],
 				name: mapPackEntry[2],
@@ -83,7 +82,7 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 				barColor: mapPackEntry[7],
 				textColor: mapPackEntry[8]
 			}));
-
+			
 			if (cacheMapPacks) {
 				cache[reqBundle.id] = {
 					data: mappacks,
@@ -91,7 +90,10 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 				};
 			}
 			return res.send(mappacks);
-		})
+		}
+		catch (err) {
+			return sendError();
+		}
 	}
-	mapPackLoop();
+	await mapPackLoop();
 }

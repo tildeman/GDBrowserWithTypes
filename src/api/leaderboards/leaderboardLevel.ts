@@ -55,9 +55,12 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		type: req.query.hasOwnProperty("week") ? "2" : "1",
 	};
 
-	reqBundle.gdRequest('getGJLevelScores211', params, function(err, resp, body) {
-		if (err) return res.status(500).send({ error: true, lastWorked: userCacheHandle.timeSince(reqBundle.id) });
-		const rawScores = body?.split('|').map(rawScorePlayerEntry => parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
+	try {
+		const body = await reqBundle.gdRequest('getGJLevelScores211', params);
+		const rawScores = body
+			.split('|')
+			.map(rawScorePlayerEntry => parseResponse(rawScorePlayerEntry))
+			.filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
 		const scores: LeaderboardEntry[] = [];
 		if (!rawScores.length) return res.status(500).send([]);
 		else userCacheHandle.trackSuccess(reqBundle.id);
@@ -86,5 +89,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		});
 
 		return res.send(scores.slice(0, amount));
-	});
+	}
+	catch (err) {
+		return res.status(500).send({ error: true, lastWorked: userCacheHandle.timeSince(reqBundle.id) });
+	}
 }

@@ -8,12 +8,15 @@ import { ExportBundle } from "../types.js";
  * @returns `1` if the song is valid, `0` otherwise.
  */
 export default async function(req: Request, res: Response) {
-    const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-    if (reqBundle.offline) return sendError();
+	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
+	if (reqBundle.offline) return sendError();
 
-    let songID = req.params.song;
-    reqBundle.gdRequest('getGJSongInfo', {songID: songID}, function(err: Error, resp: unknown, body: string) {
-        if (err) return sendError(400);
-        return res.send(!body.startsWith("-") && body.length > 10);
-    });
+	let songID = req.params.song;
+	try {
+		const body = await reqBundle.gdRequest('getGJSongInfo', {songID: songID});
+		return res.send(!body.startsWith("-") && body.length > 10);
+	}
+	catch (err) {
+		sendError(400);
+	}
 }

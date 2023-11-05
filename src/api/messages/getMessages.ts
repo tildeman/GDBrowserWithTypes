@@ -19,8 +19,6 @@ interface MessageOverview {
 	browserColor: boolean;
 }
 
-
-
 /**
  * Get a list of messages.
  * @param req The client request.
@@ -37,19 +35,19 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	if (!req.body.accountID) return res.status(400).send("No account ID provided!");
 	if (!req.body.password) return res.status(400).send("No password provided!");
 
-	let params = reqBundle.gdParams({
+	const params = reqBundle.gdParams({
 		accountID: req.body.accountID,
 		gjp: XOR.encrypt(req.body.password, 37526),
 		page: req.body.page || "0",
 		getSent: req.query.sent ? "1" : "0"
 	});
 
-	reqBundle.gdRequest('getGJMessages20', params, function (err, resp, body) {
-		if (err) return res.status(400).send(`Error fetching messages! Messages get blocked a lot so try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
-		else userCacheHandle.trackSuccess(reqBundle.id);
+	try {
+		const body = await reqBundle.gdRequest('getGJMessages20', params);
+		userCacheHandle.trackSuccess(reqBundle.id);
 
-		let messages = (body || "").split("|").map(msg => parseResponse(msg));
-		let messageArray: MessageOverview[] = [];
+		const messages = (body || "").split("|").map(msg => parseResponse(msg));
+		const messageArray: MessageOverview[] = [];
 		messages.forEach(colon_separated_response => {
 			let msg = {
 				id: colon_separated_response[1],
@@ -72,5 +70,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			messageArray.push(msg);
 		});
 		return res.send(messageArray);
-	});
+	}
+	catch (err) {
+		return res.status(400).send(`Error fetching messages! Messages get blocked a lot so try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
+	}
 }

@@ -58,10 +58,13 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	params.chk = chk;
 
-	reqBundle.gdRequest("likeGJItem211", params, function (err, resp, body) {
-		// TODO: Determine the last time the like worked
-		if (err) return res.status(400).send(`The Geometry Dash servers rejected your vote! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
-		else userCacheHandle.trackSuccess(reqBundle.id);
+	try {
+		await reqBundle.gdRequest("likeGJItem211", params);
+
+		userCacheHandle.trackSuccess(reqBundle.id);
 		res.send((params.like == "1" ? "Successfully liked!" : "Successfully disliked!") + " (this will only take effect if this is your first time doing so)");
-	});
+	}
+	catch (err) {
+		return res.status(400).send(`The Geometry Dash servers rejected your vote! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
+	}
 }

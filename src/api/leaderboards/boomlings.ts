@@ -19,6 +19,14 @@ interface BoomlingsUser {
     raw: string;
 }
 
+
+/**
+ * Fetch data for the Boomlings leaderboard.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param secret The key that is sent to RobTop's servers for every request.
+ * @returns The response of the leaderboard in JSON.
+ */
 export default async function(req: Request, res: Response, secret?: string) {
 	const {req: reqBundle}: ExportBundle = res.locals.stuff;
 

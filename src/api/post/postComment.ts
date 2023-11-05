@@ -71,8 +71,9 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	chk = XOR.encrypt(chk, 29481);
 	params.chk = chk;
 
-	reqBundle.gdRequest('uploadGJComment21', params, function (err, resp, body) {
-		if (err) return res.status(400).send(`The Geometry Dash servers rejected your comment! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
+	try {
+		const body = await reqBundle.gdRequest('uploadGJComment21', params);
+
 		if (body?.startsWith("temp")) {
 			let banStuff = body.split("_");
 			return res.status(400).send(`You have been banned from commenting for ${(parseInt(banStuff[1]) / 86400).toFixed(0)} days. Reason: ${banStuff[2] || "None"}`);
@@ -82,5 +83,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		userCacheHandle.trackSuccess(reqBundle.id);
 		rateLimit[req.body.username] = Date.now();
 		setTimeout(() => { delete rateLimit[req.body.username]; }, cooldown);
-	});
+	}
+	catch (err) {
+		return res.status(400).send(`The Geometry Dash servers rejected your comment! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
+	}
 }

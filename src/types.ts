@@ -139,13 +139,9 @@ export interface ExportBundle {
 		 * Wrapper for a request to a Geometry Dash server.
 		 * @param target The request endpoint of the server (`getGJLevels22` for retrieving level data in Geometry Dash 2.2).
 		 * @param params Additional parameters to be sent. Optional.
-		 * @param cb Callback to the request. This is reminiscent of the now deprecated JS module `request`.
 		 * @returns This function does not return.
 		 */
-		gdRequest: (target: string, params: Record<string, any> | undefined, cb: (err?: boolean | Error | {
-			serverError: boolean;
-			response: string;
-		}, resp?: AxiosResponse, body?: string) => any) => void;
+		gdRequest: (target: string, params?: Record<string, any>) => Promise<string>;
 	}
 	sendError: (errorCode?: number) => void;
 }

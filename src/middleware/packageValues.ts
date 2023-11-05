@@ -84,8 +84,8 @@ export default function(req: Request, res: Response, next: NextFunction) {
 		return params;
 	}
 
-	const reqGdRequest = function(target: string, params: Record<string, any> = {}, cb: (err?: boolean | Error | { serverError: boolean, response: string }, resp?: AxiosResponse, body?: string) => any): void {
-		if (!target) return cb(true);
+	const reqGdRequest = async function(target: string, params: Record<string, any> = {}): Promise<string> {
+		if (!target) throw Error("No target specified!");
 		target = reqServer.overrides ? (reqServer.overrides[target] || target) : target;
 		const parameters = params.headers ? params : reqGdParams(params);
 		let endpoint = reqEndpoint;
@@ -93,17 +93,12 @@ export default function(req: Request, res: Response, next: NextFunction) {
 			endpoint = "http://www.boomlings.com/database/";
 		}
 		// Funnily enough, `request` is the axios library.
-		request.post(endpoint + target + '.php', convertUSP(parameters.form), { headers: parameters.headers })
-			.then(function(res: AxiosResponse) {
-				let body: string = res.data.toString(), error: undefined | { serverError: true, response: any };
-				if (!body || body.match(/^-\d$/) || body.startsWith("error") || body.startsWith("<")) {
-					error = {serverError: true, response: body};
-				}
-				return cb(error, res, body);
-			})
-			.catch(function(err: any) {
-				console.warn(err.message);
-			});
+		const res = await request.post(endpoint + target + '.php', convertUSP(parameters.form), { headers: parameters.headers });
+		let body: string = String(res.data);
+		if (!body || body.match(/^-\d$/) || body.startsWith("error") || body.startsWith("<")) {
+			throw Error("Server error!\nResponse: " + body);
+		}
+		return body;
 	}
 
 	const reqBundle = {

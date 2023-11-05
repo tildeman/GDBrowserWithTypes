@@ -27,11 +27,10 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	let deleted: number = params.messages.split(",").length;
 
-	reqBundle.gdRequest('deleteGJMessages20', params, function (err, resp, body) {
-		if (body != "1") {
-			return res.status(400).send(`The Geometry Dash servers refused to delete the message! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
-		}
-		else res.send(`${deleted == 1 ? "1 message" : `${deleted} messages`} deleted!`);
-		userCacheHandle.trackSuccess(reqBundle.id);
-	});
+	const body = await reqBundle.gdRequest('deleteGJMessages20', params);
+	if (body != "1") {
+		return res.status(400).send(`The Geometry Dash servers refused to delete the message! Try again later, or make sure your username and password are entered correctly. Last worked: ${userCacheHandle.timeSince(reqBundle.id)} ago.`);
+	}
+	else res.send(`${deleted == 1 ? "1 message" : `${deleted} messages`} deleted!`);
+	userCacheHandle.trackSuccess(reqBundle.id);
 }
