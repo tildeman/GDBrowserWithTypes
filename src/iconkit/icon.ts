@@ -315,7 +315,7 @@ export function parseIconForm(form: string) {
  */
 export async function loadIconLayers(form: string, id: number): Promise<boolean> {
 	const iconStr = `${form}_${padZero(validateIconID(id, form))}`;
-	const pendingTexturesToLoad = Object.keys(iconData.gameSheet).filter(x => x.startsWith(iconStr + "_"));
+	const pendingTexturesToLoad = Object.keys(iconData.gameSheet).filter(gameSheetKeyItem => gameSheetKeyItem.startsWith(iconStr + "_"));
 
 	if (loadedNewIcons[pendingTexturesToLoad[0]]) return true;
 
@@ -323,7 +323,7 @@ export async function loadIconLayers(form: string, id: number): Promise<boolean>
 		if (iconData.newIcons.includes(iconStr)) return await loadNewIcon(iconStr);
 	}
 
-	const texturesToLoad = pendingTexturesToLoad.map(x => ({ alias: x, src: `/iconkit/icons/${x}` }));
+	const texturesToLoad = pendingTexturesToLoad.map(textureName => ({ alias: textureName, src: `/iconkit/icons/${textureName}` }));
 	loadedOldIcons = await PIXI.Assets.load(texturesToLoad);
 	return false;
 }
@@ -341,11 +341,11 @@ async function loadNewIcon(iconStr: string): Promise<boolean> {
 	const data = parseNewPlist(plist);
 	const sheetName = iconStr + "-sheet";
 	const texture = await PIXI.Assets.load({ alias: sheetName, src: `/iconkit/newicons/${iconStr}-hd.png` });
-	Object.keys(data).forEach(x => {
-		const bounds = data[x];
+	Object.keys(data).forEach(frameName => {
+		const bounds = data[frameName];
 		const textureRect = new PIXI.Rectangle(bounds.pos[0], bounds.pos[1], bounds.size[0], bounds.size[1]);
 		const partTexture = new PIXI.Texture(texture, textureRect);
-		loadedNewIcons[x] = partTexture;
+		loadedNewIcons[frameName] = partTexture;
 	});
 	return true;
 }
@@ -360,7 +360,7 @@ const dom_parser = new DOMParser();
 function parseNewPlist(data: string) {
 	const plist = dom_parser.parseFromString(data, "text/xml");
 	const iconFrames = plist.children[0].children[0].children[1].children;
-	const positionData = {};
+	const positionData: Record<string, { pos: number[]; size: number[] }> = {};
 	for (let i = 0; i < iconFrames.length; i += 2) {
 		const frameName = iconFrames[i].innerHTML;
 		const frameData = iconFrames[i + 1].children;
@@ -369,7 +369,10 @@ function parseNewPlist(data: string) {
 			spriteOffset: [0, 0],
 			spriteSize: [0, 0]
 		};
-		positionData[frameName] = {};
+		positionData[frameName] = { // Raw initialization
+			pos: [],
+			size: []
+		};
 
 		for (let n = 0; n < frameData.length; n += 2) {
 			const keyName = frameData[n].innerHTML;
@@ -384,7 +387,7 @@ function parseNewPlist(data: string) {
 			}
 
 			else if (keyName == "textureRect") {
-				const textureArr = keyData.slice(1, -1).split("},{").map(x => parseWeirdArray(x));
+				const textureArr = keyData.slice(1, -1).split("},{").map(arrayStr => parseWeirdArray(arrayStr));
 				positionData[frameName].pos = textureArr[0];
 				positionData[frameName].size = textureArr[1];
 			}
@@ -401,7 +404,7 @@ function parseNewPlist(data: string) {
  * @returns An array of parsed numbers.
  */
 function parseWeirdArray(data: string): number[] {
-	return data.replace(/[^0-9,-]/g, "").split(",").map(x => +x);
+	return data.replace(/[^0-9,-]/g, "").split(",").map(str => +str);
 }
 
 /**
@@ -541,7 +544,7 @@ export class Icon {
 			let basicIcon = new IconPart(this.form, this.id, this.colors, this.glow, extraSettings);
 			this.sprite.addChild(basicIcon.sprite);
 			this.layers.push(basicIcon);
-			this.glowLayers.push(basicIcon.sections.find(x => x.colorType == "g") as any);
+			this.glowLayers.push(basicIcon.sections.find(layer => layer.colorType == "g") as any);
 		}
 
 		// spider + robot
@@ -562,7 +565,7 @@ export class Icon {
 			});
 
 			let fullGlow = new PIXI.Container();
-			this.glowLayers.forEach(x => fullGlow.addChild(x.sprite));
+			this.glowLayers.forEach(layer => fullGlow.addChild(layer.sprite));
 			this.sprite.addChildAt(fullGlow, 0);
 			this.ease = new Ease.Ease({});
 			this.animationSpeed = Math.abs(Number(data.animationSpeed) || 1);
@@ -581,7 +584,7 @@ export class Icon {
 	 */
 	getAllLayers() {
 		let allLayers: IconLayer[] = [];
-		(this.complex ? this.glowLayers : []).concat(this.layers).forEach((x: IconPart) => x.sections.forEach(s => allLayers.push(s)));
+		(this.complex ? this.glowLayers : []).concat(this.layers).forEach((part: IconPart) => part.sections.forEach(layer => allLayers.push(layer)));
 		return allLayers;
 	}
 
@@ -596,13 +599,13 @@ export class Icon {
 		if (!colorType || !Object.keys(this.colors).includes(colorStr)) return;
 		else this.colors[colorStr] = newColor;
 		let newGlow = getGlowColor(this.colors);
-		this.getAllLayers().forEach(x => {
-			if (colorType != "g" && x.colorType == colorStr) x.setColor(newColor);
-			if (!extra.ignoreGlow && x.colorType == "g") x.setColor(newGlow);
+		this.getAllLayers().forEach(layer => {
+			if (colorType != "g" && layer.colorType == colorStr) layer.setColor(newColor);
+			if (!extra.ignoreGlow && layer.colorType == "g") layer.setColor(newGlow);
 		});
 		if (!this.glow && colorStr == "1") {
 			let shouldGlow = newColor == 0;
-			this.glowLayers.forEach(x => x.sprite.visible = shouldGlow);
+			this.glowLayers.forEach(layer => layer.sprite.visible = shouldGlow);
 		}
 	}
 
@@ -661,8 +664,8 @@ export class Icon {
 	 * @param animName The name of the animation.
 	 * @param duration The duration of the animation. Optional.
 	 */
-	runAnimation(animData: any, animName: string, duration?: number) {
-		animData.frames[this.animationFrame].forEach((newPart: any, index: number) => {
+	runAnimation(animData: AnimationObject, animName: string, duration?: number) {
+		animData.frames[this.animationFrame].forEach((newPart: PartForSpecialIcons, index: number) => {
 			let section = this.layers[index];
 			let glowSection = this.glowLayers[index];
 			let truePosMultiplier = this.new ? positionMultiplier * 0.5 : positionMultiplier;
@@ -683,9 +686,9 @@ export class Icon {
 			if (newPart.flipped[1]) movementData.scaleY *= -1;
 
 			let bothSections = [section, glowSection];
-			bothSections.forEach((x, y) => {
-				let easing = this.ease.add(x.sprite, movementData, { duration: duration || 1, ease: 'linear' });
-				let continueAfterEase = animData.frames.length > 1 && y == 0 && index == 0 && animName == this.animationName;
+			bothSections.forEach((section, sectionIndex) => {
+				let easing = this.ease.add(section.sprite, movementData, { duration: duration || 1, ease: 'linear' });
+				let continueAfterEase = animData.frames.length > 1 && sectionIndex == 0 && index == 0 && animName == this.animationName;
 				if (continueAfterEase) easing.on('complete', () => {
 					this.animationFrame++
 					if (this.animationFrame >= animData.frames.length) {
@@ -810,8 +813,8 @@ export class Icon {
 		let renderer = this.app.renderer;
 		let complex = this.complex;
 
-		function addPSDLayer(layer, parent, sprite) {
-			allLayers.forEach(x => x.sprite.alpha = 0);
+		function addPSDLayer(layer: IconLayer, parent: IconPart, sprite: PIXI.Container) {
+			allLayers.forEach(currentLayer => currentLayer.sprite.alpha = 0);
 			layer.sprite.alpha = 255;
 
 			let layerChild: any = {
@@ -826,11 +829,11 @@ export class Icon {
 			return layerChild;
 		}
 
-		this.layers.forEach(x => {
-			let partName = x.part ? x.part.name : "Icon";
+		this.layers.forEach(currentLayer => {
+			let partName = currentLayer.part ? currentLayer.part.name : "Icon";
 			let folder = {
 				name: partName,
-				children: x.sections.map(layer => addPSDLayer(layer, x, this.sprite)),
+				children: currentLayer.sections.map(layer => addPSDLayer(layer, currentLayer, this.sprite)),
 				opened: true
 			};
 			psd.children.push(folder);
@@ -839,14 +842,14 @@ export class Icon {
 		if (complex) {
 			let glowFolder = {
 				name: "Glow",
-				children: this.glowLayers.map(x => addPSDLayer(x.sections[0], x, this.sprite)),
+				children: this.glowLayers.map(currentLayer => addPSDLayer(currentLayer.sections[0], currentLayer, this.sprite)),
 				opened: true,
 				hidden: !glowing
 			};
 			psd.children.unshift(glowFolder);
 		}
 
-		allLayers.forEach(x => x.sprite.alpha = 255);
+		allLayers.forEach(currentLayer => currentLayer.sprite.alpha = 255);
 		let output = agPsd.writePsd(psd);
 		let blob = new Blob([output]);
 		let downloader = document.createElement('a');
@@ -906,11 +909,11 @@ class IconPart {
 		}
 
 		const layerOrder = ["glow", "ufo", "col2", "col1", "white"]
-			.map((x: "glow" | "ufo" | "col1" | "col2" | "white") => sections[x])
-			.filter(x => x) as IconLayer[];
-		layerOrder.forEach(x => {
-			this.sections.push(x);
-			this.sprite.addChild(x.sprite);
+			.map((orderItem: "glow" | "ufo" | "col1" | "col2" | "white") => sections[orderItem])
+			.filter(orderItem => orderItem) as IconLayer[];
+		layerOrder.forEach(orderItem => {
+			this.sections.push(orderItem);
+			this.sprite.addChild(orderItem.sprite);
 		});
 	}
 }

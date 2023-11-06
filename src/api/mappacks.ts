@@ -27,7 +27,7 @@ interface MapPackCacheItem {
 /**
  * The map pack difficulties.
  */
-let difficulties = [
+const difficulties = [
 	"auto", "easy", "normal", "hard", "harder",
 	"insane", "demon", "demon-easy", "demon-medium",
 	"demon-insane", "demon-extreme"
@@ -35,7 +35,7 @@ let difficulties = [
 /**
  * The global cache object for map packs.
  */
-let cache: Record<string, MapPackCacheItem> = {};
+const cache: Record<string, MapPackCacheItem> = {};
 
 /**
  * Return a list of available map packs.
@@ -53,7 +53,7 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 	if (cacheMapPacks && cached && cached.data && cached.indexed + 5000000 > Date.now()) {
 		return res.send(cached.data); // 1.5 hour cache
 	}
-	let params = { count: 250, page: 0 };
+	const params = { count: 250, page: 0 };
 	let packs: Record<number, string>[] = [];
 
 	/**
@@ -63,7 +63,7 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 		try {
 			const body = await reqBundle.gdRequest('getGJMapPacks21', params);
 			
-			let newPacks = body?.split('#')[0].split('|').map(mapPackResponse => parseResponse(mapPackResponse)).filter(mapPackResponse => mapPackResponse[2]) || [];
+			const newPacks = body?.split('#')[0].split('|').map(mapPackResponse => parseResponse(mapPackResponse)).filter(mapPackResponse => mapPackResponse[2]) || [];
 			packs = packs.concat(newPacks);
 			
 			// not all GDPS'es support the count param, which means recursion time!!!
@@ -72,7 +72,7 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 				return await mapPackLoop();
 			}
 			
-			let mappacks: MapPackEntry[] = packs.map(mapPackEntry => ({ // "packs.map()" laugh now please
+			const mappacks: MapPackEntry[] = packs.map(mapPackEntry => ({ // "packs.map()" laugh now please
 				id: +mapPackEntry[1],
 				name: mapPackEntry[2],
 				levels: mapPackEntry[3].split(","),

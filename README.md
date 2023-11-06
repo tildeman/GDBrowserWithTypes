@@ -204,7 +204,7 @@ These templates (written in [Pug](https://pugjs.org)) are designed to address th
 
 ## Roadmap
 
-- [ ] Complete all the TODOs (39).
+- [ ] Complete all the TODOs (32).
 - [ ] Implement 2.2 features once the release is out.
 - [ ] Write JSDoc for all the types and interfaces in code.
 - [ ] Fix glaring formatting errors.

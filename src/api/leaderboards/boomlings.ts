@@ -19,9 +19,11 @@ interface BoomlingsUser {
     raw: string;
 }
 
+// Note: As Boomlings has been discontinued for a long time, the servers went offline sometime around 2018.
+// The code here is largely untested and will definitely fail, but may prove helpful (who knows?)
 
 /**
- * Fetch data for the Boomlings leaderboard.
+ * Fetch data for the (now offline) Boomlings leaderboard.
  * @param req The client request.
  * @param res The server response (to send the level details/error).
  * @param secret The key that is sent to RobTop's servers for every request.
@@ -37,17 +39,17 @@ export default async function(req: Request, res: Response, secret?: string) {
 		secret: secret || "Wmfd2893gb7",
 		name: "Player"
 	}).then(function(resp) {
-		let body = resp.data;
+		const body = resp.data;
 		if (!body || body == 0) return res.status(500).send("0");
 		// let info = body.split(" ").filter(infoText => infoText.includes(";"));
-		let strBody: string = body;
-		let info = strBody.split(" ").filter(infoText => infoText.includes(";"));
-		let users: BoomlingsUser[] = [];
+		const strBody: string = body;
+		const info = strBody.split(" ").filter(infoText => infoText.includes(";"));
+		const users: BoomlingsUser[] = [];
 		info.forEach((item, index) => {
-			let userRaw = item.split(";");
-			let scores = userRaw[2];
-			let visuals = userRaw[3];
-			let user: BoomlingsUser = {
+			const userRaw = item.split(";");
+			const scores = userRaw[2];
+			const visuals = userRaw[3];
+			const user: BoomlingsUser = {
 				rank: index + 1,
 				name: userRaw[0],
 				ID: userRaw[1],

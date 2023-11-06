@@ -53,7 +53,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (rateLimit[req.body.username]) return res.status(400).send(`Please wait ${getTime(rateLimit[req.body.username] + cooldown - Date.now())} seconds before posting another comment!`);
 
-	let params: ICommentParams = {
+	const params: ICommentParams = {
 		percent: 0,
 		comment: Buffer.from(req.body.comment + (req.body.color ? "☆" : "")).toString('base64').replace(/\//g, '_').replace(/\+/g, "-"),
 		gjp: XOR.encrypt(req.body.password, 37526),
@@ -63,19 +63,17 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		chk: ""
 	};
 
-	let percent = parseInt(req.body.percent);
+	const percent = parseInt(req.body.percent);
 	if (percent && percent > 0 && percent <= 100) params.percent = +percent;
 
-	let chk = params.userName + params.comment + params.levelID + params.percent + "0xPT6iUrtws0J";
-	chk = sha1(chk);
-	chk = XOR.encrypt(chk, 29481);
+	const chk = XOR.encrypt(sha1(params.userName + params.comment + params.levelID + params.percent + "0xPT6iUrtws0J"), 29481);
 	params.chk = chk;
 
 	try {
 		const body = await reqBundle.gdRequest('uploadGJComment21', params);
 
 		if (body?.startsWith("temp")) {
-			let banStuff = body.split("_");
+			const banStuff = body.split("_");
 			return res.status(400).send(`You have been banned from commenting for ${(parseInt(banStuff[1]) / 86400).toFixed(0)} days. Reason: ${banStuff[2] || "None"}`);
 		}
 

@@ -39,16 +39,17 @@ export default async function(req: Request, res: Response, api: boolean, analyze
 	try {
 		const body = await reqBundle.gdRequest('getGJLevels21', { str: levelID, type: 0 });
 
-		if (body?.startsWith("##")) throw Error("Malformed level response.");
+		if (body?.startsWith("##")) throw new Error("Malformed level response.");
 
 		const preRes = body.split('#')[0].split('|', 10);
 		const author = body.split('#')[1].split('|')[0].split(':');
 		const songStr = '~' + body.split('#')[2];
 		const song = parseResponse(songStr, '~|~');
 
-		const levelInfo = parseResponse(preRes.find(x => x.startsWith(`1:${levelID}`)) || preRes[0]);
-		const level = new SearchQueryLevel(levelInfo, reqBundle.server, false, ["", author[1] || "", (+author[2] || 0).toString()]).getSongInfo(song);
-		if (!level.id) throw Error("No level ID provided!");
+		const levelInfo = parseResponse(preRes.find(rawLevelInfo => rawLevelInfo.startsWith(`1:${levelID}`)) || preRes[0]);
+		const level = new SearchQueryLevel(levelInfo, reqBundle.server, false, ["", author[1] || "", (+author[2] || 0).toString()]);
+		level.getSongInfo(song);
+		if (!level.id) throw new Error("No level ID provided!");
 
 		if (reqBundle.isGDPS) level.gdps = (reqBundle.onePointNine ? "1.9/" : "") + reqBundle.server.id;
 		if (level.author != "-") userCacheHandle.userCache(reqBundle.id, level.accountID.toString(), level.playerID.toString(), level.author);

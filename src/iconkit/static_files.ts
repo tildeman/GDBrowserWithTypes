@@ -17,19 +17,19 @@ const previewIcons = fs.readdirSync('./iconkit/premade');
 const newPreviewIcons = fs.readdirSync('./iconkit/newpremade');
 
 const previewCounts = {};
-previewIcons.forEach(x => {
-	if (x.endsWith("_0.png")) return;
-	const iconType = forms[x.split("_")[0]]?.form || "";
+previewIcons.forEach(iconFileName => {
+	if (iconFileName.endsWith("_0.png")) return;
+	const iconType = forms[iconFileName.split("_")[0]]?.form || "";
 	if (!previewCounts[iconType]) previewCounts[iconType] = 1;
 	else previewCounts[iconType]++;
 });
 
 const newIcons = fs.readdirSync('./iconkit/newicons');
 const newIconCounts: Record<string, number> = {};
-newIcons.forEach(x => {
-	if (x.endsWith(".plist")) {
-		newIcons.push(x.split("-")[0]);
-		let formName = x.split(/_\d/g)[0];
+newIcons.forEach(iconFileName => {
+	if (iconFileName.endsWith(".plist")) {
+		newIcons.push(iconFileName.split("-")[0]);
+		let formName = iconFileName.split(/_\d/g)[0];
 		if (!newIconCounts[formName]) newIconCounts[formName] = 1;
 		else newIconCounts[formName]++;
 	}

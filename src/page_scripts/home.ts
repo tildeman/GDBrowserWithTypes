@@ -41,18 +41,18 @@ function loadCredits() {
 
 Fetch(`/api/credits`).then(async (res: any) => {
 	lastPage = res.credits.length + 1;
-	res.credits.forEach(async (x, y) => {
-		$('#credits').append(`<div id="credits${y+1}" class="subCredits" style="display: none;">
-		<img class="gdButton creditsPrevPage" src="/assets/arrow-left.png" style="${y == 0 ? "display: none; " : ""}position: absolute; top: 45%; right: 75%; width: 4.5%" tabindex="0">
+	res.credits.forEach(async (creditItem, creditIndex) => {
+		$('#credits').append(`<div id="credits${creditIndex + 1}" class="subCredits" style="display: none;">
+		<img class="gdButton creditsPrevPage" src="/assets/arrow-left.png" style="${creditIndex == 0 ? "display: none; " : ""}position: absolute; top: 45%; right: 75%; width: 4.5%" tabindex="0">
 		<div class="brownBox center supercenter" style="width: 80vh; height: 43%; padding-top: 1.5%; padding-bottom: 3.5%;">
-			<h1>${x.header}</h1>
-			<h2 style="margin-bottom: 1.5%; margin-top: 1.5%" class="gdButton biggerShadow"><a href="https://gdbrowser.com/u/${x.ign || x.name}" title=${x.name}>${x.name}</h2></a>
+			<h1>${creditItem.header}</h1>
+			<h2 style="margin-bottom: 1.5%; margin-top: 1.5%" class="gdButton biggerShadow"><a href="https://gdbrowser.com/u/${creditItem.ign || creditItem.name}" title=${creditItem.name}>${creditItem.name}</h2></a>
 
-			<div class="creditsIcon" ign="${x.ign || x.name}"></div>
+			<div class="creditsIcon" ign="${creditItem.ign || creditItem.name}"></div>
 
-			<a target=_blank href="${x.youtube[0]}" title="YouTube"><img src="/assets/${x.youtube[1]}.png" style="width: 11%" class="gdButton"></a>
-			<a target=_blank href="${x.twitter[0]}" title="Twitter"><img src="/assets/${x.twitter[1]}.png" style="width: 11%" class="sideSpace gdButton"></a>
-			<a target=_blank href="${x.github[0]}" title="GitHub"><img src="/assets/${x.github[1]}.png" style="width: 11%" class="sideSpace gdButton"></a>
+			<a target=_blank href="${creditItem.youtube[0]}" title="YouTube"><img src="/assets/${creditItem.youtube[1]}.png" style="width: 11%" class="gdButton"></a>
+			<a target=_blank href="${creditItem.twitter[0]}" title="Twitter"><img src="/assets/${creditItem.twitter[1]}.png" style="width: 11%" class="sideSpace gdButton"></a>
+			<a target=_blank href="${creditItem.github[0]}" title="GitHub"><img src="/assets/${creditItem.github[1]}.png" style="width: 11%" class="sideSpace gdButton"></a>
 			<br>
 		</div>
 		<img class="gdButton creditsNextPage" src="/assets/arrow-right.png" style="position: absolute; top: 45%; left: 75%; width: 4.5%" tabindex="0">
@@ -66,11 +66,11 @@ Fetch(`/api/credits`).then(async (res: any) => {
 			<img class="gdButton creditsPrevPage" src="/assets/arrow-left.png" style="position: absolute; top: 45%; right: 75%; width: 4.5%" tabindex="0">
 		</div>`);
 
-	res.specialThanks.forEach(async (x, y) => {
-		let n = x.split("/");
+	res.specialThanks.forEach(async (data, index) => {
+		let username = data.split("/");
 		$('#specialthanks').append(`<div class="specialThanks">
-		<h2 class="gdButton smaller"><a href="https://gdbrowser.com/u/${n[1] || n[0]}" title=${n[0]}>${n[0]}</h2></a>
-		<div class="creditsIcon specialThanksIcon" ign="${n[1] || n[0]}"></div>
+		<h2 class="gdButton smaller"><a href="https://gdbrowser.com/u/${username[1] || username[0]}" title=${username[0]}>${username[0]}</h2></a>
+		<div class="creditsIcon specialThanksIcon" ign="${username[1] || username[0]}"></div>
 		</div>`);
 	});
 

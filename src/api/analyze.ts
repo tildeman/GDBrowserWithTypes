@@ -86,9 +86,9 @@ interface AnalysisResult {
  * Copied HSV values.
  */
 interface CopiedHSV {
-	h?: number;
-	s?: number;
-	v?: number;
+	h: number;
+	s: number;
+	v: number;
 	"s-checked"?: boolean | number;
 	"v-checked"?: boolean | number;
 }

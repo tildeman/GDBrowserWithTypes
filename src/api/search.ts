@@ -205,7 +205,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		levelArray.forEach((levelData, levelIndex) => {
 			const songSearch = songs.find(songItem => songItem['~1'] == levelData[35]) || [];
 
-			const level = new SearchQueryLevel(levelData, reqBundle.server, null, {}).getSongInfo(songSearch);
+			const level = new SearchQueryLevel(levelData, reqBundle.server, null, {});
+			level.getSongInfo(songSearch);
 			if (!level.id) sendError();
 			level.author = authorList[levelData[6]] ? authorList[levelData[6]][0] : "-";
 			level.accountID = authorList[levelData[6]] ? authorList[levelData[6]][1] : "0";

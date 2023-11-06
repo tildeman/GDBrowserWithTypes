@@ -118,7 +118,7 @@ $('.diffDiv').on("click", function() {
 
 	filters = getDiffFilters();
 
-	const minusCheck = filters.filter(x => +x < 0);
+	const minusCheck = filters.filter(filterItem => +filterItem < 0);
 	if (minusCheck.length || $(this).hasClass('demonDiff')) {
 		filters = minusCheck;
 		$('.diffDiv').removeClass('selectedFilter');
@@ -147,15 +147,15 @@ $(document).on("keydown", function(k) {
 });
 
 $('#pageSize').on('input blur', function (event) {
-	const x = +($(this).val() || "0");
+	const value = +($(this).val() || "0");
 	const max = 250;
 	const min = 1;
 	if (event.type == "input") {
-		if (x > max || x < min) $(this).addClass('red');
+		if (value > max || value < min) $(this).addClass('red');
 		else $(this).removeClass('red');
 	}
 	else {
-		$(this).val(Math.max(Math.min(Math.floor(x), max), min));
+		$(this).val(Math.max(Math.min(Math.floor(value), max), min));
 		$(this).removeClass('red');
 	}
 	$('#listLevels').trigger('input');
@@ -163,7 +163,12 @@ $('#pageSize').on('input blur', function (event) {
 
 const listMsg = $('#listInfo').html()
 $('#listLevels, #listName').on('input blur', function (event) {
-	let levels = ($('#listLevels').val() || "").toString().replace(/\n| /g, ",").split(",").map(x => x.replace(/[^0-9]/g, "")).filter(x => +x > 0 && +x < 100000000000);
+	let levels = ($('#listLevels').val() || "")
+		.toString()
+		.replace(/\n| /g, ",")
+		.split(",")
+		.map(levelID => levelID.replace(/[^0-9]/g, ""))
+		.filter(levelID => +levelID > 0 && +levelID < 100000000000);
 	levels = undupe(levels);
 
 	if (levels.length > 1 && levels.length <= 100) {
@@ -257,15 +262,15 @@ else if (savedFilters.diff[0] == -2) {
 	$('.diffDiv[diff=-2]').first().addClass('selectedFilter');
 	showDemonDiffs();
 }
-else (savedFilters.diff.forEach(x => $(`.diffDiv:not(.demonDiff)[diff=${x || "-"}]`).addClass('selectedFilter')));
+else (savedFilters.diff.forEach(difficulty => $(`.diffDiv:not(.demonDiff)[diff=${difficulty || "-"}]`).addClass('selectedFilter')));
 
 if (!savedFilters.len) savedFilters.len = [];
-else (savedFilters.len.forEach(x => $(`.lengthDiv[len=${x}]`).addClass('selectedFilter')));
+else (savedFilters.len.forEach(length => $(`.lengthDiv[len=${length}]`).addClass('selectedFilter')));
 
 if (savedFilters.starred) $('#starCheck').addClass('selectedFilter');
 
 if (!savedFilters.checked) savedFilters.checked = [];
-else (savedFilters.checked.forEach(x => $(`input[id=box-${x}]`).prop('checked', true)));
+else (savedFilters.checked.forEach(checked => $(`input[id=box-${checked}]`).prop('checked', true)));
 
 const hadDefaultSong = savedFilters.defaultSong;
 if (savedFilters.defaultSong) {

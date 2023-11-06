@@ -59,7 +59,7 @@ $('#followOff').on("click", function() {
 
 $('#followOn').on("click", function() {
 	followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
-	localStorage.followed = JSON.stringify(followed.filter(x => x != accountID));
+	localStorage.followed = JSON.stringify(followed.filter(followedID => followedID != accountID));
 	$('#followOff').show();
 	$('#followOn').hide();
 });
@@ -83,20 +83,20 @@ function appendComments() {
 
 		if (res == "-1") return $('#loading').hide()
 
-		res.forEach(x => {
+		res.forEach(commentItem => {
 			$('#statusDiv').append(`
 				<div class="commentBG">
 					<div class="comment">
 						<img class="inline statusIcon" src="${$('#mainIcon').find('img').attr('src') || ""}" style="display: ${compactMode ? "inline-block" : "none"}; margin-right: 0.8%; height: 7vh">
 						<h2 class="inline">${accountUsername}</h2>
 						<div class="commentAlign">
-							<p class="pre commentText" style="color: rgb(${accountUsername == "RobTop" ? "50, 255, 255" : accountModerator == "2" ? "75, 255, 75" : x.browserColor ? "255, 180, 255" : "255, 255, 255"})">${clean(x.content)}</p>
+							<p class="pre commentText" style="color: rgb(${accountUsername == "RobTop" ? "50, 255, 255" : accountModerator == "2" ? "75, 255, 75" : commentItem.browserColor ? "255, 180, 255" : "255, 255, 255"})">${clean(commentItem.content)}</p>
 						</div>
 					</div>
-					<p class="commentDate">${x.date}</p>
+					<p class="commentDate">${commentItem.date}</p>
 					<div class="commentLikes">
-						<img id="likeImg" class="likeComment gdButton inline" commentID="${x.ID}" ${x.likes < 0 ? "style='transform: translateY(25%); margin-right: 0.4%; height: 4vh'" : "style='margin-right: 0.4%; height: 4vh'"} src="/assets/${x.likes < 0 ? "dis" : ""}like.png">
-						<h3 class="inline">${x.likes}</h3><br>
+						<img id="likeImg" class="likeComment gdButton inline" commentID="${commentItem.ID}" ${commentItem.likes < 0 ? "style='transform: translateY(25%); margin-right: 0.4%; height: 4vh'" : "style='margin-right: 0.4%; height: 4vh'"} src="/assets/${commentItem.likes < 0 ? "dis" : ""}like.png">
+						<h3 class="inline">${commentItem.likes}</h3><br>
 					</div>
 				</div>`);
 		});
@@ -138,7 +138,7 @@ $('#submitComment').on("click", function () {
 	$('.postbutton').hide();
 	toggleEscape(false);
 	$.post("/postProfileComment", { comment, username, password, accountID, color: true })
-		.done(x => {
+		.done(() => {
 			$('#content').val("");
 			$('#leavePost').hide();
 			$('.postbutton').show();
@@ -212,8 +212,8 @@ $('#submitVote').on("click", function() {
 		}
 		else accountID = res.accountID;
 
-		$.post("/like",  { ID, accountID, password, like: likeType, type: 3, extraID: "[[ACCOUNTID]]" })
-			.done(x => {
+		$.post("/like",  { ID, accountID, password, like: likeType, type: 3, extraID: accountID })
+			.done(() => {
 				let newCount = parseInt(likeCount.text()) + (like ? 1 : -1);
 				likeCount.text(newCount);
 				if (newCount < 0) likeImg.attr('src', '/assets/dislike.png').css('transform', compactMode ? 'translateY(15%)' : 'translateY(25%)');

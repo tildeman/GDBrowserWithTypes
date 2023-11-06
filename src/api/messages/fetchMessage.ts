@@ -19,7 +19,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	if (!req.body.accountID) return res.status(400).send("No account ID provided!");
 	if (!req.body.password) return res.status(400).send("No password provided!");
 
-	let params = reqBundle.gdParams({
+	const params = reqBundle.gdParams({
 		accountID: req.body.accountID,
 		gjp: XOR.encrypt(req.body.password, 37526),
 		messageID: req.params.id,
@@ -29,8 +29,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		const body = await reqBundle.gdRequest('downloadGJMessage20', params);
 		userCacheHandle.trackSuccess(reqBundle.id);
 
-		let colon_separated_response = parseResponse(body || "");
-		let msg = {
+		const colon_separated_response = parseResponse(body || "");
+		const msg = {
 			id: colon_separated_response[1],
 			playerID: colon_separated_response[3],
 			accountID: colon_separated_response[2],

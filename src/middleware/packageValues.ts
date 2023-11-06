@@ -6,8 +6,8 @@ import serverListRaw from "../servers.json" assert { type: "json" };
 import { Request, Response, NextFunction } from "express";
 import { ExportBundle, ServerInfo } from "../types.js";
 import { convertUSP } from "../lib/uspconvert.js";
-import request, { AxiosResponse } from 'axios'; // `request` is trash
 import appConfig from '../settings.js';
+import request from 'axios'; // `request` is trash
 
 /**
  * The list of servers in `servers.json`.
@@ -85,7 +85,7 @@ export default function(req: Request, res: Response, next: NextFunction) {
 	}
 
 	const reqGdRequest = async function(target: string, params: Record<string, any> = {}): Promise<string> {
-		if (!target) throw Error("No target specified!");
+		if (!target) throw new Error("No target specified!");
 		target = reqServer.overrides ? (reqServer.overrides[target] || target) : target;
 		const parameters = params.headers ? params : reqGdParams(params);
 		let endpoint = reqEndpoint;
@@ -96,7 +96,7 @@ export default function(req: Request, res: Response, next: NextFunction) {
 		const res = await request.post(endpoint + target + '.php', convertUSP(parameters.form), { headers: parameters.headers });
 		let body: string = String(res.data);
 		if (!body || body.match(/^-\d$/) || body.startsWith("error") || body.startsWith("<")) {
-			throw Error("Server error!\nResponse: " + body);
+			throw new Error("Server error!\nResponse: " + body);
 		}
 		return body;
 	}

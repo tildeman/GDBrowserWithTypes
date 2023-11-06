@@ -39,7 +39,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	if (!req.body.type) return res.status(400).send("No type provided! (1=level, 2=comment, 3=profile");
 	if (!req.body.extraID) return res.status(400).send("No extra ID provided! (this should be a level ID, account ID, or \"0\" for levels");
 
-	let params: ILikeParams = {
+	const params: ILikeParams = {
 		udid: "0",
 		uuid: "0",
 		rs: "8f0l0ClAN1",
@@ -52,9 +52,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		chk: ""
 	};
 
-	let chk = params.special + params.itemID + params.like + params.type + params.rs + params.accountID + params.udid + params.uuid + "ysg6pUrtjn0J";
-	chk = sha1(chk);
-	chk = XOR.encrypt(chk, 58281);
+	const chk = XOR.encrypt(sha1(params.special + params.itemID + params.like + params.type + params.rs + params.accountID + params.udid + params.uuid + "ysg6pUrtjn0J"), 58281);
 
 	params.chk = chk;
 

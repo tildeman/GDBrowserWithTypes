@@ -75,7 +75,7 @@ let onePointNine = false;
  */
 export async function Fetch(link: RequestInfo | URL) {
 	const resp = await fetch(link);
-	if (!resp.ok) throw Error("Malformed response");
+	if (!resp.ok) throw new Error("Malformed response");
 	gdps = resp.headers.get('gdps');
 	// TODO: Use a better check method for 1.9 servers
 	if (gdps && gdps.startsWith('1.9/')) {

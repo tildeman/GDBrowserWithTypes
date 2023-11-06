@@ -59,10 +59,10 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	try {
 		const body = await reqBundle.gdRequest('getGJScores20', params);
-		let scoresArr = body?.split('|').map(rawScorePlayerEntry => parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
+		const scoresArr = body?.split('|').map(rawScorePlayerEntry => parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
 		if (!scoresArr.length) return sendError();
 
-		let scores = scoresArr.map(scorePlayerEntry => new Player(scorePlayerEntry));
+		const scores = scoresArr.map(scorePlayerEntry => new Player(scorePlayerEntry));
 		scores.forEach(playerEntry => userCacheHandle.userCache(reqBundle.id, playerEntry.accountID, playerEntry.playerID, playerEntry.username));
 		return res.send(scores.slice(0, amount));
 	}

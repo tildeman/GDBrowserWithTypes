@@ -24,19 +24,18 @@ interface ICommentContent {
     ID: string;
     likes: number;
     date: string;
-	// All the things that "extend" the Player class
-	// TODO: Make a safer data transfer
+
 	browserColor?: boolean;
-	levelID?: string;
-	playerID?: string;
-	accountID?: string;
-	color?: string;
 	moderator?: number;
+	accountID?: string;
+	playerID?: string;
+	username?: string;
+	levelID?: string;
 	percent?: number;
 	results?: number;
 	pages?: number;
 	range?: string;
-	username?: string;
+	color?: string;
 }
 
 /**
@@ -54,7 +53,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	let count = +(req.query.count || 10);
 	if (count > 1000) count = 1000;
 
-	let params: ICommentParams = {
+	const params: ICommentParams = {
 		userID : req.params.id,
 		accountID : req.params.id,
 		levelID: req.params.id,
@@ -80,19 +79,19 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		else comments = comments.filter(commentInfo => commentInfo[0] && commentInfo[0][2]);
 		if (!comments.length) return res.status(204).send([]);
 
-		let pages = (body || "").split('#')[1].split(":");
-		let lastPage = +Math.ceil(+pages[0] / +pages[2]);
+		const pages = (body || "").split('#')[1].split(":");
+		const lastPage = +Math.ceil(+pages[0] / +pages[2]);
 
-		let commentArray: ICommentContent[] = [];
+		const commentArray: ICommentContent[] = [];
 
 		comments.forEach((commentValue, commentIndex) => {
 
-			var commentInfo = commentValue[0]; //comment info
-			var accountInfo = commentValue[1]; //account info
+			const commentInfo = commentValue[0]; //comment info
+			const accountInfo = commentValue[1]; //account info
 
 			if (!commentInfo[2]) return;
 
-			let comment: ICommentContent = {
+			const comment: ICommentContent = {
 				content: Buffer.from(commentInfo[2], 'base64').toString(),
 				ID: commentInfo[6],
 				likes: +commentInfo[4],
@@ -105,13 +104,12 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 			if (req.query.type != "profile") {
 				let commentUser = new Player(accountInfo);
-				// TODO: Make a cleaner data transfer
-				Object.keys(commentUser).forEach(k => {
-					comment[k] = commentUser[k];
-				});
+				Object.assign(comment, commentUser);
+
 				comment.levelID = commentInfo[1] || req.params.id;
 				comment.playerID = commentInfo[3] || "0";
-				comment.color = (comment.playerID == "16" ? "50,255,255" : commentInfo[12] || "255,255,255");
+				// RobTop's comments have a special color
+				comment.color = (comment.playerID == "16") ? "50,255,255" : (commentInfo[12] || "255,255,255");
 				if (+commentInfo[10] > 0) comment.percent = +commentInfo[10];
 				comment.moderator = +commentInfo[11] || 0;
 				userCacheHandle.userCache(reqBundle.id, comment.accountID || "", comment.playerID || "", comment.username || "");

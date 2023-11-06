@@ -19,7 +19,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	if (!req.body.accountID) return res.status(400).send("No account ID provided!");
 	if (!req.body.password) return res.status(400).send("No password provided!");
 
-	let params = {
+	const params = {
 		accountID: req.body.accountID,
 		targetAccountID: req.body.accountID,
 		gjp: XOR.encrypt(req.body.password, 37526),
@@ -28,7 +28,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	try {
 		const body = await reqBundle.gdRequest('getGJUserInfo20', params);
 		userCacheHandle.trackSuccess(reqBundle.id);
-		let count = parseResponse(body || "")[38];
+		const count = parseResponse(body || "")[38];
 		if (!count) return res.status(400).send("Error fetching unread messages!");
 		else res.send(count);
 	}

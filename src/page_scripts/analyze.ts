@@ -138,7 +138,7 @@ fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (Ana
 	const blockList = Object.keys(res.blocks);
 	const colorList = Object.keys(res.colors);
 
-	let portals: (string | null)[][] = res.portals.split(", ").map(x => x.split(" "));
+	let portals: (string | null)[][] = res.portals.split(", ").map(portal => portal.split(" "));
 
 	/**
 	 * Select every third digit of a string or number, then separate them using commas.
@@ -232,8 +232,8 @@ function commafy(num: string | number) {
 	});
 
 
-	let bgCol: Color3B | undefined = res.colors.find(x => x.channel == "BG");
-	let grCol: Color3B | undefined = res.colors.find(x => x.channel == "G");
+	let bgCol: Color3B | undefined = res.colors.find(color => color.channel == "BG");
+	let grCol: Color3B | undefined = res.colors.find(color => color.channel == "G");
 
 	if (!bgCol) bgCol = {r: 40, g: 125, b: 255};
 	else if (+bgCol.r < 35 && bgCol.g < 35 && bgCol.b < 35) bgCol = {r: 75, g: 75, b: 75};
@@ -249,10 +249,10 @@ function commafy(num: string | number) {
 		$('#style').append(`<div class="inline styleDiv"><img style="height: 12vh;" src='/assets/levelstyle/mode-2p.png'></div>`);
 	}
 
-	colorList.forEach((x, y) => {
-		const color = res.colors[x];
+	colorList.forEach((colorItem, colorIndex) => {
+		const color = res.colors[colorItem];
 
-		$('#colorDiv').append(`${y % 8 == 0 ? "<brr>" : ""}<div class="inline aColor"><div class="color" channel="${color.channel}" style="background-color: rgba(${clean(color.cr || color.r)}, ${clean(color.cg || color.g)}, ${clean(color.cb || color.b)}, ${clean(color.opacity)}); border: 0.4vh solid rgb(${color.r}, ${color.g}, ${color.b})">
+		$('#colorDiv').append(`${colorIndex % 8 == 0 ? "<brr>" : ""}<div class="inline aColor"><div class="color" channel="${color.channel}" style="background-color: rgba(${clean(color.cr || color.r)}, ${clean(color.cg || color.g)}, ${clean(color.cb || color.b)}, ${clean(color.opacity)}); border: 0.4vh solid rgb(${color.r}, ${color.g}, ${color.b})">
 			${color.copiedChannel ? `<h3 class='copiedColor'>C:${color.copiedChannel}</h3>` : color.pColor ? `<h3 class='copiedColor'>P${color.pColor}</h3>` : color.blending ? "<h3 class='blendingDot'>•</h3>" : ""}
 			${color.copiedChannel && color.copiedHSV ? `<h3 class='copiedColor copiedHSV'> +HSV</h3>` : ""}
 			${color.opacity != "1" ? `<h3 class='copiedColor'>${color.opacity}%</h3>` : ""}
@@ -274,11 +274,11 @@ function commafy(num: string | number) {
 		else disabledPortals.push($(this).attr('portal') || "");
 
 		portals = res.portals.split(", ").map(portalStrFormat => portalStrFormat.split(" "));
-		if (disabledPortals.includes('form')) portals = portals.filter(x => !formPortals.includes(x[0] || ""));
-		if (disabledPortals.includes('speed')) portals = portals.filter(x => !speedPortals.includes(x[0] || ""));
-		if (disabledPortals.includes('size')) portals = portals.filter(x => !sizePortals.includes(x[0] || ""));
-		if (disabledPortals.includes('dual')) portals = portals.filter(x => !dualPortals.includes(x[0] || ""));
-		if (disabledPortals.includes('mirror')) portals = portals.filter(x => !mirrorPortals.includes(x[0] || ""));
+		if (disabledPortals.includes('form')) portals = portals.filter(portal => !formPortals.includes(portal[0] || ""));
+		if (disabledPortals.includes('speed')) portals = portals.filter(portal => !speedPortals.includes(portal[0] || ""));
+		if (disabledPortals.includes('size')) portals = portals.filter(portal => !sizePortals.includes(portal[0] || ""));
+		if (disabledPortals.includes('dual')) portals = portals.filter(portal => !dualPortals.includes(portal[0] || ""));
+		if (disabledPortals.includes('mirror')) portals = portals.filter(portal => !mirrorPortals.includes(portal[0] || ""));
 
 		if (disabledPortals.includes('dupe')) {
 			portals.reverse().forEach((portalEntry, portalIndex) => {

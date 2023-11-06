@@ -23,7 +23,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (req.body.comment.includes("\n")) return res.status(400).send("Profile posts cannot contain line breaks!");
 
-	let params = {
+	const params = {
 		cType: "1",
 		comment: Buffer.from(req.body.comment.slice(0, 190) + (req.body.color ? "☆" : "")).toString("base64").replace(/\//g, "_").replace(/\+/g, "-"),
 		gjp: XOR.encrypt(req.body.password, 37526),
@@ -32,15 +32,13 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		chk: ""
 	};
 
-	let chk = params.userName + params.comment + "1xPT6iUrtws0J";
-	chk = sha1(chk);
-	chk = XOR.encrypt(chk, 29481);
+	const chk = XOR.encrypt(sha1(params.userName + params.comment + "1xPT6iUrtws0J"), 29481);
 	params.chk = chk;
 
 	try {
 		const body = await reqBundle.gdRequest("uploadGJAccComment20", params);
 		if (body.startsWith("temp")) {
-			let banStuff = body.split("_");
+			const banStuff = body.split("_");
 			return res.status(400).send(`You have been banned from commenting for ${(parseInt(banStuff[1]) / 86400).toFixed(0)} days. Reason: ${banStuff[2] || "None"}`);
 		}
 		else userCacheHandle.trackSuccess(reqBundle.id);

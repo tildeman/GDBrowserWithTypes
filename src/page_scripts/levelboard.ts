@@ -42,17 +42,17 @@ function leaderboard() {
 			return;
 		}
 
-		res.forEach((x, y) => {
+		res.forEach((player) => {
 			$('#searchBox').append(`<div class="searchResult leaderboardSlot levelboardSlot" style="align-items: center; padding-left: 1vh; height: 15%; width: 100%; position: relative">
 
-				<h2 class="center" style="width: 12%; margin: 0% 0% 0% 0.5%; transform: scale(${1 - (Math.max(0, String(x.rank).length - 1) * 0.2)}">${x.rank}</h2>
-				<gdicon dontload="true" iconID=${x.icon.icon} cacheID=${x.playerID} iconForm="${x.icon.form}" col1="${x.icon.col1}" col2="${x.icon.col2}" glow="${x.icon.glow}" style="width: 7%; margin-bottom: 1%" imgStyle="width: 100%"></gdicon>
-				<h2 class="small gdButton" style="font-size: 6.5vh; margin-right: 3%; margin-left: 3%"><a href="/u/${x.accountID}.">${x.username}</a></h2>
-				<h3 class="lessSpaced" style="margin-top: 1.3%; margin-right: 2%">${x.percent}%</h3>
-				${'<div style="width: 2%"><img class="valign" src="/assets/silvercoin.png" style="height: 6vh"></div>'.repeat(x.coins)}
+				<h2 class="center" style="width: 12%; margin: 0% 0% 0% 0.5%; transform: scale(${1 - (Math.max(0, String(player.rank).length - 1) * 0.2)}">${player.rank}</h2>
+				<gdicon dontload="true" iconID=${player.icon.icon} cacheID=${player.playerID} iconForm="${player.icon.form}" col1="${player.icon.col1}" col2="${player.icon.col2}" glow="${player.icon.glow}" style="width: 7%; margin-bottom: 1%" imgStyle="width: 100%"></gdicon>
+				<h2 class="small gdButton" style="font-size: 6.5vh; margin-right: 3%; margin-left: 3%"><a href="/u/${player.accountID}.">${player.username}</a></h2>
+				<h3 class="lessSpaced" style="margin-top: 1.3%; margin-right: 2%">${player.percent}%</h3>
+				${'<div style="width: 2%"><img class="valign" src="/assets/silvercoin.png" style="height: 6vh"></div>'.repeat(player.coins)}
 
 				<div class="center" style="text-align: right; position:absolute; right: 1.25%; height: 10%; width: 12.5%; top: 100%;">
-					<p class="commentDate">${x.date}</p>
+					<p class="commentDate">${player.date}</p>
 				</div>
 
 			</div>`);

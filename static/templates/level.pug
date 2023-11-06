@@ -62,32 +62,33 @@ html(lang="en")
 							| Extra string:
 							|
 							span(style={ color: "lightgreen" })= (level.extraString || "").length + " chars"
+						br
+						| Version:
+						|
+						cy= level.version
+						br
+						| GD Version:
+						|
+						cy= level.gameVersion
+						if level.objects != 0
 							br
-							| Version:
+							| Objects:
 							|
-							cy= level.version
+							cy= level.objects == 65535 ? "65535+" : level.objects
+						if level.starsRequested != 0
 							br
-							| GD Version:
+							| Stars Requested:
 							|
-							cy= level.gameVersion
-							if level.objects != 0
+							cy= level.starsRequested
+						if (!level.uploaded)
+							if (!isDownloadDisabled)
 								br
-								| Objects:
-								|
-								cy= level.objects == 65535 ? "65535+" : level.objects
-							if level.starsRequested != 0
+								a#additional.youCanClickThis(href="/level/" + level.id + "?download")
+									ca Download additional info
+							else
 								br
-								| Stars Requested:
-								|
-								cy= level.starsRequested
-						else if (!isDownloadDisabled)
-							br
-							a#additional.youCanClickThis(href="/level/" + level.id + "?download")
-								ca Download additional info
-						else
-							br
-							a#additional.downloadsDisabled
-								ca Download additional info
+								a#additional.downloadsDisabled
+									ca Download additional info
 
 					img.gdButton.center.closeWindow(src="/assets/ok.png", style={ width: "20%" })
 

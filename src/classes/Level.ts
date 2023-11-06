@@ -5,19 +5,19 @@ import { ServerInfo } from "../types.js";
 /**
  * The amount of orbs given to the player by the star rating.
  */
-let orbs = [0, 0, 50, 75, 125, 175, 225, 275, 350, 425, 500];
+const orbs = [0, 0, 50, 75, 125, 175, 225, 275, 350, 425, 500];
 /**
  * The length value of the level.
  */
-let length = ['Tiny', 'Short', 'Medium', 'Long', 'XL'];
+const length = ['Tiny', 'Short', 'Medium', 'Long', 'XL'];
 /**
  * The difficulty "face rating" of the level.
  */
-let difficulty = { 0: 'Unrated', 10: 'Easy', 20: 'Normal', 30: 'Hard', 40: 'Harder', 50: 'Insane' };
+const difficulty = { 0: 'Unrated', 10: 'Easy', 20: 'Normal', 30: 'Hard', 40: 'Harder', 50: 'Insane' };
 /**
  * The sub-ratings for demons.
  */
-let demonTypes = { 3: "Easy", 4: "Medium", 5: "Insane", 6: "Extreme" };
+const demonTypes = { 3: "Easy", 4: "Medium", 5: "Insane", 6: "Extreme" };
 
 // Placeholder array
 
@@ -297,6 +297,10 @@ export class Level implements LevelObject {
 		} // remove GDPS default values
 	}
 
+	/**
+	 * Parse a song object, and include the necessary information into this `Level` object.
+	 * @param songInfo The song information as a semi-parsed song object.
+	 */
 	getSongInfo(songInfo: Record<number, string>) {
 		if (this.customSong) {
 			this.songName = songInfo[2] || "Unknown";
@@ -312,8 +316,6 @@ export class Level implements LevelObject {
 			this.songSize = "0MB";
 			this.songID = "Level " + this.officialSong;
 		}
-
-		return this;
 	}
 }
 
@@ -361,11 +363,7 @@ export class DownloadedLevel extends Level {
 	 */
 	gdps?: string;
 	/**
-	 * The URL of the server's Demon List API, if it has one (e.g. `http://pointercrate.com/`. Make sure it ends with a slash!
-	 */
-	demonList?: string;
-	/**
 	 * The position of the level on the Demon list.
 	 */
-	demonPosition?: number;
+	demonList?: number;
 }

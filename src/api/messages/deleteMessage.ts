@@ -19,13 +19,13 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	if (!req.body.password) return res.status(400).send("No password provided!");
 	if (!req.body.id) return res.status(400).send("No message ID(s) provided!");
 
-	let params = {
+	const params = {
 		accountID: req.body.accountID,
 		gjp: XOR.encrypt(req.body.password, 37526),
 		messages: Array.isArray(req.body.id) ? req.body.id.map(messageContent => messageContent.trim()).join(",") : req.body.id,
 	};
 
-	let deleted: number = params.messages.split(",").length;
+	const deleted: number = params.messages.split(",").length;
 
 	const body = await reqBundle.gdRequest('deleteGJMessages20', params);
 	if (body != "1") {

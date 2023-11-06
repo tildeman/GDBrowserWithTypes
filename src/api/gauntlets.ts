@@ -22,11 +22,11 @@ interface GauntletCacheItem {
 /**
  * The global cache object for gauntlets.
  */
-let cache: Record<string, GauntletCacheItem> = {};
+const cache: Record<string, GauntletCacheItem> = {};
 /**
  * The gauntlet names as of update 2.11.
  */
-let gauntletNames = [
+const gauntletNames = [
 	"Fire", "Ice", "Poison", "Shadow",
 	"Lava", "Bonus", "Chaos", "Demon",
 	"Time", "Crystal", "Magic", "Spike",
@@ -45,7 +45,7 @@ export default async function(req: Request, res: Response, cacheGauntlets: boole
 
 	if (reqBundle.offline) return sendError();
 
-	let cached = cache[reqBundle.id];
+	const cached = cache[reqBundle.id];
 	if (cacheGauntlets && cached && cached.data && cached.indexed + 2000000 > Date.now()) {
 		return res.send(cached.data); // half hour cache
 	}
@@ -53,8 +53,8 @@ export default async function(req: Request, res: Response, cacheGauntlets: boole
 	try {
 		const body = await reqBundle.gdRequest('getGJGauntlets21', {});
 
-		let gauntlets = body.split('#')[0].split('|').map(gauntletResponse => parseResponse(gauntletResponse)).filter(gauntletResponse => gauntletResponse[3]) || [];
-		let gauntletList: GauntletEntry[] = gauntlets.map((gauntletItem) => ({
+		const gauntlets = body.split('#')[0].split('|').map(gauntletResponse => parseResponse(gauntletResponse)).filter(gauntletResponse => gauntletResponse[3]) || [];
+		const gauntletList: GauntletEntry[] = gauntlets.map((gauntletItem) => ({
 			id: +gauntletItem[1],
 			name: gauntletNames[+gauntletItem[1] - 1] || "Unknown",
 			levels: gauntletItem[3].split(",")
