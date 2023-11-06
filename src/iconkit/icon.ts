@@ -19,12 +19,16 @@ interface PartForSpecialIcons {
 	name?: string;
 }
 
+/**
+ * Extra settings in the icon kit UI
+ */
 interface ExtraSettings {
 	new?: boolean;
 	noDome?: boolean;
 	ignoreGlow?: boolean;
 }
 
+// Object for extra animation data for robots and spiders
 export interface AnimationObject {
 	/**
 	 * Information about the animation.
@@ -267,8 +271,7 @@ function validNum(val: any, defaultVal: number | null) {
  * @returns The glow color.
  */
 function getGlowColor(colors: { g?: number } | [number, number, number]) {
-	let glowCol = colors["g"] || (colors[2] === 0 ? colors[1] : colors[2]);
-	if (glowCol === 0) glowCol = WHITE; // white glow if both colors are black
+	const glowCol = colors["g"] || (colors[2] === 0 ? colors[1] : colors[2]) || WHITE; // white glow if both colors are black
 	return glowCol;
 }
 
@@ -302,7 +305,7 @@ export function parseIconColor(col: string | number | null) {
  * The detected form, or `player` if none is found.
  */
 export function parseIconForm(form: string) {
-	let foundForm = iconData.forms[form];
+	const foundForm = iconData.forms[form];
 	return foundForm ? foundForm.form : "player";
 }
 
@@ -541,7 +544,7 @@ export class Icon {
 				new: this.new
 			};
 			if (data.noUFODome) extraSettings.noDome = true;
-			let basicIcon = new IconPart(this.form, this.id, this.colors, this.glow, extraSettings);
+			const basicIcon = new IconPart(this.form, this.id, this.colors, this.glow, extraSettings);
 			this.sprite.addChild(basicIcon.sprite);
 			this.layers.push(basicIcon);
 			this.glowLayers.push(basicIcon.sections.find(layer => layer.colorType == "g") as any);
@@ -549,13 +552,13 @@ export class Icon {
 
 		// spider + robot
 		else {
-			let idlePosition = this.getAnimation(data.animation || "", data.animationForm).frames[0];
+			const idlePosition = this.getAnimation(data.animation || "", data.animationForm).frames[0];
 			idlePosition.forEach((position, index) => {
 				position.name = iconData.robotAnimations.info[this.form].names[index];
-				let part = new IconPart(this.form, this.id, this.colors, false, { part: position, skipGlow: true, new: this.new });
+				const part = new IconPart(this.form, this.id, this.colors, false, { part: position, skipGlow: true, new: this.new });
 				positionPart(position, index, part.sprite, this.form, this.new);
 
-				let glowPart = new IconPart(this.form, this.id, this.colors, true, { part: position, onlyGlow: true, new: this.new });
+				const glowPart = new IconPart(this.form, this.id, this.colors, true, { part: position, onlyGlow: true, new: this.new });
 				positionPart(position, index, glowPart.sprite, this.form, this.new, true);
 				glowPart.sprite.visible = this.glow;
 				this.glowLayers.push(glowPart);
@@ -564,7 +567,7 @@ export class Icon {
 				this.sprite.addChild(part.sprite);
 			});
 
-			let fullGlow = new PIXI.Container();
+			const fullGlow = new PIXI.Container();
 			this.glowLayers.forEach(layer => fullGlow.addChild(layer.sprite));
 			this.sprite.addChildAt(fullGlow, 0);
 			this.ease = new Ease.Ease({});
@@ -583,7 +586,7 @@ export class Icon {
 	 * @returns A list of all the icon layers.
 	 */
 	getAllLayers() {
-		let allLayers: IconLayer[] = [];
+		const allLayers: IconLayer[] = [];
 		(this.complex ? this.glowLayers : []).concat(this.layers).forEach((part: IconPart) => part.sections.forEach(layer => allLayers.push(layer)));
 		return allLayers;
 	}
@@ -595,16 +598,16 @@ export class Icon {
 	 * @param extra Optional settings that come with setting the color.
 	 */
 	setColor(colorType: string, newColor: number, extra: ExtraSettings = {}) {
-		let colorStr = String(colorType).toLowerCase();
+		const colorStr = String(colorType).toLowerCase();
 		if (!colorType || !Object.keys(this.colors).includes(colorStr)) return;
 		else this.colors[colorStr] = newColor;
-		let newGlow = getGlowColor(this.colors);
+		const newGlow = getGlowColor(this.colors);
 		this.getAllLayers().forEach(layer => {
 			if (colorType != "g" && layer.colorType == colorStr) layer.setColor(newColor);
 			if (!extra.ignoreGlow && layer.colorType == "g") layer.setColor(newGlow);
 		});
 		if (!this.glow && colorStr == "1") {
-			let shouldGlow = newColor == 0;
+			const shouldGlow = newColor == 0;
 			this.glowLayers.forEach(layer => layer.sprite.visible = shouldGlow);
 		}
 	}
@@ -641,7 +644,7 @@ export class Icon {
 	 * @returns The current animation form of the robot.
 	 */
 	getAnimation(name: string, animForm?: string) {
-		let animationList = iconData.robotAnimations.animations[animForm || this.form];
+		const animationList = iconData.robotAnimations.animations[animForm || this.form];
 		return animationList[name || "idle"] || animationList["idle"];
 	}
 
@@ -651,7 +654,7 @@ export class Icon {
 	 * @param animForm The animation form of the robot.
 	 */
 	setAnimation(data: string, animForm: string) {
-		let animData = this.getAnimation(data, animForm) || this.getAnimation("idle");
+		const animData = this.getAnimation(data, animForm) || this.getAnimation("idle");
 		this.ease.removeAll();
 		this.animationFrame = 0;
 		this.animationName = data;
@@ -666,16 +669,16 @@ export class Icon {
 	 */
 	runAnimation(animData: AnimationObject, animName: string, duration?: number) {
 		animData.frames[this.animationFrame].forEach((newPart: PartForSpecialIcons, index: number) => {
-			let section = this.layers[index];
-			let glowSection = this.glowLayers[index];
-			let truePosMultiplier = this.new ? positionMultiplier * 0.5 : positionMultiplier;
+			const section = this.layers[index];
+			const glowSection = this.glowLayers[index];
+			const truePosMultiplier = this.new ? positionMultiplier * 0.5 : positionMultiplier;
 			if (!section) return;
 
 			// gd is weird with negative rotations
 			let realRot = newPart.rotation;
 			if (realRot < -180) realRot += 360;
 
-			let movementData = {
+			const movementData = {
 				x: newPart.pos[0] * truePosMultiplier,
 				y: newPart.pos[1] * truePosMultiplier * -1,
 				scaleX: newPart.scale[0],
@@ -685,10 +688,10 @@ export class Icon {
 			if (newPart.flipped[0]) movementData.scaleX *= -1;
 			if (newPart.flipped[1]) movementData.scaleY *= -1;
 
-			let bothSections = [section, glowSection];
+			const bothSections = [section, glowSection];
 			bothSections.forEach((section, sectionIndex) => {
-				let easing = this.ease.add(section.sprite, movementData, { duration: duration || 1, ease: 'linear' });
-				let continueAfterEase = animData.frames.length > 1 && sectionIndex == 0 && index == 0 && animName == this.animationName;
+				const easing = this.ease.add(section.sprite, movementData, { duration: duration || 1, ease: 'linear' });
+				const continueAfterEase = animData.frames.length > 1 && sectionIndex == 0 && index == 0 && animName == this.animationName;
 				if (continueAfterEase) easing.on('complete', () => {
 					this.animationFrame++
 					if (this.animationFrame >= animData.frames.length) {
@@ -708,10 +711,10 @@ export class Icon {
 	 */
 	autocrop() {
 		if (this.new) this.sprite.scale.set(1)
-		let spriteSize = [Math.round(this.sprite.width), Math.round(this.sprite.height)];
-		let pixels = this.app.renderer.extract.pixels(this.sprite);;
-		let xRange = [spriteSize[0], 0];
-		let yRange = [spriteSize[1], 0];
+		const spriteSize = [Math.round(this.sprite.width), Math.round(this.sprite.height)];
+		const pixels = this.app.renderer.extract.pixels(this.sprite);;
+		const xRange = [spriteSize[0], 0];
+		const yRange = [spriteSize[1], 0];
 
 		this.preCrop = {
 			pos: [this.sprite.position.x, this.sprite.position.y],
@@ -719,9 +722,9 @@ export class Icon {
 		};
 
 		for (let i=3; i < pixels.length; i += 4) {
-			let alpha = pixels[i];
-			let realIndex = (i-3) / 4;
-			let pos = [realIndex % spriteSize[0], Math.floor(realIndex / spriteSize[0])];
+			const alpha = pixels[i];
+			const realIndex = (i-3) / 4;
+			const pos = [realIndex % spriteSize[0], Math.floor(realIndex / spriteSize[0])];
 
 			if (alpha > 10) { // if pixel is not blank...
 				if (pos[0] < xRange[0]) xRange[0] = pos[0];      // if x pos is < the lowest x pos so far
@@ -735,11 +738,11 @@ export class Icon {
 		xRange[1]++;
 		yRange[1]++;
 
-		let realWidth = xRange[1] - xRange[0];
-		let realHeight = yRange[1] - yRange[0];
+		const realWidth = xRange[1] - xRange[0];
+		const realHeight = yRange[1] - yRange[0];
 
 		this.app.renderer.resize(realWidth, realHeight);
-		let bounds = this.sprite.getBounds();
+		const bounds = this.sprite.getBounds();
 		this.sprite.position.x -= bounds.x;
 		this.sprite.position.y -= bounds.y;
 
@@ -760,10 +763,10 @@ export class Icon {
 	 * @param dataType The data type of the image.
 	 * @returns The base64-encoded image.
 	 */
-	toDataURL(dataType="image/png") {
+	toDataURL(dataType = "image/png") {
 		this.autocrop();
 		this.app.renderer.render(this.app.stage);
-		let b64data = this.app.view.toDataURL!(dataType);
+		const b64data = this.app.view.toDataURL!(dataType);
 		this.revertCrop();
 		return b64data;
 	}
@@ -772,8 +775,8 @@ export class Icon {
 	 * Export the icon image as PNG.
 	 */
 	pngExport() {
-		let b64data = this.toDataURL();
-		let downloader = document.createElement('a');
+		const b64data = this.toDataURL();
+		const downloader = document.createElement('a');
 		downloader.href = b64data;
 		downloader.setAttribute("download", `${this.formName()}_${this.id}.png`);
 		document.body.appendChild(downloader);
@@ -789,7 +792,7 @@ export class Icon {
 		this.app.renderer.render(this.app.stage);
 		this.app.view.toBlob!(blob => {
 			if (blob) {
-				let item = new ClipboardItem({ "image/png": blob });
+				const item = new ClipboardItem({ "image/png": blob });
 				navigator.clipboard.write([item]);
 			}
 		});
@@ -801,25 +804,25 @@ export class Icon {
 	 */
 	psdExport() {
 		if (typeof agPsd === "undefined") throw new Error("ag-psd not imported!");
-		let glowing = this.isGlowing();
+		const glowing = this.isGlowing();
 		this.setGlow(true);
 
-		let psd = {
+		const psd: agPsd.Psd = {
 			width: this.app.stage.width,
 			height: this.app.stage.height,
-			children: [] as any[]
+			children: []
 		};
-		let allLayers = this.getAllLayers();
-		let renderer = this.app.renderer;
-		let complex = this.complex;
+		const allLayers = this.getAllLayers();
+		const renderer = this.app.renderer;
+		const complex = this.complex;
 
 		function addPSDLayer(layer: IconLayer, parent: IconPart, sprite: PIXI.Container) {
 			allLayers.forEach(currentLayer => currentLayer.sprite.alpha = 0);
 			layer.sprite.alpha = 255;
 
-			let layerChild: any = {
+			const layerChild: agPsd.Layer = {
 				name: layer.colorName,
-				canvas: renderer.extract.canvas(sprite)
+				canvas: renderer.extract.canvas(sprite) as HTMLCanvasElement
 			};
 			if (layer.colorType == "g") {
 				if (parent.part) layerChild.name = parent.part.name + " glow";
@@ -830,29 +833,29 @@ export class Icon {
 		}
 
 		this.layers.forEach(currentLayer => {
-			let partName = currentLayer.part ? currentLayer.part.name : "Icon";
-			let folder = {
+			const partName = currentLayer.part ? (currentLayer.part.name || "Icon") : "Icon";
+			const folder = {
 				name: partName,
 				children: currentLayer.sections.map(layer => addPSDLayer(layer, currentLayer, this.sprite)),
 				opened: true
 			};
-			psd.children.push(folder);
+			psd.children!.push(folder);
 		});
 
 		if (complex) {
-			let glowFolder = {
+			const glowFolder: agPsd.Layer = {
 				name: "Glow",
 				children: this.glowLayers.map(currentLayer => addPSDLayer(currentLayer.sections[0], currentLayer, this.sprite)),
 				opened: true,
 				hidden: !glowing
 			};
-			psd.children.unshift(glowFolder);
+			psd.children!.unshift(glowFolder);
 		}
 
 		allLayers.forEach(currentLayer => currentLayer.sprite.alpha = 255);
-		let output = agPsd.writePsd(psd);
-		let blob = new Blob([output]);
-		let downloader = document.createElement('a');
+		const output = agPsd.writePsd(psd);
+		const blob = new Blob([output]);
+		const downloader = document.createElement('a');
 		downloader.href = URL.createObjectURL(blob);
 		downloader.setAttribute("download", `${this.formName()}_${this.id}.psd`);
 		document.body.appendChild(downloader);
@@ -868,7 +871,7 @@ export class Icon {
 class IconPart {
 	sprite: PIXI.Container;
 	sections: IconLayer[];
-	part: any;
+	part: PartForSpecialIcons;
 
 	/**
 	 * @param form The form of the icon.
@@ -889,7 +892,7 @@ class IconPart {
 		this.sections = [];
 
 		if (!misc.skipGlow) {
-			let glowCol = getGlowColor(colors);
+			const glowCol = getGlowColor(colors);
 			sections.glow = new IconLayer(`${iconPath}${partString}_glow_001.png`, glowCol, "g", misc.new);
 			if (!glow) sections.glow.sprite.visible = false;
 		}
@@ -902,7 +905,7 @@ class IconPart {
 			sections.col1 = new IconLayer(`${iconPath}${partString}_001.png`, colors["1"], "1", misc.new);
 			sections.col2 = new IconLayer(`${iconPath}${partString}_2_001.png`, colors["2"], "2", misc.new);
 
-			let extraPath = `${iconPath}${partString}_extra_001.png`;
+			const extraPath = `${iconPath}${partString}_extra_001.png`;
 			if (iconData.gameSheet[extraPath]) {
 				sections.white = new IconLayer(extraPath, colors["w"], "w", misc.new);
 			}
