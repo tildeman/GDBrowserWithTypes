@@ -2,28 +2,13 @@
  * @fileoverview Site-specific script for the user profile page.
  */
 
+import { Fetch, clean, toggleEscape } from "../misc/global.js";
 import { renderIcons } from "../iconkit/icon.js";
-import { Fetch, toggleEscape } from "../misc/global.js";
+import { Player } from "../classes/Player.js";
 
 const accountID: string = $('#dataBlock').data('accountid');
 const accountUsername: string = $('#dataBlock').data('username');
 const accountModerator: string = $('#dataBlock').data('moderator');
-
-// TODO: Avoid defining duplicates of `clean`
-/**
- * Sanitize potentially dangerous code.
- * @param text The text to replace characters.
- * @returns The sanitized text that is safe to display.
- */
-function clean(text: string | number | undefined) {
-	return String(text)
-		.replace(/&/g, "&#38;")
-		.replace(/</g, "&#60;")
-		.replace(/>/g, "&#62;")
-		.replace(/=/g, "&#61;")
-		.replace(/"/g, "&#34;")
-		.replace(/'/g, "&#39;");
-}
 
 // TODO: Use URI paramters instead
 // remove ID from URL
@@ -194,7 +179,7 @@ $('#submitVote').on("click", function() {
 	const password = $('#like-password').val();
 	const extraID = lvID || window.location.pathname.split('/')[2];
 	const likeType = like ? "1" : "0";
-	let accountID = 0;
+	let accountID = "0";
 
 	if (!ID || !username || !password || loadingComments) {
 		return $('#postComment').hide();
@@ -204,7 +189,7 @@ $('#submitVote').on("click", function() {
 	$('.postbutton').hide();
 	toggleEscape(false);
 
-	Fetch(`/api/profile/${username}`).then(res => {
+	Fetch(`/api/profile/${username}`).then((res: Player | "-1") => {
 		if (!res || res == "-1") {
 			toggleEscape(true);
 			$('.postbutton').show();

@@ -3,6 +3,7 @@
  */
 
 import { Fetch } from "../misc/global.js";
+import { SafeServers } from "../types/servers.js";
 
 let filters: string[] = [];
 let demons = [];
@@ -24,7 +25,6 @@ function undupe<T>(array: T[]) {
   else return array.filter((value, index) => array.indexOf(value) == index);
 }
 
-// TODO: Remove this deprecated usage
 $('#userSearch').on("click", function() {
 	const query = encodeURIComponent(($('#levelName').val() || "").toString()).replace(/%2F/gi, "");
 	if (query) window.location.href = "./u/" + query;
@@ -281,7 +281,7 @@ else if (+savedFilters.song && +savedFilters.song > 0) $('#songID').val(savedFil
 
 checkExtraFilters();
 
-Fetch(`/api/music`).then((music: any) => {
+Fetch(`/api/music`).then((music: [string, string][]) => {
 
 	$('#songName').html("1: " + music[1][0]);
 
@@ -314,7 +314,7 @@ Fetch(`/api/music`).then((music: any) => {
 		$('#levelName').css('width', '76%');
 	}
 
-	if (gdps) Fetch(`/api/gdps?current=1`).then((res: any) => {
+	if (gdps) Fetch(`/api/gdps?current=1`).then((res: SafeServers) => {
 		if (res.demonList) $('#demonList').show();
 	});
 	else $('#demonList').show();

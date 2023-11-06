@@ -1,42 +1,9 @@
+import { ICommentContent, ICommentParams } from "../types/comments.js";
+import { parseResponse } from "../lib/parse_response.js";
 import { UserCache } from "../classes/UserCache.js";
+import { ExportBundle } from "../types/servers.js";
 import { Player } from "../classes/Player.js";
 import { Request, Response } from "express";
-import { ExportBundle } from "../types.js";
-import { parseResponse } from "../lib/parse_response.js";
-
-/**
- * Interface for comment parameters.
- */
-interface ICommentParams {
-	userID: string;
-	accountID?: string;
-	levelID?: string;
-	page: number;
-	count: number;
-	mode: string;
-}
-
-/**
- * Interface for GD comments.
- */
-interface ICommentContent {
-    content: string;
-    ID: string;
-    likes: number;
-    date: string;
-
-	browserColor?: boolean;
-	moderator?: number;
-	accountID?: string;
-	playerID?: string;
-	username?: string;
-	levelID?: string;
-	percent?: number;
-	results?: number;
-	pages?: number;
-	range?: string;
-	color?: string;
-}
 
 /**
  * Fetch comments from a level or user.

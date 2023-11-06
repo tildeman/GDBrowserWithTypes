@@ -3,7 +3,7 @@
  */
 
 import { Fetch } from "../misc/global.js";
-import { ServerInfo } from "../types";
+import { ServerInfo } from "../types/servers.js";
 
 const max = 250;
 const trophies = [1, 5, 10, 25, 50, 100, max];

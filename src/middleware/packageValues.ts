@@ -4,7 +4,7 @@
 
 import serverListRaw from "../servers.json" assert { type: "json" };
 import { Request, Response, NextFunction } from "express";
-import { ExportBundle, ServerInfo } from "../types.js";
+import { ExportBundle, ServerInfo } from "../types/servers.js";
 import { convertUSP } from "../lib/uspconvert.js";
 import appConfig from '../settings.js';
 import request from 'axios'; // `request` is trash

@@ -1,5 +1,5 @@
 import { UserCache } from "../../classes/UserCache.js";
-import { ExportBundle } from "../../types.js";
+import { ExportBundle } from "../../types/servers.js";
 import { Request, Response } from "express";
 import { sha1 } from "../../lib/sha.js";
 import { XOR } from "../../lib/xor.js";
@@ -26,8 +26,7 @@ interface ICommentParams {
  * @returns A number [0-59] denoting the number of seconds in a minute
  */
 function getTime(time: number) {
-	let seconds = Math.ceil(time / 1000);
-	seconds = seconds % 60;
+	const seconds = Math.ceil(time / 1000) % 60;
 	return seconds;
 }
 

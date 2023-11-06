@@ -1,6 +1,6 @@
 import { XOR } from "../lib/xor.js";
 import music from "../misc/music.json" assert { type: "json" };
-import { ServerInfo } from "../types.js";
+import { ServerInfo } from "../types/servers.js";
 
 /**
  * The amount of orbs given to the player by the star rating.

@@ -5,117 +5,12 @@
 import properties from "../misc/analysis/objectProperties.json" assert { type: "json" };
 import colorStuff from "../misc/analysis/colorProperties.json" assert { type: "json" };
 import init from "../misc/analysis/initialProperties.json" assert { type: "json" };
-import ids from "../misc/analysis/objects.json" assert { type: "json" };
 import blocks from "../misc/analysis/blocks.json" assert { type: "json" };
+import ids from "../misc/analysis/objects.json" assert { type: "json" };
+import { AnalysisResult, ColorObject, LevelObject, LevelSettings, RelevantHeaderResponse } from "../types/analyses.js";
 import { DownloadedLevel } from "../classes/Level.js";
 import { Request, Response } from "express";
 import zlib from "zlib";
-
-/**
- * Raw information for a level object.
- */
-interface LevelObject {
-	id: string;
-	portal?: string;
-	coin?: string;
-	orb?: string;
-	trigger?: string;
-	message?: string;
-	triggerGroups?: string;
-	highDetail?: number;
-	/**
-	 * X-coordinate of the object.
-	 */
-	x?: number;
-	touchTriggered?: boolean;
-	spawnTriggered?: boolean;
-	opacity?: number;
-	duration?: number;
-	targetGroupID?: string;
-}
-
-/**
- * The configuration at the start of the level.
- */
-interface LevelSettings {
-	songOffset: number;
-	fadeIn: boolean;
-	fadeOut: boolean;
-	background: number;
-	ground: number;
-	alternateLine: boolean;
-	font: number;
-	gamemode: string;
-	startMini: boolean;
-	startDual: boolean;
-	speed: string;
-	twoPlayer: false;
-}
-
-/**
- * The object returned as results of analyses.
- */
-interface AnalysisResult {
-	level: {
-		name: string;
-		id: string;
-		author: string;
-		playerID: string;
-		accountID: string;
-		large: boolean;
-	};
-	objects: number;
-	highDetail: number;
-	portals: string;
-	coins: number[];
-	coinsVerified: boolean;
-	orbs: Record<string, number>;
-	triggers: Record<string, number>;
-	triggerGroups: Record<string, number>;
-	invisibleGroup?: number;
-	text: string[][];
-	settings: LevelSettings;
-	colors: ColorObject[];
-	dataLength: number;
-	data: string;
-	blocks: Record<string, number>; // Can be more specific; see `blocks.json`
-	misc: Record<string, [number, string]>;
-}
-
-/**
- * Copied HSV values.
- */
-interface CopiedHSV {
-	h: number;
-	s: number;
-	v: number;
-	"s-checked"?: boolean | number;
-	"v-checked"?: boolean | number;
-}
-
-/**
- * Object color data.
- */
-interface ColorObject {
-	channel: string;
-	pColor?: string;
-	opacity: number;
-	blending?: boolean;
-	copiedChannel?: number;
-	copiedHSV?: CopiedHSV;
-	copyOpacity?: boolean;
-	r: number;
-	g: number;
-	b: number;
-}
-
-/**
- * The response returned by parsing the level headers, with only the important bits.
- */
-interface RelevantHeaderResponse {
-	settings: any; // TODO: Make a better entry for settings
-	colors: ColorObject[];
-}
 
 /**
  * Analyze a level (controller function).

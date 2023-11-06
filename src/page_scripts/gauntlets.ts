@@ -2,10 +2,11 @@
  * @fileoverview Site-specific script for the gauntlet listing page.
  */
 
-// TODO: Separate types from API files
-fetch('/api/gauntlets').then(res => res.json()).then(gauntlets => {
+import { GauntletEntry } from "../types/gauntlets.js";
+
+fetch('/api/gauntlets').then(res => res.json()).then((gauntlets: GauntletEntry[]) => {
 	$('#loading').hide();
-	gauntlets.forEach((gauntletItem) => {
+	gauntlets.forEach(gauntletItem => {
 		$('#gauntletList').append(`
 			<div class="gauntlet">
 			<a href="/search/*?gauntlet=${gauntletItem.id}">

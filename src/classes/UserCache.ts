@@ -1,4 +1,4 @@
-import { ServerInfo } from "../types";
+import { ServerInfo } from "../types/servers.js";
 
 /**
  * Cache player data the GDBrowser way.

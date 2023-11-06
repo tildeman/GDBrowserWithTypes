@@ -2,7 +2,8 @@
  * @fileoverview Site-specific script for the achievements page.
  */
 
-import { AchievementAPIResponse, AchievementItem, Color3B } from "../misc/global.js";
+import { AchievementAPIResponse, AchievementItem } from "../types/achievements.js";
+import { Color3B } from "../types/miscellaneous.js";
 
 interface IDisabledFilters {
 	reward: string[];

@@ -2,7 +2,7 @@ import { parseResponse } from '../lib/parse_response.js';
 import { UserCache } from '../classes/UserCache.js';
 import { Player } from '../classes/Player.js';
 import { Request, Response } from "express";
-import { ExportBundle } from "../types.js";
+import { ExportBundle } from "../types/servers.js";
 import searchController from "./search.js";
 
 /**

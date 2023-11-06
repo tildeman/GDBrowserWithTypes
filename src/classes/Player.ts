@@ -1,14 +1,10 @@
 import colors_raw from '../iconkit/sacredtexts/colors.json' assert { type: "json" };
-
-/**
- * A color in RGB format.
- */
-type ColorRGB = { r: number, g: number, b: number };
+import { Color3B } from '../types/miscellaneous.js';
 
 /**
  * An object of colors.
  */
-const colors: Record<string , ColorRGB> = colors_raw;
+const colors: Record<string , Color3B> = colors_raw;
 
 /**
  * Interface for a player icon
@@ -108,11 +104,11 @@ export class Player {
 	/**
 	 * The RGB value of the first color.
 	 */
-	col1RGB?: ColorRGB;
+	col1RGB?: Color3B;
 	/**
 	 * The RGB value of the second color.
 	 */
-	col2RGB?: ColorRGB;
+	col2RGB?: Color3B;
 	/**
 	 * Whether friend requests are enabled.
 	 */

@@ -9,7 +9,7 @@ import credits from "../misc/credits.json" assert { type: "json" };
 import music from '../misc/music.json' assert { type: "json" };
 import { fetchTemplate } from "../lib/template_handle.js";
 import { UserCache } from "../classes/UserCache.js";
-import { SafeServers } from '../types.js';
+import { SafeServers } from '../types/servers.js';
 import express from "express";
 
 export default function(userCacheHandle: UserCache, safeServers: SafeServers[]) {

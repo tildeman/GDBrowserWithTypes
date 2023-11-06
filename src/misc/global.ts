@@ -1,26 +1,3 @@
-export type Color3B = {
-	r: number;
-	g: number;
-	b: number;
-}
-
-export interface AchievementItem {
-	id: string;
-	game: string;
-	name: string;
-	rewardType: string;
-	rewardID: number;
-	description: string;
-	achievedDescription: string;
-	trueID: string;
-}
-
-export interface AchievementAPIResponse {
-	achievements: AchievementItem[];
-	types: Record<string, [string, string[]]>;
-	colors: Record<number, Color3B>;
-}
-
 // Warning to be displayed when the viewport is vertical
 $('body').append(`
 	<div data-nosnippet id="tooSmall" class="brownBox center supercenter" style="display: none; width: 80%">
@@ -63,6 +40,21 @@ function backButton() {
 			else window.history.back();
 		}
 	else window.location.href = "/";
+}
+
+/**
+ * Sanitize potentially dangerous code.
+ * @param text The text to replace characters.
+ * @returns The sanitized text that is safe to display.
+ */
+export function clean(text: string | number | undefined) {
+	return String(text)
+		.replace(/&/g, "&#38;")
+		.replace(/</g, "&#60;")
+		.replace(/>/g, "&#62;")
+		.replace(/=/g, "&#61;")
+		.replace(/"/g, "&#34;")
+		.replace(/'/g, "&#39;");
 }
 
 let gdps: string | null = null;

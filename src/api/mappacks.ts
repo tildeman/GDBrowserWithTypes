@@ -1,28 +1,7 @@
+import { MapPackCacheItem, MapPackEntry } from "../types/mappacks.js";
 import { parseResponse } from "../lib/parse_response.js";
+import { ExportBundle } from "../types/servers.js";
 import { Request, Response } from "express";
-import { ExportBundle } from "../types.js";
-
-/**
- * An entry for a Geometry Dash map pack.
- */
-interface MapPackEntry {
-    id: number;
-    name: string;
-    levels: string[];
-	stars: number;
-	coins: number;
-	difficulty: string;
-	barColor: string;
-	textColor: string;
-}
-
-/**
- * The cache object for map packs on any GDPS.
- */
-interface MapPackCacheItem {
-	data: MapPackEntry[];
-	indexed: number;
-}
 
 /**
  * The map pack difficulties.

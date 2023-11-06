@@ -2,8 +2,8 @@
  * @fileoverview Site-specific script for the search results page.
  */
 
-import { SearchQueryLevel } from "../classes/Level";
-import { Fetch } from "../misc/global.js";
+import { SearchQueryLevel } from "../classes/Level.js";
+import { Fetch, clean } from "../misc/global.js";
 
 $('#pageDown').hide();
 $('#pageUp').hide();
@@ -35,21 +35,6 @@ let pageCache = {};
 
 let demonListLink = "https://pointercrate.com/";
 let searchFilters = `/api/search/${type == 'saved' ? JSON.parse(localStorage.getItem('saved') || '[]').reverse().toString() : accID || path}?page=[PAGE]${count ? "" : "&count=10"}${window.location.search.replace(/\?/g, "&").replace("currentPage", "nope")}`;
-
-/**
- * Sanitize potentially dangerous code.
- * @param text The text to replace characters.
- * @returns The sanitized text that is safe to display.
- */
-function clean(text: string | number | undefined) {
-	return String(text)
-		.replace(/&/g, "&#38;")
-		.replace(/</g, "&#60;")
-		.replace(/>/g, "&#62;")
-		.replace(/=/g, "&#61;")
-		.replace(/"/g, "&#34;")
-		.replace(/'/g, "&#39;");
-}
 
 if (type == "followed") {
 	let followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];

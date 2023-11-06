@@ -1,23 +1,10 @@
 import { parseResponse } from "../../lib/parse_response.js";
 import countMessagesController from "./countMessages.js";
+import { MessageObject } from "../../types/messages.js";
 import { UserCache } from "../../classes/UserCache.js";
-import { ExportBundle } from "../../types.js";
+import { ExportBundle } from "../../types/servers.js";
 import { Request, Response } from "express";
 import { XOR } from "../../lib/xor.js";
-
-/**
- * Auxiliary interface for a partial message object
- */
-interface MessageOverview {
-	id: string;
-	playerID: string;
-	accountID: string;
-	author: string;
-	subject: string;
-	date: string;
-	unread: boolean;
-	browserColor: boolean;
-}
 
 /**
  * Get a list of messages.
@@ -47,9 +34,9 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		userCacheHandle.trackSuccess(reqBundle.id);
 
 		const messages = (body || "").split("|").map(msg => parseResponse(msg));
-		const messageArray: MessageOverview[] = [];
+		const messageArray: MessageObject[] = [];
 		messages.forEach(colon_separated_response => {
-			let msg = {
+			let msg: MessageObject = {
 				id: colon_separated_response[1],
 				playerID: colon_separated_response[3],
 				accountID: colon_separated_response[2],

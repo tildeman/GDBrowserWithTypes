@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ExportBundle } from "../types.js";
+import { ExportBundle } from "../types/servers.js";
 
 /**
  * Check if a song is allowed for use.

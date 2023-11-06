@@ -1,56 +1,13 @@
+import { ListDemon, SearchFilters } from '../types/searches.js';
 import { parseResponse } from '../lib/parse_response.js';
 import { SearchQueryLevel } from '../classes/Level.js';
 import { UserCache } from '../classes/UserCache.js';
+import { ExportBundle } from "../types/servers.js";
 import profileController from "./profile.js";
 import { Request, Response } from "express";
-import { ExportBundle } from "../types.js";
 import request from 'axios';
 
 let demonList = {};
-
-interface SearchFilters {
-    str?: string;
-    diff?: string;
-    demonFilter?: string;
-    page?: number;
-    gauntlet?: number;
-    len?: string;
-    song?: string;
-    followed?: string;
-    featured?: number;
-    originalOnly?: number;
-    twoPlayer?: number;
-    coins?: number;
-	epic?: number;
-	star?: number;
-	noStar?: number;
-	customSong?: number;
-	type?: number;
-    count?: number;
-}
-
-// SARY NEVER CLEAR
-
-/**
- * Auxiliary interface for Pointercrate's level entries.
- */
-interface ListDemon {
-	name: string;
-	position?: number;
-	id: number;
-	publisher: {
-		id: number;
-		name: string;
-		banned: boolean;
-	};
-	verifier: {
-		id: number;
-		name: string;
-		banned: boolean;
-	};
-	level_id?: number;
-	video?: string;
-}
 
 /**
  * Find a level in Pointercrate's level list using the ID.

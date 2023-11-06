@@ -58,6 +58,9 @@ jspm_packages/
 # Output of 'tsc'
 out
 
+# Output of 'webpack'
+src/vendor
+
 # Yarn Integrity file
 .yarn-integrity
 

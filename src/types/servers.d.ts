@@ -1,8 +1,6 @@
 /**
- * @fileoverview Common types to be used by GDBrowser's typing system.
+ * @fileoverview Server handling in GDBrowser.
  */
-
-import { AxiosResponse } from "axios";
 
 /**
  * An object for private servers defined in `servers.json`.
@@ -127,9 +125,7 @@ export interface ExportBundle {
 		 * @returns An object containing the forms and headers for a request.
 		 */
 		gdParams: (obj?: Record<string, string | number | undefined>, substitute?: boolean) => {
-			form: {
-				[configEntry: string]: string | number | undefined;
-			};
+			form: Record<string, string | number | undefined>;
 			headers: {
 				'x-forwarded-for': string;
 				'x-real-ip': string;

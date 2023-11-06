@@ -191,9 +191,9 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 		$('#searchBox').append('<div style="height: 4.5%"></div>');
 
 		if (scrollTo) {
-			let foundElement = $(`#searchBox .leaderboardName a[accountID=${scrollTo}]`);
+			const foundElement = $(`#searchBox .leaderboardName a[accountID=${scrollTo}]`);
 			if (foundElement.length) {
-				let foundParent = foundElement.parent().parent();
+				const foundParent = foundElement.parent().parent();
 				$('#searchBox').scrollTop(foundParent.offset()!.top - (foundParent.height() || 0));
 			}
 		}
@@ -308,7 +308,7 @@ $('#relativeSearch').on("click", function() {
 	const relativeUsername = $('#relativeName').val();
 	if (relativeLoading || !relativeUsername) return;
 	relativeLoading = true;
-	Fetch("/api/profile/" + relativeUsername).then(foundUser => {
+	Fetch("/api/profile/" + relativeUsername).then((foundUser: Player) => {
 		if (foundUser && foundUser.accountID && foundUser.rank) {
 			leaderboard(null, "type=relative&accountID=" + foundUser.accountID, foundUser.accountID);
 			$('#userSearch').hide();

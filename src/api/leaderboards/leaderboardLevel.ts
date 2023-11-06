@@ -1,32 +1,11 @@
 import colors from '../../iconkit/sacredtexts/colors.json' assert { type: "json" };
 import secret_stuff from "../../misc/secretStuff.json" assert { type: "json" };
+import { LeaderboardEntry } from '../../types/leaderboards.js';
 import { parseResponse } from '../../lib/parse_response.js';
 import { UserCache } from '../../classes/UserCache.js';
-import { ExportBundle } from "../../types.js";
+import { ExportBundle } from "../../types/servers.js";
 import { Request, Response } from "express";
 import { XOR } from '../../lib/xor.js';
-
-/**
- * An entry for the in-game leaderboard.
- */
-interface LeaderboardEntry {
-	username: string;
-	playerID: string;
-	percent: number;
-	date: string;
-	rank: number;
-	icon: {
-		icon: number;
-		col1: number;
-		col2: number;
-		form: string;
-		glow: boolean;
-		col1RGB: { r: number, g: number, b: number };
-		col2RGB: { r: number, g: number, b: number };
-	}
-	coins: number;
-	accountID: string;
-}
 
 
 /**

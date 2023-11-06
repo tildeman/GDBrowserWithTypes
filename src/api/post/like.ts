@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { ExportBundle } from "../../types.js";
+import { ExportBundle } from "../../types/servers.js";
 import { sha1 } from "../../lib/sha.js";
 import { XOR } from "../../lib/xor.js";
 import { UserCache } from "../../classes/UserCache.js";

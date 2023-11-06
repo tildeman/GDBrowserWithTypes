@@ -2,7 +2,7 @@ import { __dirname , fetchStaticFile } from './lib/template_handle.js';
 import serverListRaw from "./servers.json" assert { type: "json" };
 import handleTimeouts from './middleware/handleTimeouts.js';
 import packageValues from './middleware/packageValues.js';
-import { SafeServers, ServerInfo } from "./types.js";
+import { SafeServers, ServerInfo } from "./types/servers.js";
 import { UserCache } from './classes/UserCache.js';
 import compression from 'compression';
 import appConfig from './settings.js';

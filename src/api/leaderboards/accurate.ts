@@ -1,31 +1,9 @@
 import secret_stuff from "../../misc/secretStuff.json" assert { type: "json" };
+import { AccurateLeaderboardEntry } from "../../types/leaderboards.js";
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { UserCache } from "../../classes/UserCache";
+import { ExportBundle } from "../../types/servers.js";
+import { UserCache } from "../../classes/UserCache.js";
 import { Request, Response } from "express";
-import { ExportBundle } from "../../types";
-
-/**
- * An entry for the accurate leaderboard.
- */
-interface LeaderboardEntry {
-	username: string;
-	playerID: string;
-	stars: number;
-	demons: number;
-	rank: number;
-	cp: number;
-	icon: {
-		icon: number;
-		col1: number;
-		col2: number;
-		form: string;
-		glow: boolean;
-	}
-	coins: number;
-	accountID: string;
-	usercoins: number;
-	diamonds: number;
-}
 
 const sheet = new GoogleSpreadsheet('1ADIJvAkL0XHGBDhO7PP9aQOuK3mPIKB2cVPbshuBBHc', { apiKey: secret_stuff.sheetsKey }); // accurate leaderboard spreadsheet
 
@@ -78,7 +56,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			console.log(cell);
 			return sendError();
 		}
-		const leaderboard: LeaderboardEntry[] = JSON.parse(cell.replace(/~( |$)/g, ""));
+		const leaderboard: AccurateLeaderboardEntry[] = JSON.parse(cell.replace(/~( |$)/g, ""));
 
 		let gdFormatting = "";
 		leaderboard.forEach(entry => {

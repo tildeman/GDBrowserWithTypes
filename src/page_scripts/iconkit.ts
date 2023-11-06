@@ -3,41 +3,12 @@
  */
 // hi there hello! this code is really old, so it's shit. i should rewrite it some time omg
 
-import { AnimationObject, Icon, IconConfiguration, IconData, iconData, loadIconLayers, parseIconColor, parseIconForm, rgbToDecimal } from "../iconkit/icon.js";
+import { Icon, iconData, loadIconLayers, parseIconColor, parseIconForm, rgbToDecimal } from "../iconkit/icon.js";
+import { AnimationObject, IconConfiguration, IconData, IconKitAPIResponse } from "../types/icons.js";
+import { AchievementAPIResponse, AchievementItem } from "../types/achievements.js";
+import { Color3B } from "../types/miscellaneous.js";
 import { PIXI } from "../vendor/index.js";
-import { AchievementAPIResponse, AchievementItem, Color3B } from "../misc/global.js";
 
-export interface ExtraData {
-	colorOrder: number[];
-	hardcodedUnlocks: {
-		form: string;
-		id: number;
-		type?: string;
-		keys?: number;
-		chests?: number;
-		unlock?: string;
-		gauntlet?: string;
-	}[];
-	iconCredits: {
-		name: string;
-		form: string;
-		id: number;
-	}[];
-	shops: {
-		icon: number;
-		type: string;
-		price: number;
-		shop: number;
-	}[];
-	previewIcons: string[];
-	newPreviewIcons: string[];
-}
-
-interface IconKitAPIResponse extends ExtraData {
-	sample: string[];
-	server?: string;
-	noCopy?: boolean;
-}
 let currentForm = 'icon';
 let glowbtnformCopy = 'icon';
 const mobile =  /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);

@@ -2,94 +2,9 @@
  * @fileoverview Site-specific script for the level analysis page.
  */
 
-import { Color3B, toggleEscape } from "../misc/global.js";
-
-interface CopiedHSV {
-	h: number | string;
-	s: number | string;
-	v: number | string;
-	"s-checked": boolean;
-	"v-checked": boolean;
-}
-
-interface AnalysisColorObject {
-	channel: string;
-	pColor?: string;
-	opacity: number;
-	blending?: boolean;
-	copiedChannel?: number;
-	copiedHSV?: CopiedHSV;
-	copyOpacity?: boolean;
-	r: number;
-	g: number;
-	b: number;
-}
-
-interface AnalysisResult {
-	level: {
-		name: string;
-		id: string;
-		author: string;
-		playerID: string;
-		accountID: string;
-		large: boolean;
-	};
-	objects: number;
-	highDetail: number;
-	hdPercent?: number;
-	portals: string; // The most stupid implementation I've ever seen
-	coins: number[];
-	coinsVerified: boolean;
-	orbs: Record<string, number> & {
-		/**
-		 * The total number of jump rings in the level
-		 */
-		total: number;
-	};
-	triggers: Record<string, number> & {
-		/**
-		 * The total number of triggers in the level
-		 */
-		total: number;
-	};
-	triggerGroups: Record<string, number>;
-	invisibleGroup: number;
-	text: [string, string][];
-	settings: {
-		songOffset: number;
-		fadeIn: boolean;
-		fadeOut: boolean;
-		background: number;
-		ground: number;
-		alternateLine: boolean;
-		font: number;
-		gamemode: string;
-		startMini: boolean;
-		startDual: boolean;
-		speed: string;
-		twoPlayer: false;
-	}
-	colors: AnalysisColorObject[];
-	dataLength: number;
-	data: string;
-	blocks: Record<string, number>; // Can be more specific; see `blocks.json`
-	misc: Record<string, [number, string]>;
-}
-
-/**
- * Sanitize potentially dangerous code.
- * @param text The text to replace characters.
- * @returns The sanitized text that is safe to display.
- */
-function clean(text: string | number | undefined) {
-	return String(text)
-		.replace(/&/g, "&#38;")
-		.replace(/</g, "&#60;")
-		.replace(/>/g, "&#62;")
-		.replace(/=/g, "&#61;")
-		.replace(/"/g, "&#34;")
-		.replace(/'/g, "&#39;");
-}
+import { AnalysisResult, AnalysisColorObject } from "../types/analyses.js";
+import { toggleEscape, clean } from "../misc/global.js";
+import { Color3B } from "../types/miscellaneous.js";
 
 let disabledPortals: string[] = [];
 let altTriggerSort = false;
@@ -124,10 +39,10 @@ fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (Ana
 	$('#meta-desc').attr('content',  `${res.portals.split(",").length}x portals, ${res.orbs.total || 0}x orbs, ${res.triggers.total || 0}x triggers, ${res.misc.glow || 0}x glow...`);
 
 
-	let hdPercent = (res.highDetail / res.objects) * 100;
-	if (res.highDetail == 0 || res.hdPercent == 0) $('#highDetailDiv').hide();
+	const hdPercent = (res.highDetail / res.objects) * 100;
+	if (res.highDetail == 0 || hdPercent == 0) $('#highDetailDiv').hide();
 	else {
-		let offset = hdPercent < 20 ? 1 : hdPercent < 40 ? 2 : hdPercent < 60 ? 3 : hdPercent < 80 ? 4 : 5;
+		const offset = Math.min(Math.floor(hdPercent / 20) + 1, 5);
 		$('#highdetail').append(`<div class="inline" style="width:${hdPercent + offset}%; height: 100%; background-color: lime; margin-left: -2.25%"></div>`);
 		$('#hdText').text(`${commafy(res.highDetail)}/${commafy(res.objects)} marked high detail • ${+hdPercent.toFixed(1)}% optimized`);
 	}
@@ -151,9 +66,9 @@ fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (Ana
 	 * @example
 	 * commafy(12345678); // Returns "12,345,678"
 	 */
-function commafy(num: string | number) {
-	return (+num || 0).toString().replace(/(\d)(?=(\d\d\d)+$)/g, "$1,");
-}
+	function commafy(num: string | number) {
+		return (+num || 0).toString().replace(/(\d)(?=(\d\d\d)+$)/g, "$1,");
+	}
 
 	/**
 	 * Append portals into the result page
@@ -309,8 +224,8 @@ function commafy(num: string | number) {
 		const col = res.colors.find(colorObject => colorObject.channel == $(this).attr('channel')) as AnalysisColorObject;
 		const hsv = col.copiedHSV;
 		if (hsv) {
-			hsv.s = Number(hsv.s).toFixed(2);
-			hsv.v = Number(hsv.v).toFixed(2);
+			hsv.s = Math.round(Number(hsv.s) * 100) / 100;
+			hsv.v = Math.round(Number(hsv.v) * 100) / 100;
 		}
 		const hex = "#" + ((1 << 24) + (+col.r << 16) + (+col.g << 8) + +col.b).toString(16).slice(1);
 		$('#colorStuff').html(`

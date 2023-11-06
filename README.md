@@ -13,8 +13,8 @@ To run GDBrowser locally:
 2) Clone/download this repository
 3) Open cmd/powershell/terminal in the main folder (with `package.json`)
 4) Type `npm i` to flood your hard drive with code that's 99% useless
-5) Type `npm run buildDeps` to bundle dependendencies into browser code
-6) Type `npm run build` to transpile all the code into something node.js can actually understand.
+5) Type `npm run buildDeps` to flood your hard drive even more with a bundled glob
+6) Type `npm run build` to transpile all the code into something node.js can actually understand
 7) Type `cd out && node index` to run the web server
 8) GDBrowser is now running locally at http://localhost:2000
 
@@ -160,6 +160,16 @@ These templates (written in [Pug](https://pugjs.org)) are designed to address th
 - Conform as much as possible to the HTML standards and Pug styling guidelines.
 - Use conditions and mix-ins that replace the preprocessing functions that manually replace placeholder values server-side. Instead of embedding unknown stuff into HTML files and hope it doesn't break, the preprocessing is now handled entirely by the template engine.
 
+### Types
+
+Last but not least, the type declarations for common GDBrowser features. (icons, leaderboards - even level analysis results!)
+
+As a JS/TS developer, sometimes you want some sort of pattern for the infinite amount of possible structures objects can take; TypeScript implements those features by allowing you to write your own object structures and type-check your code with them during development. This has a few benefits:
+
+1) You spend less time debugging for runtime errors.
+2) You can avoid having to define whole classes for simple data structures.
+3) These type declarations are stripped from the output, so you don't have to worry about the extra code footprint.
+
 ## RAQ (Rarely Asked Questions)
 
 **Q**: What on Earth is GDBrowser?
@@ -204,10 +214,10 @@ These templates (written in [Pug](https://pugjs.org)) are designed to address th
 
 ## Roadmap
 
-- [ ] Complete all the TODOs (32).
+- [ ] Complete all the TODOs (24).
 - [ ] Implement 2.2 features once the release is out.
 - [ ] Write JSDoc for all the types and interfaces in code.
-- [ ] Fix glaring formatting errors.
+- [ ] Fix glaring visual errors.
 
 ---
 

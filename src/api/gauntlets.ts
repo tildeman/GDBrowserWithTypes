@@ -1,23 +1,7 @@
+import { GauntletCacheItem, GauntletEntry } from "../types/gauntlets.js";
 import { parseResponse } from "../lib/parse_response.js";
+import { ExportBundle } from "../types/servers.js";
 import { Request, Response } from "express";
-import { ExportBundle } from "../types.js";
-
-/**
- * An entry for a Geometry Dash gauntlet.
- */
-interface GauntletEntry {
-    id: number;
-    name: string;
-    levels: string[];
-}
-
-/**
- * The cache object for gauntlets on any GDPS.
- */
-interface GauntletCacheItem {
-	data: GauntletEntry[];
-	indexed: number;
-}
 
 /**
  * The global cache object for gauntlets.

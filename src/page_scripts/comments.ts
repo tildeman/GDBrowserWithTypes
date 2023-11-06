@@ -2,10 +2,11 @@
  * @fileoverview Site-specific script for the level comments page.
  */
 
-import { Level } from "../classes/Level.js";
+import { Fetch, clean, toggleEscape } from "../misc/global.js";
 import { Player, PlayerIcon } from "../classes/Player.js";
+import { Color3B } from "../types/miscellaneous.js";
 import { renderIcons } from "../iconkit/icon.js";
-import { Color3B, Fetch, toggleEscape } from "../misc/global.js";
+import { Level } from "../classes/Level.js";
 
 interface CommentItem {
 	content: string;
@@ -28,10 +29,15 @@ interface CommentItem {
 	browserColor?: boolean;
 }
 
+interface CommentPreset {
+	mode: string;
+	compact: boolean
+}
+
 // TODO: GDPS check missing
 const gdps = "";
 
-let {mode, compact} = JSON.parse(localStorage.getItem('commentPreset') || '{"mode": "top", "compact": true}');
+let { mode, compact }: CommentPreset = JSON.parse(localStorage.getItem('commentPreset') || '{"mode": "top", "compact": true}');
 let messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for posting a comment <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postComment.js">here</a>.';
 $('#message').html(messageText);
 $('#likeMessage').html(messageText.replace("posting", "liking").replace("postComment", "like"));
@@ -62,23 +68,6 @@ if (mode == "top") {
 	$('#topSort').attr('src', "/assets/sort-likes-on.png")
 }
 else $('#timeSort').attr('src', "/assets/sort-time-on.png")
-
-
-// TODO: Avoid defining duplicates of `clean`
-/**
- * Sanitize potentially dangerous code.
- * @param text The text to replace characters.
- * @returns The sanitized text that is safe to display.
- */
-function clean(text: string | number | undefined) {
-	return String(text)
-		.replace(/&/g, "&#38;")
-		.replace(/</g, "&#60;")
-		.replace(/>/g, "&#62;")
-		.replace(/=/g, "&#61;")
-		.replace(/"/g, "&#34;")
-		.replace(/'/g, "&#39;");
-}
 
 $('#compactMode').attr('src', `/assets/compact-${compact ? "on" : "off"}.png`);
 
@@ -135,6 +124,11 @@ function buildComments(lvl: Level | Player) {
 		}
 	}
 
+	/**
+	 * Wrapper function for inserting comments/profile posts.
+	 * @param auto Whether to auto-load comments.
+	 * @param noCache Whether to cache comment data.
+	 */
 	function appendComments(auto?: boolean, noCache?: boolean) {
 		if (loadingComments) return;
 		else loadingComments = true;

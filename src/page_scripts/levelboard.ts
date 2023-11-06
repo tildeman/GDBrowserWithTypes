@@ -2,8 +2,10 @@
  * @fileoverview Site-specific script for the level leaderboard page.
  */
 
-import { buildIcon } from "../iconkit/icon.js";
+import { LeaderboardEntry } from "../types/leaderboards.js";
 import { isInViewport } from "../misc/global.js";
+import { buildIcon } from "../iconkit/icon.js";
+import { Level } from "../classes/Level.js";
 
 let loading = false;
 const lvlID = Math.round(+window.location.pathname.split('/')[2]);
@@ -23,7 +25,7 @@ function leaderboard() {
 	loading = true;
 	$('#loading').show();
 
-	fetch(`/api/level/${lvlID}`).then(lvl => lvl.json()).then(lvl => {
+	fetch(`/api/level/${lvlID}`).then(lvl => lvl.json()).then((lvl: "-1" | Level) => {
 		if (lvl == "-1") return $('#header').html("Nonexistent level " + lvlID);
 
 		document.title = "Leaderboards for " + lvl.name;
@@ -32,7 +34,6 @@ function leaderboard() {
 		$('#meta-desc').attr('content', 'View the leaderboard for ' + lvl.name + ' by ' + lvl.author + '!');
 	});
 
-	// TODO: Add better types
 	fetch(`/api/leaderboardLevel/${lvlID}?count=200${weekly ? "&week" : ""}`).then(res => res.json()).then(res => {
 		if (!res || res.error || res == "-1") {
 			loading = false;
@@ -42,7 +43,7 @@ function leaderboard() {
 			return;
 		}
 
-		res.forEach((player) => {
+		res.forEach((player: LeaderboardEntry) => {
 			$('#searchBox').append(`<div class="searchResult leaderboardSlot levelboardSlot" style="align-items: center; padding-left: 1vh; height: 15%; width: 100%; position: relative">
 
 				<h2 class="center" style="width: 12%; margin: 0% 0% 0% 0.5%; transform: scale(${1 - (Math.max(0, String(player.rank).length - 1) * 0.2)}">${player.rank}</h2>

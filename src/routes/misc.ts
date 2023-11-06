@@ -3,7 +3,7 @@
  */
 
 import { fetchTemplate } from "../lib/template_handle.js";
-import { ExportBundle } from "../types.js";
+import { ExportBundle } from "../types/servers.js";
 import express from "express";
 
 const router = express.Router();

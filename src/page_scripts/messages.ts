@@ -2,27 +2,16 @@
  * @fileoverview Site-specific script for the private message management page.
  */
 
-import { Player } from "../classes/Player";
-import { toggleEscape } from "../misc/global";
-
-// TODO: Avoid duplicate interface declarations
-interface MessageOverview {
-	id: string;
-	playerID: string;
-	accountID: string;
-	author: string;
-	subject: string;
-	date: string;
-	unread: boolean;
-	browserColor: boolean;
-}
+import { Player } from "../classes/Player.js";
+import { toggleEscape } from "../misc/global.js";
+import { MessageObject } from "../types/messages.js";
 
 let accountID: string;
 let password: string;
 let page = 0;
 let messageID: string = "0";
 let playerID: string = "0";
-let messages: MessageOverview[] = [];
+let messages: MessageObject[] = [];
 const messageStatus = {};
 const cache = {};
 let loading = false;
@@ -83,7 +72,7 @@ $('#logIn').on("click", function() {
 		}
 		else accountID = res.accountID;
 
-		$.post("/messages", { password, accountID }).done(msgs => {
+		$.post("/messages", { password, accountID }).done((msgs: MessageObject[]) => {
 			messages = msgs;
 			$('#access').hide();
 			appendMessages();
@@ -127,7 +116,7 @@ function getMessages() {
 	$('#selectAll').show();
 	$('#selectNone').hide();
 	$('#msgList').html('<img src="/assets/loading.png" class="spin noSelect" style="margin-top: 20%; height: 20%;">');
-	$.post("/messages", { password, accountID, page }).done(msgs => {
+	$.post("/messages", { password, accountID, page }).done((msgs: MessageObject[]) => {
 			messages = msgs;
 			appendMessages();
 	}).fail(e => {
@@ -179,18 +168,18 @@ $(document).on('click', '.gdMessage', function () {
 		$('#deleteButton').show();
 	}
 
-	else $.post("/messages/" + messageID, { password, accountID }).done(msg => {
+	else $.post("/messages/" + messageID, { password, accountID }).done((msg: MessageObject) => {
 		cache[messageID] = [msg.content, msg.browserColor];
 
 		function loadMsg() {
-			$('#messageBody').attr('style', `color: ${msg.browserColor ? 'rgb(255, 140, 255)' : "white"}`).text(msg.content).show();
+			$('#messageBody').attr('style', `color: ${msg.browserColor ? 'rgb(255, 140, 255)' : "white"}`).text(msg.content || "").show();
 			$('#messageLoad').hide();
 			$('#replyButton').show();
 			$('#deleteButton').show();
 		}
 
 		if (!messageStatus[msg.accountID]) {
-			fetch(`/api/profile/${msg.author}`).then(res => res.json()).then(res => {
+			fetch(`/api/profile/${msg.author}`).then(res => res.json()).then((res: Player) => {
 				messageStatus[msg.accountID] = [res.messages, msg.author];
 				loadMsg();
 			});
@@ -212,14 +201,14 @@ $('#deleteCurrentMessage').on("click", function() {
 	$('#preDelete').hide();
 	$('#deleting').show();
 
-	$.post("/deleteMessage/", { password, accountID, id: messageID }).done(msg => {
-			messages = messages.filter(messageItem => messageItem.id != messageID);
-			appendMessages(true);
-			toggleEscape(true);
-			$('#selectedMessage').hide();
-			$('#confirmDelete').hide();
-			$('#preDelete').show();
-			$('#deleting').hide();
+	$.post("/deleteMessage/", { password, accountID, id: messageID }).done(() => {
+		messages = messages.filter(messageItem => messageItem.id != messageID);
+		appendMessages(true);
+		toggleEscape(true);
+		$('#selectedMessage').hide();
+		$('#confirmDelete').hide();
+		$('#preDelete').show();
+		$('#deleting').hide();
 	}).fail(e => {
 		$('#deleting').hide();
 		$('#delete-error').show();
@@ -244,7 +233,7 @@ $('#bulkDeleteMessages').on("click", function() {
 	$('#preBulkDelete').hide();
 	$('#bulkDeleting').show();
 
-	$.post("/deleteMessage/", { password, accountID, id: msgIDs }).done(msg => {
+	$.post("/deleteMessage/", { password, accountID, id: msgIDs }).done(() => {
 		if (msgIDs.length > 10) getMessages();
 		else {
 			messages = messages.filter(messageItem => !msgIDs.includes(messageItem.id));
@@ -286,7 +275,7 @@ $('#postMessage').on("click", function() {
 	$('#reply-error').hide();
 	$('#postingMessage').show();
 
-	$.post("/sendMessage/", { password, accountID, subject, message, targetID: playerID, color: true }).done(msg => {
+	$.post("/sendMessage/", { password, accountID, subject, message, targetID: playerID, color: true }).done(() => {
 		$('#reply-loading').hide();
 		$('#reply-sent').show();
 		toggleEscape(true);

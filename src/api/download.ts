@@ -1,5 +1,5 @@
 import { parseResponse } from "../lib/parse_response.js";
-import { ExportBundle } from "../types.js";
+import { ExportBundle } from "../types/servers.js";
 import { DownloadedLevel } from '../classes/Level.js';
 import { Request, Response } from "express";
 import { UserCache } from "../classes/UserCache.js";

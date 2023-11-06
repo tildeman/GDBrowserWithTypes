@@ -1,23 +1,7 @@
+import { BoomlingsUser } from "../../types/leaderboards.js";
+import { ExportBundle } from "../../types/servers.js";
 import { Request, Response } from "express";
-import { ExportBundle } from "../../types.js";
 import request from "axios";
-
-/**
- * An object for a user in Boomlings, RobTop's discontinued game.
- */
-interface BoomlingsUser {
-    rank: number;
-    name: string;
-    ID: string;
-    level: number;
-    score: number;
-    boomling: number;
-    boomlingLevel: number;
-    powerups: number[];
-    unknownVisual: number;
-    unknownScore: number;
-    raw: string;
-}
 
 // Note: As Boomlings has been discontinued for a long time, the servers went offline sometime around 2018.
 // The code here is largely untested and will definitely fail, but may prove helpful (who knows?)

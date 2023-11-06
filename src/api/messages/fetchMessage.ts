@@ -1,6 +1,7 @@
 import { parseResponse } from "../../lib/parse_response.js";
+import { MessageObject } from "../../types/messages.js";
 import { UserCache } from "../../classes/UserCache.js";
-import { ExportBundle } from "../../types.js";
+import { ExportBundle } from "../../types/servers.js";
 import { Request, Response } from "express";
 import { XOR } from "../../lib/xor.js";
 
@@ -30,7 +31,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		userCacheHandle.trackSuccess(reqBundle.id);
 
 		const colon_separated_response = parseResponse(body || "");
-		const msg = {
+		const msg: MessageObject = {
 			id: colon_separated_response[1],
 			playerID: colon_separated_response[3],
 			accountID: colon_separated_response[2],

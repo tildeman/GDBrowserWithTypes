@@ -1,17 +1,15 @@
+import robotAnimations from "./sacredtexts/robotAnimations.json" assert { type: "json" }
+import gameSheet from "./sacredtexts/gameSheet.json" assert { type: "json" }
 import colors from "./sacredtexts/colors.json" assert { type: "json" }
 import forms from "./sacredtexts/forms.json" assert { type: "json" }
-import gameSheet from "./sacredtexts/gameSheet.json" assert { type: "json" }
-import robotAnimations from "./sacredtexts/robotAnimations.json" assert { type: "json" }
 
-import colorOrder from "./extradata/colorOrder.json" assert { type: "json" }
 import hardcodedUnlocks from "./extradata/hardcodedUnlocks.json" assert { type: "json" }
 import iconCredits from "./extradata/iconCredits.json" assert { type: "json" }
+import colorOrder from "./extradata/colorOrder.json" assert { type: "json" }
 import shops from "./extradata/shops.json" assert { type: "json" }
 
+import { ExtraData, IconData } from "../types/icons.js"
 import fs from "node:fs";
-import { IconData } from "./icon.js"
-// TODO: Move ExtraData out of `page_scripts`
-import { ExtraData } from "../page_scripts/iconkit.js"
 
 const previewIcons = fs.readdirSync('./iconkit/premade');
 const newPreviewIcons = fs.readdirSync('./iconkit/newpremade');
@@ -35,7 +33,6 @@ newIcons.forEach(iconFileName => {
 	}
 });
 
-// TODO: make a more rigorous type import model
 export const sacredTexts: IconData = {
     forms,
     robotAnimations,

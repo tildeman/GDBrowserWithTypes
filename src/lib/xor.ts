@@ -30,6 +30,6 @@ export namespace XOR {
 	 * @returns A RobTop-deciphered string.
 	 */
 	export function decrypt(str: string, key = 37526) {
-		return this.xor(Buffer.from(str.replace(/./gs, c => ({'/': '_', '+': '-'}[c] || c)), 'base64').toString(), key);
+		return xor(Buffer.from(str.replace(/./gs, c => ({'/': '_', '+': '-'}[c] || c)), 'base64').toString(), key);
 	}
 }

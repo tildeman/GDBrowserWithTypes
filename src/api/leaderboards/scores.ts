@@ -1,27 +1,9 @@
+import { ScoreParameters } from "../../types/leaderboards.js";
 import { parseResponse } from "../../lib/parse_response.js";
 import { UserCache } from "../../classes/UserCache.js";
+import { ExportBundle } from "../../types/servers.js";
 import { Player } from "../../classes/Player.js";
-import { ExportBundle } from "../../types.js";
 import { Request, Response } from "express";
-
-/**
- * Leaderboard parameters.
- */
-interface ScoreParameters {
-	/**
-	 * The amount of entries in the leaderboard.
-	 */
-	count: number;
-	/**
-	 * The type of the leaderboard.
-	 */
-	type: "top" | "creators" | "week" | "relative";
-	/**
-	 * The account ID used for the leaderboard.
-	 */
-	accountID?: string;
-}
-
 /**
  * Fetch data for the in-game leaderboard.
  * @param req The client request.

@@ -3,7 +3,7 @@
  */
 
 import { Fetch } from "../misc/global.js";
-import { ServerInfo } from "../types";
+import { ServerInfo } from "../types/servers.js";
 
 // TODO: Use a better check for GDPS servers
 const gdps = "";

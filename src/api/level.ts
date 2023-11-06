@@ -3,7 +3,7 @@ import { SearchQueryLevel } from '../classes/Level.js';
 import { UserCache } from '../classes/UserCache.js';
 import downloadController from "./download.js";
 import { Request, Response } from "express";
-import { ExportBundle } from "../types.js";
+import { ExportBundle } from "../types/servers.js";
 import request from 'axios'; // I hope this doesn't cause too much trouble
 
 /**
