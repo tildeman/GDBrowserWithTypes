@@ -2,7 +2,7 @@
  * @fileoverview Spaghetti code for level analysis.
  */
 
-import { AnalysisColorObject, AnalysisResult, LevelObject, LevelSettings, RelevantHeaderResponse } from "../types/analyses.js";
+import { IAnalysisColorObject, IAnalysisResult, ILevelObject, ILevelSettings, IRelevantHeaderResponse } from "../types/analyses.js";
 import properties from "../misc/analysis/objectProperties.json" assert { type: "json" };
 import colorStuff from "../misc/analysis/colorProperties.json" assert { type: "json" };
 import init from "../misc/analysis/initialProperties.json" assert { type: "json" };
@@ -98,7 +98,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	let miscCounts: Record<string, [number, string]> = {};
 	let triggerGroups: string[] = [];
 	let highDetail = 0;
-	let alphaTriggers: LevelObject[] = [];
+	let alphaTriggers: ILevelObject[] = [];
 
 	let misc_objects: Record<number, string> = {};
 	let block_ids: Record<string, string> = {};
@@ -120,16 +120,16 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	const data = rawData.split(";");
 	const header = data.shift();
 
-	const objdata: LevelObject[] = [];
-	let level_portals: LevelObject[] = [];
-	let level_coins: LevelObject[] = [];
-	let level_text: LevelObject[] = [];
+	const objdata: ILevelObject[] = [];
+	let level_portals: ILevelObject[] = [];
+	let level_coins: ILevelObject[] = [];
+	let level_text: ILevelObject[] = [];
 
 	let orb_array: Record<string, number> = {};
 	let trigger_array: Record<string, number> = {};
 
 	let last = 0;
-	let obj: LevelObject;
+	let obj: ILevelObject;
 
 	const obj_length = data.length;
 	for (let i = 0; i < obj_length; ++i) {
@@ -280,14 +280,14 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 		return (levelTextA.x || 0) - (levelTextB.x || 0);
 	}).map(levelText => [Buffer.from(levelText.message || "", "base64").toString(), Math.round((levelText.x || 0) / last * 99) + "%"]);
 
-	const headerResponse = parse_header(header || "") as { settings: LevelSettings, colors: AnalysisColorObject[] };
-	const responseSettings: LevelSettings = headerResponse.settings;
+	const headerResponse = parse_header(header || "") as { settings: ILevelSettings, colors: IAnalysisColorObject[] };
+	const responseSettings: ILevelSettings = headerResponse.settings;
 	const responseColors = headerResponse.colors;
 
 	const responseDataLength = rawData.length;
 	const responseData = rawData;
 
-	const response: AnalysisResult = {
+	const response: IAnalysisResult = {
 		level: responseLevel,
 		objects: responseObjects,
 		highDetail: responseHighDetail,
@@ -316,7 +316,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
  * @returns An object containing relevant settings and colors.
  */
 function parse_header(header: string) {
-	let response: RelevantHeaderResponse = {
+	let response: IRelevantHeaderResponse = {
 		settings: {},
 		colors: []
 	};
@@ -372,7 +372,7 @@ function parse_header(header: string) {
 				const colorVal = name.split("-").pop();
 
 				// let colorObj = color as unknown as ColorObject;
-				const colorObj: AnalysisColorObject = {
+				const colorObj: IAnalysisColorObject = {
 					channel: colorVal || "",
 					pColor: color.pColor,
 					opacity: 1, // 1.9 colors don"t have this!
@@ -400,11 +400,11 @@ function parse_header(header: string) {
 			}
 			case "colors": {
 				let colorList: string[] = property.split("|");
-				let colorList2: AnalysisColorObject[] = [];
+				let colorList2: IAnalysisColorObject[] = [];
 				colorList.forEach((colorItem, colorIndex) => {
 					const color = parse_obj(colorItem, "_", colorStuff.properties);
 					const raw_hsv_value: string[] | undefined = color.copiedHSV?.split("a");
-					const colorObj: AnalysisColorObject = {
+					const colorObj: IAnalysisColorObject = {
 						channel: color.channel || "",
 						pColor: color.pColor,
 						opacity: Math.round((+color.opacity || 0) * 100) / 100,

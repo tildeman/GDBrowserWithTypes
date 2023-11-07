@@ -1,4 +1,4 @@
-import { MapPackCacheItem, MapPackEntry } from "../types/mappacks.js";
+import { IMapPackCacheItem, IMapPackEntry } from "../types/mappacks.js";
 import { parseResponse } from "../lib/parse_response.js";
 import { ExportBundle } from "../types/servers.js";
 import { Request, Response } from "express";
@@ -14,7 +14,7 @@ const difficulties = [
 /**
  * The global cache object for map packs.
  */
-const cache: Record<string, MapPackCacheItem> = {};
+const cache: Record<string, IMapPackCacheItem> = {};
 
 /**
  * Return a list of available map packs.
@@ -51,7 +51,7 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 				return await mapPackLoop();
 			}
 			
-			const mappacks: MapPackEntry[] = packs.map(mapPackEntry => ({ // "packs.map()" laugh now please
+			const mappacks: IMapPackEntry[] = packs.map(mapPackEntry => ({ // "packs.map()" laugh now please
 				id: +mapPackEntry[1],
 				name: mapPackEntry[2],
 				levels: mapPackEntry[3].split(","),

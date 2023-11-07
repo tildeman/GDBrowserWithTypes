@@ -1,24 +1,9 @@
-import { Request, Response } from "express";
+import { UserCache } from "../../classes/UserCache.js";
 import { ExportBundle } from "../../types/servers.js";
+import { ILikeParams } from "../../types/comments.js";
+import { Request, Response } from "express";
 import { sha1 } from "../../lib/sha.js";
 import { XOR } from "../../lib/xor.js";
-import { UserCache } from "../../classes/UserCache.js";
-
-/**
- * Parameters for item likes
- */
-interface ILikeParams {
-	udid: string;
-	uuid: string;
-	rs: string;
-	itemID: string;
-	gjp: string;
-	accountID: string;
-	like: string;
-	special: string;
-	type: string;
-	chk: string;
-}
 
 /**
  * Vote on a post.

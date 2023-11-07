@@ -1,10 +1,14 @@
+/**
+ * @fileoverview Types and interfaces for the icon kit.
+ */
+
 import { PIXI } from "../vendor/index.js";
 import { Color3B } from "./miscellaneous.js";
 
 /**
  * For robots and spiders, this determines the position of the icon parts
  */
-export interface PartForSpecialIcons {
+export interface IPartForSpecialIcons {
 	part: number;
 	pos: number[];
 	scale: number[];
@@ -15,7 +19,7 @@ export interface PartForSpecialIcons {
 }
 
 // Object for extra animation data for robots and spiders
-export interface AnimationObject {
+export interface IAnimationObject {
 	/**
 	 * Information about the animation.
 	 */
@@ -32,13 +36,13 @@ export interface AnimationObject {
 	/**
 	 * The frame data for the animation.
 	 */
-	frames: PartForSpecialIcons[][];
+	frames: IPartForSpecialIcons[][];
 }
 
 /**
  * Data for all the icons and their properties.
  */
-export interface IconData {
+export interface IIconData {
 	/**
 	 * The (internal) form names of each icon.
 	 */
@@ -82,7 +86,7 @@ export interface IconData {
 		/**
 		 * The actual keyframes that define the animation.
 		 */
-		animations: Record<string, Record<string, AnimationObject>>;
+		animations: Record<string, Record<string, IAnimationObject>>;
 	};
 	/**
 	 * A list of colors in RGB format.
@@ -116,7 +120,7 @@ export interface IconData {
 	newIcons: string[];
 }
 
-export interface IconConfiguration {
+export interface IIconConfiguration {
 	id: number;
 	form: string;
 	col1: number;
@@ -133,7 +137,7 @@ export interface IconConfiguration {
 	animationForm?: string;
 }
 
-export interface ExtraData {
+export interface IExtraData {
 	colorOrder: number[];
 	hardcodedUnlocks: {
 		form: string;
@@ -159,7 +163,7 @@ export interface ExtraData {
 	newPreviewIcons: string[];
 }
 
-export interface IconKitAPIResponse extends ExtraData {
+export interface IIconKitAPIResponse extends IExtraData {
 	sample: string[];
 	server?: string;
 	noCopy?: boolean;

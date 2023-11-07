@@ -2,8 +2,9 @@
  * @fileoverview Site-specific script for the demon leaderboard page.
  */
 
+import { IListEntry, IListEntryOverview } from "../types/demonlist.js";
+import { IServerInfo } from "../types/servers.js";
 import { Fetch } from "../misc/global.js";
-import { ServerInfo } from "../types/servers.js";
 
 const max = 250;
 const trophies = [1, 5, 10, 25, 50, 100, max];
@@ -18,17 +19,16 @@ if (demonID < max) $('#pageUp').attr('href', `./${demonID + 1}`);
 else $('#pageUp').hide();
 
 try {
-	const server: ServerInfo = await Fetch(`/api/gdps?current=1`);
+	const server: IServerInfo = await Fetch(`/api/gdps?current=1`);
 	if (illegal || !server.demonList) throw new Error("Server does not have a demon list!");
 
-	// TODO: Define types for both
 	const rawDemonStr = await fetch(`${server.demonList}api/v2/demons/listed?after=${demonID - 1}&before=${demonID + 1}`);
-	const rawDemon = await rawDemonStr.json();
+	const rawDemon: IListEntryOverview = await rawDemonStr.json();
 	if (!rawDemon || !rawDemon[0]) {
 		throw new Error("Can't find the specified demon!");
 	}
 	const demonResStr = await fetch(`${server.demonList}api/v2/demons/${rawDemon[0].id}`);
-	const demonRes = await demonResStr.json();
+	const demonRes: { data: IListEntry } = await demonResStr.json();
 	const demon = demonRes.data;
 	if (!demon.id) window.location.href = "/";
 

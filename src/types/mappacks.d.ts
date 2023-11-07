@@ -1,7 +1,11 @@
 /**
+ * @fileoverview Types and interfaces for map packs.
+ */
+
+/**
  * An entry for a Geometry Dash map pack.
  */
-export interface MapPackEntry {
+export interface IMapPackEntry {
 	id: number;
 	name: string;
 	levels: string[];
@@ -15,7 +19,7 @@ export interface MapPackEntry {
 /**
  * The cache object for map packs on any GDPS.
  */
-export interface MapPackCacheItem {
-	data: MapPackEntry[];
+export interface IMapPackCacheItem {
+	data: IMapPackEntry[];
 	indexed: number;
 }

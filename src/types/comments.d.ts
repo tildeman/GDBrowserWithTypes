@@ -1,4 +1,6 @@
-// TODO: Use a more consistent naming pattern
+/**
+ * @fileoverview Types and interfaces for comments of every type.
+ */
 
 /**
  * Interface for comment parameters.
@@ -12,6 +14,20 @@ export interface ICommentParams {
 	mode: string;
 }
 
+
+/**
+ * Interface for level comment parameters.
+ */
+export interface ILevelCommentParams {
+	percent: number;
+	comment: string;
+	gjp: string;
+	levelID: string;
+	accountID: string;
+	userName: string;
+	chk: string;
+}
+
 /**
  * Interface for GD comments.
  */
@@ -22,14 +38,28 @@ export interface ICommentContent {
 	date: string;
 
 	browserColor?: boolean;
-	moderator?: number;
-	accountID?: string;
-	playerID?: string;
-	username?: string;
 	levelID?: string;
 	percent?: number;
 	results?: number;
 	pages?: number;
 	range?: string;
 	color?: string;
+}
+
+/**
+ * Parameters for item likes.
+ *
+ * I actually hate parameters.
+ */
+export interface ILikeParams {
+	udid: string;
+	uuid: string;
+	rs: string;
+	itemID: string;
+	gjp: string;
+	accountID: string;
+	like: string;
+	special: string;
+	type: string;
+	chk: string;
 }

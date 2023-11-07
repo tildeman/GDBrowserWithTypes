@@ -9,6 +9,7 @@ $('#pageDown').hide();
 $('#pageUp').hide();
 
 let accID = "";
+let loading = false;
 let path = location.pathname.replace('/search/', "");
 const url = new URL(window.location.href);
 const gauntlet = url.searchParams.get('gauntlet');
@@ -17,8 +18,8 @@ const type = url.searchParams.get('type') || "";
 const list = url.searchParams.get('list');
 const count = url.searchParams.get('count');
 const rawHeader = url.searchParams.get('header');
+const superSearch = ['*', '*?type=mostliked', '*?type=mostdownloaded', '*?type=recent'].includes(window.location.href.split('/')[4].toLowerCase());
 const demonList = ["demonList", "demonlist"].some(linkName => typeof url.searchParams.get(linkName) == "string" || type == linkName);
-let loading = false;
 const gauntlets = [
 	"Fire", "Ice", "Poison", "Shadow", "Lava", "Bonus",
 	"Chaos", "Demon", "Time", "Crystal", "Magic", "Spike",
@@ -28,7 +29,6 @@ const gauntlets = [
 let currentPage = Math.max(1, Number(url.searchParams.get('page') || 0)) - 1;
 let pages = 0;
 let results = 0;
-const superSearch = ['*', '*?type=mostliked', '*?type=mostdownloaded', '*?type=recent'].includes(window.location.href.split('/')[4].toLowerCase());
 let pageCache = {};
 
 let demonListLink = "https://pointercrate.com/";
@@ -310,6 +310,23 @@ $(document).on("keydown", function(k) {
 
 	if (k.which == 37 && $('#pageDown').is(":visible")) $('#pageDown').trigger('click');   // left
 	if (k.which == 39 && $('#pageUp').is(":visible")) $('#pageUp').trigger('click');       // right
+});
+
+/**
+ * Move the pagination by an amount.
+ * @param increment The amount of page to move
+ */
+function movePageBy(increment: number) {
+	$('#pageSelect').val((parseInt(String($('#pageSelect').val() || "0")) || 0) + increment);
+	$('#pageSelect').trigger('input');
+}
+
+$("#prevResult").on("click", function() {
+	movePageBy(-1);
+});
+
+$("#nextResult").on("click", function() {
+	movePageBy(1);
 });
 
 export {};

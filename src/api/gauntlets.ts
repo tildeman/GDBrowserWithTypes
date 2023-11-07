@@ -1,4 +1,4 @@
-import { GauntletCacheItem, GauntletEntry } from "../types/gauntlets.js";
+import { IGauntletCacheItem, IGauntletEntry } from "../types/gauntlets.js";
 import { parseResponse } from "../lib/parse_response.js";
 import { ExportBundle } from "../types/servers.js";
 import { Request, Response } from "express";
@@ -6,7 +6,7 @@ import { Request, Response } from "express";
 /**
  * The global cache object for gauntlets.
  */
-const cache: Record<string, GauntletCacheItem> = {};
+const cache: Record<string, IGauntletCacheItem> = {};
 /**
  * The gauntlet names as of update 2.11.
  */
@@ -38,7 +38,7 @@ export default async function(req: Request, res: Response, cacheGauntlets: boole
 		const body = await reqBundle.gdRequest('getGJGauntlets21', {});
 
 		const gauntlets = body.split('#')[0].split('|').map(gauntletResponse => parseResponse(gauntletResponse)).filter(gauntletResponse => gauntletResponse[3]) || [];
-		const gauntletList: GauntletEntry[] = gauntlets.map((gauntletItem) => ({
+		const gauntletList: IGauntletEntry[] = gauntlets.map((gauntletItem) => ({
 			id: +gauntletItem[1],
 			name: gauntletNames[+gauntletItem[1] - 1] || "Unknown",
 			levels: gauntletItem[3].split(",")

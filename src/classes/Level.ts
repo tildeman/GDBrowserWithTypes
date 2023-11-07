@@ -1,6 +1,6 @@
 import { XOR } from "../lib/xor.js";
 import music from "../misc/music.json" assert { type: "json" };
-import { ServerInfo } from "../types/servers.js";
+import { IServerInfo } from "../types/servers.js";
 
 /**
  * The amount of orbs given to the player by the star rating.
@@ -21,7 +21,7 @@ const demonTypes = { 3: "Easy", 4: "Medium", 5: "Insane", 6: "Extreme" };
 
 // Placeholder array
 
-export interface LevelObject {
+export interface ILevelObject {
 	/**
 	 * Name of the level. (e.g.: isolation my ver)
 	 */
@@ -206,7 +206,7 @@ export interface LevelObject {
 /**
  * Class for a Geometry Dash level.
  */
-export class Level implements LevelObject {
+export class Level implements ILevelObject {
 	// Glob of whatever
 	name: string; id: string; description: string; author: string;
 	playerID: string; accountID: string; difficulty: string;
@@ -230,7 +230,7 @@ export class Level implements LevelObject {
 	 * @param download Not sure what it's used for.
 	 * @param author The author information, parsed from RobTop's colon-based data format.
 	 */
-	constructor(levelInfo: Record<number, string>, server: ServerInfo, download: boolean | null, author: Record<number, string>) {
+	constructor(levelInfo: Record<number, string>, server: IServerInfo, download: boolean | null, author: Record<number, string>) {
 		this.name = levelInfo[2] || "-";
 		this.id = levelInfo[1] || "0";
 		this.description = Buffer.from((levelInfo[3] || ""), "base64").toString() || "(No description provided)";

@@ -3,9 +3,9 @@
  */
 
 import { Fetch, clean, toggleEscape } from "../misc/global.js";
+import { ICommentContent } from "../types/comments.js";
 import { renderIcons } from "../iconkit/icon.js";
 import { Player } from "../classes/Player.js";
-import { ICommentContent } from "../types/comments.js";
 
 const accountID: string = $('#dataBlock').data('accountid');
 const accountUsername: string = $('#dataBlock').data('username');
@@ -157,7 +157,7 @@ $('#dislikebtn').on("click", function() {
 	like = false;
 });
 
-$(document).on('click', '.likeComment', function(cmnt) {
+$(document).on('click', '.likeComment', function() {
 	commentID = +($(this).attr('commentID') || "") || 0;
 
 	likedComments = localStorage.likedComments ? JSON.parse(localStorage.likedComments) : [];
@@ -178,7 +178,6 @@ $('#submitVote').on("click", function() {
 	const ID = commentID;
 	const username = $('#like-username').val();
 	const password = $('#like-password').val();
-	const extraID = lvID || window.location.pathname.split('/')[2];
 	const likeType = like ? "1" : "0";
 	let accountID = "0";
 

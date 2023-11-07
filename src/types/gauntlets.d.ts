@@ -1,7 +1,11 @@
 /**
+ * @fileoverview Types and interfaces for gauntlets.
+ */
+
+/**
  * An entry for a Geometry Dash gauntlet.
  */
-export interface GauntletEntry {
+export interface IGauntletEntry {
 	id: number;
 	name: string;
 	levels: string[];
@@ -10,7 +14,7 @@ export interface GauntletEntry {
 /**
  * The cache object for gauntlets on any GDPS.
  */
-export interface GauntletCacheItem {
-	data: GauntletEntry[];
+export interface IGauntletCacheItem {
+	data: IGauntletEntry[];
 	indexed: number;
 }

@@ -58,7 +58,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 			if (!commentInfo[2]) return;
 
-			const comment: ICommentContent = {
+			let comment: ICommentContent | (ICommentContent & Player) = {
 				content: Buffer.from(commentInfo[2], 'base64').toString(),
 				ID: commentInfo[6],
 				likes: +commentInfo[4],
@@ -71,7 +71,9 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 			if (req.query.type != "profile") {
 				let commentUser = new Player(accountInfo);
-				Object.assign(comment, commentUser);
+				comment = Object.assign(comment, commentUser);
+				// Quite redundant, but required for typechecking
+				if (!("username" in comment)) throw new Error("Can't append player data into comment object!");
 
 				comment.levelID = commentInfo[1] || req.params.id;
 				comment.playerID = commentInfo[3] || "0";

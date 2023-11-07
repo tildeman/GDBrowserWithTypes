@@ -2,7 +2,7 @@
  * @fileoverview Site-specific script for the level leaderboard page.
  */
 
-import { LeaderboardEntry } from "../types/leaderboards.js";
+import { ILeaderboardEntry } from "../types/leaderboards.js";
 import { isInViewport } from "../misc/global.js";
 import { buildIcon } from "../iconkit/icon.js";
 import { Level } from "../classes/Level.js";
@@ -43,7 +43,7 @@ function leaderboard() {
 			return;
 		}
 
-		res.forEach((player: LeaderboardEntry) => {
+		res.forEach((player: ILeaderboardEntry) => {
 			$('#searchBox').append(`<div class="searchResult leaderboardSlot levelboardSlot" style="align-items: center; padding-left: 1vh; height: 15%; width: 100%; position: relative">
 
 				<h2 class="center" style="width: 12%; margin: 0% 0% 0% 0.5%; transform: scale(${1 - (Math.max(0, String(player.rank).length - 1) * 0.2)}">${player.rank}</h2>

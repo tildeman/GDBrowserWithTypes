@@ -2,7 +2,7 @@
  * @fileoverview Site-specific script for the achievements page.
  */
 
-import { AchievementAPIResponse, AchievementItem } from "../types/achievements.js";
+import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements.js";
 import { Color3B } from "../types/miscellaneous.js";
 
 interface IDisabledFilters {
@@ -18,7 +18,7 @@ const disabledFilters: IDisabledFilters = {
 };
 const forms = ["icon", "ship", "ball", "ufo", "wave", "robot", "spider"];
 const gameColors = { gd: "255,200,0", meltdown: "255, 100, 0", world: "100,220,0", subzero: "0,255,255" };
-let achievements: AchievementItem[] = [];
+let achievements: IAchievementItem[] = [];
 let colors: Record<number, Color3B> = {};
 let completed = false;
 
@@ -53,7 +53,7 @@ function append(reset: boolean = true) {
 	if (reset) $('#searchBox').scrollTop(0);
 }
 
-fetch('/api/achievements').then(res => res.json()).then((ach: AchievementAPIResponse) => {
+fetch('/api/achievements').then(res => res.json()).then((ach: IAchievementAPIResponse) => {
 	Object.keys(ach.types).forEach(achType => {
 		$('#types').append(`<img class="gdButton achFilter typeFilter" filter="${ach.types[achType][1].join(" ")}" src="/assets/achievements/${achType}.png" title="${ach.types[achType][0]}"  style="margin: 0.6% 0.4%; height:6vh">`);
 	});

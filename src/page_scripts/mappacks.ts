@@ -2,9 +2,9 @@
  * @fileoverview Site-specific script for the map pack listing page.
  */
 
-import { MapPackEntry } from "../types/mappacks.js";
+import { IMapPackEntry } from "../types/mappacks.js";
 
-fetch('/api/mappacks').then(res => res.json()).then((packs: MapPackEntry[]) => {
+fetch('/api/mappacks').then(res => res.json()).then((packs: IMapPackEntry[]) => {
 	$('#loading').hide();
 	packs.forEach(packItem => {
 		$('#packList').append(`

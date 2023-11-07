@@ -3,7 +3,7 @@
  */
 
 import { Fetch, serverMetadata } from "../misc/global.js";
-import { ServerInfo } from "../types/servers.js";
+import { IServerInfo } from "../types/servers.js";
 
 let pageSize = 20;
 let page = 1;
@@ -11,9 +11,9 @@ let page = 1;
 const localhost = window.location.hostname == "localhost";
 const host = window.location.host.split(".").slice(-2).join(".");
 
-Fetch('/api/gdps').then((servers: ServerInfo[]) => {
+Fetch('/api/gdps').then((servers: IServerInfo[]) => {
 	let currentServer = servers.find(serverItem => serverItem.id == serverMetadata.gdps);
-	servers = [currentServer].concat(servers.filter(serverItem => serverItem.id != serverMetadata.gdps)).filter(serverItem => serverItem) as ServerInfo[];
+	servers = [currentServer].concat(servers.filter(serverItem => serverItem.id != serverMetadata.gdps)).filter(serverItem => serverItem) as IServerInfo[];
 	let pageCount = Math.floor((servers.length - 1) / pageSize) + 1;
 
 	/**

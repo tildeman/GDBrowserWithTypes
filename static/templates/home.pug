@@ -1,7 +1,12 @@
+-
+	function isDisabled(item) {
+		return (isOnePointNine && onePointNineDisabled.includes(item)) || (serverDisabled.includes(item)) || (isDownloadDisabled && downloadDisabled.includes(item));
+	}
+
 mixin mainButton(id, link, dir, name)
 	td
-		a(tabindex="1", href=(isOnePointNine && onePointNineDisabled.includes(id)) || (serverDisabled.includes(id)) || (isDownloadDisabled && downloadDisabled.includes(id)) ? null : dir)
-			img.menuButton(class=(isOnePointNine && onePointNineDisabled.includes(id)) || (serverDisabled.includes(id)) || (isDownloadDisabled && downloadDisabled.includes(id)) ? "menuDisabled" : "menu-" + id, src="/assets/category-" + link + ".png", title=name)
+		a(tabindex="1", href=isDisabled(id) ? null : dir)
+			img.menuButton(class=isDisabled(id) ? "menuDisabled" : "menu-" + id, src="/assets/category-" + link + ".png", title=name)
 
 doctype html
 html(lang="en")
@@ -33,13 +38,12 @@ html(lang="en")
 			div(style={ position: "absolute", top: "1.7%", right: "2%", width: "10%", "text-align": "right"})
 				img#creditsButton.gdButton(src="/assets/credits.png", style={ width: "60%" })
 
-			//- TODO: This is kludgy
-			div(class=(isOnePointNine && onePointNineDisabled.includes("achievements")) || (serverDisabled.includes("achievements")) || (isDownloadDisabled && downloadDisabled.includes("achievements")) ? "menuDisabled" : "menu-achievements", style={ position: "absolute", top: "5.5%", left: "3%", width: "12%"})
-				a(href=(isOnePointNine && onePointNineDisabled.includes("achievements")) || (serverDisabled.includes("achievements")) || (isDownloadDisabled && downloadDisabled.includes("achievements")) ? null : "/achievements")
+			div(class=isDisabled("achievements") ? "menuDisabled" : "menu-achievements", style={ position: "absolute", top: "5.5%", left: "3%", width: "12%"})
+				a(href=isDisabled("achievements") ? null : "/achievements")
 					img.gdButton(src="/assets/achievements.png", style={ width: "40%" })
 
-			div(class=(isOnePointNine && onePointNineDisabled.includes("messages")) || (serverDisabled.includes("messages")) || (isDownloadDisabled && downloadDisabled.includes("messages")) ? "menuDisabled" : "menu-messages", style={ position: "absolute", top: "-1.7%", left: "11%", width: "10%", "text-align": "left"})
-				a(href=(isOnePointNine && onePointNineDisabled.includes("messages")) || (serverDisabled.includes("messages")) || (isDownloadDisabled && downloadDisabled.includes("messages")) ? null : "/messages")
+			div(class=isDisabled("messages") ? "menuDisabled" : "menu-messages", style={ position: "absolute", top: "-1.7%", left: "11%", width: "10%", "text-align": "left"})
+				a(href=isDisabled("messages") ? null : "/messages")
 					img.iconRope(src="/assets/messagerope.png", style={ width: "40%" })
 
 			div(style={ position: "absolute", top: "-1.5%", right: "10%", width: "10%", "text-align": "right" })
@@ -79,7 +83,7 @@ html(lang="en")
 					tr.menuButtonList
 						+mainButton("saved", "saved", "./search/*?type=saved", "Saved Levels")
 						+mainButton("daily", "daily", "./level/daily", "Daily Level")
-						if (isOnePointNine && onePointNineDisabled.includes("weekly")) || (serverDisabled.includes("weekly")) || (isDownloadDisabled && downloadDisabled.includes("weekly"))
+						if (isDisabled("weekly"))
 							td#menu_featured
 								a(tabindex="1", href="./search/*?type=featured")
 									img.menuButton(class="menu-featured", src="/assets/category-featured.png", title="Featured")

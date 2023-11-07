@@ -4,14 +4,14 @@
 
 import { Player } from "../classes/Player.js";
 import { toggleEscape } from "../misc/global.js";
-import { MessageObject } from "../types/messages.js";
+import { IMessageObject } from "../types/messages.js";
 
 let accountID: string;
 let password: string;
 let page = 0;
 let messageID: string = "0";
 let playerID: string = "0";
-let messages: MessageObject[] = [];
+let messages: IMessageObject[] = [];
 const messageStatus = {};
 const cache = {};
 let loading = false;
@@ -72,7 +72,7 @@ $('#logIn').on("click", function() {
 		}
 		else accountID = res.accountID;
 
-		$.post("/messages", { password, accountID }).done((msgs: MessageObject[]) => {
+		$.post("/messages", { password, accountID }).done((msgs: IMessageObject[]) => {
 			messages = msgs;
 			$('#access').hide();
 			appendMessages();
@@ -116,7 +116,7 @@ function getMessages() {
 	$('#selectAll').show();
 	$('#selectNone').hide();
 	$('#msgList').html('<img src="/assets/loading.png" class="spin noSelect" style="margin-top: 20%; height: 20%;">');
-	$.post("/messages", { password, accountID, page }).done((msgs: MessageObject[]) => {
+	$.post("/messages", { password, accountID, page }).done((msgs: IMessageObject[]) => {
 			messages = msgs;
 			appendMessages();
 	}).fail(e => {
@@ -168,7 +168,7 @@ $(document).on('click', '.gdMessage', function () {
 		$('#deleteButton').show();
 	}
 
-	else $.post("/messages/" + messageID, { password, accountID }).done((msg: MessageObject) => {
+	else $.post("/messages/" + messageID, { password, accountID }).done((msg: IMessageObject) => {
 		cache[messageID] = [msg.content, msg.browserColor];
 
 		function loadMsg() {

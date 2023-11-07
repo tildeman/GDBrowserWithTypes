@@ -8,7 +8,7 @@ import iconCredits from "./extradata/iconCredits.json" assert { type: "json" };
 import colorOrder from "./extradata/colorOrder.json" assert { type: "json" };
 import shops from "./extradata/shops.json" assert { type: "json" };
 
-import { ExtraData, IconData } from "../types/icons.js";
+import { IExtraData, IIconData } from "../types/icons.js";
 import { __dirname } from "../lib/template_handle.js";
 import { resolve } from "node:path";
 import fs from "node:fs";
@@ -35,7 +35,7 @@ newIcons.forEach(iconFileName => {
 	}
 });
 
-export const sacredTexts: IconData = {
+export const sacredTexts: IIconData = {
     forms,
     robotAnimations,
     colors,
@@ -44,7 +44,7 @@ export const sacredTexts: IconData = {
     newIcons
 }
 
-export const extraData: ExtraData = {
+export const extraData: IExtraData = {
     colorOrder,
     hardcodedUnlocks,
     iconCredits,

@@ -1,4 +1,10 @@
-export interface AnalysisColorObject {
+/**
+ * @fileoverview Types and interfaces for level analysis.
+ */
+
+import { CopiedHSV } from "./miscellaneous.js";
+
+export interface IAnalysisColorObject {
 	channel: string;
 	pColor?: string;
 	opacity: number;
@@ -14,7 +20,7 @@ export interface AnalysisColorObject {
 /**
  * Raw information for a level object.
  */
-export interface LevelObject {
+export interface ILevelObject {
 	id: string;
 	portal?: string;
 	coin?: string;
@@ -37,7 +43,7 @@ export interface LevelObject {
 /**
  * The configuration at the start of the level.
  */
-export interface LevelSettings {
+export interface ILevelSettings {
 	songOffset: number;
 	fadeIn: boolean;
 	fadeOut: boolean;
@@ -55,7 +61,7 @@ export interface LevelSettings {
 /**
  * The object returned as results of analyses.
  */
-export interface AnalysisResult {
+export interface IAnalysisResult {
 	level: {
 		name: string;
 		id: string;
@@ -74,8 +80,8 @@ export interface AnalysisResult {
 	triggerGroups: Record<string, number>;
 	invisibleGroup?: number;
 	text: string[][];
-	settings: LevelSettings;
-	colors: AnalysisColorObject[];
+	settings: ILevelSettings;
+	colors: IAnalysisColorObject[];
 	dataLength: number;
 	data: string;
 	blocks: Record<string, number>; // Can be more specific; see `blocks.json`
@@ -83,20 +89,9 @@ export interface AnalysisResult {
 }
 
 /**
- * Copied HSV values.
- */
-export interface CopiedHSV {
-	h: number;
-	s: number;
-	v: number;
-	"s-checked"?: boolean | number;
-	"v-checked"?: boolean | number;
-}
-
-/**
  * The response returned by parsing the level headers, with only the important bits.
  */
-export interface RelevantHeaderResponse {
+export interface IRelevantHeaderResponse {
 	settings: any; // TODO: Make a better entry for settings
-	colors: AnalysisColorObject[];
+	colors: IAnalysisColorObject[];
 }

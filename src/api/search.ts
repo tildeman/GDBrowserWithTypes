@@ -1,26 +1,29 @@
-import { ListDemon, SearchFilters } from '../types/searches.js';
+import { IListEntryOverview } from '../types/demonlist.js';
 import { parseResponse } from '../lib/parse_response.js';
 import { SearchQueryLevel } from '../classes/Level.js';
+import { ISearchFilters } from '../types/searches.js';
 import { UserCache } from '../classes/UserCache.js';
 import { ExportBundle } from "../types/servers.js";
 import profileController from "./profile.js";
 import { Request, Response } from "express";
 import request from 'axios';
 
-let demonList = {};
+const demonList: Record<string, {
+	list: string[];
+	augmentedList: IListEntryOverview[];
+	lastUpdated: number;
+}> = {};
 
 /**
  * Find a level in Pointercrate's level list using the ID.
  * @param needle The level ID to search.
  * @param haystack The level list (Pointercrate's format) in use.
+ * @param [start=0] The index to start searching
  * @returns The position of the level in the list, or -1 if not existent.
  */
-// TODO: Since both the regular and augmented arrays are regular, optimize this to O(n) complexity
-function idInDemon(needle: number, haystack: ListDemon[]) {
-	let index = 0;
-	for (const value of haystack) {
-		if (value.level_id == needle) return index;
-		index++;
+function idInDemon(needle: number, haystack: IListEntryOverview[], start: number = 0) {
+	for (let index = start; index < haystack.length; index++) {
+		if (haystack[index].level_id == needle) return index;
 	}
 	return -1;
 }
@@ -46,16 +49,16 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		let dList = demonList[reqBundle.id];
 		if (!dList || !dList.list.length || dList.lastUpdated + 600000 < Date.now()) {  // 10 minute cache
 			try {
-				const list1: ListDemon[] = (await request.get(url1)).data;
-				const list2: ListDemon[] = (await request.get(url2)).data;
+				const list1: IListEntryOverview[] = (await request.get(url1)).data;
+				const list2: IListEntryOverview[] = (await request.get(url2)).data;
 				demonList[reqBundle.id] = {
 					list: list1.concat(list2).filter((demonListItem) => demonListItem.level_id).map((demonListItem) => (demonListItem.level_id?.toString() || "")),
 					augmentedList: list1.concat(list2),
 					lastUpdated: Date.now(),
 				};
 			}
-			catch(err: any) {
-				console.warn(err.message);
+			catch(err) {
+				console.error(err.message);
 				return sendError();
 			}
 		}
@@ -68,7 +71,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		else amount = count;
 	}
 
-	let filters: SearchFilters = {
+	let filters: ISearchFilters = {
 		str: req.params.text,
 
 		page: +(req.query.page || 0),
@@ -158,6 +161,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 		const levelArray = preRes.map(levelResponse => parseResponse(levelResponse)).filter(levelResponse => levelResponse[1]);
 		let parsedLevels: SearchQueryLevel[] = [];
+		let currentDemonPos = 0;
 
 		levelArray.forEach((levelData, levelIndex) => {
 			const songSearch = songs.find(songItem => songItem['~1'] == levelData[35]) || [];
@@ -170,7 +174,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 			if (demonMode) {
 				if (!levelIndex) level.demonList = reqBundle.server.demonList;
-				level.demonPosition = idInDemon(+level.id, demonList[reqBundle.id].augmentedList) + 1;
+				currentDemonPos = idInDemon(+level.id, demonList[reqBundle.id].augmentedList, currentDemonPos + 1);
+				level.demonPosition = currentDemonPos + 1;
 			}
 
 			if (reqBundle.isGDPS) level.gdps = (reqBundle.onePointNine ? "1.9/" : "") + reqBundle.server.id;

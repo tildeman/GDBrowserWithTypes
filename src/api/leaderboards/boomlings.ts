@@ -1,4 +1,4 @@
-import { BoomlingsUser } from "../../types/leaderboards.js";
+import { IBoomlingsUser } from "../../types/leaderboards.js";
 import { ExportBundle } from "../../types/servers.js";
 import { Request, Response } from "express";
 import request from "axios";
@@ -28,12 +28,12 @@ export default async function(req: Request, res: Response, secret?: string) {
 		// let info = body.split(" ").filter(infoText => infoText.includes(";"));
 		const strBody: string = body;
 		const info = strBody.split(" ").filter(infoText => infoText.includes(";"));
-		const users: BoomlingsUser[] = [];
+		const users: IBoomlingsUser[] = [];
 		info.forEach((item, index) => {
 			const userRaw = item.split(";");
 			const scores = userRaw[2];
 			const visuals = userRaw[3];
-			const user: BoomlingsUser = {
+			const user: IBoomlingsUser = {
 				rank: index + 1,
 				name: userRaw[0],
 				ID: userRaw[1],

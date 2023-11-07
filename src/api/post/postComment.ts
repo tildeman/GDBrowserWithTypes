@@ -1,3 +1,4 @@
+import { ILevelCommentParams } from "../../types/comments.js";
 import { UserCache } from "../../classes/UserCache.js";
 import { ExportBundle } from "../../types/servers.js";
 import { Request, Response } from "express";
@@ -6,19 +7,6 @@ import { XOR } from "../../lib/xor.js";
 
 let rateLimit: Record<string, number> = {};
 let cooldown = 15000;  // GD has a secret rate limit and doesn't return -1 when a comment is rejected, so this keeps track
-
-/**
- * Parameters for comment posts
- */
-interface ICommentParams {
-	percent: number;
-	comment: string;
-	gjp: string;
-	levelID: string;
-	accountID: string;
-	userName: string;
-	chk: string;
-}
 
 /**
  * Get the second value of a timestamp using rudimentary algorithms
@@ -52,7 +40,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (rateLimit[req.body.username]) return res.status(400).send(`Please wait ${getTime(rateLimit[req.body.username] + cooldown - Date.now())} seconds before posting another comment!`);
 
-	const params: ICommentParams = {
+	const params: ILevelCommentParams = {
 		percent: 0,
 		comment: Buffer.from(req.body.comment + (req.body.color ? "☆" : "")).toString('base64').replace(/\//g, '_').replace(/\+/g, "-"),
 		gjp: XOR.encrypt(req.body.password, 37526),

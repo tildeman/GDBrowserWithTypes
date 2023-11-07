@@ -19,12 +19,10 @@ html(lang="en")
 					img.closeWindow.gdButton(src="/assets/close.png", style={ height: "25%", position: "absolute", top: "-13.5%", left: "-6vh" })
 
 					.supercenter(style={ left: "25%", top: "43%", height: "10%" })
-						//- TODO: convert this into a routine
-						img.gdButton(src="/assets/whitearrow-left.png" style={ height: "160%" }, onclick="$('#pageSelect').val(parseInt($('#pageSelect').val() || 0) - 1); $('#pageSelect').trigger('input');")
+						img#prevResult.gdButton(src="/assets/whitearrow-left.png" style={ height: "160%" })
 
 					.supercenter(style={ left: "75%", top: "43%", height: "10%" })
-						//- TODO: convert this into a routine
-						img.gdButton(src="/assets/whitearrow-right.png" style={ height: "160%" }, onclick="$('#pageSelect').val(parseInt($('#pageSelect').val() || 0) + 1); $('#pageSelect').trigger('input');")
+						img#nextResult.gdButton(src="/assets/whitearrow-right.png" style={ height: "160%" })
 
 			#purgeDiv.popup
 				.fancybox.bounce.center.supercenter(style={ width: "35%", height: "28%" })

@@ -1,11 +1,11 @@
 /**
- * @fileoverview Server handling in GDBrowser.
+ * @fileoverview Types and interfaces for server handling in GDBrowser.
  */
 
 /**
  * An object for private servers defined in `servers.json`.
  */
-export interface ServerInfo {
+export interface IServerInfo {
 	/**
 	 * The display name of the server.
 	 */
@@ -93,7 +93,7 @@ export interface ExportBundle {
 		/**
 		 * The server for the request.
 		 */
-		server: ServerInfo;
+		server: IServerInfo;
 		/**
 		 * Whether the server is offline or not.
 		 */
@@ -145,4 +145,4 @@ export interface ExportBundle {
 /**
  * A dictionary of servers without risky attributes.
  */
-export type SafeServers = Omit<ServerInfo, "endpoint" | "substitutions" | "overrides" | "disabled">;
+export type ISafeServers = Omit<IServerInfo, "endpoint" | "substitutions" | "overrides" | "disabled">;

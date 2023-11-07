@@ -3,7 +3,7 @@
  */
 
 import { Fetch, serverMetadata } from "../misc/global.js";
-import { SafeServers } from "../types/servers.js";
+import { ISafeServers } from "../types/servers.js";
 
 let filters: string[] = [];
 let demonMode = false;
@@ -309,7 +309,7 @@ Fetch(`/api/music`).then((music: [string, string][]) => {
 		$('#levelName').css('width', '76%');
 	}
 
-	if (serverMetadata.gdps) Fetch(`/api/gdps?current=1`).then((res: SafeServers) => {
+	if (serverMetadata.gdps) Fetch(`/api/gdps?current=1`).then((res: ISafeServers) => {
 		if (res.demonList) $('#demonList').show();
 	});
 	else $('#demonList').show();

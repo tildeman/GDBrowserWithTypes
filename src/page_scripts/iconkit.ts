@@ -4,8 +4,8 @@
 // hi there hello! this code is really old, so it's shit. i should rewrite it some time omg
 
 import { Icon, iconData, loadIconLayers, parseIconColor, parseIconForm, rgbToDecimal } from "../iconkit/icon.js";
-import { AnimationObject, IconConfiguration, IconData, IconKitAPIResponse } from "../types/icons.js";
-import { AchievementAPIResponse, AchievementItem } from "../types/achievements.js";
+import { IAnimationObject, IIconConfiguration, IIconData, IIconKitAPIResponse } from "../types/icons.js";
+import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements.js";
 import { Color3B } from "../types/miscellaneous.js";
 import { PIXI } from "../vendor/index.js";
 
@@ -27,9 +27,9 @@ let enableSpoilers = false;
 let clickedSpoilerWarning = false;
 
 let shops = ["the Shop", "Scratch's Shop", "the Community Shop"];
-let achievements: AchievementItem[] = [];
+let achievements: IAchievementItem[] = [];
 let shopIcons: { icon: number; type: string; price: number; shop: number; }[] = [];
-let iconStuff: IconData & IconKitAPIResponse;
+let iconStuff: IIconData & IIconKitAPIResponse;
 let unlockMode = false;
 let currentAnimation: {} | {
 	name: string;
@@ -164,7 +164,7 @@ function checkAnimation() {
  * @param anim The record of animation objects.
  * @returns The sorted animation record.
  */
-function animationSort(anim: Record<string, AnimationObject>) {
+function animationSort(anim: Record<string, IAnimationObject>) {
 	return Object.keys(anim).sort((objectA, objectB) => objectA.localeCompare(objectB));
 }
 
@@ -173,7 +173,7 @@ function animationSort(anim: Record<string, AnimationObject>) {
  * @param form The animation form (`robot` or `spider`).
  * @param animationData The animation data object.
  */
-function appendAnimations(form: string, animationData: Record<string, AnimationObject>) {
+function appendAnimations(form: string, animationData: Record<string, IAnimationObject>) {
 	let animationNames = animationSort(animationData);
 	$('#robotAnimation').html(animationNames.map(animationName => `<option form="${form}" value="${animationName}">${animationName.replace(/_/g, " ")}</option>`).join());
 	$('#robotAnimation').val("idle");
@@ -236,7 +236,7 @@ function toHexCode(decimal: number) {
 }
 
 const rawIconKitData = await fetch("/api/iconkit");
-const iconKitData: IconKitAPIResponse = await rawIconKitData.json();
+const iconKitData: IIconKitAPIResponse = await rawIconKitData.json();
 
 iconStuff = Object.assign(iconData, iconKitData);
 
@@ -268,7 +268,7 @@ async function generateIcon(): Promise<void> {
 	const foundForm = parseIconForm(selectedForm);
 
 	const isNew = await loadIconLayers(foundForm, selectedIcon);
-	let iconArgs: IconConfiguration = {
+	let iconArgs: IIconConfiguration = {
 		app,
 		form: foundForm,
 		id: selectedIcon,
@@ -624,7 +624,7 @@ $(document).on('change', '.iconsetting', function(e) {
 $('#unlockIcon').on("click", function() {
 	if (!achievements.length) {
 		fetch('/api/achievements').then(res => {
-			res.json().then((achievementsItem: AchievementAPIResponse) => {
+			res.json().then((achievementsItem: IAchievementAPIResponse) => {
 				achievements = achievementsItem.achievements;
 				shopIcons = iconStuff.shops;
 				unlockMode = true;

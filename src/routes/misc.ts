@@ -8,8 +8,6 @@ import express from "express";
 
 const router = express.Router();
 
-
-
 /**
  * Entries that are disabled for 1.9 servers.
  * 2.0 servers don't have customized settings, but it should be similar enough.

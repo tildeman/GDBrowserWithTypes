@@ -1,7 +1,11 @@
 /**
+ * @fileoverview Types and interfaces for leaderboards.
+ */
+
+/**
  * An entry for the accurate leaderboard.
  */
-export interface AccurateLeaderboardEntry {
+export interface IAccurateILeaderboardEntry {
 	username: string;
 	playerID: string;
 	stars: number;
@@ -24,24 +28,24 @@ export interface AccurateLeaderboardEntry {
 /**
  * An object for a user in Boomlings, RobTop's discontinued game.
  */
-export interface BoomlingsUser {
-    rank: number;
-    name: string;
-    ID: string;
-    level: number;
-    score: number;
-    boomling: number;
-    boomlingLevel: number;
-    powerups: number[];
-    unknownVisual: number;
-    unknownScore: number;
-    raw: string;
+export interface IBoomlingsUser {
+	rank: number;
+	name: string;
+	ID: string;
+	level: number;
+	score: number;
+	boomling: number;
+	boomlingLevel: number;
+	powerups: number[];
+	unknownVisual: number;
+	unknownScore: number;
+	raw: string;
 }
 
 /**
  * An entry for the in-game leaderboard.
  */
-export interface LeaderboardEntry {
+export interface ILeaderboardEntry {
 	username: string;
 	playerID: string;
 	percent: number;
@@ -63,7 +67,7 @@ export interface LeaderboardEntry {
 /**
  * Leaderboard parameters.
  */
-export interface ScoreParameters {
+export interface IScoreParameters {
 	/**
 	 * The amount of entries in the leaderboard.
 	 */

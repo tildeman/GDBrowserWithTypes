@@ -2,7 +2,7 @@
  * @fileoverview Site-specific script for the level analysis page.
  */
 
-import { AnalysisResult, AnalysisColorObject } from "../types/analyses.js";
+import { IAnalysisResult, IAnalysisColorObject } from "../types/analyses.js";
 import { toggleEscape, clean } from "../misc/global.js";
 import { Color3B } from "../types/miscellaneous.js";
 
@@ -14,7 +14,7 @@ const sizePortals = ['mini', 'big'];
 const dualPortals = ['dual', 'single'];
 const mirrorPortals = ['mirrorOn', 'mirrorOff'];
 
-fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (AnalysisResult | "-1" | "-2" | "-3")) => {
+fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (IAnalysisResult | "-1" | "-2" | "-3")) => {
 	if (typeof(res) != "object") {
 		switch(res) {
 			case "-1":
@@ -221,7 +221,7 @@ fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (Ana
 
 	$(document).on('click', '.color', function() {
 		// TODO: This is kludgy.
-		const col = res.colors.find(colorObject => colorObject.channel == $(this).attr('channel')) as AnalysisColorObject;
+		const col = res.colors.find(colorObject => colorObject.channel == $(this).attr('channel')) as IAnalysisColorObject;
 		const hsv = col.copiedHSV;
 		if (hsv) {
 			hsv.s = Math.round(Number(hsv.s) * 100) / 100;
@@ -262,11 +262,11 @@ fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (Ana
 				</div>
 				<div class="colorSection copyDetails">
 					<h3>Saturation</h3>
-					<p>${!hsv ? "x1.00" : !hsv['s-checked'] ? "x" + hsv.s : +hsv.s > 0 ? "+" + hsv.s : hsv.s}</p>
+					<p>${!hsv ? "x1.00" : !hsv['s-checked'] ? "x" + hsv.s : hsv.s > 0 ? "+" + hsv.s : hsv.s}</p>
 				</div>
 				<div class="colorSection copyDetails">
 					<h3>Brightness</h3>
-					<p>${!hsv ? "x1.00" : !hsv['v-checked'] ? "x" + hsv.v : +hsv.v > 0 ? "+" + hsv.v : hsv.v}</p>
+					<p>${!hsv ? "x1.00" : !hsv['v-checked'] ? "x" + hsv.v : hsv.v > 0 ? "+" + hsv.v : hsv.v}</p>
 				</div>
 			</div>`
 			: `<div class="colorBox" style="background-color: rgba(${clean(col.r)}, ${clean(col.g)}, ${clean(col.b)}, ${clean(col.opacity)}); border-color: ${hex}"></div>`}

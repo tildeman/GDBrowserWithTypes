@@ -1434,7 +1434,7 @@ cp { color: #ff00ff }
 	}
 }
 
-/*
+/**
  * Disable all transitions and animations if the user has reduced motion enabled in their sytem settings
  * Also disabled on devices that may be slow to render new frames for performance optimization
  */

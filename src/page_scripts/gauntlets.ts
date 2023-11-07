@@ -2,9 +2,9 @@
  * @fileoverview Site-specific script for the gauntlet listing page.
  */
 
-import { GauntletEntry } from "../types/gauntlets.js";
+import { IGauntletEntry } from "../types/gauntlets.js";
 
-fetch('/api/gauntlets').then(res => res.json()).then((gauntlets: GauntletEntry[]) => {
+fetch('/api/gauntlets').then(res => res.json()).then((gauntlets: IGauntletEntry[]) => {
 	$('#loading').hide();
 	gauntlets.forEach(gauntletItem => {
 		$('#gauntletList').append(`

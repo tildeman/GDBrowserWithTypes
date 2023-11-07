@@ -1,6 +1,6 @@
 import colors from '../../iconkit/sacredtexts/colors.json' assert { type: "json" };
 import secret_stuff from "../../misc/secretStuff.json" assert { type: "json" };
-import { LeaderboardEntry } from '../../types/leaderboards.js';
+import { ILeaderboardEntry } from '../../types/leaderboards.js';
 import { parseResponse } from '../../lib/parse_response.js';
 import { UserCache } from '../../classes/UserCache.js';
 import { ExportBundle } from "../../types/servers.js";
@@ -40,12 +40,12 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			.split('|')
 			.map(rawScorePlayerEntry => parseResponse(rawScorePlayerEntry))
 			.filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
-		const scores: LeaderboardEntry[] = [];
+		const scores: ILeaderboardEntry[] = [];
 		if (!rawScores.length) return res.status(500).send([]);
 		else userCacheHandle.trackSuccess(reqBundle.id);
 
 		rawScores.forEach(playerEntry => {
-			const score: LeaderboardEntry = {
+			const score: ILeaderboardEntry = {
 				rank: +playerEntry[6],
 				username: playerEntry[1],
 				percent: +playerEntry[3],

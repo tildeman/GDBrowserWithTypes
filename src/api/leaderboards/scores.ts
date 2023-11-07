@@ -1,4 +1,4 @@
-import { ScoreParameters } from "../../types/leaderboards.js";
+import { IScoreParameters } from "../../types/leaderboards.js";
 import { parseResponse } from "../../lib/parse_response.js";
 import { UserCache } from "../../classes/UserCache.js";
 import { ExportBundle } from "../../types/servers.js";
@@ -23,7 +23,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		else amount = count;
 	}
 
-	let params: ScoreParameters = {
+	let params: IScoreParameters = {
 		count: amount,
 		type: "top"
 	};

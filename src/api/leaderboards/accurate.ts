@@ -1,5 +1,5 @@
 import secret_stuff from "../../misc/secretStuff.json" assert { type: "json" };
-import { AccurateLeaderboardEntry } from "../../types/leaderboards.js";
+import { IAccurateILeaderboardEntry } from "../../types/leaderboards.js";
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { ExportBundle } from "../../types/servers.js";
 import { UserCache } from "../../classes/UserCache.js";
@@ -56,7 +56,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			console.log(cell);
 			return sendError();
 		}
-		const leaderboard: AccurateLeaderboardEntry[] = JSON.parse(cell.replace(/~( |$)/g, ""));
+		const leaderboard: IAccurateILeaderboardEntry[] = JSON.parse(cell.replace(/~( |$)/g, ""));
 
 		let gdFormatting = "";
 		leaderboard.forEach(entry => {

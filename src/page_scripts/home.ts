@@ -5,7 +5,7 @@
 import { Player } from "../classes/Player.js";
 import { buildIcon } from "../iconkit/icon.js";
 import { Fetch } from "../misc/global.js";
-import { BrowserCredits } from "../types/miscellaneous.js";
+import { IBrowserCredits } from "../types/miscellaneous.js";
 
 let page = 1;
 $('#browserlogo').css('filter', `hue-rotate(${Math.floor(Math.random() * (330 - 60)) + 60}deg) saturate(${Math.floor(Math.random() * (150 - 100)) + 100}%)`);
@@ -40,7 +40,7 @@ function loadCredits() {
 }
 
 
-Fetch(`/api/credits`).then(async (res: BrowserCredits) => {
+Fetch(`/api/credits`).then(async (res: IBrowserCredits) => {
 	lastPage = res.credits.length + 1;
 	res.credits.forEach(async (creditItem, creditIndex) => {
 		$('#credits').append(`<div id="credits${creditIndex + 1}" class="subCredits" style="display: none;">

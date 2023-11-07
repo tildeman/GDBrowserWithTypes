@@ -4,7 +4,7 @@
 
 import { PIXI, agPsd, Ease } from "../vendor/index.js";
 import { Color3B } from "../types/miscellaneous.js";
-import { AnimationObject, IconConfiguration, IconData, PartForSpecialIcons } from "../types/icons.js";
+import { IAnimationObject, IIconConfiguration, IIconData, IPartForSpecialIcons } from "../types/icons.js";
 import { Fetch } from "../misc/global.js";
 
 
@@ -49,7 +49,7 @@ interface ExtraSettings {
 	ignoreGlow?: boolean;
 }
 
-export const iconData: IconData = await Fetch("/api/icons");
+export const iconData: IIconData = await Fetch("/api/icons");
 const iconCanvas: HTMLCanvasElement = document.createElement('canvas');
 const iconRenderer: PIXI.Application = new PIXI.Application({
 	view: iconCanvas,
@@ -103,7 +103,7 @@ const positionMultiplier = 4;
  * @param isNew Whether the icon is in 2.2.
  * @param isGlow Whether glow is enabled.
  */
-function positionPart(part: PartForSpecialIcons, partIndex: number, layer: PIXI.Container, formName: string, isNew: boolean, isGlow?: boolean) {
+function positionPart(part: IPartForSpecialIcons, partIndex: number, layer: PIXI.Container, formName: string, isNew: boolean, isGlow?: boolean) {
 	layer.position.x += (part.pos[0] * positionMultiplier * (isNew ? 0.5 : 1));
 	layer.position.y -= (part.pos[1] * positionMultiplier * (isNew ? 0.5 : 1));
 	layer.scale.x = part.scale[0];
@@ -333,7 +333,7 @@ export async function buildIcon(elements: JQuery<HTMLElement>, current: number =
 		return buildIcon(elements, current + 1);
 	}
 
-	const iconConfig: IconConfiguration = {
+	const iconConfig: IIconConfiguration = {
 		id: +(currentIcon.attr('iconID') || "0"),
 		form: parseIconForm(currentIcon.attr('iconForm') || ""),
 		col1: parseIconColor(currentIcon.attr('col1') || ""),
@@ -390,7 +390,7 @@ export class Icon {
 	 * @param data The icon configuration.
 	 * @param cb The callback once the icon is loaded.
 	 */
-	constructor(data: IconConfiguration) {
+	constructor(data: IIconConfiguration) {
 		this.app = data.app;
 		this.sprite = new PIXI.Container();
 		this.form = data.form || "player";
@@ -538,8 +538,8 @@ export class Icon {
 	 * @param animName The name of the animation.
 	 * @param duration The duration of the animation. Optional.
 	 */
-	runAnimation(animData: AnimationObject, animName: string, duration?: number) {
-		animData.frames[this.animationFrame].forEach((newPart: PartForSpecialIcons, index: number) => {
+	runAnimation(animData: IAnimationObject, animName: string, duration?: number) {
+		animData.frames[this.animationFrame].forEach((newPart: IPartForSpecialIcons, index: number) => {
 			const section = this.layers[index];
 			const glowSection = this.glowLayers[index];
 			const truePosMultiplier = this.new ? positionMultiplier * 0.5 : positionMultiplier;
@@ -742,7 +742,7 @@ export class Icon {
 class IconPart {
 	sprite: PIXI.Container;
 	sections: IconLayer[];
-	part: PartForSpecialIcons;
+	part: IPartForSpecialIcons;
 
 	/**
 	 * @param form The form of the icon.

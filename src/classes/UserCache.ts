@@ -1,4 +1,4 @@
-import { ServerInfo } from "../types/servers.js";
+import { IServerInfo } from "../types/servers.js";
 
 /**
  * Cache player data the GDBrowser way.
@@ -24,7 +24,7 @@ export class UserCache{
 	/**
 	 * @param cacheAccountIDs For convenience. Determines whether to actually do the caching.
 	 */
-	constructor(cacheAccountIDs: boolean, servers: ServerInfo[]) {
+	constructor(cacheAccountIDs: boolean, servers: IServerInfo[]) {
 		this.accountCache = {};
 		this.lastSuccess = {};
 		this.actuallyWorked = {};
