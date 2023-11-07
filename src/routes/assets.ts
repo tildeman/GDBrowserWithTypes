@@ -2,13 +2,15 @@
  * @fileoverview Routing page for static assets.
  */
 
+import { __dirname } from "../lib/template_handle.js";
+import { resolve } from "node:path";
 import express from "express";
 import fs from "node:fs";
 
 const router = express.Router();
 
-router.use('/', express.static('assets', {maxAge: "7d"}));
-router.use('/css', express.static('assets/css'));
+router.use('/', express.static(resolve(__dirname, 'assets'), {maxAge: "7d"}));
+router.use('/css', express.static(resolve(__dirname, 'assets/css')));
 
 router.get("/:dir*?", function(req, res) {
 	let main = (req.params["dir*"] || "").toLowerCase();
@@ -31,7 +33,7 @@ router.get("/:dir*?", function(req, res) {
 	}
 
 	const path = `./assets/${dir}`;
-	const files: string[] = fs.existsSync(path)? fs.readdirSync(path): [];
+	const files: string[] = fs.existsSync(resolve(__dirname, path))? fs.readdirSync(resolve(__dirname, path)): [];
 
 	const assetData = {
 		files: files.filter(fileName => fileName.includes('.')),

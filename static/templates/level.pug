@@ -10,7 +10,6 @@ html(lang="en")
 		meta(id="meta-desc", property="og:description", content=`ID: ${level.id} | Stars: ${level.stars} | Difficulty: ${level.difficulty} | Downloads: ${level.downloads} | Likes: ${level.likes} | Length: ${level.length} | Song: ${level.songName} (${level.songID})`)
 		meta(id="meta-image", name="og:image", content="/assets/difficulties/" + level.difficultyFace + ".png", itemprop="image")
 		meta(name="twitter:card", content="summary")
-
 	body.levelBG
 		#dataBlock(data-id=level.id, data-dailynumber=(level.dailyNumber || 0), data-nextdaily=(level.nextDaily || 0), data-songid=level.songID)
 		#everything

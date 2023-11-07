@@ -54,7 +54,7 @@ export default function(req: Request, res: Response, next: NextFunction) {
 	// literally just for convenience
 	const reqOffline = (+(req.query.online || 0) > 0) ? false : (reqServer.offline || false);
 	const reqEndpoint = reqServer.endpoint;
-	const reqOnePointNine = reqServer.onePointNine;
+	const reqOnePointNine = reqServer.onePointNine || false;
 	const reqTimestampSuffix = reqServer.timestampSuffix || "";
 	const reqId = reqServer.id || "gd";
 	const reqIsGDPS = reqServer.endpoint != appMainEndpoint;

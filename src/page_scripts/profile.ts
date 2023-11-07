@@ -5,6 +5,7 @@
 import { Fetch, clean, toggleEscape } from "../misc/global.js";
 import { renderIcons } from "../iconkit/icon.js";
 import { Player } from "../classes/Player.js";
+import { ICommentContent } from "../types/comments.js";
 
 const accountID: string = $('#dataBlock').data('accountid');
 const accountUsername: string = $('#dataBlock').data('username');
@@ -68,7 +69,7 @@ function appendComments() {
 
 		if (res == "-1") return $('#loading').hide()
 
-		res.forEach(commentItem => {
+		res.forEach((commentItem: ICommentContent) => {
 			$('#statusDiv').append(`
 				<div class="commentBG">
 					<div class="comment">

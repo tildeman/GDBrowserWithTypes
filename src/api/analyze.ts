@@ -2,12 +2,12 @@
  * @fileoverview Spaghetti code for level analysis.
  */
 
+import { AnalysisColorObject, AnalysisResult, LevelObject, LevelSettings, RelevantHeaderResponse } from "../types/analyses.js";
 import properties from "../misc/analysis/objectProperties.json" assert { type: "json" };
 import colorStuff from "../misc/analysis/colorProperties.json" assert { type: "json" };
 import init from "../misc/analysis/initialProperties.json" assert { type: "json" };
 import blocks from "../misc/analysis/blocks.json" assert { type: "json" };
 import ids from "../misc/analysis/objects.json" assert { type: "json" };
-import { AnalysisResult, ColorObject, LevelObject, LevelSettings, RelevantHeaderResponse } from "../types/analyses.js";
 import { DownloadedLevel } from "../classes/Level.js";
 import { Request, Response } from "express";
 import zlib from "zlib";
@@ -280,7 +280,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 		return (levelTextA.x || 0) - (levelTextB.x || 0);
 	}).map(levelText => [Buffer.from(levelText.message || "", "base64").toString(), Math.round((levelText.x || 0) / last * 99) + "%"]);
 
-	const headerResponse = parse_header(header || "") as { settings: LevelSettings, colors: ColorObject[] };
+	const headerResponse = parse_header(header || "") as { settings: LevelSettings, colors: AnalysisColorObject[] };
 	const responseSettings: LevelSettings = headerResponse.settings;
 	const responseColors = headerResponse.colors;
 
@@ -372,7 +372,7 @@ function parse_header(header: string) {
 				const colorVal = name.split("-").pop();
 
 				// let colorObj = color as unknown as ColorObject;
-				const colorObj: ColorObject = {
+				const colorObj: AnalysisColorObject = {
 					channel: colorVal || "",
 					pColor: color.pColor,
 					opacity: 1, // 1.9 colors don"t have this!
@@ -400,11 +400,11 @@ function parse_header(header: string) {
 			}
 			case "colors": {
 				let colorList: string[] = property.split("|");
-				let colorList2: ColorObject[] = [];
+				let colorList2: AnalysisColorObject[] = [];
 				colorList.forEach((colorItem, colorIndex) => {
 					const color = parse_obj(colorItem, "_", colorStuff.properties);
 					const raw_hsv_value: string[] | undefined = color.copiedHSV?.split("a");
-					const colorObj: ColorObject = {
+					const colorObj: AnalysisColorObject = {
 						channel: color.channel || "",
 						pColor: color.pColor,
 						opacity: Math.round((+color.opacity || 0) * 100) / 100,

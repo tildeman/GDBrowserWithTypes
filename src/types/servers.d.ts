@@ -105,7 +105,7 @@ export interface ExportBundle {
 		/**
 		 * Whether the server is 1.9 or not.
 		 */
-		onePointNine?: boolean;
+		onePointNine: boolean;
 		/**
 		 * A string to append at the end of timestamps (" ago").
 		 */

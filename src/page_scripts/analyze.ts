@@ -14,16 +14,16 @@ const sizePortals = ['mini', 'big'];
 const dualPortals = ['dual', 'single'];
 const mirrorPortals = ['mirrorOn', 'mirrorOff'];
 
-fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (AnalysisResult | -1 | -2 | -3)) => {
+fetch(`/api${window.location.pathname}`).then(res => res.json()).then((res: (AnalysisResult | "-1" | "-2" | "-3")) => {
 	if (typeof(res) != "object") {
 		switch(res) {
-			case -1:
+			case "-1":
 				$('#errorMessage').html("This level could not be be <cr>downloaded</cr>. Either the servers rejected the request, or the level simply <co>doesn't exist at all</co>.");
 				break;
-			case -2:
+			case "-2":
 				$('#errorMessage').html("This level's data appears to be <cr>corrupt</cr> and cannot be <cy>parsed</cy>. It most likely won't load in GD.");
 				break;
-			case -3:
+			case "-3":
 				$('#errorMessage').html("This level's data could not be obtained because <ca>RobTop</ca> has disabled <cg>level downloading</cg>.");
 				break;
 		}

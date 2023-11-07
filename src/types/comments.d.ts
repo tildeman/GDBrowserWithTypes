@@ -1,3 +1,5 @@
+// TODO: Use a more consistent naming pattern
+
 /**
  * Interface for comment parameters.
  */

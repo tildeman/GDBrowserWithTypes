@@ -23,6 +23,7 @@ import postRoutes from "./routes/posts.js";
 import iconRoutes from "./routes/icons.js";
 import listRoutes from "./routes/lists.js";
 import miscRoutes from "./routes/misc.js";
+import { resolve } from 'node:path';
 
 /**
  * The Express app that does all the stuff.
@@ -62,7 +63,7 @@ app.use(timeout('20s'));
 app.use(packageValues);
 
 app.set("view engine", "pug");
-app.set("views", "./templates");
+app.set("views", resolve(__dirname, "templates"));
 
 // ASSETS
 
@@ -70,8 +71,8 @@ app.get("/dragscroll.js", fetchStaticFile("misc/dragscroll.js"));
 app.get("/vendor/index.js", fetchStaticFile("vendor/index.js"));
 app.get("/global.js", fetchStaticFile("misc/global.js"));
 app.get("/misc/global.js", fetchStaticFile("misc/global.js"));
-app.use("/page_scripts", express.static("page_scripts"));
-app.use('/iconkit', express.static('iconkit'));
+app.use("/page_scripts", express.static(resolve(__dirname, "page_scripts")));
+app.use('/iconkit', express.static(resolve(__dirname, 'iconkit')));
 app.use("/assets", assetRoutes);
 
 // ROUTES

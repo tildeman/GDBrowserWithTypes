@@ -85,7 +85,7 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 	$('#clearRelative').hide();
 	$('#loading').show();
 
-	Fetch("/api/leaderboard?" + (leaderboardParams || `count=250&${val}&type=${sort}${modMode ? "&mod=1" : ""}`)).then((res: Player[] | -1) => {
+	Fetch("/api/leaderboard?" + (leaderboardParams || `count=250&${val}&type=${sort}${modMode ? "&mod=1" : ""}`)).then((res: Player[] | "-1") => {
 		if (gdps && !didGDPSStuff) {
 			didGDPSStuff = true;
 			top250Text = topGDPSText;
@@ -114,12 +114,12 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 		$('#searchBox').html(`<div style="height: 4.5%"></div>`);
 		$('.ranking').remove();
 
-		if (modMode && sort == "cp" && res != -1) res = res.sort(function(a, b) {
+		if (modMode && sort == "cp" && res != "-1") res = res.sort(function(a, b) {
 			return b.cp - a.cp;
 		});
 		const wk = type == "weekly";
 
-		if ((leaderboardParams ? true : val == type) && res != -1 && res.length) res.forEach((lbItem, lbIndex) => {
+		if ((leaderboardParams ? true : val == type) && res != "-1" && res.length) res.forEach((lbItem, lbIndex) => {
 			// Quick and dirty method, just in case
 			if (typeof(lbItem.icon) == "number") return;
 

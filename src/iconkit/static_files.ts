@@ -1,18 +1,20 @@
-import robotAnimations from "./sacredtexts/robotAnimations.json" assert { type: "json" }
-import gameSheet from "./sacredtexts/gameSheet.json" assert { type: "json" }
-import colors from "./sacredtexts/colors.json" assert { type: "json" }
-import forms from "./sacredtexts/forms.json" assert { type: "json" }
+import robotAnimations from "./sacredtexts/robotAnimations.json" assert { type: "json" };
+import gameSheet from "./sacredtexts/gameSheet.json" assert { type: "json" };
+import colors from "./sacredtexts/colors.json" assert { type: "json" };
+import forms from "./sacredtexts/forms.json" assert { type: "json" };
 
-import hardcodedUnlocks from "./extradata/hardcodedUnlocks.json" assert { type: "json" }
-import iconCredits from "./extradata/iconCredits.json" assert { type: "json" }
-import colorOrder from "./extradata/colorOrder.json" assert { type: "json" }
-import shops from "./extradata/shops.json" assert { type: "json" }
+import hardcodedUnlocks from "./extradata/hardcodedUnlocks.json" assert { type: "json" };
+import iconCredits from "./extradata/iconCredits.json" assert { type: "json" };
+import colorOrder from "./extradata/colorOrder.json" assert { type: "json" };
+import shops from "./extradata/shops.json" assert { type: "json" };
 
-import { ExtraData, IconData } from "../types/icons.js"
+import { ExtraData, IconData } from "../types/icons.js";
+import { __dirname } from "../lib/template_handle.js";
+import { resolve } from "node:path";
 import fs from "node:fs";
 
-const previewIcons = fs.readdirSync('./iconkit/premade');
-const newPreviewIcons = fs.readdirSync('./iconkit/newpremade');
+const previewIcons = fs.readdirSync(resolve(__dirname, 'iconkit/premade'));
+const newPreviewIcons = fs.readdirSync(resolve(__dirname, 'iconkit/newpremade'));
 
 const previewCounts = {};
 previewIcons.forEach(iconFileName => {
@@ -22,7 +24,7 @@ previewIcons.forEach(iconFileName => {
 	else previewCounts[iconType]++;
 });
 
-const newIcons = fs.readdirSync('./iconkit/newicons');
+const newIcons = fs.readdirSync(resolve(__dirname, 'iconkit/newicons'));
 const newIconCounts: Record<string, number> = {};
 newIcons.forEach(iconFileName => {
 	if (iconFileName.endsWith(".plist")) {
