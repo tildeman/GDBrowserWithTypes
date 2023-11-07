@@ -33,8 +33,8 @@ function append(reset: boolean = true) {
 		let iconImg = `"`;
 		if (forms.includes(achItem.rewardType)) iconImg = `/iconkit/premade/${achItem.rewardType}_${achItem.rewardID}.png" style="width: 90%" title="${achItem.rewardType}_${achItem.rewardID < 10 ? "0" : ""}${achItem.rewardID}"`;
 		else if (achItem.rewardType.startsWith("color")) {
-			let col = colors[achItem.rewardID];
-			let colType = achItem.rewardType.slice(5);
+			const col = colors[achItem.rewardID];
+			const colType = achItem.rewardType.slice(5);
 			iconImg = `/assets/col${colType}.png" class="colorCircle" title="${colType == "1" ? "Primary" : "Secondary"} Color ${achItem.rewardID}" style="width: 80%; background-color: rgb(${col.r}, ${col.g}, ${col.b})"`;
 		}
 		else if (achItem.rewardType == "deathEffect") iconImg = `/assets/deatheffects/${achItem.rewardID}.png" style="width: 85%" title="Death Effect ${achItem.rewardID}"`;

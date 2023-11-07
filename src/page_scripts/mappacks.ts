@@ -4,7 +4,6 @@
 
 import { MapPackEntry } from "../types/mappacks.js";
 
-// TODO: Separate types from API files
 fetch('/api/mappacks').then(res => res.json()).then((packs: MapPackEntry[]) => {
 	$('#loading').hide();
 	packs.forEach(packItem => {

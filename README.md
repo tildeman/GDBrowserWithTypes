@@ -15,10 +15,10 @@ To run GDBrowser locally:
 4) Type `npm i` to flood your hard drive with code that's 99% useless
 5) Type `npm run buildDeps` to flood your hard drive even more with a bundled glob
 6) Type `npm run build` to transpile all the code into something node.js can actually understand
-7) Type `cd out && node index` to run the web server
+7) Type `npm run dev` to run the web server
 8) GDBrowser is now running locally at http://localhost:2000
 
-If you want to disable rate limits, ip forwarding, etc you can do so by modifying `settings.js`. Doing this is probably a good idea if you feel like obliterating Rob's servers for some reason. (please don't)
+If you want to disable rate limits, ip forwarding, etc. you can do so by modifying `settings.js`. Doing this is probably a good idea if you feel like obliterating Rob's servers for some reason. (please don't)
 
 ## Using this for a GDPS?
 
@@ -214,7 +214,7 @@ As a JS/TS developer, sometimes you want some sort of pattern for the infinite a
 
 ## Roadmap
 
-- [ ] Complete all the TODOs (25).
+- [ ] Complete all the TODOs (19).
 - [ ] Implement 2.2 features once the release is out.
 - [ ] Write JSDoc for all the types and interfaces in code.
 - [ ] Fix glaring visual errors.

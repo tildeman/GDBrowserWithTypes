@@ -97,4 +97,4 @@ function lazyLoadIcons() {
 	});
 }
 
-$('#searchBox').on("scroll",lazyLoadIcons);
+$('#searchBox').on("scroll", lazyLoadIcons);

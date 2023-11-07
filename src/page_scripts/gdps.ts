@@ -2,11 +2,8 @@
  * @fileoverview Site-specific script for the private server listing page.
  */
 
-import { Fetch } from "../misc/global.js";
+import { Fetch, serverMetadata } from "../misc/global.js";
 import { ServerInfo } from "../types/servers.js";
-
-// TODO: Use a better check for GDPS servers
-const gdps = "";
 
 let pageSize = 20;
 let page = 1;
@@ -15,8 +12,8 @@ const localhost = window.location.hostname == "localhost";
 const host = window.location.host.split(".").slice(-2).join(".");
 
 Fetch('/api/gdps').then((servers: ServerInfo[]) => {
-	let currentServer = servers.find(serverItem => serverItem.id == gdps);
-	servers = [currentServer].concat(servers.filter(serverItem => serverItem.id != gdps)).filter(serverItem => serverItem) as ServerInfo[];
+	let currentServer = servers.find(serverItem => serverItem.id == serverMetadata.gdps);
+	servers = [currentServer].concat(servers.filter(serverItem => serverItem.id != serverMetadata.gdps)).filter(serverItem => serverItem) as ServerInfo[];
 	let pageCount = Math.floor((servers.length - 1) / pageSize) + 1;
 
 	/**
@@ -34,7 +31,7 @@ Fetch('/api/gdps').then((servers: ServerInfo[]) => {
 		// TODO: This has a few glaring visual glitches
 		serverPage.forEach(serverInfo => {
 			$('#searchBox').append(`<div class="searchResult" style="height: 19%; padding-top: 1.2%; margin-right: 20vh;">
-					<h1 class="lessspaced blue" style="color: ${(gdps || "") == serverInfo.id ? "#00DDFF" : "white"}">${serverInfo.name}</h1>
+					<h1 class="lessspaced blue" style="color: ${(serverMetadata.gdps || "") == serverInfo.id ? "#00DDFF" : "white"}">${serverInfo.name}</h1>
 					<h2 class="lessSpaced smaller inline gdButton"><a href="${serverInfo.authorLink}" target="_blank">By ${serverInfo.author}</a></h2>
 
 					<div class="center" style="position:absolute; height: 10%; width: 12.5%; left: 3%; transform:translateY(-160%)">

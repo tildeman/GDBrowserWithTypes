@@ -5,11 +5,25 @@
 		}
 	],
 	"settings": {
-		"git.ignoreLimitWarning": true
+		"git.ignoreLimitWarning": true,
+		"prettier.useTabs": true
 	},
 	"launch": {
 		"version": "0.2.0",
 		"configurations": [
+			{
+				"name": "Build dependencies",
+				"request": "launch",
+				"runtimeArgs": [
+					"run",
+					"buildDeps"
+				],
+				"runtimeExecutable": "npm",
+				"skipFiles": [
+					"<node_internals>/**"
+				],
+				"type": "node"
+			},
 			{
 				"name": "Build project",
 				"request": "launch",

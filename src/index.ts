@@ -58,7 +58,7 @@ const userCacheHandle = new UserCache(appConfig.cacheAccountIDs, appServers);
 app.set('json spaces', "\t");
 app.use(compression());
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(timeout('20s'));
 app.use(packageValues);
 
@@ -91,11 +91,11 @@ app.use("/", miscRoutes);
 
 app.use(handleTimeouts);
 
-process.on('uncaughtException', (err) => {
+process.on('uncaughtException', err => {
 	console.log(err);
 });
 
-process.on('unhandledRejection', (err) => {
+process.on('unhandledRejection', err => {
 	console.log(err);
 });
 

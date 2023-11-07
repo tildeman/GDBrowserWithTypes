@@ -1,3 +1,8 @@
+interface ServerMetadata {
+    gdps: string | null;
+    onePointNine: boolean;
+}
+
 // Warning to be displayed when the viewport is vertical
 $('body').append(`
 	<div data-nosnippet id="tooSmall" class="brownBox center supercenter" style="display: none; width: 80%">
@@ -57,8 +62,10 @@ export function clean(text: string | number | undefined) {
 		.replace(/'/g, "&#39;");
 }
 
-let gdps: string | null = null;
-let onePointNine = false;
+export const serverMetadata: ServerMetadata = {
+	gdps: null,
+	onePointNine: false
+}
 
 /**
  * Wrapper function for the Fetch API to check for 1.9 features.
@@ -68,11 +75,11 @@ let onePointNine = false;
 export async function Fetch(link: RequestInfo | URL) {
 	const resp = await fetch(link);
 	if (!resp.ok) throw new Error("Malformed response");
-	gdps = resp.headers.get('gdps');
+	serverMetadata.gdps = resp.headers.get('gdps');
 	// TODO: Use a better check method for 1.9 servers
-	if (gdps && gdps.startsWith('1.9/')) {
-		onePointNine = true;
-		gdps = gdps.slice(4);
+	if (serverMetadata.gdps && serverMetadata.gdps.startsWith('1.9/')) {
+		serverMetadata.onePointNine = true;
+		serverMetadata.gdps = serverMetadata.gdps.slice(4);
 	}
 	const returnValue = await resp.json();
 	return returnValue;
@@ -92,7 +99,7 @@ export function toggleEscape(state: boolean, popup?: boolean) {
 }
 
 $(document).on("keydown", function(k) {
-	if (k.keyCode == 27) { //esc
+	if (k.which == 27) { //esc
 		if (!allowEsc) return
 		k.preventDefault()
 		if (popupEsc && $('.popup').is(":visible")) $('.popup').hide();

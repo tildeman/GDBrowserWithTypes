@@ -2,7 +2,7 @@
  * @fileoverview Site-specific script for the level comments page.
  */
 
-import { Fetch, clean, toggleEscape } from "../misc/global.js";
+import { Fetch, clean, toggleEscape, serverMetadata } from "../misc/global.js";
 import { Player, PlayerIcon } from "../classes/Player.js";
 import { Color3B } from "../types/miscellaneous.js";
 import { renderIcons } from "../iconkit/icon.js";
@@ -33,9 +33,6 @@ interface CommentPreset {
 	mode: string;
 	compact: boolean
 }
-
-// TODO: GDPS check missing
-const gdps = "";
 
 let { mode, compact }: CommentPreset = JSON.parse(localStorage.getItem('commentPreset') || '{"mode": "top", "compact": true}');
 let messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for posting a comment <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postComment.js">here</a>.';
@@ -77,7 +74,7 @@ Fetch(target).then(lvl => buildComments(lvl)).catch(e => {
 });
 
 function buildComments(lvl: Level | Player) {
-	if (gdps) {
+	if (serverMetadata.gdps) {
 		$('#leaveComment').hide();
 		$('#postComment').remove();
 	}
@@ -417,7 +414,7 @@ function buildComments(lvl: Level | Player) {
 	let likedComments: string[];
 
 	$(document).on('click', '.likeComment', function(cmnt) {
-		if (gdps) return;
+		if (serverMetadata.gdps) return;
 		commentID = $(this).attr('commentID') || "0";
 
 		likedComments = localStorage.likedComments ? JSON.parse(localStorage.likedComments) : [];
@@ -463,6 +460,7 @@ function buildComments(lvl: Level | Player) {
 				likeCount.text(newCount);
 				if (newCount < 0) likeImg.attr('src', '/assets/dislike.png').css('transform', compact ? 'translateY(15%)' : 'translateY(25%)');
 				else likeImg.attr('src', '/assets/like.png').removeAttr('style');
+				likeImg.css("height", "4vh");
 				$('#likeComment').hide();
 				$('#likebtn').trigger('click');
 				$('.postbutton').show();

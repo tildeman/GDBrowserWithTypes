@@ -2,8 +2,8 @@
  * @fileoverview Site-specific script for the search results page.
  */
 
+import { Fetch, clean, serverMetadata } from "../misc/global.js";
 import { SearchQueryLevel } from "../classes/Level.js";
-import { Fetch, clean } from "../misc/global.js";
 
 $('#pageDown').hide();
 $('#pageUp').hide();
@@ -28,8 +28,6 @@ const gauntlets = [
 let currentPage = Math.max(1, Number(url.searchParams.get('page') || 0)) - 1;
 let pages = 0;
 let results = 0;
-let legalPages = true;
-let gdwMode = false;
 const superSearch = ['*', '*?type=mostliked', '*?type=mostdownloaded', '*?type=recent'].includes(window.location.href.split('/')[4].toLowerCase());
 let pageCache = {};
 
@@ -41,13 +39,11 @@ if (type == "followed") {
 	searchFilters += ("&creators=" + followed.join());
 }
 
-// TODO: Use a more rigorous GDPS check
-let hostMatch = window.location.host.match(/\./g);
-if (hostMatch && hostMatch.length > 1) { // gdps check
+if (serverMetadata.gdps) { // gdps check
 	$('#gdWorld').remove();
 	$('#normalGD').remove();
 }
-const onePointNine = false;
+
 
 /**
  * Append results to the selection box
@@ -122,7 +118,7 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 			$('#searchBox').append(`<div class="searchResult" title="${clean(level.description)}">
 				<h1 class="lessspaced pre" title="${level.name} by ${!level.author || level.author == "-" ? "some nerd" : level.author}" style="width: fit-content; padding-right: 1%">${clean(level.name || " ")}</h1>
 				<h2 class="pre smaller inline gdButton help ${hasAuthor ? "" : "green unregistered"}" title="Account ID: ${level.accountID}\nPlayer ID: ${level.playerID}"><!--
-					-->${hasAuthor && !onePointNine ? `<a style="margin-right: 0.66vh" href="/u/${level.accountID}.">By ${level.author || "-"}</a>` : `<a ${userSearch ? "" : `href="/search/${level.playerID}?user"`}>By ${level.author || "-"}</a>`}</h2><!--
+					-->${hasAuthor && !serverMetadata.onePointNine ? `<a style="margin-right: 0.66vh" href="/u/${level.accountID}.">By ${level.author || "-"}</a>` : `<a ${userSearch ? "" : `href="/search/${level.playerID}?user"`}>By ${level.author || "-"}</a>`}</h2><!--
 					--><h2 class="inline" style="margin-left: 1.5%; transform:translateY(10%)"> ${level.copiedID == '0' ? "" : `<a target="_blank" href="/level/${level.copiedID}"><!--
 					--><img class="gdButton valign sideSpaceD" title="Original: ${level.copiedID}" src="/assets/copied.png" style="height: 3vh;"></a>`}<!--
 					-->${level.large ? `<img class="help valign sideSpaceD" title="${level.objects}${level.objects == 65535 ? "+" : ""} objects" src="/assets/large.png" style="height: 3vh;">` : ''}<!--

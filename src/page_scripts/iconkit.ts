@@ -300,7 +300,7 @@ async function generateIcon(): Promise<void> {
  * @returns The filtered icons.
  */
 function filterIcon(name: string) {
-	return iconStuff.previewIcons.concat(iconStuff.newPreviewIcons).filter(iconName => iconName.startsWith(name)).sort(function (a,b) {
+	return iconStuff.previewIcons.concat(iconStuff.newPreviewIcons).filter(iconName => iconName.startsWith(name)).sort(function (a, b) {
 		return +a.replace(/[^0-9]/g, "") - +b.replace(/[^0-9]/g, "");
 	});
 }
@@ -703,6 +703,7 @@ function getUnlockMethod(iconNumber: number, form: string) {
 
 	if (method) {
 		switch (method.type) {
+			// Update 2.2 will feature a lot more chests. This will update accordingly.
 			case "treasureRoom": return `Found in a ${method.keys == 5 ? "large" : "small"} chest in the Treasure Room`;
 			case "treasureRoomMilestone": return `Open ${method.chests} chests in the Treasure Room`;
 			case "gauntlet": return `Complete the ${method.gauntlet} gauntlet`;
@@ -740,7 +741,7 @@ $('#animationSpeed').on('input', function() {
 	if (icon?.complex) icon.animationSpeed = animationMultiplier;
 });
 
-$('#animationSpeedBox').change(function() {
+$('#animationSpeedBox').on("change", function() {
 	animationMultiplier = Number(Math.abs(Number($(this).val()) || 1).toFixed(2));
 	if (animationMultiplier > 99) animationMultiplier = 99;
 	else if (animationMultiplier <= 0) animationMultiplier = 0.1;
@@ -750,11 +751,11 @@ $('#animationSpeedBox').change(function() {
 });
 
 $(document).on("keydown", function(k) {
-	if (k.keyCode == 13) { // enter
+	if (k.which == 13) { // enter
 		if ($("#steal").is(":visible")) $("#fetchUser").trigger('click');
 		else if ($(".popup").is(":visible")) return;
 	}
-	if (k.keyCode == 27) { //esc
+	if (k.which == 27) { //esc
 		if ($(".popup").is(":visible")) return $('.popup').hide();
 		k.preventDefault();
 		$('#backButton').trigger('click');

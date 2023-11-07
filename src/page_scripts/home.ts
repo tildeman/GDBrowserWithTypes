@@ -84,7 +84,7 @@ Fetch(`/api/credits`).then(async (res: BrowserCredits) => {
 		page = 1;
 	});
 
-	$(document).on("keydown",function(k) {
+	$(document).on("keydown", function(k) {
 		if ($('#credits').is(':hidden')) return;
 
 		if (k.which == 37 && page > 1) { //left

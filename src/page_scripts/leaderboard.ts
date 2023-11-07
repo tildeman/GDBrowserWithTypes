@@ -2,9 +2,9 @@
  * @fileoverview Site-specific script for the leaderboard page.
  */
 
-import { Player } from "../classes/Player.js";
+import { Fetch, isInViewport, serverMetadata } from "../misc/global.js";
 import { buildIcon } from "../iconkit/icon.js";
-import { Fetch, isInViewport } from "../misc/global.js";
+import { Player } from "../classes/Player.js";
 
 /**
  * Weekly progress data (for 1.9 servers that use the weekly leaderboard).
@@ -23,10 +23,6 @@ interface CosmeticsData {
 	bgColor: number[];
 	nameColor: number[];
 }
-
-// TODO: Check for GDPS during preprocessing
-let onePointNine = false;
-let gdps = false;
 
 let type: string;
 let sort = "stars";
@@ -86,7 +82,7 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 	$('#loading').show();
 
 	Fetch("/api/leaderboard?" + (leaderboardParams || `count=250&${val}&type=${sort}${modMode ? "&mod=1" : ""}`)).then((res: Player[] | "-1") => {
-		if (gdps && !didGDPSStuff) {
+		if (serverMetadata.gdps && !didGDPSStuff) {
 			didGDPSStuff = true;
 			top250Text = topGDPSText;
 			$('#accurateTabOn').remove();
@@ -155,15 +151,15 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 				<div class="leaderboardSide">
 					<div class="leaderboardStars">
 						${lbItem.moderator ? `<img title="${lbItem.moderator == 2 ? "Elder " : ""}Moderator" src="/assets/mod${lbItem.moderator == 2 ? "-elder" : ""}.png" style="width: 9%; cursor: help; padding-right: 1.6%; transform: translateY(0.7vh)">` : ""}
-						<h2 class="leaderboardName small inline gdButton" style="margin-top: 1.5%${nameString || (lbItem.moderator == 2 ? "; color: #FF9977;" : "")}"><a href="${onePointNine ? `/search/${lbItem.playerID}?user` : `/u/${lbItem.accountID}.`}" accountID="${lbItem.accountID}">${lbItem.username}</a></h2>
+						<h2 class="leaderboardName small inline gdButton" style="margin-top: 1.5%${nameString || (lbItem.moderator == 2 ? "; color: #FF9977;" : "")}"><a href="${serverMetadata.onePointNine ? `/search/${lbItem.playerID}?user` : `/u/${lbItem.accountID}.`}" accountID="${lbItem.accountID}">${lbItem.username}</a></h2>
 						<h3 class="inline${lbItem.stars >= 100000 ? " yellow" : ""}" style="margin-left: 4%; margin-top: 2%; font-size: 4.5vh${type == "weekly" ? "; display: none" : ""};">${lbItem.stars} <img class="help valign" src="/assets/star.png"style="width: 4vh; transform: translate(-25%, -10%);" title="Stars"></h3>
 					</div>
 
 					<h3 class="lessSpaced leaderboardStats">
 						${type != "weekly" ? "" : `<span${lbItem.stars >= 1000 ? " class='yellow'" : ""}>+${lbItem.stars}</span> <img class="help valign" src="/assets/star.png" title="Star Gain">`}
-						${wk || onePointNine ? "" : `<span${lbItem.diamonds >= 65535 ? ` class='blue'>` : ">"}${lbItem.diamonds}</span> <img class="help valign" src="/assets/diamond.png" title="Diamonds">`}
+						${wk || serverMetadata.onePointNine ? "" : `<span${lbItem.diamonds >= 65535 ? ` class='blue'>` : ">"}${lbItem.diamonds}</span> <img class="help valign" src="/assets/diamond.png" title="Diamonds">`}
 						${wk ? "&nbsp;" : `<span${lbItem.coins >= 149 ? " class='yellow'" : ""}>${lbItem.coins}</span> <img class="help valign" src="/assets/coin.png" title="Secret Coins">`}
-						${wk || onePointNine ? "" : `<span${lbItem.userCoins >= 10000 ? " class='brightblue'" : ""}>${lbItem.userCoins}</span> <img class="help valign" src="/assets/silvercoin.png" title="User Coins">`}
+						${wk || serverMetadata.onePointNine ? "" : `<span${lbItem.userCoins >= 10000 ? " class='brightblue'" : ""}>${lbItem.userCoins}</span> <img class="help valign" src="/assets/silvercoin.png" title="User Coins">`}
 						${wk ? "" : `<span${lbItem.demons >= 1000 ? " class='brightred'" : ""}>${lbItem.demons}</span> <img class="help valign" src="/assets/demon.png" title="Demons">`}
 						${lbItem.cp <= 0 ? "" : `<span${lbItem.cp >= 100 ? " class='yellow'" : ""}>${lbItem.cp}</span> <img class="help valign" src="/assets/cp.png" title="Creator Points">`}
 					</h3>
@@ -244,7 +240,7 @@ $('#accurateTabOff').on("click", function() {
 });
 
 $('#weeklyTabOff').on("click", function() {
-	if (type == "weekly" || !gdps) return;
+	if (type == "weekly" || !serverMetadata.gdps) return;
 	type = "weekly";
 	leaderboard(type);
 	$('.leaderboardTab').hide();

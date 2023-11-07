@@ -2,7 +2,7 @@
  * @fileoverview Site-specific script for the search page.
  */
 
-import { Fetch } from "../misc/global.js";
+import { Fetch, serverMetadata } from "../misc/global.js";
 import { SafeServers } from "../types/servers.js";
 
 let filters: string[] = [];
@@ -10,10 +10,6 @@ let demons = [];
 let demonMode = false;
 let customSong = true;
 let officialSong = 1;
-
-// TODO: Use a better check for GDPSes.
-const gdps = false;
-const onePointNine = false;
 
 /**
  * Remove duplicate entries in an array.
@@ -308,13 +304,13 @@ Fetch(`/api/music`).then((music: [string, string][]) => {
 		if (k.which == 39) $('#songUp').trigger('click');   // right
 	});
 
-	if (onePointNine) {
+	if (serverMetadata.onePointNine) {
 		$('#userSearch').hide();
 		$('#followedSearch').addClass('menuDisabled');
 		$('#levelName').css('width', '76%');
 	}
 
-	if (gdps) Fetch(`/api/gdps?current=1`).then((res: SafeServers) => {
+	if (serverMetadata.gdps) Fetch(`/api/gdps?current=1`).then((res: SafeServers) => {
 		if (res.demonList) $('#demonList').show();
 	});
 	else $('#demonList').show();
