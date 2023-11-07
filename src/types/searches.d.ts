@@ -33,6 +33,7 @@ export interface ISearchFilters {
 	/**
 	 * Only return levels that use this official song number
 	 * (2-23, unless you want hacked levels with songs from meltdown/subzero/etc. Also, Stereo Madness and Back on Track don't seem to work).
+	 *
 	 * Add the 'customSong' parameter to read the number as a custom song ID.
 	 */
 	song?: string;
