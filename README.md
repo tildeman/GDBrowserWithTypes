@@ -130,7 +130,7 @@ When you're working on a project the size and scale of GDBrowser, there has to b
 | `sampleIcons.json`      | A pool of icons, one of which will randomly appear when visiting the icon kit. Syntax is [Name, ID, Col1, Col2, Glow] |
 | `secretStuff.json`      | GJP goes here, needed for level leaderboards. A sample is included for convenience.                                   |
 
-### Page scripts
+### Scripts
 
 These are a collection of modules for use on individual webpages. `comments.ts` loads comments for the commments page. `filters.ts` remembers your filters the next time you search on GDBrowser. I separated these from the respective HTML for two reasons:
 

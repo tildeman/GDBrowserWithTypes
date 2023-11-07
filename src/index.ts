@@ -71,7 +71,7 @@ app.get("/dragscroll.js", fetchStaticFile("misc/dragscroll.js"));
 app.get("/vendor/index.js", fetchStaticFile("vendor/index.js"));
 app.get("/global.js", fetchStaticFile("misc/global.js"));
 app.get("/misc/global.js", fetchStaticFile("misc/global.js"));
-app.use("/page_scripts", express.static(resolve(__dirname, "page_scripts")));
+app.use("/scripts", express.static(resolve(__dirname, "scripts")));
 app.use('/iconkit', express.static(resolve(__dirname, 'iconkit')));
 app.use("/assets", assetRoutes);
 
