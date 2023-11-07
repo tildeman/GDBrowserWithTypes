@@ -17,3 +17,5 @@ fetch('/api/mappacks').then(res => res.json()).then((packs: MapPackEntry[]) => {
 			</h3></div></a>`);
 	});
 });
+
+export {};

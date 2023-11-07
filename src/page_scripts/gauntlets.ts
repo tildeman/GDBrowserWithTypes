@@ -14,3 +14,5 @@ fetch('/api/gauntlets').then(res => res.json()).then((gauntlets: GauntletEntry[]
 			<h3 class="gauntletText">${gauntletItem.name}<br>Gauntlet</h3></div></a>`);
 	});
 });
+
+export {};

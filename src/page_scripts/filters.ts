@@ -6,7 +6,6 @@ import { Fetch, serverMetadata } from "../misc/global.js";
 import { SafeServers } from "../types/servers.js";
 
 let filters: string[] = [];
-let demons = [];
 let demonMode = false;
 let customSong = true;
 let officialSong = 1;

@@ -346,3 +346,5 @@ function lazyLoadIcons() {
 }
 
 $('#searchBox').on("scroll", lazyLoadIcons);
+
+export {};

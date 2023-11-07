@@ -63,3 +63,5 @@ Fetch('/api/gdps').then((servers: ServerInfo[]) => {
 		if (k.which == 39 && $('#pageUp').is(":visible")) $('#pageUp').trigger('click');       // right
 	});
 });
+
+export {};

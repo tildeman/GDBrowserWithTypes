@@ -311,3 +311,5 @@ $(document).on("keydown", function(k) {
 	if (k.which == 37 && $('#pageDown').is(":visible")) $('#pageDown').trigger('click');   // left
 	if (k.which == 39 && $('#pageUp').is(":visible")) $('#pageUp').trigger('click');       // right
 });
+
+export {};

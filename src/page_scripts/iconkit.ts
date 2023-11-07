@@ -10,7 +10,6 @@ import { Color3B } from "../types/miscellaneous.js";
 import { PIXI } from "../vendor/index.js";
 
 let currentForm = 'icon';
-let glowbtnformCopy = 'icon';
 const mobile =  /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
 const yOffsets = { ball: -10, ufo: 30, spider: 7, swing: -15 };
 
@@ -791,3 +790,5 @@ $("#revealSpoilers").on("click", function() {
 	toggleSpoilers();
 	$('#spoilerWarning').hide();
 });
+
+export {};

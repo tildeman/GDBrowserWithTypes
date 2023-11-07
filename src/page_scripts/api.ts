@@ -48,3 +48,5 @@ function revealSection(element: HTMLElement | JQuery<HTMLElement>) {
 $('.reveal').on('click', function() {
 	revealSection($(this).next());
 });
+
+export {};
