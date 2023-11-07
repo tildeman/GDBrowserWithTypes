@@ -1,5 +1,5 @@
 import { ICommentContent, ICommentParams } from "../types/comments.js";
-import { parseResponse } from "../lib/parse_response.js";
+import { parseResponse } from "../lib/parseResponse.js";
 import { UserCache } from "../classes/UserCache.js";
 import { ExportBundle } from "../types/servers.js";
 import { Player } from "../classes/Player.js";

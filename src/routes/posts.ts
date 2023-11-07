@@ -9,7 +9,7 @@ import postCommentController from "../api/post/postComment.js";
 import postProfileCommentController from "../api/post/postProfileComment.js";
 import { RL, RL2 } from "../lib/ratelimits.js";
 import express from "express";
-import { fetchTemplate } from "../lib/template_handle.js";
+import { fetchTemplate } from "../lib/templateHandle.js";
 
 export default function(userCacheHandle: UserCache) {
 	const router = express.Router();

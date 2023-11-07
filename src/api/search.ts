@@ -1,5 +1,5 @@
 import { IListEntryOverview } from '../types/demonlist.js';
-import { parseResponse } from '../lib/parse_response.js';
+import { parseResponse } from '../lib/parseResponse.js';
 import { SearchQueryLevel } from '../classes/Level.js';
 import { ISearchFilters } from '../types/searches.js';
 import { UserCache } from '../classes/UserCache.js';

@@ -2,7 +2,7 @@
  * @fileoverview Routing page for static assets.
  */
 
-import { __dirname } from "../lib/template_handle.js";
+import { __dirname } from "../lib/templateHandle.js";
 import { resolve } from "node:path";
 import express from "express";
 import fs from "node:fs";

@@ -3,9 +3,10 @@
  */
 
 import { Fetch, clean, toggleEscape, serverMetadata } from "../misc/global.js";
-import { Player, PlayerIcon } from "../classes/Player.js";
 import { Color3B } from "../types/miscellaneous.js";
 import { renderIcons } from "../iconkit/icon.js";
+import { PlayerIcon } from "../types/icons.js";
+import { Player } from "../classes/Player.js";
 import { Level } from "../classes/Level.js";
 
 interface CommentItem {

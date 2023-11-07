@@ -2,7 +2,7 @@
  * @fileoverview Routing page for curated level lists (by RobTop or from other users).
  */
 
-import { fetchTemplate } from "../lib/template_handle.js";
+import { fetchTemplate } from "../lib/templateHandle.js";
 import gauntletController from "../api/gauntlets.js";
 import mapPackController from "../api/mappacks.js";
 import express from "express";

@@ -1,4 +1,4 @@
-import { parseResponse } from '../lib/parse_response.js';
+import { parseResponse } from '../lib/parseResponse.js';
 import { SearchQueryLevel } from '../classes/Level.js';
 import { UserCache } from '../classes/UserCache.js';
 import downloadController from "./download.js";

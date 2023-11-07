@@ -2,7 +2,7 @@
  * @fileoverview Routing page for levels.
  */
 
-import { fetchTemplate } from "../lib/template_handle.js";
+import { fetchTemplate } from "../lib/templateHandle.js";
 import { UserCache } from "../classes/UserCache.js";
 import analyzeController from "../api/analyze.js";
 import levelController from "../api/level.js";

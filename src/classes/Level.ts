@@ -23,11 +23,11 @@ const demonTypes = { 3: "Easy", 4: "Medium", 5: "Insane", 6: "Extreme" };
 
 export interface ILevelObject {
 	/**
-	 * Name of the level. (e.g.: isolation my ver)
+	 * The name of the level. (e.g.: isolation my ver)
 	 */
 	name: string;
 	/**
-	 * ID of the level. (e.g.: 91209839)
+	 * The ID of the level. (e.g.: 91209839)
 	 */
 	id: string;
 	/**

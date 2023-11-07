@@ -9,12 +9,13 @@ import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements
 import { Color3B } from "../types/miscellaneous.js";
 import { PIXI } from "../vendor/index.js";
 
-let currentForm = 'icon';
 const mobile =  /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+const shops = ["the Shop", "Scratch's Shop", "the Community Shop"];
 const yOffsets = { ball: -10, ufo: 30, spider: 7, swing: -15 };
 
-let selectedIcon = 1;
+let currentForm = 'icon';
 let selectedForm = 'icon';
+let selectedIcon = 1;
 
 let selectedCol1 = 0;
 let selectedCol2 = 3;
@@ -26,7 +27,6 @@ let enableGlow = 0;
 let enableSpoilers = false;
 let clickedSpoilerWarning = false;
 
-let shops = ["the Shop", "Scratch's Shop", "the Community Shop"];
 let achievements: IAchievementItem[] = [];
 let shopIcons: { icon: number; type: string; price: number; shop: number; }[] = [];
 let iconStuff: IIconData & IIconKitAPIResponse;
@@ -79,8 +79,11 @@ function randInt(min: number, max: number) {
  * Set the background color of a color channel button.
  * @param channelID The channel ID (e.g.: `1`, `W` or `U`).
  * @param colValue The color value to set.
- * @param hex No effect. Uses hexadecimal if `colValue` is a string, raw RGB otherwise.
+ * @param hex No effect. Use hexadecimal if `colValue` is a string, raw RGB otherwise.
  */
+function colorBG(channelID: string, colValue: Color3B, hex?: false): void;
+function colorBG(channelID: string, colValue: string, hex: true): void;
+
 function colorBG(channelID: string, colValue: Color3B | string, hex?: boolean) {
 	$(`#cc${channelID} img`).css('background-color', (typeof(colValue) == "string") ? `#${colValue}` : `rgb(${colValue.r}, ${colValue.g}, ${colValue.b})`);
 	if (typeof(colValue) == "object") $(`#cp${channelID}`).val(toHexCode(rgbToDecimal(colValue)));
@@ -149,7 +152,7 @@ function checkWhite() {
 }
 
 /**
- * Check if animation selector should be visible.
+ * Check if the animation selector should be visible.
  */
 function checkAnimation() {
 	let animationData = iconData!.robotAnimations.animations[selectedForm];
@@ -771,7 +774,7 @@ $(document).on('click', '.brownbox', function (e) {
 
 $("#newIconBtn").on("click", function() {
 	clickedSpoilerWarning ? toggleSpoilers() : $('#spoilerWarning').show();
-})
+});
 
 $("#downloadIconPNG").on("click", function() {
 	icon?.pngExport();

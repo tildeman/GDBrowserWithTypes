@@ -9,7 +9,7 @@ import colorOrder from "./extradata/colorOrder.json" assert { type: "json" };
 import shops from "./extradata/shops.json" assert { type: "json" };
 
 import { IExtraData, IIconData } from "../types/icons.js";
-import { __dirname } from "../lib/template_handle.js";
+import { __dirname } from "../lib/templateHandle.js";
 import { resolve } from "node:path";
 import fs from "node:fs";
 

@@ -2,32 +2,12 @@
  * @fileoverview Middleware to package useful functions into `reqBundle` for use in controllers
  */
 
-import serverListRaw from "../servers.json" assert { type: "json" };
+import { appMainEndpoint, appServers } from "../lib/serverInfo.js";
 import { Request, Response, NextFunction } from "express";
-import { ExportBundle, IServerInfo } from "../types/servers.js";
+import { ExportBundle } from "../types/servers.js";
 import { convertUSP } from "../lib/uspconvert.js";
 import appConfig from '../settings.js';
 import request from 'axios'; // `request` is trash
-
-/**
- * The list of servers in `servers.json`.
- */
-const serverList: IServerInfo[] = serverListRaw;
-
-/**
- * Servers that are pinned to the top. Sorted by whatever comes first.
- */
-const pinnedServers = serverList.filter(serverItem => serverItem.pinned);
-
-/**
- * Servers that are not pinned to the top. Sorted alphabetically.
- */
-const notPinnedServers = serverList.filter(serverItem => !serverItem.pinned).sort((serverA, serverB) => serverA.name.localeCompare(serverB.name));
-
-const appServers = pinnedServers.concat(notPinnedServers);
-
-// The default no-id endpoint always exists, trust me!
-const appMainEndpoint = appServers.find(serverItem => !serverItem.id)!.endpoint; // boomlings.com unless changed in fork
 
 /**
  * Package useful functions into `reqBundle`, and let the controllers handle the rest.
@@ -46,7 +26,7 @@ export default function(req: Request, res: Response, next: NextFunction) {
 	}
 
 	// will expand this in the future :wink:
-	// annotation: it never will be.
+	// TODO: Send an error object instead of `-1`
 	const resSendError = function(errorCode = 500) {
 		res.status(errorCode).send("-1");
 	}

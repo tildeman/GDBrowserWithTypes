@@ -1,4 +1,4 @@
-import { parseResponse } from '../lib/parse_response.js';
+import { parseResponse } from '../lib/parseResponse.js';
 import { UserCache } from '../classes/UserCache.js';
 import { Player } from '../classes/Player.js';
 import { Request, Response } from "express";

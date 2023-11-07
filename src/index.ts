@@ -1,8 +1,7 @@
-import { __dirname , fetchStaticFile } from './lib/template_handle.js';
-import serverListRaw from "./servers.json" assert { type: "json" };
+import { __dirname , fetchStaticFile } from './lib/templateHandle.js';
+import { appSafeServers, appServers } from './lib/serverInfo.js';
 import handleTimeouts from './middleware/handleTimeouts.js';
 import packageValues from './middleware/packageValues.js';
-import { ISafeServers, IServerInfo } from "./types/servers.js";
 import { UserCache } from './classes/UserCache.js';
 import compression from 'compression';
 import appConfig from './settings.js';
@@ -29,24 +28,6 @@ import { resolve } from 'node:path';
  * The Express app that does all the stuff.
  */
 const app = express();
-
-/**
- * The list of servers in `servers.json`.
- */
-const serverList: IServerInfo[] = serverListRaw;
-
-/**
- * Servers that are pinned to the top. Sorted by whatever comes first.
- */
-const pinnedServers = serverList.filter(serverItem => serverItem.pinned);
-
-/**
- * Servers that are not pinned to the top. Sorted alphabetically.
- */
-const notPinnedServers = serverList.filter(serverItem => !serverItem.pinned).sort((serverA, serverB) => serverA.name.localeCompare(serverB.name));
-
-const appServers = pinnedServers.concat(notPinnedServers);
-const appISafeServers: ISafeServers[] = appServers.map(({ endpoint, substitutions, overrides, disabled, ...rest }) => rest);
 
 /**
  * All app-wide caching and global storage are to be done here.
@@ -85,7 +66,7 @@ app.use("/", messageRoutes(userCacheHandle));
 app.use("/", postRoutes(userCacheHandle));
 app.use("/", listRoutes(appConfig.cacheGauntlets, appConfig.cacheMapPacks));
 app.use("/", iconRoutes);
-app.use("/api", staticFileRoutes(userCacheHandle, appISafeServers));
+app.use("/api", staticFileRoutes(userCacheHandle, appSafeServers));
 app.use("/", redirectRoutes)
 app.use("/", miscRoutes);
 

@@ -2,7 +2,7 @@
  * @fileoverview Routing page for the home page and miscellaneous endpoints.
  */
 
-import { fetchTemplate } from "../lib/template_handle.js";
+import { fetchTemplate } from "../lib/templateHandle.js";
 import { ExportBundle } from "../types/servers.js";
 import express from "express";
 

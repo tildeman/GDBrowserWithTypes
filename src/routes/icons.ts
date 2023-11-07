@@ -4,7 +4,7 @@
 
 import { sacredTexts, extraData as iconKitFiles } from "../iconkit/static_files.js";
 import sampleIcons from '../misc/sampleIcons.json' assert {type: "json" };
-import { fetchTemplate } from "../lib/template_handle.js";
+import { fetchTemplate } from "../lib/templateHandle.js";
 import { ExportBundle } from "../types/servers.js";
 import express from "express";
 

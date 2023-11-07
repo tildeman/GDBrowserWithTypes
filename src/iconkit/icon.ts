@@ -4,49 +4,33 @@
 
 import { PIXI, agPsd, Ease } from "../vendor/index.js";
 import { Color3B } from "../types/miscellaneous.js";
-import { IAnimationObject, IIconConfiguration, IIconData, IPartForSpecialIcons } from "../types/icons.js";
+import { IAnimationObject, IExtraSettings, IIconConfiguration, IIconData, IPartForSpecialIcons, IIconColor } from "../types/icons.js";
 import { Fetch } from "../misc/global.js";
 
-
-interface IconPartSection {
-	glow?: IconLayer;
-	ufo?: IconLayer;
-	col1?: IconLayer;
-	col2?: IconLayer;
-	white?: IconLayer
-}
-
-
-interface IconColor {
-	/**
-	 * Primary color.
-	 */
-	1: number;
-	/**
-	 * Secondary color.
-	 */
-	2: number;
+/**
+ * Section for a part of an icon.
+ */
+interface IIconPartSection {
 	/**
 	 * Glow outline.
 	 */
-	g: number;
-	/**
-	 * Values that (should be) always white.
-	 */
-	w: number;
+	glow?: IconLayer;
 	/**
 	 * UFO dome color.
 	 */
-	u: number;
-}
-
-/**
- * Extra settings in the icon kit UI
- */
-interface ExtraSettings {
-	new?: boolean;
-	noDome?: boolean;
-	ignoreGlow?: boolean;
+	ufo?: IconLayer;
+	/**
+	 * Primary color.
+	 */
+	col1?: IconLayer;
+	/**
+	 * Secondary color.
+	 */
+	col2?: IconLayer;
+	/**
+	 * White highlights.
+	 */
+	white?: IconLayer;
 }
 
 export const iconData: IIconData = await Fetch("/api/icons");
@@ -372,7 +356,7 @@ export class Icon {
 	form: string;
 	id: number;
 	new: boolean;
-	colors: IconColor;
+	colors: IIconColor;
 	glow: boolean;
 	layers: IconPart[];
 	glowLayers: IconPart[];
@@ -411,7 +395,7 @@ export class Icon {
 
 		// most forms
 		if (!this.complex) {
-			let extraSettings: ExtraSettings = {
+			let extraSettings: IExtraSettings = {
 				new: this.new
 			};
 			if (data.noUFODome) extraSettings.noDome = true;
@@ -468,7 +452,7 @@ export class Icon {
 	 * @param newColor The new color as a decimal value.
 	 * @param extra Optional settings that come with setting the color.
 	 */
-	setColor(colorType: string, newColor: number, extra: ExtraSettings = {}) {
+	setColor(colorType: string, newColor: number, extra: IExtraSettings = {}) {
 		const colorStr = String(colorType).toLowerCase();
 		if (!colorType || !Object.keys(this.colors).includes(colorStr)) return;
 		else this.colors[colorStr] = newColor;
@@ -751,12 +735,12 @@ class IconPart {
 	 * @param glow The glow status of the icon.
 	 * @param misc Additional settings.
 	 */
-	constructor(form: string, id: number, colors: IconColor, glow: boolean, misc: Record<string, any> = {}) {
+	constructor(form: string, id: number, colors: IIconColor, glow: boolean, misc: Record<string, any> = {}) {
 		if (colors["1"] == 0 && !misc.skipGlow) glow = true; // add glow if p1 is black
 
 		const iconPath = `${form}_${padZero(id)}`;
 		const partString = misc.part ? "_" + padZero(misc.part.part) : "";
-		const sections: IconPartSection = {};
+		const sections: IIconPartSection = {};
 		if (misc.part) this.part = misc.part;
 
 		this.sprite = new PIXI.Container();

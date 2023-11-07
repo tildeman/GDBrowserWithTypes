@@ -73,7 +73,7 @@ export interface IServerInfo {
 	 */
 	overrides?: Record<string, string>;
 	/**
-	 * Not sure what this is supposed to do. Maybe to indicate that the server is down?
+	 * Assume that the server is offline and replace the homepage with a Congregation jumpscare.
 	 */
 	offline?: boolean;
 	/**
@@ -139,6 +139,10 @@ export interface ExportBundle {
 		 */
 		gdRequest: (target: string, params?: Record<string, any>) => Promise<string>;
 	}
+	/**
+	 * Terminate the execution of the current controller and respond with `-1`.
+	 * @param [errorCode=500] The error code to send. Defaults to 500.
+	 */
 	sendError: (errorCode?: number) => void;
 }
 

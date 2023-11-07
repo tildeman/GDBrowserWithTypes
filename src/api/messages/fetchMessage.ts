@@ -1,4 +1,4 @@
-import { parseResponse } from "../../lib/parse_response.js";
+import { parseResponse } from "../../lib/parseResponse.js";
 import { IMessageObject } from "../../types/messages.js";
 import { UserCache } from "../../classes/UserCache.js";
 import { ExportBundle } from "../../types/servers.js";

@@ -1,4 +1,4 @@
-import { parseResponse } from "../lib/parse_response.js";
+import { parseResponse } from "../lib/parseResponse.js";
 import { ExportBundle } from "../types/servers.js";
 import { DownloadedLevel } from '../classes/Level.js';
 import { Request, Response } from "express";

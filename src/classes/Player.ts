@@ -1,38 +1,11 @@
 import colors_raw from '../iconkit/sacredtexts/colors.json' assert { type: "json" };
 import { Color3B } from '../types/miscellaneous.js';
+import { PlayerIcon } from '../types/icons';
 
 /**
  * An object of colors.
  */
 const colors: Record<string , Color3B> = colors_raw;
-
-/**
- * Interface for a player icon
- */
-export interface PlayerIcon {
-	/**
-	 * The gamemode of the default icon.
-	 */
-	form: string;
-	/**
-	 * The icon ID (e.g.: Ship `22` yields the ghost ship).
-	 */
-	icon: number;
-	/**
-	 * The primary color of the icon.
-	 */
-	col1: number;
-	/**
-	 * The secondary color of the icon.
-	 */
-	col2: number;
-	/**
-	 * Whether glow is enabled for the icon.
-	 *
-	 * Note: 2.2 introduces a breaking change where the glow color is independent.
-	 */
-	glow: boolean;
-}
 
 /**
  * Class for a Geometry Dash Player.

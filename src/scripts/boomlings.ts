@@ -8,7 +8,7 @@ $('#loading').show();
 /**
  * Entry for the leaderboard in Boomlings (RobTop's discontinued game).
  */
-interface BoomlingsILeaderboardEntry {
+interface BoomlingsLeaderboardEntry {
 	boomling: string;
 	name: string;
 	level: number;
@@ -18,7 +18,7 @@ interface BoomlingsILeaderboardEntry {
 	rank: number;
 }
 
-fetch(`/api/boomlings`).then(res => res.json()).then((res: "0" | BoomlingsILeaderboardEntry[]) => {
+fetch(`/api/boomlings`).then(res => res.json()).then((res: "0" | BoomlingsLeaderboardEntry[]) => {
 	if (res == "0") res = [];
 	$('#boomerbox').html('');
 	$('.ranking').remove();

@@ -3,6 +3,7 @@ import { ExportBundle } from "../../types/servers.js";
 import { Request, Response } from "express";
 import { sha1 } from "../../lib/sha.js";
 import { XOR } from "../../lib/xor.js";
+import { IProfileCommentParams } from "../../types/comments.js";
 
 /**
  * Post a comment on a user's profile.
@@ -23,12 +24,12 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (req.body.comment.includes("\n")) return res.status(400).send("Profile posts cannot contain line breaks!");
 
-	const params = {
+	const params: IProfileCommentParams = {
 		cType: "1",
 		comment: Buffer.from(req.body.comment.slice(0, 190) + (req.body.color ? "☆" : "")).toString("base64").replace(/\//g, "_").replace(/\+/g, "-"),
 		gjp: XOR.encrypt(req.body.password, 37526),
-		accountID: req.body.accountID.toString(),
-		userName: req.body.username,
+		accountID: String(req.body.accountID),
+		userName: String(req.body.username),
 		chk: ""
 	};
 

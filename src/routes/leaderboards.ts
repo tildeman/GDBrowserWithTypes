@@ -6,7 +6,7 @@ import boomlingsLeaderboardController from "../api/leaderboards/boomlings.js";
 import accurateLeaderboardController from "../api/leaderboards/accurate.js";
 import levelboardController from "../api/leaderboards/leaderboardLevel.js";
 import leaderboardController from "../api/leaderboards/scores.js";
-import { fetchTemplate } from "../lib/template_handle.js";
+import { fetchTemplate } from "../lib/templateHandle.js";
 import { UserCache } from "../classes/UserCache.js";
 import { RL2 } from "../lib/ratelimits.js";
 import express from "express";

@@ -7,7 +7,7 @@ import { sacredTexts, extraData as iconKitFiles } from "../iconkit/static_files.
 import achievements from '../misc/achievements.json' assert { type: "json" };
 import credits from "../misc/credits.json" assert { type: "json" };
 import music from '../misc/music.json' assert { type: "json" };
-import { fetchTemplate } from "../lib/template_handle.js";
+import { fetchTemplate } from "../lib/templateHandle.js";
 import { UserCache } from "../classes/UserCache.js";
 import { ISafeServers } from '../types/servers.js';
 import express from "express";

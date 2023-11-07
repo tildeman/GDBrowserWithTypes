@@ -2,7 +2,7 @@
  * @fileoverview Routing page for search results.
  */
 
-import { fetchTemplate } from "../lib/template_handle.js";
+import { fetchTemplate } from "../lib/templateHandle.js";
 import { UserCache } from "../classes/UserCache.js";
 import searchController from "../api/search.js";
 import { RL2 } from "../lib/ratelimits.js";

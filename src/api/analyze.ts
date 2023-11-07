@@ -2,7 +2,7 @@
  * @fileoverview Spaghetti code for level analysis.
  */
 
-import { IAnalysisColorObject, IAnalysisResult, ILevelObject, ILevelSettings, IRelevantHeaderResponse } from "../types/analyses.js";
+import { IAnalysisColorObject, IAnalysisResult, ILevelObject, ILevelSettings, IHeaderResponse } from "../types/analyses.js";
 import properties from "../misc/analysis/objectProperties.json" assert { type: "json" };
 import colorStuff from "../misc/analysis/colorProperties.json" assert { type: "json" };
 import init from "../misc/analysis/initialProperties.json" assert { type: "json" };
@@ -280,7 +280,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 		return (levelTextA.x || 0) - (levelTextB.x || 0);
 	}).map(levelText => [Buffer.from(levelText.message || "", "base64").toString(), Math.round((levelText.x || 0) / last * 99) + "%"]);
 
-	const headerResponse = parse_header(header || "") as { settings: ILevelSettings, colors: IAnalysisColorObject[] };
+	const headerResponse = parse_header(header || "");
 	const responseSettings: ILevelSettings = headerResponse.settings;
 	const responseColors = headerResponse.colors;
 
@@ -316,20 +316,20 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
  * @returns An object containing relevant settings and colors.
  */
 function parse_header(header: string) {
-	let response: IRelevantHeaderResponse = {
-		settings: {},
+	let response: IHeaderResponse = {
+		settings: {} as ILevelSettings,
 		colors: []
 	};
 
 	const header_keyed = parse_obj(header, ",", init.values, true);
 
 	Object.keys(header_keyed).forEach(header => {
-		let val = init.values[header];
-		let name: string = val[0];
-		let property = header_keyed[header];
+		let val: [string, string] | string | number | boolean = init.values[header];
+		const name: string = val[0];
+		const property = header_keyed[header];
 		switch (val[1]) {
 			case "list":
-				val = init[(val[0] + "s")][property];
+				val = init[(val[0] + "s")][+property];
 				break;
 			case "number":
 				val = Number(property);
@@ -353,7 +353,7 @@ function parse_header(header: string) {
 					response.colors.push({ channel: channel, opacity: 1, r: 0, g: 0, b: 0 });
 				}
 				// from here we touch the color object
-				let currentChannel = response.colors.find(colorItem => colorItem.channel == channel);
+				const currentChannel = response.colors.find(colorItem => colorItem.channel == channel);
 				if (color == "blend") {
 					currentChannel!.blending = true; // only one color has blending though lol
 				} else if (color == "pcol" && property != "0") {
@@ -433,7 +433,6 @@ function parse_header(header: string) {
 					if ((colorObj.copiedChannel || 0) > 1000) delete colorObj.copiedChannel;
 					if (colorObj.pColor == "-1") delete colorObj.pColor;
 					if (color.blending) colorObj.blending = true;
-					// colorObj.opacity = +Number(colorObj.opacity).toFixed(2);
 					colorList2.push(colorObj);
 				});
 				// we assume this is only going to be run once so... some stuff can go here
@@ -454,11 +453,11 @@ function parse_header(header: string) {
 		response.settings[name] = val;
 	});
 
-	if (!response.settings.ground || response.settings.ground > 17) response.settings.ground = 1;
-	if (!response.settings.background || response.settings.background > 20) response.settings.background = 1;
+	if (!response.settings.ground || +response.settings.ground > 17) response.settings.ground = 1;
+	if (!response.settings.background || +response.settings.background > 20) response.settings.background = 1;
 	if (!response.settings.font) response.settings.font = 1;
 
-	if (response.settings.alternateLine == 2) response.settings.alternateLine = true;
+	if ((response.settings.alternateLine as any) == 2) response.settings.alternateLine = true;
 	else response.settings.alternateLine = false;
 
 	Object.keys(response.settings).filter(k => {

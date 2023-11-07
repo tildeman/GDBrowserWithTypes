@@ -2,7 +2,7 @@
  * @fileoverview Routing page for private messaging.
  */
 
-import { fetchTemplate } from "../lib/template_handle.js";
+import { fetchTemplate } from "../lib/templateHandle.js";
 import { UserCache } from "../classes/UserCache.js";
 import getMessagesController from "../api/messages/getMessages.js";
 import fetchMessageController from "../api/messages/fetchMessage.js";
