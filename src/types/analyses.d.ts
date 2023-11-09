@@ -59,19 +59,19 @@ export interface ILevelObject {
 	 */
 	id: string;
 	/**
-	 * Whether this is a portal.
+	 * The name of this portal, if it is.
 	 */
 	portal?: string;
 	/**
-	 * Whether this is a coin.
+	 * The name of this coin (?), if it is.
 	 */
 	coin?: string;
 	/**
-	 * Whether this is a jump ring.
+	 * The name of this jump ring, if it is.
 	 */
 	orb?: string;
 	/**
-	 * Whether this is a trigger.
+	 * The name of this trigger, if it is.
 	 */
 	trigger?: string;
 	/**
@@ -208,9 +208,8 @@ export interface IAnalysisResult {
 	 * The amount of objects in a level removed in low-detail mode.
 	 */
 	highDetail: number;
-	// TODO: Please don't pass in a list of portals this way.
 	/**
-	 * A serialized list of portals in the level.
+	 * A list of portals and their percentages (formatted) in the level.
 	 */
 	portals: [string | null, string][];
 	/**

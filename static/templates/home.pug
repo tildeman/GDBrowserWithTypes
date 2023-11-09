@@ -6,7 +6,7 @@
 mixin mainButton(id, link, dir, name)
 	td
 		a(tabindex="1", href=isDisabled(id) ? null : dir)
-			img.menuButton(class=isDisabled(id) ? "menuDisabled" : "menu-" + id, src="/assets/category-" + link + ".png", title=name)
+			img.menuButton(class=isDisabled(id) ? "menuDisabled" : "menu-" + id, src="/assets/categories/" + link + ".png", title=name)
 
 doctype html
 html(lang="en")
@@ -86,11 +86,11 @@ html(lang="en")
 						if (isDisabled("weekly"))
 							td#menu_featured
 								a(tabindex="1", href="./search/*?type=featured")
-									img.menuButton(class="menu-featured", src="/assets/category-featured.png", title="Featured")
+									img.menuButton(class="menu-featured", src="/assets/categories/featured.png", title="Featured")
 						else
 							td#menu_weekly
 								a(tabindex="1", href="./level/weekly")
-									img.menuButton(class="menu-weekly", src="/assets/category-weekly.png", title="Weekly Demon")
+									img.menuButton(class="menu-weekly", src="/assets/categories/weekly.png", title="Weekly Demon")
 						+mainButton("gauntlets", "gauntlets", "./gauntlets", "Gauntlets")
 					tr.menuButtonList
 						+mainButton("leaderboard", "scores", "./leaderboard", "Scores")

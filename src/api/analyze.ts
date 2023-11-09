@@ -10,7 +10,7 @@ import blocks from "../misc/analysis/blocks.json" assert { type: "json" };
 import ids from "../misc/analysis/objects.json" assert { type: "json" };
 import { DownloadedLevel } from "../classes/Level.js";
 import { Request, Response } from "express";
-import zlib from "zlib";
+import zlib from "node:zlib";
 
 /**
  * Analyze a level (controller function).

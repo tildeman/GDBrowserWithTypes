@@ -3,7 +3,7 @@ mixin scoreTab(id, suffix, offByDefault, sideSpace)
 	img(src="/assets/tab-" + id + suffix + "-off.png", class=(sideSpace ? "sideSpaceC ": "") + "leaderboardTab leaderboardClick", id=id + "TabOff", style={ display: offByDefault ? "none" : null })
 
 mixin sortFilter(titleName, sortID, elementID, buttonName, offByDefault)
-	img.gdButton.sortButton(style={ "margin-bottom": "1vh", height: "11vh", display: offByDefault ? "none" : null }, sort=sortID, title="Most " + titleName, src="/assets/sort-" + buttonName + ".png", id=elementID)
+	img.gdButton.sortButton(style={ "margin-bottom": "1vh", height: "11vh", display: offByDefault ? "none" : null }, sort=sortID, title="Most " + titleName, src="/assets/sort/" + buttonName + ".png", id=elementID)
 
 doctype html
 html(lang="en")
@@ -47,8 +47,8 @@ html(lang="en")
 					img#clearRelative.gdButton(style={ "margin-bottom": "1vh", height: "11vh", display: "none" }, title="Clear Global Search", src="/assets/unmagnify.png")
 
 				.sortDiv(style={ display: "none", position: "relative", left: "100%", transform: "translateX(4.5vh)", top: "12%", width: "0.1%" })
-					img#modSort.gdButton(style={ "margin-bottom": "1vh", height: "11vh" }, title="Moderators", src="/assets/sort-mod.png")
-					img#weeklyStats.gdButton(style={ "margin-bottom": "1vh", height: "11vh" }, title="Weekly Stats", src="/assets/sort-week.png")
+					img#modSort.gdButton(style={ "margin-bottom": "1vh", height: "11vh" }, title="Moderators", src="/assets/sort/mod.png")
+					img#weeklyStats.gdButton(style={ "margin-bottom": "1vh", height: "11vh" }, title="Weekly Stats", src="/assets/sort/week.png")
 
 				#statSort.sortDiv(style={ display: "none", position: "relative", right: "10.5%", transform: "translateY(-33.3%)", top: "0", width: "0.1%" })
 					+sortFilter("stars", "stars", "starSort", "stars-on", false)
@@ -86,8 +86,8 @@ html(lang="en")
 						| .
 					input#relativeName(type="text", placeholder="Username", style={ height: "8vh", width: "90%", "text-align": "center", "margin-top": "0.5%", "margin-bottom": "5%" })
 					br
-					img.gdButton.postbutton.center(src="/assets/btn-cancel.png", style={ width: "32%", "margin-right": "1%" }, onclick="$('#userSearch').hide()")
-					img#relativeSearch.gdButton.postbutton.center(src="/assets/btn-submit.png", style={ width: "32%", "margin-left": "1%" })
+					img.gdButton.postbutton.center(src="/assets/textbuttons/cancel.png", style={ width: "32%", "margin-right": "1%" }, onclick="$('#userSearch').hide()")
+					img#relativeSearch.gdButton.postbutton.center(src="/assets/textbuttons/submit.png", style={ width: "32%", "margin-left": "1%" })
 					p#relativeStatus(style={ display: "none" })
 					img.closeWindow.gdButton(src="/assets/close.png", style={ position: "absolute", top: "13.5%", left: "-6vh", width: "13%" }, onclick="$('#userSearch').hide()")
 

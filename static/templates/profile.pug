@@ -54,8 +54,8 @@ html(lang="en")
 						input#password(type="password", maxlength="50", style={ height: "8vh", width: "90%", "text-align": "center", "margin-top": "0.5%" })
 					div(style={ "min-height": "20%", "max-height": "20%" })
 						p#message(style={ padding: "0 10%", "margin-top": "2%" })
-					img.postButton.gdButton.center(src="/assets/btn-cancel.png", style={ "margin-right": "1%", height: "11%" }, onclick="$('#leavePost').hide(); $('textarea').val('')")
-					img#submitComment.postButton.gdButton.center(src="/assets/btn-submit.png", style={ "margin-left": "1%", height: "11%" }, type="submit")
+					img.postButton.gdButton.center(src="/assets/textbuttons/cancel.png", style={ "margin-right": "1%", height: "11%" }, onclick="$('#leavePost').hide(); $('textarea').val('')")
+					img#submitComment.postButton.gdButton.center(src="/assets/textbuttons/submit.png", style={ "margin-left": "1%", height: "11%" }, type="submit")
 
 			#likeComment.popup
 				.brownBox.bounce.center.supercenter(style={ height: "75%", width: "110vh" })
@@ -70,8 +70,8 @@ html(lang="en")
 						input#like-password(type="password", maxlength="50", style={ height: "8vh", width: "90%", "text-align": "center", "margin-top": "0.5%" })
 					div(style={ "min-height": "18%", "max-height": "18%" })
 						p#likeMessage(style={ padding: "0 10%", "margin-top": "2.5%" })
-					img.postButton.gdButton.center(src="/assets/btn-cancel.png", style={ "margin-right": "1%", height: "10%" }, onclick="$('#likeComment').hide(); $('#likebtn').trigger('click');")
-					img#submitVote.postButton.gdButton.center(src="/assets/btn-submit.png", style={ "margin-left": "1%", height: "10%" }, type="submit")
+					img.postButton.gdButton.center(src="/assets/textbuttons/cancel.png", style={ "margin-right": "1%", height: "10%" }, onclick="$('#likeComment').hide(); $('#likebtn').trigger('click');")
+					img#submitVote.postButton.gdButton.center(src="/assets/textbuttons/submit.png", style={ "margin-left": "1%", height: "10%" }, type="submit")
 
 			#settingsDiv.popup
 				.fancybox.bounce.center.supercenter

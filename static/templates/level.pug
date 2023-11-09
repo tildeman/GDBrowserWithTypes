@@ -117,8 +117,8 @@ html(lang="en")
 						a.youCanClickThis2(style={ color: "lime" }, href="/search/levels?type=saved") saved levels
 						|
 						| list?
-					img.gdButton.center.closeWindow(src="/assets/btn-no.png", style={ height: "25%" })
-					img#confirmDelete.gdButton.center.sideSpaceB(src="/assets/btn-yes.png", style={ height: "25%" })
+					img.gdButton.center.closeWindow(src="/assets/textbuttons/no.png", style={ height: "25%" })
+					img#confirmDelete.gdButton.center.sideSpaceB(src="/assets/textbuttons/yes.png", style={ height: "25%" })
 
 			#analyzeDisabled.popup
 				.fancybox.bounce.center.supercenter
@@ -221,7 +221,7 @@ html(lang="en")
 						a.songLink(href="https://" + level.songAuthor + ".newgrounds.com", target="_blank")
 							img#moreSongs.gdButton.valign(src="/assets/more.png", style={ width: "12%" })
 					if (!level.songID.toString().startsWith("Level") && !level.gdps)
-						img#checkSong.gdButton.valign(style={ width: "16%", "margin-top": "1%" }, title="Check song verification", src="/assets/btn-check.png")
+						img#checkSong.gdButton.valign(style={ width: "16%", "margin-top": "1%" }, title="Check song verification", src="/assets/textbuttons/check.png")
 					h3#songLoading(style={ display: "none", "margin-top": "0.5%" }) Loading...
 					h3#songAllowed(style={ display: "none", "margin-top": "0.5%", color: "lime" }) Song is allowed for use
 					h3#songNotAllowed(style={ display: "none", "margin-top": "0.5%", color: "red" }) Song is not allowed for use

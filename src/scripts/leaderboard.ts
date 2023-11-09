@@ -47,7 +47,7 @@ const accurateText =
 const creatorText =
 `The <cg>Creators Leaderboard</cg> is sorted by <cg>creator points</cg>, rather than stars. A player's <cg>creator points</cg> (CP) is calculated by counting their number of <cy>star rated</cy> levels, plus an extra point for every level that has been <cb>featured</cb>, plus an additional point for <co>epic rated</co> levels.`;
 
-if (showWeek) $('#weeklyStats').attr('src', '/assets/sort-week-on.png');
+if (showWeek) $('#weeklyStats').attr('src', '/assets/sort/week-on.png');
 
 /**
  * Change the information text.
@@ -265,7 +265,7 @@ $('#creatorTabOff').on("click", function() {
 
 $('#modSort').on("click", function() {
 	modMode = !modMode;
-	$(this).attr('src', `/assets/sort-mod${modMode ? "-on" : ""}.png`);
+	$(this).attr('src', `/assets/sort/mod${modMode ? "-on" : ""}.png`);
 	if (modMode) {
 		$('#cpSort').show();
 		$('#statSort').css('transform', 'translateY(-26.7%');
@@ -290,7 +290,7 @@ function weeklyAdjust() {
 $('#weeklyStats').on("click", function() {
 	showWeek = !showWeek;
 	localStorage.weeklyStats = +showWeek;
-	$(this).attr('src', `/assets/sort-week${showWeek ? "-on" : ""}.png`);
+	$(this).attr('src', `/assets/sort/week${showWeek ? "-on" : ""}.png`);
 	weeklyAdjust();
 });
 
