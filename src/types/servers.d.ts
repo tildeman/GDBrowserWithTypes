@@ -139,6 +139,14 @@ export interface ExportBundle {
 		 */
 		gdRequest: (target: string, params?: Record<string, any>) => Promise<string>;
 	}
+	// TODO: Elaborate on the error response.
+
+	// Usually when it comes to error handling that may or may or may not be
+	// untestable during development, it might become more useful if it is
+	// possible to respond with a more elaborate error message. I'm thinking
+	// like an "error" object that contains the error code and relevant
+	// messages and all that stuff. This will be sent into `sendError` and
+	// get processed as returned. This significantly improves clarity.
 	/**
 	 * Terminate the execution of the current controller and respond with `-1`.
 	 * @param [errorCode=500] The error code to send. Defaults to 500.

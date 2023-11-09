@@ -4,10 +4,12 @@
 
 import { fetchTemplate } from "../lib/templateHandle.js";
 import gauntletController from "../api/gauntlets.js";
+import { UserCache } from "../classes/UserCache.js";
 import mapPackController from "../api/mappacks.js";
+import listController from "../api/lists.js";
 import express from "express";
 
-export default function(cacheGauntlets: boolean, cacheMapPacks: boolean) {
+export default function(cacheGauntlets: boolean, cacheMapPacks: boolean, userCacheHandle: UserCache) {
 	const router = express.Router();
 
 	router.get("/api/gauntlets", function(req, res) {
@@ -15,6 +17,9 @@ export default function(cacheGauntlets: boolean, cacheMapPacks: boolean) {
 	});
 	router.get("/api/mappacks", function(req, res) {
 		mapPackController(req, res, cacheMapPacks);
+	});
+	router.get("/api/list/:id", function(req, res) {
+		listController(req, res, true, userCacheHandle);
 	});
 
 	router.get("/gauntlets", fetchTemplate("gauntlets"));

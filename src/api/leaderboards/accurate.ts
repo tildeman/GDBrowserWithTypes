@@ -10,7 +10,10 @@ const sheet = new GoogleSpreadsheet('1ADIJvAkL0XHGBDhO7PP9aQOuK3mPIKB2cVPbshuBBH
 const indices = ["stars", "coins", "demons", "diamonds"];
 
 const forms = ['cube', 'ship', 'ball', 'ufo', 'wave', 'robot', 'spider'];
-const lastIndex = [{"stars": 0, "coins": 0, "demons": 0}, {"stars": 0, "coins": 0, "demons": 0, "diamonds": 0}];
+const lastIndex = [
+	{"stars": 0, "coins": 0, "demons": 0},
+	{"stars": 0, "coins": 0, "demons": 0, "diamonds": 0}
+];
 const caches = [
 	{"stars": null, "coins": null, "demons": null, "diamonds": null},
 	{"stars": null, "coins": null, "demons": null, "diamonds": null},

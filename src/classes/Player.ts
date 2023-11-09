@@ -1,6 +1,6 @@
 import colors_raw from '../iconkit/sacredtexts/colors.json' assert { type: "json" };
 import { Color3B } from '../types/miscellaneous.js';
-import { PlayerIcon } from '../types/icons';
+import { PlayerIcon } from '../types/icons.js';
 
 /**
  * An object of colors.
