@@ -212,7 +212,7 @@ export interface IAnalysisResult {
 	/**
 	 * A serialized list of portals in the level.
 	 */
-	portals: string;
+	portals: [string | null, string][];
 	/**
 	 * A list of positions of all the coins in the level.
 	 */

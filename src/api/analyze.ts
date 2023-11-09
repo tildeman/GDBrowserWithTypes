@@ -52,9 +52,9 @@ export default async function(req: Request, res: Response, level?: DownloadedLev
  * @param sortBy How to sort the object.
  * @returns The sorted object.
  */
-function sortObj(obj: {}, sortBy?: string) {
-	var sorted = {};
-	var keys = !sortBy ? Object.keys(obj).sort((objectA, objectB) => obj[objectB] - obj[objectA]) : Object.keys(obj).sort((objectA, objectB) => obj[objectB][sortBy] - obj[objectA][sortBy]);
+function sortObj(obj: Record<string, any>, sortBy?: string) { // TODO: What are they sorted after?
+	const sorted: Record<string, any> = {};
+	const keys = !sortBy ? Object.keys(obj).sort((objectA, objectB) => obj[objectB] - obj[objectA]) : Object.keys(obj).sort((objectA, objectB) => obj[objectB][sortBy] - obj[objectA][sortBy]);
 	keys.forEach(key => {
 		sorted[key] = obj[key];
 	});
@@ -246,9 +246,9 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	const responseObjects = data.length - 2;
 	const responseHighDetail = highDetail;
 
-	const responsePortals = level_portals.sort(function (portalA, portalB) {
+	const responsePortals: [string | null, string][] = level_portals.sort(function (portalA, portalB) {
 		return (portalA.x || 0) - (portalB.x || 0);
-	}).map(portal => portal.portal + " " + Math.floor((portal.x || 0) / (Math.max(last, 529.0) + 340.0) * 100) + "%").join(", ");
+	}).map(portal => [portal.portal || null, Math.floor((portal.x || 0) / (Math.max(last, 529.0) + 340.0) * 100).toString() + "%"]);
 	const responseCoins = level_coins.sort(function (coinA, coinB) {
 		return (coinA.x || 0) - (coinB.x || 0);
 	}).map(coin => Math.floor((coin.x || 0) / (Math.max(last, 529.0) + 340.0) * 100));
