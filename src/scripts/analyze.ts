@@ -3,8 +3,8 @@
  */
 
 import { IAnalysisResult, IAnalysisColorObject } from "../types/analyses.js";
+import { Color3B, ErrorObject } from "../types/miscellaneous.js";
 import { toggleEscape, clean } from "../misc/global.js";
-import { Color3B } from "../types/miscellaneous.js";
 
 let disabledPortals: string[] = [];
 let altTriggerSort = false;
@@ -30,16 +30,16 @@ const dualPortals = ['dual', 'single'];
 const mirrorPortals = ['mirrorOn', 'mirrorOff'];
 
 const apiResponse = await fetch(`/api${window.location.pathname}`);
-const res: (IAnalysisResult | "-1" | "-2" | "-3") = await apiResponse.json();
-if (typeof(res) != "object") {
-	switch(res) {
-		case "-1":
+const res: (IAnalysisResult | ErrorObject) = await apiResponse.json();
+if ("error" in res) {
+	switch(res.error) {
+		case 2:
 			$('#errorMessage').html("This level could not be be <cr>downloaded</cr>. Either the servers rejected the request, or the level simply <co>doesn't exist at all</co>.");
 			break;
-		case "-2":
+		case 5:
 			$('#errorMessage').html("This level's data appears to be <cr>corrupt</cr> and cannot be <cy>parsed</cy>. It most likely won't load in GD.");
 			break;
-		case "-3":
+		case 4:
 			$('#errorMessage').html("This level's data could not be obtained because <ca>RobTop</ca> has disabled <cg>level downloading</cg>.");
 			break;
 	}
@@ -92,7 +92,7 @@ function commafy(num: string | number) {
  * Append portals into the result page
  */
 function appendPortals() {
-	if (typeof(res) != "object") return;
+	if ("error" in res) return;
 	$('#portals').html("");
 	if (res.settings.gamemode && res.settings.gamemode != "cube" && !disabledPortals.includes('form')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='/assets/objects/portals/${res.settings.gamemode}.png'><h3>Start</h3></div><img class="divider portalImage" src="/assets/divider.png" style="margin: 1.3% 0.8%">`);
 	if (res.settings.startMini && !disabledPortals.includes('size')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='/assets/objects/portals/mini.png'><h3>Start</h3></div><img class="divider portalImage" src="/assets/divider.png" style="margin: 1.3% 0.8%">`);
@@ -115,7 +115,7 @@ function appendPortals() {
  * Append trigger groups into the result page
  */
 function appendTriggerGroups() {
-	if (typeof(res) != "object") return;
+	if ("error" in res) return;
 	$('#groups').html("");
 	let groupList = Object.keys(res.triggerGroups);
 	if (!altTriggerSort) groupList = groupList.sort((groupA, groupB) => Number(groupA.slice(6)) - Number(groupB.slice(6)));

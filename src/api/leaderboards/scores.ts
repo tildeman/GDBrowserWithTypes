@@ -14,7 +14,7 @@ import { Request, Response } from "express";
 export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return sendError();
+	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
 	let amount = 100;
 	let count = req.query.count ? parseInt(req.query.count.toString() || "0") : null;
@@ -42,13 +42,13 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	try {
 		const body = await reqBundle.gdRequest('getGJScores20', params);
 		const scoresArr = body?.split('|').map(rawScorePlayerEntry => parseResponse(rawScorePlayerEntry)).filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
-		if (!scoresArr.length) return sendError();
+		if (!scoresArr.length) throw new Error("Can't search for scores upstream.");
 
 		const scores = scoresArr.map(scorePlayerEntry => new Player(scorePlayerEntry));
 		scores.forEach(playerEntry => userCacheHandle.userCache(reqBundle.id, playerEntry.accountID, playerEntry.playerID, playerEntry.username));
 		return res.send(scores.slice(0, amount));
 	}
 	catch (err) {
-		return sendError();
+		return sendError(2, err.message);
 	}
 }

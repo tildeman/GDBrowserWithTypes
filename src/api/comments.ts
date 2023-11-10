@@ -15,7 +15,7 @@ import { Request, Response } from "express";
 export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return sendError();
+	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
 	let count = +(req.query.count || 10);
 	if (count > 1000) count = 1000;
@@ -44,7 +44,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		let comments = split_colons.map(commentInfo => commentInfo.map(commentInfo => parseResponse(commentInfo, "~")));
 		if (req.query.type == "profile") comments = comments.filter(commentInfo => commentInfo[0][2]);
 		else comments = comments.filter(commentInfo => commentInfo[0] && commentInfo[0][2]);
-		if (!comments.length) return res.status(204).send([]);
+		if (!comments.length) return res.send([]);
 
 		const pages = (body || "").split('#')[1].split(":");
 		const lastPage = +Math.ceil(+pages[0] / +pages[2]);
@@ -96,6 +96,6 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		return res.send(commentArray);
 	}
 	catch (err) {
-		return sendError();
+		return sendError(2, err.message);
 	}
 }

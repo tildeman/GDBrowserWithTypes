@@ -27,7 +27,7 @@ const gauntletNames = [
 export default async function(req: Request, res: Response, cacheGauntlets: boolean) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return sendError();
+	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
 	const cached = cache[reqBundle.id];
 	if (cacheGauntlets && cached && cached.data && cached.indexed + 2000000 > Date.now()) {
@@ -51,6 +51,6 @@ export default async function(req: Request, res: Response, cacheGauntlets: boole
 		res.send(gauntletList);
 	}
 	catch (err) {
-		return sendError();
+		return sendError(2, "Failed to fetch gauntlets upstream.");
 	}
 }

@@ -141,7 +141,7 @@ $(document).on("keydown", function(k) {
 	}
 });
 
-$('#pageSize').on('input blur', function (event) {
+$('#pageSize').on('input blur', function(event) {
 	const value = +($(this).val() || "0");
 	const max = 250;
 	const min = 1;
@@ -157,7 +157,7 @@ $('#pageSize').on('input blur', function (event) {
 });
 
 const listMsg = $('#listInfo').html()
-$('#listLevels, #listName').on('input blur', function (event) {
+$('#listLevels, #listName').on('input blur', function() {
 	let levels = ($('#listLevels').val() || "")
 		.toString()
 		.replace(/\n| /g, ",")
@@ -180,7 +180,7 @@ $('#listLevels, #listName').on('input blur', function (event) {
 	}
 });
 
-$(document).on('change', 'input[url]', function () {
+$(document).on('change', 'input[url]', function() {
 	savedFilters.checked = $('input[url]:checked').map(function() {
 		return $(this).attr('id')?.slice(4);
 	}).toArray();

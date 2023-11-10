@@ -26,7 +26,7 @@ const cache: Record<string, IMapPackCacheItem> = {};
 export default async function(req: Request, res: Response, cacheMapPacks: boolean) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return sendError();
+	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
 	let cached = cache[reqBundle.id];
 	if (cacheMapPacks && cached && cached.data && cached.indexed + 5000000 > Date.now()) {
@@ -71,7 +71,7 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 			return res.send(mappacks);
 		}
 		catch (err) {
-			return sendError();
+			return sendError(2, "Failed to fetch map packs upstream.");
 		}
 	}
 	await mapPackLoop();

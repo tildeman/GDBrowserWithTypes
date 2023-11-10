@@ -21,7 +21,10 @@ import zlib from "node:zlib";
  */
 export default async function(req: Request, res: Response, level?: DownloadedLevel) {
 	if (!level) {
-		return res.status(500).send("44");
+		return res.status(500).send({
+			error: 3,
+			message: "No level provided!"
+		});
 	}
 
 	let unencrypted = level.data.startsWith("kS"); // some gdps"es don"t encrypt level data
@@ -36,7 +39,10 @@ export default async function(req: Request, res: Response, level?: DownloadedLev
 	else {
 		zlib.unzip(levelString, (err, buffer) => {
 			if (err) {
-				return res.status(500).send("-2");
+				return res.status(500).send({
+					error: 5,
+					message: "Can't decompress (inflate) the level data."
+				});
 			}
 
 			const raw_data = buffer.toString();

@@ -3,7 +3,7 @@
  */
 
 import { Fetch, clean, toggleEscape, serverMetadata } from "../misc/global.js";
-import { Color3B } from "../types/miscellaneous.js";
+import { Color3B, ErrorObject } from "../types/miscellaneous.js";
 import { renderIcons } from "../iconkit/icon.js";
 import { PlayerIcon } from "../types/icons.js";
 import { Player } from "../classes/Player.js";
@@ -149,19 +149,18 @@ function appendComments(auto?: boolean, noCache?: boolean) {
 	}
 
 	if (!noCache && commentCache[page]) addComments(commentCache[page]);
-	fetch(`/api${!history ? window.location.pathname : "/comments/" + lvl.playerID}?count=${compact && !auto ? 20 : 10}&page=${page}${history ? "&type=commentHistory" : ""}&${mode}`).then((res) => {
-		if (res.status === 204) return [];
-		return res.json();
-	}).then(addComments);
+	fetch(`/api${!history ? window.location.pathname : "/comments/" + lvl.playerID}?count=${compact && !auto ? 20 : 10}&page=${page}${history ? "&type=commentHistory" : ""}&${mode}`)
+		.then((res) => res.json())
+		.then(addComments);
 
 	/**
-	 * Append comments to the display
-	 * @param res A list of comments, or `-1`
+	 * Append comments to the display.
+	 * @param res A list of comments, or an error object.
 	 */
-	function addComments(res: -1 | CommentItem[]) {
+	function addComments(res: ErrorObject | CommentItem[]) {
 		if (("commentHistory" in lvl) && history && lvl.commentHistory != "all") $('#pageUp').hide();
 
-		if (res == -1 || (("commentHistory" in lvl) && history && lvl.commentHistory != "all")) {
+		if ("error" in res || (("commentHistory" in lvl) && history && lvl.commentHistory != "all")) {
 			loadingComments = false;
 			$('#loading').hide();
 			return;
@@ -370,7 +369,7 @@ $('#submitComment').on("click", function() {
 	toggleEscape(false);
 
 	fetch(`/api/profile/${username}`).then(res => res.json()).then(res => {
-		if (!res || res == "-1") {
+		if (!res || "error" in res) {
 			toggleEscape(true);
 			$('.postbutton').show();
 			return $('#message').text("The username you provided doesn't exist!");
@@ -449,7 +448,7 @@ $('#submitVote').on("click", function() {
 	toggleEscape(false);
 
 	fetch(`/api/profile/${username}`).then(res => res.json()).then(res => {
-		if (!res || res == "-1") {
+		if (!res || "error" in res) {
 			toggleEscape(true);
 			$('.postbutton').show();
 			return $('#likeMessage').text("The username you provided doesn't exist!");

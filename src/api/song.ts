@@ -9,7 +9,7 @@ import { ExportBundle } from "../types/servers.js";
  */
 export default async function(req: Request, res: Response) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-	if (reqBundle.offline) return sendError();
+	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
 	let songID = req.params.song;
 	try {
@@ -17,6 +17,6 @@ export default async function(req: Request, res: Response) {
 		return res.send(!body.startsWith("-") && body.length > 10);
 	}
 	catch (err) {
-		sendError(400);
+		sendError(3, "Cannot search the requested song.",400);
 	}
 }

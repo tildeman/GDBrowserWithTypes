@@ -20,18 +20,20 @@ export default async function(req: Request, res: Response, api: boolean, analyze
 
 	/**
 	 * If the level info is ill-formed, redirect the user to the search page.
+	 * @param [message="Problem found with an unknown cause"] The error message upon level rejection.
+	 * @param [errorCode=2] The error code that comes with the error.
 	 */
-	function rejectLevel() {
+	function rejectLevel(message: string = "Problem found with an unknown cause", errorCode = 2) {
 		if (!api) return res.redirect('search/' + req.params.id);
-		else return sendError();
+		else return sendError(errorCode, message);
 	}
 
-	if (reqBundle.offline) return rejectLevel();
+	if (reqBundle.offline) return rejectLevel("The requested server is currently unavailable.", 1);
 
 	let levelID = req.params.id;
 	if (levelID == "daily") return downloadController(req, res, api, 'daily', analyze, userCacheHandle);
 	else if (levelID == "weekly") return downloadController(req, res, api, 'weekly', analyze, userCacheHandle);
-	else if (levelID.match(/[^0-9]/)) return rejectLevel();
+	else if (levelID.match(/[^0-9]/)) return rejectLevel("The provided level ID has an invalid format.");
 	else levelID = levelID.replace(/[^0-9]/g, "");
 
 	if (analyze || req.query.hasOwnProperty("download")) return downloadController(req, res, api, levelID, analyze, userCacheHandle);
@@ -81,6 +83,6 @@ export default async function(req: Request, res: Response, api: boolean, analyze
 		return sendLevel();
 	}
 	catch (err) {
-		return rejectLevel();
+		return rejectLevel(err.message);
 	}
 }

@@ -17,14 +17,20 @@ export default async function(req: Request, res: Response, secret?: string) {
 	const {req: reqBundle}: ExportBundle = res.locals.stuff;
 
 	// Accurate leaderboard returns 418 because Private servers do not use.
-	if (reqBundle.isGDPS) return res.status(418).send("0");
+	if (reqBundle.isGDPS) return res.status(418).send({
+		error: 3,
+		message: "GDBrowser cannot look up Boomlings private servers."
+	});
 
 	request.post('http://robtopgames.com/Boomlings/get_scores.php', {
 		secret: secret || "Wmfd2893gb7",
 		name: "Player"
 	}).then(function(resp) {
 		const body = resp.data;
-		if (!body || body == 0) return res.status(500).send("0");
+		if (!body || body == 0) return res.status(500).send({
+			error: 2,
+			message: "The response body is empty."
+		});
 		// let info = body.split(" ").filter(infoText => infoText.includes(";"));
 		const strBody: string = body;
 		const info = strBody.split(" ").filter(infoText => infoText.includes(";"));

@@ -142,6 +142,7 @@ function deleteLevel() {
 $('#checkSong').on("click", function() {
 	$('#checkSong').hide();
 	$('#songLoading').show();
+	// TODO: missing types!
 	fetch(`/api/song/${ levelSongID }`).then(res => res.json()).then(info => {
 		$('#songLoading').hide();
 		$(info && info != -1 ? '#songAllowed' : '#songNotAllowed').show().addClass('songStatus');

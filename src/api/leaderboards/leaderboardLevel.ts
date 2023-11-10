@@ -18,7 +18,7 @@ import { XOR } from '../../lib/xor.js';
 export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return sendError();
+	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
 	let amount = 100;
 	const count = req.query.count ? parseInt(req.query.count.toString()) : null;
@@ -41,7 +41,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			.map(rawScorePlayerEntry => parseResponse(rawScorePlayerEntry))
 			.filter(rawScorePlayerEntry => rawScorePlayerEntry[1]) || [];
 		const scores: ILevelLeaderboardEntry[] = [];
-		if (!rawScores.length) return res.status(500).send([]);
+		if (!rawScores.length) return res.send([]);
 		else userCacheHandle.trackSuccess(reqBundle.id);
 
 		rawScores.forEach(playerEntry => {
@@ -70,6 +70,10 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		return res.send(scores.slice(0, amount));
 	}
 	catch (err) {
-		return res.status(500).send({ error: true, lastWorked: userCacheHandle.timeSince(reqBundle.id) });
+		return res.status(500).send({
+			error: 2,
+			lastWorked: userCacheHandle.timeSince(reqBundle.id),
+			message: "Can't fetch level leaderboards. Did you forget to include your authentication credentials?"
+		});
 	}
 }

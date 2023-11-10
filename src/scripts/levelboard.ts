@@ -3,6 +3,7 @@
  */
 
 import { ILevelLeaderboardEntry } from "../types/leaderboards.js";
+import { ErrorObject } from "../types/miscellaneous.js";
 import { isInViewport } from "../misc/global.js";
 import { buildIcon } from "../iconkit/icon.js";
 import { Level } from "../classes/Level.js";
@@ -25,8 +26,8 @@ function leaderboard() {
 	loading = true;
 	$('#loading').show();
 
-	fetch(`/api/level/${lvlID}`).then(lvl => lvl.json()).then((lvl: "-1" | Level) => {
-		if (lvl == "-1") return $('#header').html("Nonexistent level " + lvlID);
+	fetch(`/api/level/${lvlID}`).then(lvl => lvl.json()).then((lvl: ErrorObject | Level) => {
+		if ("error" in lvl) return $('#header').html("Nonexistent level " + lvlID);
 
 		document.title = "Leaderboards for " + lvl.name;
 		$('#header').html(lvl.name);
@@ -34,8 +35,9 @@ function leaderboard() {
 		$('#meta-desc').attr('content', 'View the leaderboard for ' + lvl.name + ' by ' + lvl.author + '!');
 	});
 
+	// TODO: missing types!
 	fetch(`/api/leaderboardLevel/${lvlID}?count=200${weekly ? "&week" : ""}`).then(res => res.json()).then(res => {
-		if (!res || res.error || res == "-1") {
+		if (!res || "error" in res) {
 			loading = false;
 			$('#loading').hide();
 			$('#lastWorked').html(res.error ? res.lastWorked + " ago": "Unknown");

@@ -21,17 +21,19 @@ export default async function(req: Request, res: Response, api: boolean, ID: str
 
 	/**
 	 * If the level info is ill-formed, redirect the user to the search page.
+	 * @param message The error message upon level rejection.
+	 * @param errorCode The error code that comes with the error.
 	 */
-	function rejectLevel() {
+	function rejectLevel(message: string = "Problem found with an unknown cause", errorCode = 2) {
 		if (!api) return res.redirect('search/' + req.params.id);
-		else return sendError();
+		else return sendError(errorCode, message);
 	}
 
 	let levelIDCode = ID || req.params.id, levelID: number;
 
 	if (reqBundle.offline) {
 		if (!api && +levelIDCode < 0) return res.redirect('/');
-		return rejectLevel();
+		return rejectLevel("The requested server is currently unavailable.", 1);
 	}
 	if (levelIDCode == "daily") levelID = -1;
 	else if (levelIDCode == "weekly") levelID = -2;
@@ -44,7 +46,7 @@ export default async function(req: Request, res: Response, api: boolean, ID: str
 
 		const levelInfo = parseResponse(body || "");
 		const level = new DownloadedLevel(levelInfo, reqBundle.server, true, {});
-		if (!level.id) return rejectLevel();
+		if (!level.id) return rejectLevel("No level ID provided!");
 
 		const foundUser = Object
 			.keys(userCacheHandle.accountCache[reqBundle.id])
@@ -112,8 +114,11 @@ export default async function(req: Request, res: Response, api: boolean, ID: str
 	}
 	catch (err) {
 		console.log(err.message);
-		if (analyze && api && reqBundle.server.downloadsDisabled) return res.status(403).send("-3");
+		if (analyze && api && reqBundle.server.downloadsDisabled) return res.status(403).send({
+			error: 4,
+			message: "Downloads are disabled for this server."
+		});
 		else if (!api && levelID < 0) return res.redirect(`/?daily=${levelID * -1}`);
-		else return rejectLevel();
+		else return rejectLevel("The level could not be found.");
 	}
 }

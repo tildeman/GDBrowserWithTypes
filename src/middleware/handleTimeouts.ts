@@ -12,6 +12,9 @@ import { Request, Response } from "express";
  */
 export default function (err: Error | undefined, req: Request, res: Response) {
 	if (err && err.message == "Response timeout") {
-		res.status(504).send('Internal server error! (Timed out)');
+		res.status(504).send({
+			error: 1,
+			message: 'Internal server error! (Timed out)'
+		});
 	}
 }

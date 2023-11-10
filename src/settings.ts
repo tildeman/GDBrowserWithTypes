@@ -12,8 +12,8 @@ export default {
 	 */
 	params: {
 		secret: 'Wmfd2893gb7',
-		gameVersion: '22',
-		binaryVersion: '40',
+		gameVersion: '21',
+		binaryVersion: '37',
 		gdbrowser: '2'
 	},
 

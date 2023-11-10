@@ -2,6 +2,8 @@
  * @fileoverview Site-specific script for the Boomlings leaderboard page.
  */
 
+import { ErrorObject } from "../types/miscellaneous.js";
+
 $('#boomerbox').html('');
 $('#loading').show();
 
@@ -18,8 +20,8 @@ interface BoomlingsLeaderboardEntry {
 	rank: number;
 }
 
-fetch(`/api/boomlings`).then(res => res.json()).then((res: "0" | BoomlingsLeaderboardEntry[]) => {
-	if (res == "0") res = [];
+fetch(`/api/boomlings`).then(res => res.json()).then((res: ErrorObject | BoomlingsLeaderboardEntry[]) => {
+	if ("error" in res) res = [];
 	$('#boomerbox').html('');
 	$('.ranking').remove();
 

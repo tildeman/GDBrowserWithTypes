@@ -38,14 +38,17 @@ function idInDemon(needle: number, haystack: IListEntryOverview[], start: number
 export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return res.status(500).send(req.query.hasOwnProperty("err") ? "err" : "-1");
+	if (reqBundle.offline) {
+		if (req.query.hasOwnProperty("err")) res.status(500).send("err");
+		else sendError(1, "The requested server is currently unavailable.");
+	}
 
 	let demonMode = req.query.hasOwnProperty("demonlist") || req.query.hasOwnProperty("demonList") || req.query.type == "demonlist" || req.query.type == "demonList";
 	// TODO: this is quite dependent on the structure of the demonlist.
 	let url1 = reqBundle.server.demonList + 'api/v2/demons/listed/?limit=100';
 	let url2 = reqBundle.server.demonList + 'api/v2/demons/listed/?limit=100&after=100';
 	if (demonMode) {
-		if (!reqBundle.server.demonList) return sendError(400);
+		if (!reqBundle.server.demonList) return sendError(3, "Cannot search this server's demon list because it lacks one.", 400);
 		let dList = demonList[reqBundle.id];
 		if (!dList || !dList.list.length || dList.lastUpdated + 600000 < Date.now()) {  // 10 minute cache
 			try {
@@ -59,7 +62,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			}
 			catch(err) {
 				console.error(err.message);
-				return sendError();
+				return sendError(2, "The server's demon list either is inaccessible or uses nonstandard REST endpoints.");
 			}
 		}
 	}
@@ -132,7 +135,10 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		let filtersStrArr: string[] = demonMode ? demonList[reqBundle.id].list : filters.str!.split(",");
 		listSize = filtersStrArr.length;
 		filtersStrArr = filtersStrArr.slice((filters.page || 0) * amount, (filters.page || 0) * amount + amount);
-		if (!filtersStrArr.length) return sendError(400);
+		if (!filtersStrArr.length) return res.status(400).send({
+			error: 3,
+			message: "The requested array of levels is empty."
+		});
 		filters.str = filtersStrArr.map(levelData => String(Number(levelData) + +(req.query.len || 0))).join();
 		filters.page = 0;
 	}
@@ -154,7 +160,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		});
 
 		authors.forEach(authorResponse => {
-			if (authorResponse.startsWith('~')) sendError();
+			if (authorResponse.startsWith('~')) throw new Error("Can't look up author data.");
 			let arr = authorResponse.split(':');
 			authorList[arr[0]] = [arr[1], arr[2]];
 		});
@@ -168,7 +174,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 			const level = new SearchQueryLevel(levelData, reqBundle.server, null, {});
 			level.getSongInfo(songSearch);
-			if (!level.id) sendError();
+			if (!level.id) throw new Error("The search query included levels without an ID.")
 			level.author = authorList[levelData[6]] ? authorList[levelData[6]][0] : "-";
 			level.accountID = authorList[levelData[6]] ? authorList[levelData[6]][1] : "0";
 
@@ -206,6 +212,6 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		return res.send(parsedLevels);
 	}
 	catch (err) {
-		return sendError();
+		return sendError(2, "Unable to search levels upstream.");
 	}
 }

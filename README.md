@@ -27,7 +27,7 @@ I mean, sure. Why not.
 As this is nothing more than a side project, yes, you can add your own server into your own magical little fork by adding it to **servers.json**. Simply add a new object to the array with the following information:
 
 | Identifier       | Description                                                                                                                |
-|:----------------:|:--------------------------------------------------------------------------------------------------------------------------:|
+|------------------|----------------------------------------------------------------------------------------------------------------------------|
 | `name`           | The display name of the server                                                                                             |
 | `link`           | The server's website URL (unrelated to the actual endpoint)                                                                |
 | `author`         | The creator(s) of the server                                                                                               |
@@ -39,7 +39,7 @@ As this is nothing more than a side project, yes, you can add your own server in
 There's also a few optional values for fine-tuning. I'll add more over time
 
 | Identifier          | Description                                                                                                                                | Type                     |
-|:-------------------:|:------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------:|
+|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|
 | `timestampSuffix`   | A string to append at the end of timestamps. Vanilla GD uses " ago"                                                                        | `string`                 |
 | `demonList`         | The URL of the server's Demon List API, if it has one (e.g. `http://pointercrate.com/` - make sure it ends with a slash!)                  | `string`                 |
 | `disabled`          | An array of menu buttons to "disable" (mappacks, gauntlets, daily, weekly, etc). They appear greyed out but are still clickable.           | `string[]`               |
@@ -110,7 +110,7 @@ When you're working on a project the size and scale of GDBrowser, there has to b
 **Level Analysis Stuff (in `/analysis`)**
 
 | Name                     | Description                                                                                                                                                          |
-|:------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|--------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `blocks.json`            | The object IDs in the different 'families' of blocks                                                                                                                 |
 | `colorProperties.json`   | Color channel cheatsheet                                                                                                                                             |
 | `initialProperties.json` | Level settings cheatsheet                                                                                                                                            |
@@ -120,7 +120,7 @@ When you're working on a project the size and scale of GDBrowser, there has to b
 **Everything Else**
 
 | Name                    | Description                                                                                                           |
-|:-----------------------:|:---------------------------------------------------------------------------------------------------------------------:|
+|-------------------------|-----------------------------------------------------------------------------------------------------------------------|
 | `achievements.json`     | List of all GD/meltdown/subzero/etc achievements. `parseAchievementPlist.ts` automatically creates this file          |
 | `achievementTypes.json` | An object containing different categories of achievements (stars, shards, vault, etc) and how to identify them        |
 | `credits.json`          | Credits! (shown on the homepage)                                                                                      |
@@ -214,7 +214,7 @@ As a JS/TS developer, sometimes you want some sort of pattern for the infinite a
 
 ## Roadmap
 
-- [ ] Complete all the TODOs (10).
+- [ ] Complete all the TODOs (14).
 - [ ] Implement 2.2 features once the release is out.
 - [ ] Write JSDoc for all the types and interfaces in code.
 - [ ] Fix glaring visual errors.

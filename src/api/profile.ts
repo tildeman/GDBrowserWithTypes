@@ -19,7 +19,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (reqBundle.offline) {
 		if (!api) return res.redirect('/search/' + req.params.id);
-		else return sendError();
+		else return sendError(1, "The requested server is currently unavailable.");
 	}
 
 	let username = getLevels || req.params.id;
@@ -74,6 +74,6 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		});
 	}
 	catch (err) {
-		return sendError();
+		return sendError(1, err.message);
 	}
 }

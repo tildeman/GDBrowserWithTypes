@@ -89,3 +89,9 @@ export interface IBrowserCredits {
 	 */
 	specialThanks: string[];
 }
+
+export interface ErrorObject {
+	error: number;
+	message: string;
+	lastWorked?: string;
+}

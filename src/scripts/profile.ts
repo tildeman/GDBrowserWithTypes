@@ -6,6 +6,7 @@ import { Fetch, clean, toggleEscape } from "../misc/global.js";
 import { ICommentContent } from "../types/comments.js";
 import { renderIcons } from "../iconkit/icon.js";
 import { Player } from "../classes/Player.js";
+import { ErrorObject } from "../types/miscellaneous.js";
 
 const accountID: string = $('#dataBlock').data('accountid');
 const accountUsername: string = $('#dataBlock').data('username');
@@ -67,7 +68,7 @@ function appendComments() {
 		if (res.length != 10) $('#pageUp').hide()
 		else $('#pageUp').show()
 
-		if (res == "-1") return $('#loading').hide()
+		if ("error" in res) return $('#loading').hide()
 
 		res.forEach((commentItem: ICommentContent) => {
 			$('#statusDiv').append(`
@@ -189,8 +190,8 @@ $('#submitVote').on("click", function() {
 	$('.postbutton').hide();
 	toggleEscape(false);
 
-	Fetch(`/api/profile/${username}`).then((res: Player | "-1") => {
-		if (!res || res == "-1") {
+	Fetch(`/api/profile/${username}`).then((res: Player | ErrorObject) => {
+		if (!res || "error" in res) {
 			toggleEscape(true);
 			$('.postbutton').show();
 			return $('#likeMessage').text("The username you provided doesn't exist!");

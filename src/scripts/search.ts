@@ -3,6 +3,7 @@
  */
 
 import { Fetch, clean, serverMetadata } from "../misc/global.js";
+import { ErrorObject } from "../types/miscellaneous.js";
 import { SearchQueryLevel } from "../classes/Level.js";
 
 $('#pageDown').hide();
@@ -67,8 +68,8 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 	if (!noCache && pageCache[currentPage]) appendLevels(pageCache[currentPage]);
 	else Fetch(searchFilters.replace("[PAGE]", currentPage.toString())).then(appendLevels).catch(e => $('#loading').hide());
 
-	function appendLevels(res: SearchQueryLevel[] | "-1") {
-		if (res == '-1' || res.length == 0) {
+	function appendLevels(res: SearchQueryLevel[] | ErrorObject) {
+		if ("error" in res || !res.length) {
 			$('#loading').hide();
 			$('#pageUp').hide();
 			return loading = false;
@@ -276,8 +277,9 @@ $('#shuffle').on("click", function() {
 		fetch("/api/search/*page=0&type=recent").then(res => res.json()).then(recent => {
 			let mostRecent = recent[0].id;
 			function fetchRandom() {
+				// TODO: missing types!
 				fetch(`/api/level/${Math.floor(Math.random() * (mostRecent)) + 1}`).then(res => res.json()).then(res => {
-					if (res == "-1" || !res.id) return fetchRandom();
+					if ("error" in res || !res.id) return fetchRandom();
 					else window.location.href = "/level/" + res.id;
 				});
 			}
@@ -294,7 +296,7 @@ $('#shuffle').on("click", function() {
 		$('#searchBox').html('<div style="height: 4.5%"></div>');
 		$('#loading').show();
 		fetch(searchFilters.replace('[PAGE]', (randomPage - 1).toString())).then(res => res.json()).then(res => {
-			window.location.href = "/level/" + res[randomIndex-1].id;
+			window.location.href = "/level/" + res[randomIndex - 1].id;
 		});
 	}
 	else return $('#shuffleDiv').show();

@@ -674,10 +674,11 @@ $("#fetchUser").on("click", async function() {
 	$("#steal").hide();
 	enableGlow = 0;
 
+	// TODO: missing types!
 	let info = await fetch('/api/profile/' + user).then(res => res.json()).catch(e => {
 		console.error(e.message);
 	});
-	if (info == "-1") info = {};
+	if ("error" in info) info = {};
 
 	$(`#${formCopy}-${Math.min(info[formCopy] || 1, $(`.iconButton[form=${formCopy}]`).length)}`).trigger('click');
 	$(`#col1-${info.col1 || 0}`).trigger('click');

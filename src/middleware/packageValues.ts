@@ -26,9 +26,11 @@ export default function(req: Request, res: Response, next: NextFunction) {
 	}
 
 	// will expand this in the future :wink:
-	// TODO: Send an error object instead of `-1`
-	const resSendError = function(errorCode = 500) {
-		res.status(errorCode).send("-1");
+	const resSendError = function(errorCode = 0, message = "The GD servers rejected the response for an unknown reason", responseCode = 500) {
+		res.status(responseCode).send({
+			error: errorCode,
+			message
+		});
 	}
 
 	// literally just for convenience

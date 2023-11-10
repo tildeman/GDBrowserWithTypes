@@ -7,19 +7,19 @@ import { Request, Response } from "express";
 export default async function (req: Request, res: Response, api: boolean, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return sendError();
-
 	/**
-	 * If the level info is ill-formed, redirect the user to the search page.
+	 * If the list info is ill-formed, redirect the user to the search page.
+	 * @param [message="Problem found with an unknown cause"] The error message upon level rejection.
+	 * @param [errorCode=2] The error code that comes with the error.
 	 */
-	function rejectLevel() {
+	function rejectList(message: string = "Problem found with an unknown cause", errorCode = 2) {
 		if (!api) return res.redirect('search/' + req.params.id);
-		else return sendError();
+		else return sendError(errorCode, message);
 	}
 
-	if (reqBundle.offline) return rejectLevel();
+	if (reqBundle.offline) return rejectList("The requested server is currently unavailable.", 1);
 
-	let listID = req.params.id.replace(/[^0-9]/g, "");
+	const listID = req.params.id.replace(/[^0-9]/g, "");
 
 	try {
 		const body = await reqBundle.gdRequest("getGJLevelLists", { str: listID, type: 0 });
@@ -27,6 +27,9 @@ export default async function (req: Request, res: Response, api: boolean, userCa
 		const rawData = body.split("#");
 		const currentList = parseResponse(rawData[0]);
 		const author = rawData[1].split(":");
+		console.log(author);
+		const levelList = currentList[51].split(",");
+		// if (author.length) userCacheHandle.userCache(reqBundle.id, author[0], author[1], author[2]);
 
 		const listResponse: ListResponse = {
 			id: currentList[1],
@@ -39,13 +42,16 @@ export default async function (req: Request, res: Response, api: boolean, userCa
 			difficulty: +currentList[7],
 			likes: +currentList[14],
 			featured: +currentList[19] || 0,
-			levels: currentList[51].split(","),
+			levels: levelList,
 			uploaded: +currentList[28],
 			updated: +currentList[29]
 		};
-		res.send(listResponse);
+
+		if (api) res.send(listResponse);
+		else {
+		}
 	}
 	catch {
-		rejectLevel();
+		rejectList("The list cannot be retrieved.");
 	}
 }

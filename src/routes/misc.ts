@@ -68,7 +68,10 @@ router.get("/gdps", fetchTemplate("gdps"));
 
 router.get('*', function(req, res) {
 	if (req.path.startsWith('/api') || req.path.startsWith("/iconkit")) {
-		res.status(404).send('-1');
+		res.status(404).send({
+			error: 3,
+			message: "Cannot find the resource specified."
+		});
 	}
 	else res.redirect('/level/14471563');
 });

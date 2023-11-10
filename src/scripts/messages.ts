@@ -2,9 +2,10 @@
  * @fileoverview Site-specific script for the private message management page.
  */
 
-import { Player } from "../classes/Player.js";
-import { toggleEscape } from "../misc/global.js";
+import { ErrorObject } from "../types/miscellaneous.js";
 import { IMessageObject } from "../types/messages.js";
+import { toggleEscape } from "../misc/global.js";
+import { Player } from "../classes/Player.js";
 
 let accountID: string;
 let password: string;
@@ -65,8 +66,8 @@ $('#logIn').on("click", function() {
 	$('#message').text("Logging in...");
 	$('.postbutton').hide();
 
-	fetch(`/api/profile/${username}`).then(res => res.json()).then((res: Player | "-1") => {
-		if (!res || res == "-1") {
+	fetch(`/api/profile/${username}`).then(res => res.json()).then((res: Player | ErrorObject) => {
+		if (!res || "error" in res) {
 			$('.postbutton').show();
 			return $('#message').text("The username you provided doesn't exist!");
 		}
@@ -81,8 +82,8 @@ $('#logIn').on("click", function() {
 			const targetUser = window.location.search.match(/(\?|&)sendTo=(.+)/);
 			if (targetUser) {
 				const targetUserStr = decodeURIComponent(targetUser[2]);
-				fetch(`/api/profile/${targetUserStr}`).then(res => res.json()).then((res: Player | "-1") => {
-					if (res == "-1" || !res) return;
+				fetch(`/api/profile/${targetUserStr}`).then(res => res.json()).then((res: Player | ErrorObject) => {
+					if ("error" in res || !res) return;
 					$('#replyAuthor').html(`<a href="/u/${res.accountID}." target="_blank">To: ${res.username}</a>`);
 					messageStatus[res.accountID] = [res.messages, res.username];
 					playerID = res.accountID;
