@@ -121,9 +121,9 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 				<h2 class="pre smaller inline gdButton help ${hasAuthor ? "" : "green unregistered"}" title="Account ID: ${level.accountID}\nPlayer ID: ${level.playerID}"><!--
 					-->${hasAuthor && !serverMetadata.onePointNine ? `<a style="margin-right: 0.66vh" href="/u/${level.accountID}.">By ${level.author || "-"}</a>` : `<a ${userSearch ? "" : `href="/search/${level.playerID}?user"`}>By ${level.author || "-"}</a>`}</h2><!--
 					--><h2 class="inline" style="margin-left: 1.5%; transform:translateY(10%)"> ${level.copiedID == '0' ? "" : `<a target="_blank" href="/level/${level.copiedID}"><!--
-					--><img class="gdButton valign sideSpaceD" title="Original: ${level.copiedID}" src="/assets/copied.png" style="height: 3vh;"></a>`}<!--
-					-->${level.large ? `<img class="help valign sideSpaceD" title="${level.objects}${level.objects == 65535 ? "+" : ""} objects" src="/assets/large.png" style="height: 3vh;">` : ''}<!--
-					-->${level.twoPlayer ? `<img class="help valign sideSpaceD" title="Two player level" src="/assets/twoPlayer.png" style="height: 3vh;">` : ''}
+					--><img class="gdButton valign rightSpaceB" title="Original: ${level.copiedID}" src="/assets/copied.png" style="height: 3vh;"></a>`}<!--
+					-->${level.large ? `<img class="help valign rightSpaceB" title="${level.objects}${level.objects == 65535 ? "+" : ""} objects" src="/assets/large.png" style="height: 3vh;">` : ''}<!--
+					-->${level.twoPlayer ? `<img class="help valign rightSpaceB" title="Two player level" src="/assets/twoPlayer.png" style="height: 3vh;">` : ''}
 				</h2>
 				<h3 class="lessSpaced help ${noLink ? "" : 'gdButton '}pre ${songColor}" title="${filteredSong} by ${level.songAuthor} (${level.songID})" style="overflow: hidden; max-height: 19%; width: fit-content; padding: 1% 1% 0% 0%">${noLink ? filteredSong : `<a target="_blank" style="width: fit-content" href="https://www.newgrounds.com/audio/listen/${level.songID}">${filteredSong}</a>`}</h3>
 				<h3 class="lessSpaced" style="width: fit-content" title="">

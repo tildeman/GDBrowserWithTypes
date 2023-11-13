@@ -289,8 +289,6 @@ export function rgbToDecimal(rgb: Color3B): number {
 
 /**
  * Render the selected icon. Not thread-safe.
- * @param [selector='gdicon:not([rendered], [dontload])'] The CSS selector to use. Optional.
- * @returns A promise that resolves to void.
  */
 export function renderIcons() {
 	// if (overrideLoader) return;
@@ -303,7 +301,7 @@ export function renderIcons() {
 /**
  * Auxiliary function to render icons in a page.
  * @param elements The list of GDIcon elements.
- * @param [current=0] The current index of the element.
+ * @param current The current index of the element.
  */
 export async function buildIcon(elements: JQuery<HTMLElement>, current: number = 0) {
 	if (current >= elements.length) return;

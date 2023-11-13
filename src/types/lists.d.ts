@@ -44,7 +44,7 @@ export interface IListParams {
 	page?: number;
 }
 
-export interface ListResponse{
+export interface LevelList{
 	id: string;
 	name: string;
 	desc: string;
@@ -53,6 +53,7 @@ export interface ListResponse{
 	username: string;
 	downloads: number;
 	difficulty: number;
+	difficultyFace: string;
 	likes: number;
 	featured: number;
 	levels: string[];

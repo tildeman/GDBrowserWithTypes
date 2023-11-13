@@ -235,7 +235,7 @@ $('#revealCode').on("click", function() {
 		$('#levelCode').html(`<p class="codeFont">${clean(res.data).replace(/\n/g, "<br>")}</p>`);
 	}, 50);
 	$('#levelCode').focus().select();
-})
+});
 
 $(document).on('click', '.color', function() {
 	// TODO: This is kludgy.

@@ -20,8 +20,8 @@ export default async function(req: Request, res: Response, api: boolean, analyze
 
 	/**
 	 * If the level info is ill-formed, redirect the user to the search page.
-	 * @param [message="Problem found with an unknown cause"] The error message upon level rejection.
-	 * @param [errorCode=2] The error code that comes with the error.
+	 * @param message The error message upon level rejection.
+	 * @param errorCode The error code that comes with the error.
 	 */
 	function rejectLevel(message: string = "Problem found with an unknown cause", errorCode = 2) {
 		if (!api) return res.redirect('search/' + req.params.id);

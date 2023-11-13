@@ -58,7 +58,7 @@ export default async function(req: Request, res: Response, secret?: string) {
 			if (!user.boomlingLevel || user.boomlingLevel > 25 || user.boomlingLevel < 1) user.boomlingLevel = 25;
 
 			users.push(user);
-		})
+		});
 
 		return res.send(users);
 	});

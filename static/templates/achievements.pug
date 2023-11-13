@@ -45,12 +45,12 @@ html(lang="en")
 			#searchBox.supercenter.dragscroll(style={ width: "128vh" })
 				div(style={ height: "4.5%" })
 
-			.epicbox.supercenter.gs(style={ width: "126vh", height: "80%", "pointer-events": "none" })
+			.epicbox.supercenter.gs.noClick(style={ width: "126vh", height: "80%" })
 
 			.center(style={ position: "absolute", top: "8%", left: "0", right: "0" })
 				h1#header.pre Achievements
 
-			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+			.noClick(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%" })
 				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
 
 			div(style={ position: "absolute", top: "2%", right: "1.5%", width: "9%", "text-align": "right" })

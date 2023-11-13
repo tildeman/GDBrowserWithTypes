@@ -18,7 +18,7 @@ const demonList: Record<string, {
  * Find a level in Pointercrate's level list using the ID.
  * @param needle The level ID to search.
  * @param haystack The level list (Pointercrate's format) in use.
- * @param [start=0] The index to start searching
+ * @param start The index to start searching
  * @returns The position of the level in the list, or -1 if not existent.
  */
 function idInDemon(needle: number, haystack: IListEntryOverview[], start: number = 0) {
@@ -212,6 +212,6 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		return res.send(parsedLevels);
 	}
 	catch (err) {
-		return sendError(2, "Unable to search levels upstream.");
+		return sendError(2, err.message);
 	}
 }

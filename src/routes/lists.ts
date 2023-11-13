@@ -24,6 +24,9 @@ export default function(cacheGauntlets: boolean, cacheMapPacks: boolean, userCac
 
 	router.get("/gauntlets", fetchTemplate("gauntlets"));
 	router.get("/mappacks", fetchTemplate("mappacks"));
+	router.get("/list/:id", function(req, res) {
+		listController(req, res, false, userCacheHandle);
+	});
 
 	return router;
 }

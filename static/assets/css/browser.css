@@ -53,6 +53,7 @@ img, .noSelect {
 	width: fit-content;
 }
 
+/* Code for centering a `div`. Absolute classic. */
 .supercenter {
 	position: absolute;
 	top: 50%;
@@ -125,12 +126,21 @@ img, .noSelect {
 	display: inline-block;
 }
 
+/* Similar in concept to `supercenter`.*/
+.superinline {
+	display: inline;
+}
+
 .squeeze {
 	margin-left: -4%;
 }
 
 .squeezeB {
 	margin-left: -8%;
+}
+
+.squeezeC {
+	margin-left: -2%;
 }
 
 .normalCursor {
@@ -150,7 +160,12 @@ img, .noSelect {
 }
 
 .youAreNotTheOne {
-	transform: scale(0.85)
+	transform: scale(0.85);
+}
+
+.verticalMargin {
+	margin-top: 10px;
+	margin-bottom: 10px;
 }
 
 #everything {
@@ -369,6 +384,14 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 	border-image-slice: 65;
 }
 
+.listBox {
+	border-width: 5vh;
+	border-style: solid;
+	border-image: url('../../assets/listbox.png') 10% stretch;
+	background-color: rgb(173, 115, 76);
+	border-image-slice: 54;
+}
+
 .bounce {
 	animation: boxAnimator 0.25s;
 }
@@ -416,11 +439,15 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 .sideSpaceD {
-	margin-right: 25%;
+	margin-left: 20px;
 }
 
 .rightSpace {
 	margin-right: 2%;
+}
+
+.rightSpaceB {
+	margin-right: 25%;
 }
 
 .diffDiv {
@@ -472,7 +499,8 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 	font-size: 4vh;
 	-webkit-text-stroke-width: 0.18vh;
 	-webkit-text-stroke-color: black;
-	text-shadow: 0.3vh 0.3vh 0vh rgba(0, 0, 0, 0.3);}
+	text-shadow: 0.3vh 0.3vh 0vh rgba(0, 0, 0, 0.3);
+}
 
 .sideButton {
 	margin-bottom: 30%;
@@ -653,6 +681,17 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 	padding-top: 1vh;
 	white-space: nowrap;
 	overflow-x: hidden;
+}
+
+.condensedSearchResult {
+	width: auto;
+	height: 24%;
+}
+
+.condensedIndex {
+	position: absolute;
+	left: 1vh;
+	margin-top: 5vh;
 }
 
 .searchResult:nth-child(odd) {

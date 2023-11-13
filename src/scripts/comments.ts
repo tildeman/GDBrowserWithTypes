@@ -63,9 +63,9 @@ else lvlID = Math.round(+lvlID).toString();
 
 if (mode == "top") {
 	mode = "top";
-	$('#topSort').attr('src', "/assets/sort/likes-on.png")
+	$('#topSort').attr('src', "/assets/sorting/likes-on.png")
 }
-else $('#timeSort').attr('src', "/assets/sort/time-on.png")
+else $('#timeSort').attr('src', "/assets/sorting/time-on.png")
 
 $('#compactMode').attr('src', `/assets/compact-${compact ? "on" : "off"}.png`);
 
@@ -292,8 +292,8 @@ $('#topSort').on("click", function() {
 	if (mode == "top" || loadingComments) return;
 	resetSort();
 	mode = "top";
-	$('#timeSort').attr('src', "/assets/sort/time.png");
-	$('#topSort').attr('src', "/assets/sort/likes-on.png");
+	$('#timeSort').attr('src', "/assets/sorting/time.png");
+	$('#topSort').attr('src', "/assets/sorting/likes-on.png");
 	appendComments();
 });
 
@@ -301,8 +301,8 @@ $('#timeSort').on("click", function() {
 	if (mode == "time" || loadingComments) return;
 	resetSort();
 	mode = "time";
-	$('#timeSort').attr('src', "/assets/sort/time-on.png");
-	$('#topSort').attr('src', "/assets/sort/likes.png");
+	$('#timeSort').attr('src', "/assets/sorting/time-on.png");
+	$('#topSort').attr('src', "/assets/sorting/likes.png");
 	appendComments();
 });
 
@@ -320,8 +320,8 @@ $('#autoMode').on("click", function() {
 	auto = !auto;
 	mode = "time";
 	page = 0;
-	$('#timeSort').attr('src', "/assets/sort/time-on.png");
-	$('#topSort').attr('src', "/assets/sort/likes.png");
+	$('#timeSort').attr('src', "/assets/sorting/time-on.png");
+	$('#topSort').attr('src', "/assets/sorting/likes.png");
 
 	if (auto) {
 		document.title = "[LIVE] " + document.title;
@@ -381,8 +381,8 @@ $('#submitComment').on("click", function() {
 			$('#postComment').hide();
 			$('.postbutton').show();
 			$('#message').html(messageText);
-			$('#timeSort').attr('src', "/assets/sort/time-on.png");
-			$('#topSort').attr('src', "/assets/sort/likes.png");
+			$('#timeSort').attr('src', "/assets/sorting/time-on.png");
+			$('#topSort').attr('src', "/assets/sorting/likes.png");
 			toggleEscape(true);
 			mode = "time";
 			page = 0;

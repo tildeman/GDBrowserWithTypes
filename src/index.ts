@@ -64,7 +64,7 @@ app.use("/", searchRoutes(userCacheHandle));
 app.use("/", leaderboardRoutes(userCacheHandle, appConfig.params.secret));
 app.use("/", messageRoutes(userCacheHandle));
 app.use("/", postRoutes(userCacheHandle));
-app.use("/", listRoutes(appConfig.cacheGauntlets, appConfig.cacheMapPacks));
+app.use("/", listRoutes(appConfig.cacheGauntlets, appConfig.cacheMapPacks, userCacheHandle));
 app.use("/", iconRoutes);
 app.use("/api", staticFileRoutes(userCacheHandle, appSafeServers));
 app.use("/", redirectRoutes)

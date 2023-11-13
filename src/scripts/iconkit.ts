@@ -249,7 +249,7 @@ forms.forEach(form => {
 	let spoil = ["swing", "jetpack"].includes(form);
 	$("#iconTabs").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""} title="${iconStuff.forms[form].name}" class="blankButton iconTabButton"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
 	$("#copyForms").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""}  title="${iconStuff.forms[form].name}" class="blankButton copyForm"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
-})
+});
 $("#iconTabs").append(`<button title="Glow" class="blankButton glowToggle" id="glowbtn"><img id="glow" src="/assets/iconkitbuttons/streak_off.png" style="width: 50px"></button>`)
 
 forms.forEach(form => {

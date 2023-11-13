@@ -1,0 +1,140 @@
+- var diffImage = "/assets/difficulties/" + (list.difficultyFace || "unrated") + ".png";
+
+mixin listStats(title, image, stat)
+	img.help.valign.rightSpace(title=title, src="/assets/" + image + ".png", style={ height: "3.5vh" })
+	= stat
+	|
+	|
+
+doctype html
+html(lang="en")
+	head
+		title= list.name + " (List #" + list.id + ")"
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href=diffImage)
+		meta(id="meta-title", property="og:title", content="Level Leaderboard")
+		meta(id="meta-desc", property="og:description", content="Collections of user-curated yet still terrible Geometry Dash levels that people only play because of the absurd number of icons they unlock.")
+		meta(id="meta-image", name="og:image", content=diffImage, itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body.levelBG
+		#everything
+			div(style={ margin: "2vh auto 0 auto", width: "fit-content" })
+				img.superinline.valign(src=diffImage, style={ height: "8vh" })
+				h1.smaller.superinline.valign.sideSpaceD= list.name
+				h2.slightlySmaller.superinline.valign.sideSpaceD
+					if list.accountID != "0"
+						a(style={ "margin-right": "0.66vh" }, href="/u/" + list.accountID + ".")= list.username || "-"
+					else
+						a(href="/search/" + list.playerID + "?user")= list.username || "-"
+			.listBox.supercenter.gs(style={ width: "100vh", height: "64%", "overflow-y": "auto" })
+				each level, index in levels
+					- let songColor = level.customSong == 0 ? "blue" : (level.songLink && !level.songLink.match(/^https?:\/\/\audio\.ngfiles\.com\//)) ? "nong" : "whatIfItWasPurple";
+					- let coinColor = level.verifiedCoins ? "silvercoin" : "browncoin";
+					//- Pusab.ttf has a limited character possibility
+					- let filteredSong = level.songName?.replace(/[^ -~]/g, "");
+					- let noLink = songColor != "whatIfItWasPurple";
+					- let hasAuthor = (level.accountID != "0");
+					.condensedSearchResult.searchResult(title=level.description)
+						h1.condensedIndex.smaller= index + 1
+						h1.lessspaced.pre.inline.smaller(title=level.name + " by " + level.author, style={ width: "fit-content", "padding-right": "1%" })= level.name || " "
+						h2.pre.smaller.inline.gdButton.help.smallerer.sideSpaceC(class=hasAuthor ? "" : "green unregistered", title="Account ID: " + level.accountID + "\nPlayer ID: " + level.playerID)
+							//- Lists don't exist in 1.9, no need to check
+							if level.accountID != "0"
+								a(style={ "margin-right": "0.66vh" }, href="/u/" + level.accountID + ".")= level.author || "-"
+							else
+								a(href=userSearch ? null : "/search/" + level.playerID + "?user")= level.author || "-"
+							if level.copiedID != "0"
+								a(href="/level/" + level.copiedID, target="_blank")
+									img.gdButton.valign.rightSpace(title="Original: " + level.copiedID, src="/assets/copied.png", style={ height: "3vh" })
+							if level.large
+								img.help.valign.rightSpace(title=level.objects.toString() + (level.objects == 65535 ? "+" : "") + "objects", src="/assets/large.png", style={ height: "3vh" })
+							if level.twoPlayer
+								img.help.valign.rightSpace(title="Two player level", src="/assets/twoPlayer.png", style={ height: "3vh" })
+						h3.lessSpaced.help.pre(class=(noLink ? " " : "gdButton ") + songColor, title=filteredSong + " by " + level.songAuthor + " (" + level.songID + ")", style={ overflow: "hidden", "max-height": "19%", width: "fit-content", padding: "1% 1% 0 0" })
+							if noLink
+								=filteredSong
+							else
+								a(target="_blank", style={ width: "fit-content" }, href="https://www.newgrounds.com/audio/listen/" + level.songID)= filteredSong
+							#coins(style={ "margin-top": "3%", display: "inline" })
+								if (level.coins)
+									if (level.coins > 0)
+										img.help.sideSpaceB(src="/assets/" + coinColor + ".png", style={ height: "3vh" })
+									if (level.coins > 1)
+										img.help.squeezeC(src="/assets/" + coinColor + ".png", style={ height: "3vh" })
+									if (level.coins > 2)
+										img.help.squeezeC(src="/assets/" + coinColor + ".png", style={ height: "3vh" })
+						h3.lessSpaced(style={ width: "fit-content" })
+							+listStats("Length", "time", level.length)
+							+listStats("Downloads", "download", level.downloads)
+							+listStats("Likes", (level.disliked ? "dis" : "") + "like", level.likes)
+							if level.orbs
+								+listStats("Mana Orbs", "orbs", level.orbs)
+
+						.center(style={ position: "absolute", "margin-top": "-14vh", left: "4.4%", transform: "scale(0.66)", height: "10%", width: "12.5%" })
+							img#dFace.help.spaced(title=`${level.difficulty}${level.epic ? " (Epic)" : level.featured ? " (Featured)" : ""}`, src=`/assets/difficulties/${level.difficultyFace}.png`, style={ height: "12vh", "margin-bottom": "0", transform: `scale(${level.epic ? 1.2 : level.featured ? 1.1 : 1})` })
+							h3= level.difficulty.includes('Demon') ? "Demon" : level.difficulty
+							if level.stars
+								h3.help(title=`${level.stars} star${level.stars == 1 ? "" : "s"}${level.starsRequested ? ` (${level.starsRequested} requested)` : ""}`)
+									= level.stars
+									img.valign.sideSpaceB(style={ height: "3vh", transform: "translateY(-8%)" }, src="/assets/star.png")
+						.center(style={ position: "absolute", right: "2%", "margin-top": "-12vh" })
+							a(href="/level/" + level.id, title="View level")
+								img.valign.gdButton(style={ "margin-bottom": "4.5%", height: "8vh" }, src="/assets/view.png")
+							p(title="Level ID", style={ "text-align": "right", color: "rgba(0, 0, 0, 0.4)", "font-size": "2.2vh", transform: "translate(1vh, -1vh)", "margin-bottom": "0" })= "#" + level.id
+
+			div(style={ "text-align": "center", width: "6%", "margin-top": "20px" })
+				img(src="/assets/download.png", style={ height: "5vh" })
+				h1.smallerer.verticalMargin= list.downloads
+				img(src="/assets/" + (list.likes < 0 ? "dis" : "") + "like.png", style={ height: "5vh" })
+				h1.smallerer.verticalMargin= list.likes
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%" })
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
+				img.cornerPiece(src="/assets/corner.png", style={ width: "7%", transform: "scaleX(-1)" })
+
+			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
+
+			.levelButtons(style={ position: "absolute", top: "46%", right: "3.5%", transform: "translateY(-50%)", height: "75%" })
+				img#refreshButton.gdButton.sideButton(title="Refresh list", src="/assets/refresh.png")
+				br
+				img#infoButton.gdButton.sideButton(title="Level Info", src="/assets/info.png")
+				br
+
+			#infoDiv.popup
+				.fancybox.bounce.center.supercenter
+					h2.smaller.center(style={ "font-size": "5.5vh" }) Level Info
+					p#levelInfo.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh" })
+						span.pre(style={ color: "lime" })= list.name
+						br
+						| Description:
+						.transparentBox.center
+							p(style={ "white-space": "normal" })= list.desc
+					p#levelInfo.bigger.center(style={ "line-height": "5vh" })
+						| ID:
+						|
+						cy= list.id
+						if list.uploaded != 0
+							br
+							| Uploaded:
+							|
+							co= list.uploaded
+						if list.updated != 0
+							br
+							| Updated:
+							|
+							co= list.updated
+						br
+						| Version:
+						|
+						cy= list.version
+						br
+					img.gdButton.center.closeWindow(src="/assets/ok.png", style={ width: "20%" })
+
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="module", src="/vendor/index.js")
+		script(type="module", src="/misc/global.js")
+		script(type="module", src="/scripts/lists.js")
