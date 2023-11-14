@@ -14,6 +14,15 @@ const difficulties = [
 	"demon-insane", "demon-extreme"
 ];
 
+
+/**
+ * Inspect a list's overview data.
+ * @param req The client request.
+ * @param res The server response (to send the level details/error).
+ * @param api Whether this is an API request.
+ * @param userCacheHandle The user cache passed in by reference.
+ * @returns If this is an API request, return the raw data in JSON. Else display it in a webpage.
+ */
 export default async function (req: Request, res: Response, api: boolean, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
@@ -23,7 +32,7 @@ export default async function (req: Request, res: Response, api: boolean, userCa
 	 * @param errorCode The error code that comes with the error.
 	 */
 	function rejectList(message: string = "Problem found with an unknown cause", errorCode = 2) {
-		console.log(message);
+		console.error(message);
 		if (!api) return res.redirect('search/' + req.params.id);
 		else return sendError(errorCode, message);
 	}
@@ -80,10 +89,10 @@ export default async function (req: Request, res: Response, api: boolean, userCa
 
 			const levelArray = preRes.map(levelResponse => parseResponse(levelResponse)).filter(levelResponse => levelResponse[1]);
 			let parsedLevels: SearchQueryLevel[] = [];
-	
+
 			levelArray.forEach((levelData, levelIndex) => {
 				const songSearch = songs.find(songItem => songItem['~1'] == levelData[35]) || [];
-	
+
 				const level = new SearchQueryLevel(levelData, reqBundle.server, null, {});
 				level.getSongInfo(songSearch);
 				if (!level.id) throw new Error("The list includes levels without an ID.")

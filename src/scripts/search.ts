@@ -64,7 +64,6 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 	if (currentPage == (pages - 1)) $('#lastPage').addClass('grayscale').find('img').removeClass('gdButton');
 	else $('#lastPage').removeClass('grayscale').find('img').addClass('gdButton');
 
-	console.log(searchFilters.replace("[PAGE]", currentPage.toString()));
 	if (!noCache && pageCache[currentPage]) appendLevels(pageCache[currentPage]);
 	else Fetch(searchFilters.replace("[PAGE]", currentPage.toString())).then(appendLevels).catch(e => $('#loading').hide());
 

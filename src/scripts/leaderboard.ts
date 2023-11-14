@@ -198,7 +198,7 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 		lazyLoadIcons();
 		$('#loading').hide();
 	}).catch(e => {
-		console.log(e);
+		console.error(e);
 		$('#loading').hide();
 	});
 }

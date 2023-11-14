@@ -16,7 +16,7 @@ import fs from 'node:fs';
 let achArray: { id: string, game: string, trueID: string }[] = [];
 
 files.forEach((file, fileNum) => {
-	if (!file) return
+	if (!file) return;
 	let data = plist.parse(fs.readFileSync(path + file + '.plist', 'utf8'));
 
 	console.log(`Converting ${file}.plist...`)

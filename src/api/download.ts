@@ -113,7 +113,7 @@ export default async function(req: Request, res: Response, api: boolean, ID: str
 		return sendLevel();
 	}
 	catch (err) {
-		console.log(err.message);
+		console.error(err.message);
 		if (analyze && api && reqBundle.server.downloadsDisabled) return res.status(403).send({
 			error: 4,
 			message: "Downloads are disabled for this server."

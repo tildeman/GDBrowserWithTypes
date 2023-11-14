@@ -71,7 +71,7 @@ $('#compactMode').attr('src', `/assets/compact-${compact ? "on" : "off"}.png`);
 
 const lvl: Level | Player = await Fetch(target).catch(e => {
 	loadingComments = false;
-	console.log(e.message);
+	console.error(e.message);
 });
 
 if (serverMetadata.gdps) {

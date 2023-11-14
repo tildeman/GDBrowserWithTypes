@@ -306,7 +306,6 @@ export function renderIcons() {
 export async function buildIcon(elements: JQuery<HTMLElement>, current: number = 0) {
 	if (current >= elements.length) return;
 	const currentIcon = elements.eq(current);
-	console.log(currentIcon);
 
 	const cacheID = currentIcon.attr('cacheID');
 	const foundCache = renderedIcons[cacheID || ""];
