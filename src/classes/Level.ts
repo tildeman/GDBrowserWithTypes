@@ -283,7 +283,7 @@ export class Level implements ILevelObject {
 		this.difficultyFace = `${levelInfo[17] != "1" ? this.difficulty.toLowerCase() : `demon-${this.difficulty.toLowerCase().split(' ')[0]}`}${this.epic ? '-epic' : `${this.featured ? '-featured' : ''}`}`;
 
 		if (this.password && this.password != "0") {
-			let pass = XOR.decrypt(this.password, 26364);
+			const pass = XOR.decrypt(this.password, 26364);
 			if (pass.length > 1) this.password = pass.slice(1);
 			else this.password = pass;
 		}
@@ -316,7 +316,7 @@ export class Level implements ILevelObject {
 			if (songInfo[10]) this.songLink = decodeURIComponent(songInfo[10]);
 		}
 		else if (this.officialSong) {
-			let foundSong = music[this.officialSong] || {"null": true};
+			const foundSong = music[this.officialSong] || {"null": true};
 			this.songName =  foundSong[0] || "Unknown";
 			this.songAuthor = foundSong[1] || "Unknown";
 			this.songSize = "0MB";

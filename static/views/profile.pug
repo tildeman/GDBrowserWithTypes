@@ -135,6 +135,8 @@ html(lang="en")
 				hr.profilePostHide(style={ "margin-bottom": "2%" })
 				h3#collectibles.profilePostHide
 					+collectiblesList("stars", player.stars, 100000, "yellow", "star", "Stars")
+					if player.moons
+						+collectiblesList("moons", player.moons, 18, "blue", "moon", "Moons")
 					+collectiblesList("diamonds", player.diamonds, 65535, "blue", "diamond", "Diamonds")
 					+collectiblesList("coins", player.coins, 149, "yellow", "coin", "Secret Coins")
 					+collectiblesList("usercoins", player.userCoins, 10000, "brightblue", "silvercoin", "User Coins")

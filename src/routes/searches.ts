@@ -18,5 +18,12 @@ export default function(userCacheHandle: UserCache) {
 	router.get("/search", fetchTemplate("filters"));
 	router.get("/search/:text", fetchTemplate("search"));
 
+	// router.get("/api/lists/:text", RL2, function(req, res) {
+	// 	listSearchController(req, res, userCacheHandle);
+	// })
+
+	router.get("/listsearch", fetchTemplate("listfilters"));
+	// router.get("/search/:text", fetchTemplate("lists"));
+
 	return router;
 }

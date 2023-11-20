@@ -33,6 +33,11 @@ export class Player {
 	 */
 	stars: number;
 	/**
+	 * The number of moons a player has.
+	 * Caps at 18 during private beta.
+	 */
+	moons: number;
+	/**
 	 * The number of diamonds a player has.
 	 * Caps at 65535.
 	 */
@@ -148,6 +153,7 @@ export class Player {
 		this.accountID = account[16];
 		this.rank = +account[6] || +account[30];
 		this.stars = +account[3];
+		this.moons = +account[52] || 0;
 		this.diamonds = +account[46];
 		this.coins = +account[13];
 		this.userCoins = +account[17];

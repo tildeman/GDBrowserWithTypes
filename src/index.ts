@@ -5,7 +5,6 @@ import packageValues from './middleware/packageValues.js';
 import { UserCache } from './classes/UserCache.js';
 import compression from 'compression';
 import appConfig from './settings.js';
-import timeout from 'connect-timeout';
 import express from 'express';
 
 // ROUTE IMPORTS
@@ -40,35 +39,36 @@ app.set('json spaces', "\t");
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(timeout('20s'));
 app.use(packageValues);
 
+app.set("views", resolve(__dirname, "views"));
 app.set("view engine", "pug");
-app.set("views", resolve(__dirname, "templates"));
 
 // ASSETS
 
-app.get("/dragscroll.js", fetchStaticFile("misc/dragscroll.js"));
-app.get("/vendor/index.js", fetchStaticFile("vendor/index.js"));
-app.get("/global.js", fetchStaticFile("misc/global.js"));
-app.get("/misc/global.js", fetchStaticFile("misc/global.js"));
+app.use('/templates', express.static(resolve(__dirname, 'templates')));
 app.use("/scripts", express.static(resolve(__dirname, "scripts")));
 app.use('/iconkit', express.static(resolve(__dirname, 'iconkit')));
+app.get("/dragscroll.js", fetchStaticFile("misc/dragscroll.js"));
+app.get("/vendor/index.js", fetchStaticFile("vendor/index.js"));
+app.get("/misc/global.js", fetchStaticFile("misc/global.js"));
+app.get("/global.js", fetchStaticFile("misc/global.js"));
 app.use("/assets", assetRoutes);
 
 // ROUTES
 
-app.use("/", levelRoutes(userCacheHandle));
-app.use("/", profileRoutes(userCacheHandle));
-app.use("/", searchRoutes(userCacheHandle));
+app.use("/", listRoutes(appConfig.cacheGauntlets, appConfig.cacheMapPacks, userCacheHandle));
 app.use("/", leaderboardRoutes(userCacheHandle, appConfig.params.secret));
 app.use("/", messageRoutes(userCacheHandle));
+app.use("/", profileRoutes(userCacheHandle));
+app.use("/", searchRoutes(userCacheHandle));
+app.use("/", levelRoutes(userCacheHandle));
 app.use("/", postRoutes(userCacheHandle));
-app.use("/", listRoutes(appConfig.cacheGauntlets, appConfig.cacheMapPacks, userCacheHandle));
-app.use("/", iconRoutes);
-app.use("/api", staticFileRoutes(userCacheHandle, appSafeServers));
 app.use("/", redirectRoutes)
 app.use("/", miscRoutes);
+app.use("/", iconRoutes);
+
+app.use("/api", staticFileRoutes(userCacheHandle, appSafeServers));
 
 app.use(handleTimeouts);
 

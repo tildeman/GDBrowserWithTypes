@@ -33,11 +33,11 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	const skipRequest = accountMode || (foundID && +foundID[0]) || probablyID;
 	let searchResult = probablyID ? username : req.params.id;
 
-	if (!skipRequest) {
+	if (foundID) searchResult = foundID[0];
+	else if (!skipRequest) {
 		try {
 			const b1 = await reqBundle.gdRequest('getGJUsers20', { str: username, page: 0 });
-			if (foundID) searchResult = foundID[0];
-			else if (accountMode || b1 == '-1' || b1.startsWith("<") || !b1) {}
+			if (accountMode || b1 == '-1' || b1.startsWith("<") || !b1) {}
 			else if (!reqBundle.isGDPS) searchResult = parseResponse(b1.split("|")[0])[16];
 			else {  // GDPS's return multiple users, GD no longer does this
 				const userResults = b1.split("|").map(variable => parseResponse(variable));

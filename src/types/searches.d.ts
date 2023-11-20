@@ -82,3 +82,13 @@ export interface ISearchFilters {
 	 */
 	count?: number;
 }
+
+export interface IClientSavedFilters {
+	diff: number[];
+	len: string[];
+	checked: string[];
+	demonDiff?: boolean;
+	starred?: boolean;
+	defaultSong?: boolean;
+	song?: number;
+}

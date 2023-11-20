@@ -8,7 +8,7 @@ import { renderIcons } from "../iconkit/icon.js";
 import { Player } from "../classes/Player.js";
 import { ErrorObject } from "../types/miscellaneous.js";
 
-const accountID: string = $('#dataBlock').data('accountid');
+const accountID: string = $('#dataBlock').data('accountid').toString();
 const accountUsername: string = $('#dataBlock').data('username');
 const accountModerator: string = $('#dataBlock').data('moderator');
 
@@ -30,7 +30,7 @@ const messageTextA = 'Your <cy>Geometry Dash password</cy> will <cg>not be store
 $('#message').html(messageTextA);
 $('#likeMessage').html(messageTextA.replace("profile posts", "liking posts").replace("postProfileComment", "like"));
 
-let followed = localStorage.followed ? JSON.parse(localStorage.followed) : []
+let followed: string[] = localStorage.followed ? JSON.parse(localStorage.followed) : []
 if (followed.includes(accountID)) {
 	$('#followOff').hide();
 	$('#followOn').show();
@@ -141,9 +141,9 @@ $('#submitComment').on("click", function () {
 		});
 });
 
-let commentID = 0, lvID: number;
+let commentID = "0", lvID: number;
 let likeCount: JQuery<HTMLElement>, likeImg: JQuery<HTMLImageElement>;
-let likedComments: number[];
+let likedComments: string[];
 let like = true;
 
 $('#likebtn').on("click", function() {
@@ -159,7 +159,7 @@ $('#dislikebtn').on("click", function() {
 });
 
 $(document).on('click', '.likeComment', function() {
-	commentID = +($(this).attr('commentID') || "") || 0;
+	commentID = $(this).attr('commentID') || "0";
 
 	likedComments = localStorage.likedComments ? JSON.parse(localStorage.likedComments) : [];
 	if (likedComments.includes(commentID)) return;
@@ -200,7 +200,7 @@ $('#submitVote').on("click", function() {
 
 		$.post("/like",  { ID, accountID, password, like: likeType, type: 3, extraID: accountID })
 			.done(() => {
-				let newCount = parseInt(likeCount.text()) + (like ? 1 : -1);
+				const newCount = parseInt(likeCount.text()) + (like ? 1 : -1);
 				likeCount.text(newCount);
 				if (newCount < 0) likeImg.attr('src', '/assets/dislike.png').css('transform', compactMode ? 'translateY(15%)' : 'translateY(25%)');
 				else likeImg.attr('src', '/assets/like.png').removeAttr('style');

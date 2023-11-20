@@ -42,7 +42,6 @@ const iconRenderer: PIXI.Application = new PIXI.Application({
 	backgroundAlpha: 0
 });
 
-let overrideLoader = false;
 let renderedIcons: Record<string, {
 	name: string,
 	data: string
@@ -168,8 +167,7 @@ export function parseIconForm(form: string) {
  * Load icon layers.
  * @param form The form of the player.
  * @param id The ID of the player.
- * @param cb The callback once the icons are loaded.
- * @returns The return value of the callback.
+ * @returns Whether the loaded icon is in 2.2
  */
 export async function loadIconLayers(form: string, id: number): Promise<boolean> {
 	const iconStr = `${form}_${padZero(validateIconID(id, form))}`;
@@ -181,7 +179,10 @@ export async function loadIconLayers(form: string, id: number): Promise<boolean>
 		if (iconData.newIcons.includes(iconStr)) return await loadNewIcon(iconStr);
 	}
 
-	const texturesToLoad = pendingTexturesToLoad.map(textureName => ({ alias: textureName, src: `/iconkit/icons/${textureName}` }));
+	const texturesToLoad = pendingTexturesToLoad.map(textureName => ({
+		alias: textureName,
+		src: `/iconkit/icons/${textureName}`
+	}));
 	loadedOldIcons = await PIXI.Assets.load(texturesToLoad);
 	return false;
 }
@@ -190,15 +191,17 @@ export async function loadIconLayers(form: string, id: number): Promise<boolean>
 /**
  * Load 2.2 icon spritesheets.
  * @param iconStr The icon name to load.
- * @param cb The callback once the icons are loaded.
- * @returns This function does not return.
+ * @returns A promise that resolves to `true`
  */
 async function loadNewIcon(iconStr: string): Promise<boolean> {
 	const rawIconPlist = await fetch(`/iconkit/newicons/${iconStr}-hd.plist`);
 	const plist = await rawIconPlist.text()
 	const data = parseNewPlist(plist);
 	const sheetName = iconStr + "-sheet";
-	const texture = await PIXI.Assets.load({ alias: sheetName, src: `/iconkit/newicons/${iconStr}-hd.png` });
+	const texture = await PIXI.Assets.load({
+		alias: sheetName,
+		src: `/iconkit/newicons/${iconStr}-hd.png`
+	});
 	Object.keys(data).forEach(frameName => {
 		const bounds = data[frameName];
 		const textureRect = new PIXI.Rectangle(bounds.pos[0], bounds.pos[1], bounds.size[0], bounds.size[1]);
@@ -288,13 +291,12 @@ export function rgbToDecimal(rgb: Color3B): number {
 // very shitty code :) i suck at this stuff
 
 /**
- * Render the selected icon. Not thread-safe.
+ * Render all missing icons in the current page.
+ * Not thread-safe.
  */
 export function renderIcons() {
-	// if (overrideLoader) return;
 	const iconsToRender = $('gdicon:not([rendered], [dontload])');
 	if (iconsToRender.length < 1) return; // There are no icons to render
-	// if (loader.loading) return overrideLoader = true;
 	buildIcon(iconsToRender, 0);
 }
 
@@ -302,6 +304,7 @@ export function renderIcons() {
  * Auxiliary function to render icons in a page.
  * @param elements The list of GDIcon elements.
  * @param current The current index of the element.
+ * @returns A Promise that resolves to `void`.
  */
 export async function buildIcon(elements: JQuery<HTMLElement>, current: number = 0) {
 	if (current >= elements.length) return;
@@ -369,7 +372,6 @@ export class Icon {
 
 	/**
 	 * @param data The icon configuration.
-	 * @param cb The callback once the icon is loaded.
 	 */
 	constructor(data: IIconConfiguration) {
 		this.app = data.app;

@@ -1,3 +1,7 @@
+/**
+ * @fileoverview Site-specific script for the level lists page.
+ */
+
 $("#refreshButton").on("click", function() {
 	location.reload();
 });

@@ -1,0 +1,94 @@
+doctype html
+html(lang="en")
+	head
+		title List Search
+		meta(charset="UTF-8")
+		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
+		link(rel="icon", href="/assets/coin.png")
+		meta(id="meta-title", property="og:title", content="List Search")
+		meta(id="meta-desc", property="og:description", content="Search for Geometry Dash lists, and filter by difficulty, category + more!")
+		meta(id="meta-image", name="og:image", content="/assets/coin.png", itemprop="image")
+		meta(name="twitter:card", content="summary")
+	body.levelBG
+		#everything
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
+				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh" })
+
+			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
+				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh", transform: "scaleX(-1)", "pointer-events": "none" })
+
+			.transparentBox.center(style={ width: "115vh", height: "9%", margin: "1.5% auto 1% auto", "padding-bottom": "0.2%" })
+				input#levelName(type="text", placeholder="Enter a list name or ID", maxlength="20", style={ width: "74.6%" })
+				img#searchBtn.valign.gdButton.levelSearch(search="0", src="/assets/search.png", style={ width: "20%", "margin-left": "1%", "margin-bottom": "2.2%"})
+
+			.center
+				h1.smaller Quick Search
+
+			.transparentBox.center(style={ width: "115vh", height: "24%", margin: "0.5% auto 1% auto", "padding-top": "1.1%" })
+				img.valign.gdButton.spaced.levelSearch(src="/assets/textbuttons/top.png", search="mostdownloaded", style={ height: "40%" })
+				span(style={ "margin-right": "3%"})
+				img.valign.gdButton.spaced.levelSearch(src="/assets/textbuttons/liked.png", search="mostliked", style={ height: "40%" })
+				br
+				img.valign.gdButton.spaced.levelSearch(src="/assets/textbuttons/featured.png", search="featured", style={ height: "40%", "margin-right": "2%" })
+				img.valign.gdButton.spaced.levelSearch(src="/assets/textbuttons/recent.png", search="recent", style={ height: "40%", "margin-right": "2%" })
+				img#followedSearch.valign.gdButton.spaced.levelSearch(src="/assets/textbuttons/followed.png", search="followed", style={ height: "40%" })
+
+			.center
+				h1.smaller Filters
+
+			#difficulties.transparentBox.center(style={ width: "115vh", height: "24%", margin: "0.5% auto 1% auto", "padding-top": "0.5%", "padding-bottom": "0.5%" })
+				.diffDiv.gdButton(diff="-1")
+					img(src="/assets/difficulties/unrated.png")
+					h3.mini N/A
+				.diffDiv.gdButton(diff="1")
+					img(src="/assets/difficulties/easy.png")
+					h3.mini Easy
+				.diffDiv.gdButton(diff="2")
+					img(src="/assets/difficulties/normal.png")
+					h3.mini Normal
+				.diffDiv.gdButton(diff="3")
+					img(src="/assets/difficulties/hard.png")
+					h3.mini Hard
+				.diffDiv.gdButton(diff="4")
+					img(src="/assets/difficulties/harder.png")
+					h3.mini Harder
+				.diffDiv.gdButton(diff="5")
+					img(src="/assets/difficulties/insane.png")
+					h3.mini Insane
+
+				.diffDiv.gdButton(diff="-2")
+					img(src="/assets/difficulties/demon.png", style={ width: "85%" })
+					h3.mini Demon
+
+				.diffDiv.gdButton(diff="-3")
+					img(src="/assets/difficulties/auto.png")
+					h3.mini Auto
+
+				br
+
+				.diffDiv.gdButton.demonDiff(diff="7", style={ "margin-left": "3.5%" })
+					img(src="/assets/difficulties/demon-easy.png", style={ width: "calc(75% * 240 / 220)" })
+					h3.normalWhitespace.mini.center Easy Demon
+				.diffDiv.gdButton.demonDiff(diff="8")
+					img(src="/assets/difficulties/demon-medium.png", style={ width: "calc(75% * 240 / 215)" })
+					h3.normalWhitespace.mini.center Medium Demon
+				.diffDiv.gdButton.demonDiff(diff="6")
+					img(src="/assets/difficulties/demon-hard.png", style={ width: "calc(75% * 240 / 220)" })
+					h3.normalWhitespace.mini.center Hard Demon
+				.diffDiv.gdButton.demonDiff(diff="9")
+					img(src="/assets/difficulties/demon-insane.png", style={ width: "calc(75% * 240 / 210)" })
+					h3.normalWhitespace.mini.center Insane Demon
+				.diffDiv.gdButton.demonDiff(diff="10")
+					img(src="/assets/difficulties/demon-extreme.png", style={ width: "calc(75% * 240 / 204)" })
+					h3.normalWhitespace.mini.center Extreme Demon
+
+				#starCheck.lengthDiv
+					img.gdButton(src="/assets/star.png", style={ height: "6vh", "margin-bottom": "50%" })
+
+			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
+				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
+
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
+		script(type="module", src="/vendor/index.js")
+		script(type="module", src="/misc/global.js")
+		script(type="module", src="/scripts/listfilters.js")

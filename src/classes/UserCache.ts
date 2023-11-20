@@ -67,11 +67,11 @@ export class UserCache{
 	 * @param name The user's name on the GD servers.
 	 * @returns A string array of cached data.
 	 */
-	userCache(id: string, accountID: string, playerID: string, name: string): [string, string, string] | void {
+	userCache(id: string, accountID: string, playerID: string, name: string): [string, string, string] {
 		// Never cache RobTop.
-		if (!accountID || accountID == "0" || (name && name.toLowerCase() == "robtop" && accountID != "71") || !this.cacheAccountIDs) return;
+		if (!accountID || accountID == "0" || (name && name.toLowerCase() == "robtop" && accountID != "71") || !this.cacheAccountIDs) return ["71", "16", "robtop"];
 		if (!playerID) return this.accountCache[id][accountID.toLowerCase()];
-		let cacheStuff: [string, string, string] = [accountID, playerID, name];
+		const cacheStuff: [string, string, string] = [accountID, playerID, name];
 		this.accountCache[id][name.toLowerCase()] = cacheStuff;
 		return cacheStuff;
 	}
