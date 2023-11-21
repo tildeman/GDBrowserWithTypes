@@ -26,14 +26,14 @@ I mean, sure. Why not.
 
 As this is nothing more than a side project, yes, you can add your own server into your own magical little fork by adding it to **servers.json**. Simply add a new object to the array with the following information:
 
-| Identifier       | Description                                                                                                                |
-|------------------|----------------------------------------------------------------------------------------------------------------------------|
-| `name`           | The display name of the server                                                                                             |
-| `link`           | The server's website URL (unrelated to the actual endpoint)                                                                |
-| `author`         | The creator(s) of the server                                                                                               |
-| `authorLink`     | The URL to open when clicking on the creator's name                                                                        |
-| `id`             | An ID for the server, also used as the subdomain (e.g. `something` would become `something.gdbrowser.com`)                 |
-| `endpoint`       | The actual endpoint to ~~spam~~ send requests to (e.g. `http://boomlings.com/database/` - make sure it ends with a slash!) |
+| Identifier       | Description                                                                                                                 |
+|------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `name`           | The display name of the server.                                                                                             |
+| `link`           | The server's website URL (unrelated to the actual endpoint).                                                                |
+| `author`         | The creator(s) of the server.                                                                                               |
+| `authorLink`     | The URL to open when clicking on the creator's name.                                                                        |
+| `id`             | An ID for the server, also used as the subdomain. (e.g. `something` would become `something.gdbrowser.com`)                 |
+| `endpoint`       | The actual endpoint to ~~spam~~ send requests to. (e.g. `http://boomlings.com/database/` - make sure it ends with a slash!) |
 
 
 There's also a few optional values for fine-tuning. I'll add more over time
@@ -45,7 +45,7 @@ There's also a few optional values for fine-tuning. I'll add more over time
 | `disabled`          | An array of menu buttons to "disable" (mappacks, gauntlets, daily, weekly, etc). They appear greyed out but are still clickable.           | `string[]`               |
 | `pinned`            | "Pins" the server to the top of the GDPS list. It appears above all unpinned servers and is not placed in alphabetical order.              | `boolean`                |
 | `onePointNine`      | Makes a bunch of fancy changes to better fit 1.9 servers. (removes orbs/diamonds, hides some pointless buttons, etc)                       | `boolean`                |
-| `weeklyLeaderboard` | Enables the lost but not forgotten Weekly Leaderboard, for servers that still milk it                                                      | `boolean`                |
+| `weeklyLeaderboard` | Enables the lost but not forgotten Weekly Leaderboard, for servers that still milk it.                                                     | `boolean`                |
 | `substitutions`     | A list of parameter substitutions, because some servers rename/obfuscate them. (e.g. `{ "levelID": "oiuyhxp4w9I" }`)                       | `Record<string, string>` |
 | `overrides`         | A list of endpoint substitutions, because some servers use renamed or older versions. (e.g. `{ "getGJLevels21": "dorabaeChooseLevel42" }`) | `Record<string, string>` |
 
@@ -145,9 +145,9 @@ The original repository didn't have this folder; the routes were all packaged in
 
 This does seem a lot like ravioli code, but it may aid in readability.
 
-### Templates
+### Templates + Views
 
-This is the "views" part in the MVC model if you're familiar with that. I will call them templates to help make it easier to understand.
+This is the "views" part in the MVC model if you're familiar with that. I will call all them templates to help make it easier to understand.
 
 These are the "new" templates that are made to replace the contents in `/html`, notably those about levels and profiles.
 

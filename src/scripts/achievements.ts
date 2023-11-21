@@ -4,6 +4,16 @@
 
 import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements.js";
 import { Color3B } from "../types/miscellaneous.js";
+import { Handlebars } from "../vendor/index.js";
+
+const searchResultTemplateString = await (await fetch("/templates/achievements_searchResult.hbs")).text();
+const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
+
+const rewardFilterTemplateString = await (await fetch("/templates/achievements_rewardFilter.hbs")).text();
+const rewardFilterTemplate = Handlebars.compile(rewardFilterTemplateString);
+
+const typeFilterTemplateString = await (await fetch("/templates/achievements_typeFilter.hbs")).text();
+const typeFilterTemplate = Handlebars.compile(typeFilterTemplateString);
 
 interface IDisabledFilters {
 	reward: string[];
@@ -24,30 +34,79 @@ let completed = false;
 
 const formStr = ["Icon", "Ship", "Ball", "UFO", "Wave", "Robot", "Spider", "Trail", "Death Effect", "Primary Color", "Secondary Color", "Misc"];
 forms.concat(["trail", "deathEffect", "color1", "color2", "misc"]).forEach((property, propertyIndex) => {
-	$('#forms').append(`<img class="gdButton achFilter rewardFilter" filter="${property}" title="${formStr[propertyIndex]}" src="/assets/${propertyIndex > 8 ? "achievements" : "iconkitbuttons"}/${property}_on.png" style="margin: 0% 0.75%; height:7vh">`);
+	// $('#forms').append(`<img class="gdButton achFilter rewardFilter" filter="${property}" title="${formStr[propertyIndex]}" src="/assets/${propertyIndex > 8 ? "achievements" : "iconkitbuttons"}/${property}_on.png" style="margin: 0% 0.75%; height:7vh">`);
+	$('#forms').append(rewardFilterTemplate({
+		property,
+		propertyForm: formStr[propertyIndex],
+		iconSource: propertyIndex > 8 ? "achievements" : "iconkitbuttons"
+	}));
 });
+
+interface ISearchResultEntryTemplateParams {
+	inForms: boolean;
+	isColor: boolean;
+	title?: string;
+	iconPath: string;
+	col?: Color3B;
+	achGameColor: string;
+	achItem: IAchievementItem;
+	completed: boolean;
+	completedColor: string;
+	completedDescription: string;
+}
 
 function append(reset: boolean = true) {
 	$('#searchBox').html(`<div style="height: 4.5%"></div>`);
 	achievements.forEach(achItem => {
 		let iconImg = `"`;
-		if (forms.includes(achItem.rewardType)) iconImg = `/iconkit/premade/${achItem.rewardType}_${achItem.rewardID}.png" style="width: 90%" title="${achItem.rewardType}_${achItem.rewardID < 10 ? "0" : ""}${achItem.rewardID}"`;
+		const appendTemplateData: ISearchResultEntryTemplateParams = {
+			inForms: false,
+			isColor: false,
+			iconPath: "coin",
+			col: { r: 0, g: 0, b: 0 },
+			achGameColor: gameColors[achItem.game],
+			achItem,
+			completed,
+			completedColor: completed ? "yellow" : "white",
+			completedDescription: completed ? achItem.achievedDescription : achItem.description
+		}
+		if (forms.includes(achItem.rewardType)) {
+			// iconImg = `/iconkit/premade/${achItem.rewardType}_${achItem.rewardID}.png" style="width: 90%" title="${achItem.rewardType}_${achItem.rewardID < 10 ? "0" : ""}${achItem.rewardID}"`;
+			appendTemplateData.inForms = true;
+			appendTemplateData.title = `${achItem.rewardType}_${achItem.rewardID < 10 ? "0" : ""}${achItem.rewardID}`;
+		}
 		else if (achItem.rewardType.startsWith("color")) {
 			const col = colors[achItem.rewardID];
 			const colType = achItem.rewardType.slice(5);
-			iconImg = `/assets/col${colType}.png" class="colorCircle" title="${colType == "1" ? "Primary" : "Secondary"} Color ${achItem.rewardID}" style="width: 80%; background-color: rgb(${col.r}, ${col.g}, ${col.b})"`;
+			// iconImg = `/assets/col${colType}.png" class="colorCircle" title="${colType == "1" ? "Primary" : "Secondary"} Color ${achItem.rewardID}" style="width: 80%; background-color: rgb(${col.r}, ${col.g}, ${col.b})"`;
+			appendTemplateData.isColor = true;
+			appendTemplateData.title = `${colType == "1" ? "Primary" : "Secondary"} Color ${achItem.rewardID}`;
+			appendTemplateData.iconPath = "col" + colType;
+			appendTemplateData.col = col;
 		}
-		else if (achItem.rewardType == "deathEffect") iconImg = `/assets/deatheffects/${achItem.rewardID}.png" style="width: 85%" title="Death Effect ${achItem.rewardID}"`;
-		else if (achItem.rewardType == "trail") iconImg = `/assets/trails/${achItem.rewardID}.png" style="width: 85%" title="Trail ${achItem.rewardID}"`;
-		else if (achItem.rewardType == "misc") iconImg = `/assets/coin.png" style="width: 85%"`;
+		else if (achItem.rewardType == "deathEffect") {
+			// iconImg = `/assets/deatheffects/${achItem.rewardID}.png" style="width: 85%" title="Death Effect ${achItem.rewardID}"`;
+			appendTemplateData.title = `Death Effect ${achItem.rewardID}`;
+			appendTemplateData.iconPath = `deatheffects/${achItem.rewardID}`;
+		}
+		else if (achItem.rewardType == "trail") {
+			// iconImg = `/assets/trails/${achItem.rewardID}.png" style="width: 85%" title="Trail ${achItem.rewardID}"`;
+			appendTemplateData.title = `Trail ${achItem.rewardID}`;
+			appendTemplateData.iconPath = `trails/${achItem.rewardID}`;
+		}
+		else if (achItem.rewardType == "misc") {
+			// iconImg = `/assets/coin.png" style="width: 85%"`;
+			appendTemplateData.iconPath = "coin";
+		}
 
-		$('#searchBox').append(`<div class="flex searchResult leaderboardSlot" style="align-items: center; height: 18%; width: 92%; padding-left: 3%; padding-top: 0%; overflow: hidden">
-			<div class="flex" style="width: 8%; margin-right: 2%"><img src="${iconImg}></div>
-			<div>
-				<h2 title="${achItem.trueID}" class="smallerer" style="font-size: 4.5vh; margin-top: 2vh; color: rgb(${gameColors[achItem.game]})">${achItem.name}</h2>
-				<p style="margin-top: 2vh; color:${completed ? "yellow" : "white"}">${completed ? achItem.achievedDescription : achItem.description}</p>
-			</div>
-		</div>`);
+		// $('#searchBox').append(`<div class="flex searchResult leaderboardSlot" style="align-items: center; height: 18%; width: 92%; padding-left: 3%; padding-top: 0%; overflow: hidden">
+		// 	<div class="flex" style="width: 8%; margin-right: 2%"><img src="${iconImg}></div>
+		// 	<div>
+		// 		<h2 title="${achItem.trueID}" class="smallerer" style="font-size: 4.5vh; margin-top: 2vh; color: rgb(${gameColors[achItem.game]})">${achItem.name}</h2>
+		// 		<p style="margin-top: 2vh; color:${completed ? "yellow" : "white"}">${completed ? achItem.achievedDescription : achItem.description}</p>
+		// 	</div>
+		// </div>`);
+		$("#searchBox").append(searchResultTemplate(appendTemplateData));
 	});
 	$('#searchBox').append('<div style="height: 4.5%"></div>');
 	if (reset) $('#searchBox').scrollTop(0);
@@ -55,7 +114,12 @@ function append(reset: boolean = true) {
 
 fetch('/api/achievements').then(res => res.json()).then((ach: IAchievementAPIResponse) => {
 	Object.keys(ach.types).forEach(achType => {
-		$('#types').append(`<img class="gdButton achFilter typeFilter" filter="${ach.types[achType][1].join(" ")}" src="/assets/achievements/${achType}.png" title="${ach.types[achType][0]}"  style="margin: 0.6% 0.4%; height:6vh">`);
+		// $('#types').append(`<img class="gdButton achFilter typeFilter" filter="${ach.types[achType][1].join(" ")}" src="/assets/achievements/${achType}.png" title="${ach.types[achType][0]}"  style="margin: 0.6% 0.4%; height:6vh">`);
+		$('#types').append(typeFilterTemplate({
+			achType,
+			filter: ach.types[achType][1].join(" "),
+			achTitle: ach.types[achType][0]
+		}));
 	});
 
 	achievements = ach.achievements;

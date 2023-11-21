@@ -1,0 +1,17 @@
+<div class="flex searchResult leaderboardSlot" style="align-items: center; height: 18%; width: 92%; padding-left: 3%; padding-top: 0%; overflow: hidden">
+	<div class="flex" style="width: 8%; margin-right: 2%">
+		{{#if inForms}}
+			<img src="/iconkit/premade/{{achItem.rewardType}}_{{achItem.rewardID}}.png" style="width: 90%" title="{{title}}">
+		{{else}}
+			{{#if isColor}}
+				<img class="colorCircle" src="/assets/{{iconPath}}.png" style="width: 80%; background-color: rgb({{col.r}}, {{col.g}}, {{col.b}})", title="{{title}}">
+			{{else}}
+				<img src="/assets/{{iconPath}}.png" style="width: 85%" title="{{title}}">
+			{{/if}}
+		{{/if}}
+	</div>
+	<div>
+		<h2 title="${achItem.trueID}" class="smallerer" style="font-size: 4.5vh; margin-top: 2vh; color: rgb(${gameColors[achItem.game]})">{{achItem.name}}</h2>
+		<p style="margin-top: 2vh; color:{{completedColor}}">{{completedDescription}}</p>
+	</div>
+</div>

@@ -5,4 +5,4 @@
 export * as PIXI from "pixi.js";
 export * as agPsd from "ag-psd";
 export * as Ease from "pixi-ease";
-export * as pug from "pug";
+export { default as Handlebars } from "handlebars";

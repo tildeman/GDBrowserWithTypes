@@ -65,10 +65,10 @@ app.use("/", searchRoutes(userCacheHandle));
 app.use("/", levelRoutes(userCacheHandle));
 app.use("/", postRoutes(userCacheHandle));
 app.use("/", redirectRoutes)
-app.use("/", miscRoutes);
 app.use("/", iconRoutes);
 
 app.use("/api", staticFileRoutes(userCacheHandle, appSafeServers));
+app.use("/", miscRoutes);
 
 app.use(handleTimeouts);
 
