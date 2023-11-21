@@ -1,0 +1,44 @@
+<h2 class="slightlySmaller">{{colorChannel}}</h2>
+<div class="colorSection">
+	<h3>Hex Code</h3>
+	<p>{{hex}}</p>
+</div>
+<div class="colorSection">
+	<h3>RGB</h3>
+	<p>{{col.r}} {{col.g}} {{col.b}}</p>
+</div>
+<div class="colorSection">
+	<h3>Opacity</h3>
+	<p>{{formattedOpacity}}</p>
+</div>
+<br>
+<div class="colorSection2" style="width: 40%; {{#unless col.copiedChannel}}margin-right: 55.4%{{/unless}}">
+	<div class="colorCheckbox"><h3><input {{#if P1}}checked{{/if}} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 1</h3></div>
+	<div class="colorCheckbox"><h3><input {{#if P2}}checked{{/if}} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 2</h3></div>
+	<div class="colorCheckbox"><h3><input {{#if col.blending}}checked{{/if}} type="checkbox"> <label class="gdcheckbox gdButton"></label>Blending</h3></div>
+	<div class="colorCheckbox"><h3><input {{#if col.copiedChannel}}checked{{/if}} type="checkbox"><label class="gdcheckbox gdButton"></label>Copy Color</h3></div>
+	<div class="colorCheckbox"><h3><input {{#if col.copyOpacity}}checked{{/if}} type="checkbox"><label class="gdcheckbox gdButton"></label>Copy Opacity</h3></div>
+</div>
+{{#if col.copiedChannel}}
+	<div class="colorSection2">
+		<div class="colorSection copyDetails">
+			<h3>Copied</h3>
+			<p>{{copiedDetails}}</p>
+		</div>
+		<div class="colorSection copyDetails">
+			<h3>Hue</h3>
+			<p>{{copiedHue}}</p>
+		</div>
+		<div class="colorSection copyDetails">
+			<h3>Saturation</h3>
+			<p>{{copiedSaturation}}</p>
+		</div>
+		<div class="colorSection copyDetails">
+			<h3>Brightness</h3>
+			<p>{{copiedBrightness}}</p>
+		</div>
+	</div>
+{{else}}
+	<div class="colorBox" style="background-color: rgba({{col.r}}, {{col.g}}, {{col.b}}, {{col.opacity}}); border-color: {{hex}}"></div>
+{{/if}}
+<br><img src="/assets/ok.png" style="width: 14%; margin-top: 4%" class="gdButton center" onclick="$('.popup').hide()">

@@ -1,0 +1,27 @@
+{{#if triplyEvenColIndex}}
+	<br>
+{{/if}}
+<div class="inline aColor">
+	<div class="color" channel="{{color.channel}}" style="background-color: rgba({{color.r}}, {{color.g}}, {{color.b}}, {{color.opacity}}); border: 0.4vh solid rgb({{color.r}}, {{color.g}}, {{color.b}})">
+		{{#if color.copiedChannel}}
+			<h3 class="copiedColor">C:{{color.copiedChannel}}</h3>
+		{{else}}
+			{{#if color.pColor}}
+				<h3 class="copiedColor">P{{color.pColor}}</h3>
+			{{else}}
+				{{#if color.blending}}
+					<h3 class="blendingDot">•</h3>
+				{{/if}}
+			{{/if}}
+		{{/if}}
+
+		{{#if copiedChannelAndHSV}}
+			<h3 class="copiedColor copiedHSV"> +HSV</h3>
+		{{/if}}
+
+		{{#if hasAlpha}}
+			<h3 class='copiedColor'>{{color.opacity}}%</h3>
+		{{/if}}
+	</div>
+	<h3 style="padding-top: 7%">{{colorChannelName}}</h3>
+</div>

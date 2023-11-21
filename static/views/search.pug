@@ -66,7 +66,7 @@ html(lang="en")
 				h2#pagenum.smaller(style={ "font-size": "4.5vh" })
 
 			div(title="Jump to page", style={ "text-align": "right", position: "absolute", top: "7.5%", right: "2%", height: "12%" })
-				img.gdButton(src="/assets/magnify.png", style={ height: "60%", "margin-top": "5%" }, onclick="$('#pageDiv').show(); $('#pageSelect').focus().select()")
+				img.gdButton(src="/assets/magnify.png", style={ height: "60%", "margin-top": "5%" }, onclick="$('#pageDiv').show(); $('#pageSelect').trigger('focus').trigger('select')")
 
 			#shuffle(title="Random level", style={ display: "none", "text-align": "right", position: "absolute", top: "7.5%", right: "6.5%", height: "12%" })
 				img.gdButton(src="/assets/random.png", style={ height: "60%", "margin-top": "5%" })
@@ -105,5 +105,4 @@ html(lang="en")
 		script(type="module", src="/vendor/index.js")
 		script(type="module", src="/misc/global.js")
 		script(type="module", src="/dragscroll.js")
-		//- Quite a cheesy solution, but hey, things change
 		script(type="module", src="/scripts/search.js")

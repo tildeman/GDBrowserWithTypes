@@ -297,7 +297,7 @@ $('#weeklyStats').on("click", function() {
 
 $('#findRelative').on("click", function() {
 	$('#userSearch').show();
-	$('#relativeName').focus().select();
+	$('#relativeName').trigger("focus").trigger("select");
 });
 
 let relativeLoading = false;

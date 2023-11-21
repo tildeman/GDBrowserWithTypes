@@ -5,6 +5,26 @@
 import { IAnalysisResult, IAnalysisColorObject } from "../types/analyses.js";
 import { Color3B, ErrorObject } from "../types/miscellaneous.js";
 import { toggleEscape, clean } from "../misc/global.js";
+import { Handlebars } from "../vendor/index.js";
+
+const portalDivisionTemplateString = await (await fetch("/templates/analyze_portalDivision.hbs")).text();
+const portalDivisionTemplate = Handlebars.compile(portalDivisionTemplateString);
+
+const objectDivisionTemplateString = await (await fetch("/templates/analyze_objectDivision.hbs")).text();
+const objectDivisionTemplate = Handlebars.compile(objectDivisionTemplateString);
+
+const groupDivisionTemplateString = await (await fetch("/templates/analyze_groupDivision.hbs")).text();
+const groupDivisionTemplate = Handlebars.compile(groupDivisionTemplateString);
+
+const styleDivisionTemplateString = await (await fetch("/templates/analyze_styleDivision.hbs")).text();
+const styleDivisionTemplate = Handlebars.compile(styleDivisionTemplateString);
+
+const colorInfoTemplateString = await (await fetch("/templates/analyze_colorInfo.hbs")).text();
+const colorInfoTemplate = Handlebars.compile(colorInfoTemplateString);
+
+const colorPropertiesTemplateString = await (await fetch("/templates/analyze_colorProperties.hbs")).text();
+const colorPropertiesTemplate = Handlebars.compile(colorPropertiesTemplateString);
+
 
 let disabledPortals: string[] = [];
 let altTriggerSort = false;
@@ -36,11 +56,11 @@ if ("error" in res) {
 		case 2:
 			$('#errorMessage').html("This level could not be be <cr>downloaded</cr>. Either the servers rejected the request, or the level simply <co>doesn't exist at all</co>.");
 			break;
-		case 5:
-			$('#errorMessage').html("This level's data appears to be <cr>corrupt</cr> and cannot be <cy>parsed</cy>. It most likely won't load in GD.");
-			break;
 		case 4:
 			$('#errorMessage').html("This level's data could not be obtained because <ca>RobTop</ca> has disabled <cg>level downloading</cg>.");
+			break;
+		case 5:
+			$('#errorMessage').html("This level's data appears to be <cr>corrupt</cr> and cannot be <cy>parsed</cy>. It most likely won't load in GD.");
 			break;
 	}
 	toggleEscape(false, true);
@@ -53,8 +73,8 @@ $('#levelName').text(res.level.name);
 $('#objectCount').text(commafy(res.objects) + " objects");
 document.title = "Analysis of " + res.level.name;
 
-$('#meta-title').attr('content',  "Analysis of " + res.level.name);
-$('#meta-desc').attr('content',  `${res.portals.length}x portals, ${res.orbs.total || 0}x orbs, ${res.triggers.total || 0}x triggers, ${res.misc.glow || 0}x glow...`);
+$('#meta-title').attr('content', "Analysis of " + res.level.name);
+$('#meta-desc').attr('content', `${res.portals.length}x portals, ${res.orbs.total || 0}x orbs, ${res.triggers.total || 0}x triggers, ${res.misc.glow || 0}x glow...`);
 
 
 const hdPercent = (res.highDetail / res.objects) * 100;
@@ -74,7 +94,7 @@ const colorList = Object.keys(res.colors);
 let portals = res.portals;
 
 /**
- * Select every third digit of a string or number, then separate them using commas.
+ * Select every three digits of a string or number, then separate them using commas.
  * @param num The string or a number to split into commas
  * @returns A comma-separated string
  *
@@ -88,16 +108,45 @@ function commafy(num: string | number) {
 	return (+num || 0).toString().replace(/(\d)(?=(\d\d\d)+$)/g, "$1,");
 }
 
+interface IPortalInfo {
+	portalName: string;
+	extraClasses: string;
+	portalPos: string;
+	addDivider: boolean;
+}
+
 /**
  * Append portals into the result page
  */
 function appendPortals() {
 	if ("error" in res) return;
 	$('#portals').html("");
-	if (res.settings.gamemode && res.settings.gamemode != "cube" && !disabledPortals.includes('form')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='/assets/objects/portals/${res.settings.gamemode}.png'><h3>Start</h3></div><img class="divider portalImage" src="/assets/divider.png" style="margin: 1.3% 0.8%">`);
-	if (res.settings.startMini && !disabledPortals.includes('size')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='/assets/objects/portals/mini.png'><h3>Start</h3></div><img class="divider portalImage" src="/assets/divider.png" style="margin: 1.3% 0.8%">`);
-	if (res.settings.speed && res.settings.speed != "1x" && !disabledPortals.includes('speed')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage speedPortal" src='/assets/objects/portals/${res.settings.speed}.png'><h3>Start</h3></div><img class="divider portalImage" src="/assets/divider.png" style="margin: 1.3% 0.8%">`);
-	if (res.settings.startDual && !disabledPortals.includes('dual')) $('#portals').append(`<div class="inline portalDiv"><img class="portalImage" src='/assets/objects/portals/dual.png'><h3>Start</h3></div><img class="divider portalImage" src="/assets/divider.png" style="margin: 1.3% 0.8%">`);
+
+	const portalStartData: IPortalInfo = {
+		portalName: "",
+		extraClasses: "",
+		portalPos: "Start",
+		addDivider: true
+	};
+
+	if (res.settings.gamemode && res.settings.gamemode != "cube" && !disabledPortals.includes('form')) {
+		portalStartData.portalName = res.settings.gamemode;
+		$("#portals").append(portalDivisionTemplate(portalStartData));
+	}
+	if (res.settings.startMini && !disabledPortals.includes('size')) {
+		portalStartData.portalName = "mini";
+		$("#portals").append(portalDivisionTemplate(portalStartData));
+	}
+	if (res.settings.speed && res.settings.speed != "1x" && !disabledPortals.includes('speed')) {
+		portalStartData.portalName = res.settings.speed;
+		portalStartData.extraClasses = " speedPortal";
+		$("#portals").append(portalDivisionTemplate(portalStartData));
+		portalStartData.extraClasses = "";
+	}
+	if (res.settings.startDual && !disabledPortals.includes('dual')) {
+		portalStartData.portalName = "dual";
+		$("#portals").append(portalDivisionTemplate(portalStartData));
+	}
 
 	let dividerCount = $('.divider').length - 1;
 
@@ -107,7 +156,14 @@ function appendPortals() {
 
 	portals.forEach(portalItem => {
 		if (!portalItem || portalItem[0] == "") return;
-		$('#portals').append(`<div class="inline portalDiv"><img class="portalImage ${(portalItem[0] || "").match(/[0-9]x/) ? "speedPortal" : ""}" src='/assets/objects/portals/${portalItem[0]}.png'><h3>${portalItem[1]}</h3></div>`);
+
+		const portalData: IPortalInfo = {
+			portalName: portalItem[0] || "",
+			extraClasses: (portalItem[0] || "").match(/[0-9]x/) ? " speedPortal" : "",
+			portalPos: portalItem[1],
+			addDivider: false
+		};
+		$("#portals").append(portalDivisionTemplate(portalData));
 	});
 }
 
@@ -121,7 +177,10 @@ function appendTriggerGroups() {
 	if (!altTriggerSort) groupList = groupList.sort((groupA, groupB) => Number(groupA.slice(6)) - Number(groupB.slice(6)));
 	groupList.forEach(groupID => {
 		if (groupID == "total") $('#grouptext').text(`Trigger Groups (${commafy(res.triggerGroups[groupID])})`);
-		else $('#groups').append(`<div class="inline groupDiv"><h1 class="groupID">${groupID.slice(6)}</h1><h3 style="padding-top: 7%">x${commafy(res.triggerGroups[groupID])}</h3></div>`);
+		else $("#groups").append(groupDivisionTemplate({
+			groupID: groupID.slice(6),
+			groupCount: commafy(res.triggerGroups[groupID])
+		}));
 	});
 }
 
@@ -136,13 +195,25 @@ if (!res.coins || !res.coins.length) {
 else {
 	$('#coinText').text(`User Coins (${res.coins.length})`);
 	res.coins.forEach(coinPos => {
-		$('#coins').append(`<div class="inline orbDiv"><img style="height: 10vh;" src='/assets/objects/${res.coinsVerified ? "coin" : "browncoin"}.png'><h3 style="padding-top: 7%">${coinPos}%</h3></div>`);
+		$("#coins").append(objectDivisionTemplate({
+			objType: "orb",
+			objIcon: res.coinsVerified ? "coin" : "browncoin",
+			objName: `${coinPos}%`,
+			height: 10,
+			pad: 7
+		}));
 	});
 }
 
 triggerList.forEach(triggerType => {
 	if (triggerType == "total") $('#triggerText').text(`Triggers (${commafy(res.triggers[triggerType])})`);
-	else $('#triggers').append(`<div class="inline triggerDiv"><img style="height: 10vh;" src='/assets/objects/triggers/${triggerType}.png'><h3 style="padding-top: 7%">x${commafy(res.triggers[triggerType])}</h3></div>`);
+	else $("#triggers").append(objectDivisionTemplate({
+		objType: "trigger",
+		objIcon: `triggers/${triggerType}`,
+		objName: "x" + commafy(res.triggers[triggerType]),
+		height: 10,
+		pad: 7
+	}));
 });
 
 if (res.invisibleGroup) {
@@ -152,16 +223,35 @@ if (res.invisibleGroup) {
 
 orbList.forEach(orbType => {
 	if (orbType == "total") $('#orbText').text(`Jump Rings (${commafy(res.orbs[orbType])})`);
-	else $('#orbs').append(`<div class="inline orbDiv"><img style="height: 10vh;" src='/assets/objects/orbs/${orbType}.png'><h3 style="padding-top: 7%">x${commafy(res.orbs[orbType])}</h3></div>`);
+	else $("#orbs").append(objectDivisionTemplate({
+		objType: "orb",
+		objIcon: `orbs/${orbType}`,
+		objName: "x" + commafy(res.orbs[orbType]),
+		height: 10,
+		pad: 7
+	}));
 });
 
 blockList.forEach(blockType => {
-	$('#blocks').append(`<div class="inline blockDiv"><img style="height: 9vh;" src='/assets/objects/blocks/${blockType}.png'><h3 style="padding-top: 15%">x${commafy(res.blocks[blockType])}</h3></div>`);
+	$("#blocks").append(objectDivisionTemplate({
+		objType: "block",
+		objIcon: `blocks/${blockType}`,
+		objName: "x" + commafy(res.blocks[blockType]),
+		height: 9,
+		pad: 15
+	}));
 });
 
 miscList.forEach(itemType => {
 	if (itemType == "objects") return;
-	else $('#misc').append(`<div class="inline miscDiv"><img style="height: 8vh;" src='/assets/objects/${itemType.slice(0, -1)}.png'><h3 style="padding-top: 15%">x${commafy(res.misc[itemType][0])}<br>${res.misc[itemType][1]}</h3></div>`);
+	else $("#misc").append(objectDivisionTemplate({
+		objType: "misc",
+		objIcon: itemType.slice(0, -1),
+		objName: `x${commafy(res.misc[itemType][0])}`,
+		objName2: res.misc[itemType][1],
+		height: 8,
+		pad: 15
+	}));
 });
 
 
@@ -174,22 +264,37 @@ if (!bgCol) bgCol = {r: 40, g: 125, b: 255};
 if (!grCol) grCol = {r: 0, g: 102, b: 255};
 // else if (grCol.r < 35 && grCol.g < 35 && grCol.b < 35) grCol = {r: 75, g: 75, b: 75}; // If the colors are almost black, pitch them up.
 
-$('#style').append(`<div class="inline styleDiv styleBG" style='background-color: rgb(${clean(bgCol.r)}, ${clean(bgCol.g)}, ${clean(bgCol.b)})'><img style="height: 12vh;" src='/assets/levelstyle/bg-${res.settings.background}.png'></div>`);
-$('#style').append(`<div class="inline styleDiv styleBG" style='background-color: rgb(${clean(grCol.r)}, ${clean(grCol.g)}, ${clean(grCol.b)})'><img style="height: 12vh;" src='/assets/levelstyle/gr-${res.settings.ground}.png'></div>`);
-$('#style').append(`<div class="inline styleDiv"><img style="height: 11vh;" src='/assets/levelstyle/font-${res.settings.font}.png'></div>`);
-$('#style').append(`<div class="inline styleDiv"><img style="height: 12vh;" src='/assets/levelstyle/line-${res.settings.alternateLine ? 2 : 1}.png'></div>`);
+$("#style").append(styleDivisionTemplate({
+	styleName: `bg-${res.settings.background}`,
+	col: bgCol
+}));
+$("#style").append(styleDivisionTemplate({
+	styleName: `gr-${res.settings.ground}`,
+	col: grCol
+}));
+$("#style").append(styleDivisionTemplate({
+	styleName: `font-${res.settings.font}`,
+	shiftUp: true
+}));
+$("#style").append(styleDivisionTemplate({
+	styleName: `line-${res.settings.alternateLine ? 2 : 1}`
+}));
+
 if (res.settings.twoPlayer) {
-	$('#style').append(`<div class="inline styleDiv"><img style="height: 12vh;" src='/assets/levelstyle/mode-2p.png'></div>`);
+	$("#style").append(styleDivisionTemplate({
+		styleName: "mode-2p"
+	}));
 }
 
 colorList.forEach((colorItem, colorIndex) => {
-	const color = res.colors[colorItem];
-
-	$('#colorDiv').append(`${colorIndex % 8 == 0 ? "<brr>" : ""}<div class="inline aColor"><div class="color" channel="${color.channel}" style="background-color: rgba(${clean(color.cr || color.r)}, ${clean(color.cg || color.g)}, ${clean(color.cb || color.b)}, ${clean(color.opacity)}); border: 0.4vh solid rgb(${color.r}, ${color.g}, ${color.b})">
-		${color.copiedChannel ? `<h3 class='copiedColor'>C:${color.copiedChannel}</h3>` : color.pColor ? `<h3 class='copiedColor'>P${color.pColor}</h3>` : color.blending ? "<h3 class='blendingDot'>•</h3>" : ""}
-		${color.copiedChannel && color.copiedHSV ? `<h3 class='copiedColor copiedHSV'> +HSV</h3>` : ""}
-		${color.opacity != "1" ? `<h3 class='copiedColor'>${color.opacity}%</h3>` : ""}
-		</div><h3 style="padding-top: 7%">${color.channel > 0 ? "Col " + color.channel : color.channel}</h3></div>`);
+	const color: IAnalysisColorObject = res.colors[colorItem];
+	$("#colorDiv").append(colorInfoTemplate({
+		triplyEvenColIndex: colorIndex % 8 == 0,
+		color,
+		copiedChannelAndHSV: color.copiedChannel && color.copiedHSV,
+		hasAlpha: color.opacity != 1,
+		colorChannelName: (+color.channel) > 0 ? "Col " + color.channel : color.channel
+	}));
 });
 
 if (colorList.length == 0) {
@@ -234,7 +339,7 @@ $('#revealCode').on("click", function() {
 	window.setTimeout(function () { //small delay so "loading" message appears
 		$('#levelCode').html(`<p class="codeFont">${clean(res.data).replace(/\n/g, "<br>")}</p>`);
 	}, 50);
-	$('#levelCode').focus().select();
+	$("#levelCode").trigger("focus").trigger("select");
 });
 
 $(document).on('click', '.color', function() {
@@ -246,49 +351,18 @@ $(document).on('click', '.color', function() {
 		hsv.v = Math.round(Number(hsv.v) * 100) / 100;
 	}
 	const hex = "#" + ((1 << 24) + (+col.r << 16) + (+col.g << 8) + +col.b).toString(16).slice(1);
-	$('#colorStuff').html(`
-	<h2 class="slightlySmaller">${isNaN(+(col.channel || "")) ? col.channel : "Color " + col.channel}</h2>
-		<div class="colorSection">
-			<h3>Hex Code</h3>
-			<p>${hex}</p>
-		</div>
-		<div class="colorSection">
-			<h3>RGB</h3>
-			<p>${clean(col.r)}, ${clean(col.g)}, ${clean(col.b)}</p>
-		</div>
-		<div class="colorSection">
-			<h3>Opacity</h3>
-			<p>${Number(col.opacity).toFixed(2)}</p>
-		</div>
-		<br>
-		<div class="colorSection2" style="width: 40%; ${col.copiedChannel ? "" : "margin-right:55.4%"}">
-			<div class="colorCheckbox"><h3><input ${col.pColor == "1" ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 1</h3></div>
-			<div class="colorCheckbox"><h3><input ${col.pColor == "2" ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Player 2</h3></div>
-			<div class="colorCheckbox"><h3><input ${col.blending ? "checked" : ""} type="checkbox"> <label class="gdcheckbox gdButton"></label>Blending</h3></div>
-			<div class="colorCheckbox"><h3><input ${col.copiedChannel ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Copy Color</h3></div>
-			<div class="colorCheckbox"><h3><input ${col.copyOpacity ? "checked" : ""} type="checkbox"><label class="gdcheckbox gdButton"></label>Copy Opacity</h3></div>
-		</div>
-		${col.copiedChannel ? `
-		<div class="colorSection2">
-			<div class="colorSection copyDetails">
-				<h3>Copied</h3>
-				<p>${isNaN(col.copiedChannel) ? col.copiedChannel : "Col " + col.copiedChannel}</p>
-			</div>
-			<div class="colorSection copyDetails">
-				<h3>Hue</h3>
-				<p>${!hsv ? 0 : +hsv.h > 0 ? "+" + hsv.h : hsv.h}</p>
-			</div>
-			<div class="colorSection copyDetails">
-				<h3>Saturation</h3>
-				<p>${!hsv ? "x1.00" : !hsv['s-checked'] ? "x" + hsv.s : hsv.s > 0 ? "+" + hsv.s : hsv.s}</p>
-			</div>
-			<div class="colorSection copyDetails">
-				<h3>Brightness</h3>
-				<p>${!hsv ? "x1.00" : !hsv['v-checked'] ? "x" + hsv.v : hsv.v > 0 ? "+" + hsv.v : hsv.v}</p>
-			</div>
-		</div>`
-		: `<div class="colorBox" style="background-color: rgba(${clean(col.r)}, ${clean(col.g)}, ${clean(col.b)}, ${clean(col.opacity)}); border-color: ${hex}"></div>`}
-		<br><img src="/assets/ok.png" style="width: 14%; margin-top: 4%" class="gdButton center" onclick="$('.popup').hide()">`);
+	$("#colorStuff").html(colorPropertiesTemplate({
+		colorChannel: isNaN(+(col.channel || "")) ? col.channel : "Color " + col.channel,
+		hex,
+		col,
+		formattedOpacity: Number(col.opacity).toFixed(2),
+		P1: col.pColor == "1",
+		P2: col.pColor == "2",
+		copiedDetails: isNaN(col.copiedChannel || NaN) ? "NaN" : "Col " + col.copiedChannel!.toString(),
+		copiedHue: !hsv ? 0 : +hsv.h > 0 ? "+" + hsv.h : hsv.h,
+		copiedSaturation: !hsv ? "x1.00" : !hsv['s-checked'] ? "x" + hsv.s : hsv.s > 0 ? "+" + hsv.s : hsv.s,
+		copiedBrightness: !hsv ? "x1.00" : !hsv['v-checked'] ? "x" + hsv.v : hsv.v > 0 ? "+" + hsv.v : hsv.v
+	}));
 	$('#colorInfo').show();
 });
 

@@ -563,8 +563,8 @@ $("#cpU").on('input change', function() {
 $("#getUserIcon").on("click", function() {
 	$(`.copyForm[form=${currentForm}]`).trigger('click');
 	$('#steal').show();
-	$('#playerName').focus();
-	$('#playerName').select();
+	$('#playerName').trigger("focus");
+	$('#playerName').trigger("select");
 });
 
 $('#copyToClipboard').on("click", function() {
