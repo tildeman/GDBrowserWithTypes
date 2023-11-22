@@ -2,7 +2,6 @@
  * @fileoverview Routing page for curated level lists (by RobTop or from other users).
  */
 
-import { fetchTemplate } from "../lib/templateHandle.js";
 import gauntletController from "../api/gauntlets.js";
 import { UserCache } from "../classes/UserCache.js";
 import mapPackController from "../api/mappacks.js";
@@ -22,8 +21,12 @@ export default function(cacheGauntlets: boolean, cacheMapPacks: boolean, userCac
 		listController(req, res, true, userCacheHandle);
 	});
 
-	router.get("/gauntlets", fetchTemplate("gauntlets"));
-	router.get("/mappacks", fetchTemplate("mappacks"));
+	router.get("/gauntlets", function(req, res) {
+		gauntletController(req, res, cacheGauntlets, false);
+	});
+	router.get("/mappacks", function(req, res) {
+		mapPackController(req, res, cacheMapPacks, false);
+	});
 	router.get("/list/:id", function(req, res) {
 		listController(req, res, false, userCacheHandle);
 	});

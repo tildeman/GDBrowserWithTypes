@@ -15,10 +15,23 @@ html(lang="en")
 			.center(style={ margin: "2.5% auto 2% auto", width: "50%" })
 				h1(style={ transform: "scale(1.2)" }) Map Packs
 
-			img#loading.spin.noselect(style={ "margin-top": "1%", height: "12%" }, src="/assets/loading.png")
-
 			#packList
 				br
+				each packItem in mappacks
+					.mappack
+						a(href=`/search/${packItem.levels.join(",")}?list&header=${encodeURIComponent(packItem.name)}`) 
+							img(src=`/assets/difficulties/${packItem.difficulty}.png`, style={ width: "42%" })
+							br
+							- splitPackName = packItem.name.split(" Pack")
+							h3.gauntletText
+								= splitPackName[0]
+								br
+								= "Pack" + (splitPackName[1] ? " " + splitPackName[1] : "")
+								br
+								span(style={ color: `rgb(${packItem.textColor})` })= packItem.stars
+								img.valign(src="/assets/star.png", style={ cursor: "help", width: "14%", "margin-left": "2%", transform: "translateY(-10%)" }, title="Stars")
+								span(style={ color: `rgb(${packItem.barColor})` })= packItem.coins
+								img.valign(src="/assets/coin.png", style={ cursor: "help", width: "14%", "margin-left": "2%", transform: "translateY(-10%)" }, title="Secret Coins")
 
 			div(style={ position: "absolute", top: "2%", left: "-1.95%", width: "10%", height: "25%", "pointer-events": "none" })
 				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
@@ -26,4 +39,3 @@ html(lang="en")
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
 		script(type="module", src="/vendor/index.js")
 		script(type="module", src="/misc/global.js")
-		script(type="module", src="/scripts/mappacks.js")

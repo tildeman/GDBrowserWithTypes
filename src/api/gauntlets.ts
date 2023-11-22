@@ -22,16 +22,18 @@ const gauntletNames = [
  * @param req The client request.
  * @param res The server response (to send the level details/error).
  * @param cacheMapPacks Whether to cache gauntlets.
+ * @param api Whether this is an API request.
  * @returns A list of gauntlets in JSON.
  */
-export default async function(req: Request, res: Response, cacheGauntlets: boolean) {
+export default async function(req: Request, res: Response, cacheGauntlets: boolean, api: boolean = true) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
 	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
 	const cached = cache[reqBundle.id];
 	if (cacheGauntlets && cached && cached.data && cached.indexed + 2000000 > Date.now()) {
-		return res.send(cached.data); // half hour cache
+		if (api) return res.send(cached.data); // half hour cache
+		else return res.render("gauntlets", { gauntlets: cached.data });
 	}
 
 	try {
@@ -48,7 +50,8 @@ export default async function(req: Request, res: Response, cacheGauntlets: boole
 			data: gauntletList,
 			indexed: Date.now()
 		};
-		res.send(gauntletList);
+		if (api) res.send(gauntletList);
+		else res.render("gauntlets", { gauntlets: gauntletList });
 	}
 	catch (err) {
 		return sendError(2, "Failed to fetch gauntlets upstream.");

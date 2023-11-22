@@ -21,16 +21,18 @@ const cache: Record<string, IMapPackCacheItem> = {};
  * @param req The client request.
  * @param res The server response (to send the level details/error).
  * @param cacheMapPacks Whether to cache map packs.
+ * @param api Whether this is an API request.
  * @returns A list of map packs in JSON.
  */
-export default async function(req: Request, res: Response, cacheMapPacks: boolean) {
+export default async function(req: Request, res: Response, cacheMapPacks: boolean, api: boolean = true) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
 	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
 	let cached = cache[reqBundle.id];
 	if (cacheMapPacks && cached && cached.data && cached.indexed + 5000000 > Date.now()) {
-		return res.send(cached.data); // 1.5 hour cache
+		if (api) return res.send(cached.data); // 1.5 hour cache
+		else return res.render("mappacks", { mappacks: cached.data });
 	}
 	const params = { count: 250, page: 0 };
 	let packs: Record<number, string>[] = [];
@@ -68,7 +70,8 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 					indexed: Date.now()
 				};
 			}
-			return res.send(mappacks);
+			if (api) return res.send(mappacks);
+			else return res.render("mappacks", { mappacks });
 		}
 		catch (err) {
 			return sendError(2, "Failed to fetch map packs upstream.");

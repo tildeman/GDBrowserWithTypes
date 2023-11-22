@@ -7,6 +7,10 @@ import { ICommentContent } from "../types/comments.js";
 import { renderIcons } from "../iconkit/icon.js";
 import { Player } from "../classes/Player.js";
 import { ErrorObject } from "../types/miscellaneous.js";
+import { Handlebars } from "../vendor/index.js";
+
+const commentEntryTemplateString = await (await fetch("/templates/profile_commentEntry.hbs")).text();
+const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);
 
 const accountID: string = $('#dataBlock').data('accountid').toString();
 const accountUsername: string = $('#dataBlock').data('username');
@@ -71,21 +75,14 @@ function appendComments() {
 		if ("error" in res) return $('#loading').hide();
 
 		res.forEach((commentItem: ICommentContent) => {
-			$('#statusDiv').append(`
-				<div class="commentBG">
-					<div class="comment">
-						<img class="inline statusIcon" src="${$('#mainIcon').find('img').attr('src') || ""}" style="display: ${compactMode ? "inline-block" : "none"}; margin-right: 0.8%; height: 7vh">
-						<h2 class="inline">${accountUsername}</h2>
-						<div class="commentAlign">
-							<p class="pre commentText" style="color: rgb(${accountUsername == "RobTop" ? "50, 255, 255" : accountModerator == "2" ? "75, 255, 75" : commentItem.browserColor ? "255, 180, 255" : "255, 255, 255"})">${clean(commentItem.content)}</p>
-						</div>
-					</div>
-					<p class="commentDate">${commentItem.date}</p>
-					<div class="commentLikes">
-						<img id="likeImg" class="likeComment gdButton inline" commentID="${commentItem.ID}" ${commentItem.likes < 0 ? "style='transform: translateY(25%); margin-right: 0.4%; height: 4vh'" : "style='margin-right: 0.4%; height: 4vh'"} src="/assets/${commentItem.likes < 0 ? "dis" : ""}like.png">
-						<h3 class="inline">${commentItem.likes}</h3><br>
-					</div>
-				</div>`);
+			$("#statusDiv").append(commentEntryTemplate({
+				statusIcon: $('#mainIcon').find('img').attr('src') || "",
+				compactMode,
+				accountUsername,
+				commentColor: accountUsername == "RobTop" ? "50, 255, 255" : accountModerator == "2" ? "75, 255, 75" : commentItem.browserColor ? "255, 180, 255" : "255, 255, 255",
+				commentItem,
+				disliked: commentItem.likes < 0
+			}));
 		});
 
 		$('.commentText').each(function() {
