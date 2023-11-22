@@ -31,7 +31,7 @@ export interface ILevelObject {
 	/**
 	 * The ID of the level.
 	 * 
-	 * @example "91209839"
+	 * @example "91209839" // Level ID for "isolation my ver"
 	 */
 	id: string;
 	/**

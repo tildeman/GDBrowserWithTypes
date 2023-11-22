@@ -125,11 +125,11 @@ html(lang="en")
 
 				h1.veryBig.inline(style={ width: "inherit" })
 					if (player.moderator == 1)
-						img#modBadge1.inline.valign(style={ display: "none", height: "7%", cursor: "help" }, src="/assets/mod.png", title=player.username + " is a moderator!")
+						img#modBadge1.inline.valign(style={ height: "5vh", cursor: "help" }, src="/assets/mod.png", title=player.username + " is a moderator!")
 					else if (player.moderator == 2)
-						img#modBadge2.inline.valign(style={ display: "none", height: "7%", cursor: "help" }, src="/assets/mod-elder.png", title=player.username + " is an elder moderator!")
+						img#modBadge2.inline.valign(style={ height: "5vh", cursor: "help" }, src="/assets/mod-elder.png", title=player.username + " is an elder moderator!")
 					else if (player.moderator >= 3)
-						img#modBadge3.inline.valign(style={ display: "none", height: "7%", cursor: "help" }, src="/assets/mod-extra.png", title=player.username + " is a custom moderator! (tier " + player.moderator + ")")
+						img#modBadge3.inline.valign(style={ height: "5vh", cursor: "help" }, src="/assets/mod-extra.png", title=player.username + " is a custom moderator! (tier " + player.moderator + ")")
 					span(style={ "margin-left": "1%" })= player.username
 
 				hr.profilePostHide(style={ "margin-bottom": "2%" })

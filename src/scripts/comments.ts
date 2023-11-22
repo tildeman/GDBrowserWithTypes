@@ -8,6 +8,10 @@ import { renderIcons } from "../iconkit/icon.js";
 import { PlayerIcon } from "../types/icons.js";
 import { Player } from "../classes/Player.js";
 import { Level } from "../classes/Level.js";
+import { Handlebars } from "../vendor/index.js";
+
+const commentEntryTemplateString = await (await fetch("/templates/comments_commentEntry.hbs")).text();
+const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);
 
 interface CommentItem {
 	content: string;
@@ -189,59 +193,18 @@ function appendComments(auto?: boolean, noCache?: boolean) {
 				else $('#pageUp').show();
 			}
 
-			////// NORMAL MODE //////
-
-			const commentHTML = !compact ? `
-				<div class="commentBG ${bgCol}">
-					<div class="comment" commentID="${comment.ID}">
-						<div class="commentRow">
-							<gdicon class="commentIcon inline" cacheID=${comment.playerID} iconID=${comment.icon.icon} iconForm="${comment.icon.form}" col1="${comment.icon.col1}" col2="${comment.icon.col2}" glow="${comment.icon.glow}"></gdicon>
-							<a href=/${comment.accountID == "0" ? `search/${comment.playerID}?user` : `u/${comment.accountID}.`}>
-							<h2 class="inline gdButton ${(!comment.accountID || comment.accountID == "0") ? "green unregistered" : ""}">${userName}</h2></a>
-							${modNumber > 0 ? `<img class="inline" src="/assets/mod${modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : ""}.png" style="margin-left: 1%; width: 3.5%">` : ""}
-							<p class="commentPercent inline">${comment.percent ? comment.percent + "%" : ""}</p>
-						</div>
-
-						<div class="commentAlign">
-							<p class="pre commentText" style="color: rgb(${!history && comment.playerID == lvl.playerID ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color})">${clean(comment.content)}</p>
-						</div>
-					</div>
-					<p class="commentDate" id="date-${comment.ID}">${comment.date}</p>
-					<div class="commentLikes">
-						${history ? `<h3 style="margin-right: 1.5vh; pointer-events: all;" class="gold inline"><a href="/level/${comment.levelID}">(${comment.levelID})</a></h3>` : ""}
-						<div class="inline gdButton likeComment" commentID="${comment.ID}" ${comment.levelID ? `levelID="${comment.levelID}"` : ""}">
-							<img id="thumb-${comment.ID}" class="inline gdButton" ${comment.likes < 0 ? "style='transform: translateY(25%); margin-right: 0.4%; height: 4vh;'" : "style='height: 4vh;'"} src="/assets/${comment.likes < 0 ? "dis" : ""}like.png">
-						</div>
-						<h3 id="likes-${comment.ID}" class="inline">${comment.likes}</h3>
-					</div>
-				</div>`
-
-			////// COMPACT  MODE //////
-
-				:  `
-				<div class="commentBG compactBG ${bgCol}">
-					<div class="comment compact" commentID="${comment.ID}">
-						<div class="commentRow">
-							<gdicon class="commentIcon inline" cacheID=${comment.playerID} iconID=${comment.icon.icon} iconForm="${comment.icon.form}" col1="${comment.icon.col1}" col2="${comment.icon.col2}" glow="${comment.icon.glow}"></gdicon>
-							<a href=/${comment.accountID == "0" ? `search/${comment.playerID}?user` : `/u/${comment.accountID}.`}>
-							<h2 class="inline gdButton ${comment.accountID == "0" ? "green unregistered" : ""}">${userName}</h2></a>
-							${modNumber > 0 ? `<img class="inline" src="/assets/mod${modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : ""}.png" style="margin-left: 1.2%; width: 3.2%">` : ""}
-							<p class="commentPercent inline">${comment.percent ? comment.percent + "%" : ""}</p>
-						</div>
-
-						<div class="commentAlign">
-							<p class="pre commentText" style="color: rgb(${!history && comment.playerID == lvl.playerID ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color})">${clean(comment.content)}</p>
-						</div>
-					</div>
-					<p class="commentDate compactDate" id="date-${comment.ID}">${comment.date}</p>
-					<div class="commentLikes">
-						${history ? `<h3 style="margin-right: 0.5vh; pointer-events: all;" class="gold inline"><a href="/level/${comment.levelID}">(${comment.levelID})</a></h3>` : ""}
-						<div class="inline gdButton likeComment" commentID="${comment.ID}"${comment.levelID ? `levelID="${comment.levelID}"` : ""}>
-							<img id="thumb-${comment.ID}" class="inline" ${comment.likes < 0 ? "style='transform: translateY(15%); margin-right: 0.4%; height: 4vh;'" : "style='height: 4vh;'"} src="/assets/${comment.likes < 0 ? "dis" : ""}like.png">
-						</div>
-						<h3 id="likes-${comment.ID}" class="inline">${comment.likes}</h3>
-					</div>
-				</div>`;
+			const commentHTML = commentEntryTemplate({
+				compact,
+				bgCol,
+				comment,
+				notRegistered: !comment.accountID || comment.accountID == "0",
+				userName,
+				moderator: modNumber > 0,
+				moderatorRole: modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : "",
+				commentColor: !history && comment.playerID == lvl.playerID ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color,
+				history,
+				disliked: comment.likes < 0
+			});
 
 			if (auto) $('#commentBox').prepend(commentHTML);
 			else $('#commentBox').append(commentHTML);

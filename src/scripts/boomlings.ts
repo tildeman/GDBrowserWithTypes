@@ -3,6 +3,7 @@
  */
 
 import { ErrorObject } from "../types/miscellaneous.js";
+import { Handlebars } from "../vendor/index.js";
 
 const leaderboardEntryTemplateString = await (await fetch("/templates/boomlings_leaderboardEntry.hbs")).text();
 const leaderboardEntryTemplate = Handlebars.compile(leaderboardEntryTemplateString);

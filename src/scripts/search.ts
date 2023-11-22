@@ -4,7 +4,7 @@
 
 import { Fetch, clean, serverMetadata } from "../misc/global.js";
 import { ErrorObject } from "../types/miscellaneous.js";
-import { SearchQueryLevel } from "../classes/Level.js";
+import { Level, SearchQueryLevel } from "../classes/Level.js";
 import { Handlebars } from "../vendor/index.js";
 
 const searchResultTemplateString = await (await fetch("/templates/search_searchResult.hbs")).text();
@@ -265,9 +265,11 @@ $('#shuffle').on("click", function() {
 		$('#loading').show();
 		fetch("/api/search/*page=0&type=recent").then(res => res.json()).then(recent => {
 			let mostRecent = recent[0].id;
+			/**
+			 * Return a random level from the current selection.
+			 */
 			function fetchRandom() {
-				// TODO: missing types!
-				fetch(`/api/level/${Math.floor(Math.random() * (mostRecent)) + 1}`).then(res => res.json()).then(res => {
+				fetch(`/api/level/${Math.floor(Math.random() * (mostRecent)) + 1}`).then(res => res.json()).then((res: ErrorObject | Level) => {
 					if ("error" in res || !res.id) return fetchRandom();
 					else window.location.href = "/level/" + res.id;
 				});

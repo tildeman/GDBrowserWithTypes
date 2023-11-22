@@ -58,17 +58,17 @@ function appendComments() {
 	if (loadingComments) return;
 	else loadingComments = true;
 
-	$('#statusDiv').html(`<div class="supercenter" id="loading" style="height: 12%; top: 62%;"><img class="spin noSelect" src="/assets/loading.png" style="height: 105%;"></div>`)
+	$('#statusDiv').html(`<div class="supercenter" id="loading" style="height: 12%; top: 62%;"><img class="spin noSelect" src="/assets/loading.png" style="height: 105%;"></div>`);
 
-	if (profilePage == 0) $('#pageDown').hide()
-	else $('#pageDown').show()
+	if (profilePage == 0) $('#pageDown').hide();
+	else $('#pageDown').show();
 
 	Fetch(`/api/comments/${accountID}?type=profile&page=${profilePage}`).then(res => {
 
-		if (res.length != 10) $('#pageUp').hide()
-		else $('#pageUp').show()
+		if (res.length != 10) $('#pageUp').hide();
+		else $('#pageUp').show();
 
-		if ("error" in res) return $('#loading').hide()
+		if ("error" in res) return $('#loading').hide();
 
 		res.forEach((commentItem: ICommentContent) => {
 			$('#statusDiv').append(`

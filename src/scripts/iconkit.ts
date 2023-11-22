@@ -6,8 +6,9 @@
 import { Icon, iconData, loadIconLayers, parseIconColor, parseIconForm, rgbToDecimal } from "../iconkit/icon.js";
 import { IAnimationObject, IIconConfiguration, IIconData, IIconKitAPIResponse } from "../types/icons.js";
 import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements.js";
-import { Color3B } from "../types/miscellaneous.js";
+import { Color3B, ErrorObject } from "../types/miscellaneous.js";
 import { PIXI } from "../vendor/index.js";
+import { Player } from "../classes/Player.js";
 
 const mobile =  /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
 const shops = ["the Shop", "Scratch's Shop", "the Community Shop"];
@@ -674,13 +675,12 @@ $("#fetchUser").on("click", async function() {
 	$("#steal").hide();
 	enableGlow = 0;
 
-	// TODO: missing types!
-	let info = await fetch('/api/profile/' + user).then(res => res.json()).catch(e => {
+	let info: Player | ErrorObject = await fetch('/api/profile/' + user).then(res => res.json()).catch(e => {
 		console.error(e.message);
 	});
-	if ("error" in info) info = {};
+	if ("error" in info) return;
 
-	$(`#${formCopy}-${Math.min(info[formCopy] || 1, $(`.iconButton[form=${formCopy}]`).length)}`).trigger('click');
+	$(`#${formCopy}-${Math.min((info[formCopy] as number) || 1, $(`.iconButton[form=${formCopy}]`).length)}`).trigger('click');
 	$(`#col1-${info.col1 || 0}`).trigger('click');
 	$(`#col2-${info.col2 || 3}`).trigger('click');
 	$(`#colG-${info.col2 || 3}`).trigger('click');

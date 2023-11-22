@@ -1,0 +1,23 @@
+<div class="commentBG{{#if compact}} compactBG{{/if}} {{bgCol}}">
+	<div class="comment{{#if compact}} compact{{/if}}" commentID="{{comment.ID}}">
+		<div class="commentRow">
+			<gdicon class="commentIcon inline" cacheID={{comment.playerID}} iconID={{comment.icon.icon}} iconForm="{{comment.icon.form}}" col1="{{comment.icon.col1}}" col2="{{comment.icon.col2}}" glow="{{comment.icon.glow}}"></gdicon>
+			<a href="/{{#if notRegistered}}search/{{comment.playerID}}?user{{else}}u/{{comment.accountID}}.{{/if}}">
+			<h2 class="inline gdButton{{#if notRegistered}} green unregistered{{/if}}">{{userName}}</h2></a>
+			{{#if moderator}}<img class="inline" src="/assets/mod{{moderatorRole}}.png" style="margin-left: 1{{#if compact}}.2{{/if}}%; width: 3.{{#if compact}}2{{else}}5{{/if}}%">{{/if}}
+			<p class="commentPercent inline">{{#if comment.percent}}{{comment.percent}}%{{/if}}</p>
+		</div>
+
+		<div class="commentAlign">
+			<p class="pre commentText" style="color: rgb({{commentColor}})">{{comment.content}}</p>
+		</div>
+	</div>
+	<p class="commentDate{{#if compact}} compactDate{{/if}}" id="date-{{comment.ID}}">{{comment.date}}</p>
+	<div class="commentLikes">
+		{{#if history}}<h3 style="margin-right: {{#if compact}}1{{else}}0{{/if}}.5vh; pointer-events: all;" class="gold inline"><a href="/level/{{comment.levelID}}">({{comment.levelID}})</a></h3>{{/if}}
+		<div class="inline gdButton likeComment" commentID="{{comment.ID}}"{{#if comment.levelID}} levelID="{{comment.levelID}}"{{/if}}>
+			<img id="thumb-{{comment.ID}}" class="inline gdButton" style="{{#if disliked}}transform: translateY({{#if compact}}1{{else}}2{{/if}}5%); margin-right: 0.4%; {{/if}}height: 4vh;" src="/assets/{{#if disliked}}dis{{/if}}like.png">
+		</div>
+		<h3 id="likes-{{comment.ID}}" class="inline">{{comment.likes}}</h3>
+	</div>
+</div>
