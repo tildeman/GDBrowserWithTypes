@@ -1,0 +1,40 @@
+<div class="searchResult" title="{{level.description}}">
+	<h1 class="lessspaced pre" title="{{level.name}} by {{displayAuthor}}" style="width: fit-content; padding-right: 1%">{{level.name}}</h1>
+	<h2 class="pre smaller inline gdButton help{{#unless hasAuthor}} green unregistered{{/unless}}" title="Account ID: {{level.accountID}}\nPlayer ID: {{level.playerID}}"><!--
+		-->{{#if authorAndOnePointNine}}<a style="margin-right: 0.66vh" href="/u/{{level.accountID}}.">By {{inGameAuthor}}</a>{{else}}<a{{#unless userSearch}} href="/search/{{level.playerID}}?user"{{/unless}}>By {{inGameAuthor}}</a>{{/if}}<!--
+	--></h2><!--
+	--><h2 class="inline" style="margin-left: 1.5%; transform:translateY(10%)"><!--
+		-->{{#unless original}}<a target="_blank" href="/level/{{level.copiedID}}"><!--
+			--><img class="gdButton valign rightSpaceB" title="Original: {{level.copiedID}}" src="/assets/copied.png" style="height: 3vh;"><!--
+		--></a>{{/unless}}<!--
+		-->{{#if level.large}}<img class="help valign rightSpaceB" title="{{objectCountEstimate}} objects" src="/assets/large.png" style="height: 3vh;">{{/if}}<!--
+		-->{{#if level.twoPlayer}}<img class="help valign rightSpaceB" title="Two player level" src="/assets/twoPlayer.png" style="height: 3vh;">{{/if}}
+	</h2>
+	<h3 class="lessSpaced help {{#unless noLink}}gdButton {{/unless}}pre {{songColor}}" title="{{filteredSong}} by {{level.songAuthor}} ({{level.songID}})" style="overflow: hidden; max-height: 19%; width: fit-content; padding: 1% 1% 0% 0%">{{#if noLink}}{{filteredSong}}{{else}}<a target="_blank" style="width: fit-content" href="https://www.newgrounds.com/audio/listen/{{level.songID}}">{{filteredSong}}</a>{{/if}}</h3>
+	<h3 class="lessSpaced" style="width: fit-content" title="">
+		<img class="help valign rightSpace" title="Length" src="/assets/time.png" style="height: 3.5vh;">{{level.length}}
+		<img class="help valign rightSpace" title="Downloads" src="/assets/download.png" style="height: 3.5vh;">{{level.downloads}}
+		<img class="help valign rightSpace" title="Likes" src="/assets/{{#if level.disliked}}dis{{/if}}like.png" style="height: 3.5vh;">{{level.likes}}
+		{{#if level.orbs}}<img class="help valign rightSpace" title="Mana Orbs" src="/assets/orbs.png" style="height: 3.5vh;">{{/if}}
+	</h3>
+
+	<div class="center" style="position:absolute; top: {{ratingDetailsTop}}%; left: 4.4%; transform:scale(0.82); height: 10%; width: 12.5%;">
+		<img class="help spaced" id="dFace" title="{{ratingDetails}}" src="/assets/difficulties/{{level.difficultyFace}}.png" style="height: 12vh;" style="margin-bottom: 0%; {{#if level.epic}}transform:scale(1.2){{else}}{{#if level.featured}}transform:scale(1.1){{/if}}{{/if}}">
+		<h3 title="">{{shortenedDiff}}</h3>
+		{{#if starButNotDemonlist}}<h3 class="help" title="{{level.stars}} star{{#if starsPlural}}s{{/if}}{{#if level.starsRequested}} ({{level.starsRequested}} requested){{/if}}">{{level.stars}}<img class="valign sideSpaceB" src="/assets/star.png" style="height: 3vh;" style="transform:translateY(-8%)"></h3>{{/if}}
+
+		{{#if demonList}}<h3 class="help yellow" title="Ranked #{{level.demonPosition}} on the Demon List">#{{level.demonPosition}}</h3>{{/if}}
+
+		<div id="coins" style="margin-top: 3%" title="{{level.coins}} user coin{{#if twoCoins}}s{{/if}} ({{#unless level.verifiedCoins}}un{{/unless}}verified)">
+			{{#if oneCoin}}<img src="/assets/{{#if level.verifiedCoins}}silver{{else}}brown{{/if}}coin.png" style="height: 4vh;" class="help">{{/if}}
+			{{#if twoCoins}}<img src="/assets/{{#if level.verifiedCoins}}silver{{else}}brown{{/if}}coin.png" style="height: 4vh;" class="help squeezeB">{{/if}}
+			{{#if threeCoins}}<img src="/assets/{{#if level.verifiedCoins}}silver{{else}}brown{{/if}}coin.png" style="height: 4vh;" class="help squeezeB">{{/if}}
+		</div>
+	</div>
+	<div class="center" style="position:absolute; right: 7%; transform:translateY(-{{#if demonList}}19.5{{else}}16.25{{/if}}vh); height: 10%">
+		<a title="View level" href="/level/{{level.id}}"><img style="margin-bottom: 4.5%; height: 105%;" class="valign gdButton" src="/assets/view.png"></a>
+		{{#if demonList}}<br><a title="View leaderboard" href="/demon/{{level.demonPosition}}"><img class="valign gdButton" src="/assets/trophyButton.png" style="height: 110%;"></a>
+		<a title="View on Pointercrate" href="{{demonListLink}}demonlist/{{level.demonPosition}}" target=_blank><img class="valign gdButton" src="/assets/demonButton.png" style="height: 110%;"></a>{{/if}}
+		<p title="Level ID" style="text-align: right; color: rgba(0, 0, 0, 0.4); font-size: 2.2vh; transform: translate(2.8vh, {{#if demonList}}-1.8{{else}}2.5{{/if}}vh)">#{{level.id}}</p>
+	</div>
+</div>

@@ -1,0 +1,12 @@
+<div class="searchResult leaderboardSlot" style="align-items: center; padding-left: 1vh; height: 15%; width: 100%; position: relative;">
+	<h2 class="center" style="width: 12%; margin: 0% 0% 0% 0.5%; transform: scale({{indexScale}})">{{oneBasedIndex}}</h2>
+	<img class="inline spaced" src="/assets/trophies/{{trophyIcon}}.png" style="margin-bottom: 0%; height: 80%;">
+	<h2 class="small gdButton" style="font-size: 6.5vh; margin-right: 3%; margin-left: 3%"><a href="/u/{{demonEntry.player.name}}">{{demonEntry.player.name}}</a></h2>
+	<h3 class="lessSpaced" style="font-size: 4vh; margin-top: 1.3%; margin-right: 2%">{{demonEntry.progress}}%</h3>
+
+	<div style="{{#unless demonEntry.video}}display: none; {{/unless}}position:absolute; margin-top: 1.5%; width: 12.5%; height: 90%; right: 0%;">
+		<a target="_blank" href="{{demonEntry.video}}">
+		<img class="gdButton inline spaced" src="/assets/{{videoIcon}}.png" style="height: 80%;">
+		</a>
+	</div>
+</div>

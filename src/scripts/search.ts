@@ -5,6 +5,10 @@
 import { Fetch, clean, serverMetadata } from "../misc/global.js";
 import { ErrorObject } from "../types/miscellaneous.js";
 import { SearchQueryLevel } from "../classes/Level.js";
+import { Handlebars } from "../vendor/index.js";
+
+const searchResultTemplateString = await (await fetch("/templates/search_searchResult.hbs")).text();
+const searchResultTemplate = Handlebars.compile(searchResultTemplateString, {strict: true});
 
 $('#pageDown').hide();
 $('#pageUp').hide();
@@ -99,6 +103,7 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 				return (a.demonPosition || 0) - (b.demonPosition || 0);
 			});
 		}
+		console.log(res);
 
 		res.forEach((level, levelIndex) => {
 			let hasAuthor = (level.accountID != "0");
@@ -114,44 +119,29 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 			let songColor = level.customSong == 0 ? "blue" : (level.songLink && !level.songLink.match(/^https?:\/\/\audio\.ngfiles\.com\//)) ? "nong" : "whatIfItWasPurple";
 			let noLink = songColor != "whatIfItWasPurple";
 
-			// TODO: replace this with a template-based item
-			$('#searchBox').append(`<div class="searchResult" title="${clean(level.description)}">
-				<h1 class="lessspaced pre" title="${level.name} by ${!level.author || level.author == "-" ? "some nerd" : level.author}" style="width: fit-content; padding-right: 1%">${clean(level.name || " ")}</h1>
-				<h2 class="pre smaller inline gdButton help ${hasAuthor ? "" : "green unregistered"}" title="Account ID: ${level.accountID}\nPlayer ID: ${level.playerID}"><!--
-					-->${hasAuthor && !serverMetadata.onePointNine ? `<a style="margin-right: 0.66vh" href="/u/${level.accountID}.">By ${level.author || "-"}</a>` : `<a ${userSearch ? "" : `href="/search/${level.playerID}?user"`}>By ${level.author || "-"}</a>`}</h2><!--
-					--><h2 class="inline" style="margin-left: 1.5%; transform:translateY(10%)"> ${level.copiedID == '0' ? "" : `<a target="_blank" href="/level/${level.copiedID}"><!--
-					--><img class="gdButton valign rightSpaceB" title="Original: ${level.copiedID}" src="/assets/copied.png" style="height: 3vh;"></a>`}<!--
-					-->${level.large ? `<img class="help valign rightSpaceB" title="${level.objects}${level.objects == 65535 ? "+" : ""} objects" src="/assets/large.png" style="height: 3vh;">` : ''}<!--
-					-->${level.twoPlayer ? `<img class="help valign rightSpaceB" title="Two player level" src="/assets/twoPlayer.png" style="height: 3vh;">` : ''}
-				</h2>
-				<h3 class="lessSpaced help ${noLink ? "" : 'gdButton '}pre ${songColor}" title="${filteredSong} by ${level.songAuthor} (${level.songID})" style="overflow: hidden; max-height: 19%; width: fit-content; padding: 1% 1% 0% 0%">${noLink ? filteredSong : `<a target="_blank" style="width: fit-content" href="https://www.newgrounds.com/audio/listen/${level.songID}">${filteredSong}</a>`}</h3>
-				<h3 class="lessSpaced" style="width: fit-content" title="">
-					<img class="help valign rightSpace" title="Length" src="/assets/time.png" style="height: 3.5vh;">${level.length}
-					<img class="help valign rightSpace" title="Downloads" src="/assets/download.png" style="height: 3.5vh;">${level.downloads}
-					<img class="help valign rightSpace" title="Likes" src="/assets/${level.disliked ? 'dis' : ''}like.png" style="height: 3.5vh;">${level.likes}
-					${level.orbs != 0 ? `<img class="help valign rightSpace" title="Mana Orbs" src="/assets/orbs.png" style="height: 3.5vh;">${level.orbs}` : ""}
-				</h3>
-
-				<div class="center" style="position:absolute; top: ${6.5 + (levelIndex * 33.5) + (level.coins == 0 ? 2.5 : 0)}%; left: 4.4%; transform:scale(0.82); height: 10%; width: 12.5%;">
-					<img class="help spaced" id="dFace" title="${level.difficulty}${level.epic ? " (Epic)" : level.featured ? " (Featured)" : ""}" src="/assets/difficulties/${level.difficultyFace}.png" style="height: 12vh;" style="margin-bottom: 0%; ${level.epic ? 'transform:scale(1.2)' : level.featured ? 'transform:scale(1.1)' : ''}">
-					<h3 title="">${level.difficulty.includes('Demon') ? "Demon" : level.difficulty}</h3>
-					${level.stars != 0 && !demonList ? `<h3 class="help" title="${level.stars} star${level.stars == 1 ? "" : "s"}${level.starsRequested ? ` (${level.starsRequested} requested)` : ""}">${level.stars}<img class="valign sideSpaceB" src="/assets/star.png" style="height: 3vh;" style="transform:translateY(-8%)"></h3>` : ""}
-
-					${demonList ? `<h3 class="help yellow" title="Ranked #${level.demonPosition} on the Demon List">#${level.demonPosition}</h3>` : ""}
-
-					<div id="coins" style="margin-top: 3%" title="${level.coins} user coin${level.coins == 1 ? "" : "s"} (${level.verifiedCoins ? "" : "un"}verified)">
-						${level.coins > 0 ? `<img src="/assets/${level.verifiedCoins ? 'silver' : 'brown'}coin.png" style="height: 4vh;" class="help">` : ""}
-						${level.coins > 1 ? `<img src="/assets/${level.verifiedCoins ? 'silver' : 'brown'}coin.png" style="height: 4vh;" class="help squeezeB">` : ""}
-						${level.coins > 2 ? `<img src="/assets/${level.verifiedCoins ? 'silver' : 'brown'}coin.png" style="height: 4vh;" class="help squeezeB">` : ""}
-					</div>
-				</div>
-				<div class="center" style="position:absolute; right: 7%; transform:translateY(-${demonList ? 19.5 : 16.25}vh); height: 10%">
-					<a title="View level" href="/level/${level.id}""><img style="margin-bottom: 4.5%; height: 105%;" class="valign gdButton" src="/assets/view.png"></a>
-					${demonList ? `<br><a title="View leaderboard" href="/demon/${level.demonPosition}""><img class="valign gdButton" src="/assets/trophyButton.png" style="height: 110%;"></a>
-					<a title="View on Pointercrate" href="${demonListLink}demonlist/${level.demonPosition}" target=_blank><img class="valign gdButton" src="/assets/demonButton.png" style="height: 110%;"></a>` : "" }
-					<p title="Level ID" style="text-align: right; color: rgba(0, 0, 0, 0.4); font-size: 2.2vh; transform: translate(2.8vh, ${demonList ? -1.8 : 2.5}vh)">#${level.id}</p>
-				</div>
-			</div>`);
+			$("#searchBox").append(searchResultTemplate({
+				level,
+				displayAuthor: !level.author || level.author == "-" ? "some nerd" : level.author,
+				hasAuthor,
+				userSearch,
+				inGameAuthor: level.author || "-",
+				authorAndOnePointNine: hasAuthor && !serverMetadata.onePointNine,
+				original: !(level.copiedID == '0'),
+				objectCountEstimate: `${level.objects}${level.objects == 65535 ? "+" : ""}`,
+				noLink,
+				songColor,
+				filteredSong,
+				ratingDetailsTop: 6.5 + (levelIndex * 33.5) + (level.coins == 0 ? 2.5 : 0),
+				ratingDetails: level.difficulty + (level.epic ? " (Epic)" : level.featured ? " (Featured)" : ""),
+				shortenedDiff: level.difficulty.includes('Demon') ? "Demon" : level.difficulty,
+				starButNotDemonlist: level.stars != 0 && !demonList,
+				starsPlural: !(level.stars == 1),
+				demonList,
+				oneCoin: level.coins > 0,
+				twoCoins: level.coins > 1,
+				threeCoins: level.coins > 2,
+				demonListLink
+			}));
 		});
 
 		$('#searchBox').append('<div style="height: 4.5%"></div>').scrollTop(0);
