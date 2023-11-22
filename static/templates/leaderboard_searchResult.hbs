@@ -3,7 +3,7 @@
 		{{#if accurateLeaderboards}}
 			<img class="spaced" src="./assets/trophies/{{alTrophyicon}}.png" height="150%" style="margin-bottom: 0%; transform:scale(1.1)">
 		{{else}}
-			<gdicon dontload="true" class="leaderboardIcon" iconID={{lbItem.icon.icon}} cacheID={{lbItem.playerID}} iconForm="{{lbItem.icon.form}}" col1="{{lbItem.icon.col1}}" col2="{{lbItem.icon.col2}}" glow="{{lbItem.icon.glow}}"></gdicon>
+			<gdicon dontload="true" class="leaderboardIcon" iconID="{{lbItem.icon.icon}}" cacheID="{{lbItem.playerID}}" iconForm="{{lbItem.icon.form}}" col1="{{lbItem.icon.col1}}" col2="{{lbItem.icon.col2}}" glow="{{lbItem.icon.glow}}"></gdicon>
 		{{/if}}
 		<h2 class="slightlySmaller" style="transform: scale({{rankScale}})">{{lbItem.rank}}</h2>
 	</div>

@@ -6,6 +6,10 @@ import { ErrorObject } from "../types/miscellaneous.js";
 import { IMessageObject } from "../types/messages.js";
 import { toggleEscape } from "../misc/global.js";
 import { Player } from "../classes/Player.js";
+import { Handlebars } from "../vendor/index.js";
+
+const itemOverviewTemplateString = await (await fetch("/templates/messages_itemOverview.hbs")).text();
+const itemOverviewTemplate = Handlebars.compile(itemOverviewTemplateString);
 
 let accountID: string;
 let password: string;
@@ -17,7 +21,7 @@ const messageStatus = {};
 const cache = {};
 let loading = false;
 
-const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> For security, it will be <cy>forgotten</cy> when you exit this page.';
+const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>be stored</cg> <ca>locally</ca> in order to access RobTop\'s servers. For security, it will be <cy>forgotten</cy> when you exit this page.';
 $('#message').html(messageText);
 
 /**
@@ -38,19 +42,11 @@ function appendMessages(dontCheckPages?: boolean) {
 	$('#selectNone').hide();
 	$('#msgList').html('');
 	messages.forEach((messageItem, messageIndex) => {
-		$('#msgList').append(`
-		<div messageID=${messageItem.id} playerID="${messageItem.accountID}" ${messageItem.browserColor ? 'browserColor="true" ' : ""}class="commentBG gdMessage">
-			<h3 style="color: ${messageItem.browserColor ? 'rgb(120, 200, 255)' : 'white'}; font-size: ${messageItem.subject.length > 35 ? "3" : messageItem.subject.length > 30 ? "3.5" : messageItem.subject.length > 25 ? "3.75" : "4"}vh">${messageItem.subject}${messageItem.unread ? " <cg>!</cg>" : ""}</h3>
-			<h3 class="gold gdButton msgAuthor hitbox fit"><a href="/u/${messageItem.accountID}." target="_blank">From: ${messageItem.author}</a></h3>
-			<p class="msgDate">${messageItem.date}</p>
-			<div class="labelButton hitbox">
-				<input id="message-${messageIndex}" type="checkbox" class="chk" messageID=${messageItem.id}>
-				<label for="message-${messageIndex}" class="gdcheckbox gdButton"></label>
-			</div>${/*
-			<div class="xButton hitbox">
-				<img class="gdButton" style="width: 8%" src="/assets/xbutton.png">
-			</div>*/""}
-		</div>`);
+		$("#msgList").append(itemOverviewTemplate({
+			messageItem,
+			messageIndex,
+			titleFontSize: messageItem.subject.length > 35 ? "3" : messageItem.subject.length > 30 ? "3.5" : messageItem.subject.length > 25 ? "3.75" : "4"
+		}));
 	});
 
 	loading = false;

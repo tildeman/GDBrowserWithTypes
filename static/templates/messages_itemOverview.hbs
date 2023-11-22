@@ -1,0 +1,12 @@
+<div messageID={{messageItem.id}} playerID="{{messageItem.accountID}}" {{#if messageItem.browserColor}}browserColor="true" {{/if}}class="commentBG gdMessage">
+	<h3 style="color: {{#if messageItem.browserColor}}rgb(120, 200, 255){{else}}white{{/if}}; font-size: {{titleFontSize}}vh">{{messageItem.subject}}{{#if messageItem.unread}} <cg>!</cg>{{/if}}</h3>
+	<h3 class="gold gdButton msgAuthor hitbox fit"><a href="/u/{{messageItem.accountID}}." target="_blank">From: {{messageItem.author}}</a></h3>
+	<p class="msgDate">{{messageItem.date}}</p>
+	<div class="labelButton hitbox">
+		<input id="message-{{messageIndex}}" type="checkbox" class="chk" messageID={{messageItem.id}}>
+		<label for="message-{{messageIndex}}" class="gdcheckbox gdButton"></label>
+	</div>
+	{{!-- <div class="xButton hitbox">
+		<img class="gdButton" style="width: 8%" src="/assets/xbutton.png">
+	</div> --}}
+</div>

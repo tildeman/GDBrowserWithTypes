@@ -4,6 +4,10 @@
 
 import { Fetch, serverMetadata } from "../misc/global.js";
 import { IServerInfo } from "../types/servers.js";
+import { Handlebars } from "../vendor/index.js";
+
+const searchResultTemplateString = await (await fetch("/templates/gdps_searchResult.hbs")).text();
+const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
 
 let pageSize = 20;
 let page = 1;
@@ -12,9 +16,9 @@ const localhost = window.location.hostname == "localhost";
 const host = window.location.host.split(".").slice(-2).join(".");
 
 Fetch('/api/gdps').then((servers: IServerInfo[]) => {
-	let currentServer = servers.find(serverItem => serverItem.id == serverMetadata.gdps);
+	const currentServer = servers.find(serverItem => serverItem.id == serverMetadata.gdps);
 	servers = [currentServer].concat(servers.filter(serverItem => serverItem.id != serverMetadata.gdps)).filter(serverItem => serverItem) as IServerInfo[];
-	let pageCount = Math.floor((servers.length - 1) / pageSize) + 1;
+	const pageCount = Math.floor((servers.length - 1) / pageSize) + 1;
 
 	/**
 	 * List the available servers in `servers.json`.
@@ -30,18 +34,12 @@ Fetch('/api/gdps').then((servers: IServerInfo[]) => {
 
 		// TODO: This has a few glaring visual glitches
 		serverPage.forEach(serverInfo => {
-			$('#searchBox').append(`<div class="searchResult" style="height: 19%; padding-top: 1.2%; margin-right: 20vh;">
-					<h1 class="lessspaced blue" style="color: ${(serverMetadata.gdps || "") == serverInfo.id ? "#00DDFF" : "white"}">${serverInfo.name}</h1>
-					<h2 class="lessSpaced smaller inline gdButton"><a href="${serverInfo.authorLink}" target="_blank">By ${serverInfo.author}</a></h2>
-
-					<div class="center" style="position:absolute; height: 10%; width: 12.5%; left: 3%; transform:translateY(-160%)">
-						<a href="${serverInfo.link}" target="_blank"><img class="gdButton spaced gdpslogo" src="/assets/gdps/${serverInfo.id || "gd"}_icon.png" style="height: 130%;"></a>
-					</div>
-
-					<div class="center" style="position:absolute; right: 7%; transform:translateY(-150%); height: 10%">
-						<a href="http://${serverInfo.id || ""}${serverInfo.id && localhost ? ".serverInfo" : ""}${serverInfo.id ? "." : ""}${host}"><img style="margin-bottom: 4.5%" class="valign gdButton" src="/assets/view.png" height="105%"></a>
-					</div>
-				</div>`);
+			$("#searchBox").append(searchResultTemplate({
+				serverColor: (serverMetadata.gdps || "") == serverInfo.id ? "#00DDFF" : "white",
+				serverInfo,
+				serverIcon: serverInfo.id || "gd",
+				serverLink: `http://${serverInfo.id || ""}${serverInfo.id && localhost ? ".serverInfo" : ""}${serverInfo.id ? "." : ""}${host}`
+			}));
 		});
 		$('#searchBox').append('<div style="height: 4.5%"></div>');
 	}
