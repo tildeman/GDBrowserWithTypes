@@ -2,6 +2,7 @@
  * @fileoverview Routing page for the home page and miscellaneous endpoints.
  */
 
+import credits from "../misc/credits.json" assert { type: "json" };
 import { fetchTemplate } from "../lib/templateHandle.js";
 import { ExportBundle } from "../types/servers.js";
 import express from "express";
@@ -42,7 +43,8 @@ router.get("/", function(req, res) {
 				serverDisabled: (reqBundle.server.disabled || []).concat(reqBundle.isGDPS ? gdpsHide : []),
 				onePointNineDisabled,
 				isDownloadDisabled: reqBundle.server.downloadsDisabled || false,
-				downloadDisabled
+				downloadDisabled,
+				credits
 			});
 		}
 		catch (err) {

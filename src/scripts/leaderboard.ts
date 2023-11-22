@@ -6,6 +6,10 @@ import { Fetch, isInViewport, serverMetadata } from "../misc/global.js";
 import { ErrorObject } from "../types/miscellaneous.js";
 import { buildIcon } from "../iconkit/icon.js";
 import { Player } from "../classes/Player.js";
+import { Handlebars } from "../vendor/index.js";
+
+const searchResultTemplateString = await (await fetch("/templates/leaderboard_searchResult.hbs")).text();
+const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
 
 /**
  * Weekly progress data (for 1.9 servers that use the weekly leaderboard).
@@ -141,39 +145,40 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 			if (lbItem.userCoins) lbItem.userCoins = lbItem.userCoins;
 			if (wp.userCoins) wp.userCoins = wp.userCoins;
 
-			$('#searchBox').append(`<div class="searchResult leaderboardSlot"${bgString}>
-
-				<div class="center ranking">
-					${lbItem.icon.icon == -1 && type == "accurate" ? `<img class="spaced" src="./assets/trophies/${trophies.findIndex(z => lbIndex + 1 <= z) + 1}.png" height="150%" style="margin-bottom: 0%; transform:scale(1.1)">` :
-					`<gdicon dontload="true" class="leaderboardIcon" iconID=${lbItem.icon.icon} cacheID=${lbItem.playerID} iconForm="${lbItem.icon.form}" col1="${lbItem.icon.col1}" col2="${lbItem.icon.col2}" glow="${lbItem.icon.glow}"></gdicon>`}
-					<h2 class="slightlySmaller" style="transform: scale(${1 - (Math.max(0, String(lbItem.rank).length - 1) * 0.1)})">${lbItem.rank}</h2>
-				</div>
-
-				<div class="leaderboardSide">
-					<div class="leaderboardStars">
-						${lbItem.moderator ? `<img title="${lbItem.moderator == 2 ? "Elder " : ""}Moderator" src="/assets/mod${lbItem.moderator == 2 ? "-elder" : ""}.png" style="width: 9%; cursor: help; padding-right: 1.6%; transform: translateY(0.7vh)">` : ""}
-						<h2 class="leaderboardName small inline gdButton" style="margin-top: 1.5%${nameString || (lbItem.moderator == 2 ? "; color: #FF9977;" : "")}"><a href="${serverMetadata.onePointNine ? `/search/${lbItem.playerID}?user` : `/u/${lbItem.accountID}.`}" accountID="${lbItem.accountID}">${lbItem.username}</a></h2>
-						<h3 class="inline${lbItem.stars >= 100000 ? " yellow" : ""}" style="margin-left: 4%; margin-top: 2%; font-size: 4.5vh${type == "weekly" ? "; display: none" : ""};">${lbItem.stars} <img class="help valign" src="/assets/star.png"style="width: 4vh; transform: translate(-25%, -10%);" title="Stars"></h3>
-					</div>
-
-					<h3 class="lessSpaced leaderboardStats">
-						${type != "weekly" ? "" : `<span${lbItem.stars >= 1000 ? " class='yellow'" : ""}>+${lbItem.stars}</span> <img class="help valign" src="/assets/star.png" title="Star Gain">`}
-						${wk || serverMetadata.onePointNine ? "" : `<span${lbItem.diamonds >= 65535 ? ` class='blue'>` : ">"}${lbItem.diamonds}</span> <img class="help valign" src="/assets/diamond.png" title="Diamonds">`}
-						${wk ? "&nbsp;" : `<span${lbItem.coins >= 149 ? " class='yellow'" : ""}>${lbItem.coins}</span> <img class="help valign" src="/assets/coin.png" title="Secret Coins">`}
-						${wk || serverMetadata.onePointNine ? "" : `<span${lbItem.userCoins >= 10000 ? " class='brightblue'" : ""}>${lbItem.userCoins}</span> <img class="help valign" src="/assets/silvercoin.png" title="User Coins">`}
-						${wk ? "" : `<span${lbItem.demons >= 1000 ? " class='brightred'" : ""}>${lbItem.demons}</span> <img class="help valign" src="/assets/demon.png" title="Demons">`}
-						${lbItem.cp <= 0 ? "" : `<span${lbItem.cp >= 100 ? " class='yellow'" : ""}>${lbItem.cp}</span> <img class="help valign" src="/assets/cp.png" title="Creator Points">`}
-					</h3>
-
-					<h3 class="lessSpaced leaderboardStats weeklyStuff"}>
-						<span${wp.diamonds >= 250 ? " class='blue'" : ""}>${wp.diamonds >= 0 ? "+" : ""}${wp.diamonds}</span> <img class="help valign" src="/assets/diamond.png" title="Diamond Gain">
-						<span${wp.stars >= 1000 ? " class='yellow'" : ""}>${wp.stars >= 0 ? "+" : ""}${wp.stars}</span> <img class="help valign" src="/assets/star.png" title="Star Gain">
-						<span${wp.userCoins >= 250 ? " class='brightblue'" : ""}>${wp.userCoins >= 0 ? "+" : ""}${wp.userCoins}</span> <img class="help valign" src="/assets/silvercoin.png" title="User Coin Gain">
-						<span${wp.demons >= 25 ? " class='brightred'" : ""}>${wp.demons >= 0 ? "+" : ""}${wp.demons}</span> <img class="help valign" src="/assets/demon.png" title="Demon Gain">
-					</h3>
-				</div>
-
-			</div>`);
+			$("#searchBox").append(searchResultTemplate({
+				bgString,
+				accurateLeaderboards: lbItem.icon.icon == -1 && type == "accurate",
+				alTrophyIcon: trophies.findIndex(z => lbIndex + 1 <= z) + 1,
+				lbItem,
+				rankScale: 1 - (Math.max(0, String(lbItem.rank).length - 1) * 0.1),
+				elderMod: lbItem.moderator == 2,
+				properNameString: nameString || (lbItem.moderator == 2 ? "; color: #FF9977;" : ""),
+				onePointNine: serverMetadata.onePointNine,
+				wk,
+				wk19: wk || serverMetadata.onePointNine,
+				allTime: {
+					stars: lbItem.stars >= 100000,
+					starGain: lbItem.stars >= 1000,
+					diamonds: lbItem.diamonds >= 65535,
+					coins: lbItem.coins >= 149,
+					silvercoin: lbItem.userCoins >= 10000,
+					demons: lbItem.demons >= 1000,
+					cp: lbItem.cp >= 100
+				},
+				poor: lbItem.cp <= 0,
+				weekly: {
+					diamonds: wp.diamonds >= 250,
+					stars: wp.stars >= 1000,
+					userCoins: wp.userCoins >= 250,
+					demons: wp.demons >= 25
+				},
+				gained: {
+					diamonds: `${wp.diamonds >= 0 ? "+" : ""}${wp.diamonds}`,
+					stars: `${wp.stars >= 0 ? "+" : ""}${wp.stars}`,
+					userCoins: `${wp.userCoins >= 0 ? "+" : ""}${wp.userCoins}`,
+					demons: `${wp.demons >= 0 ? "+" : ""}${wp.demons}`
+				}
+			}));
 		});
 
 		// Code to display if the accurate leaderboard is disabled

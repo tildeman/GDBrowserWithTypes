@@ -12,8 +12,8 @@ import { Handlebars } from "../vendor/index.js";
 
 const commentEntryTemplateString = await (await fetch("/templates/comments_commentEntry.hbs")).text();
 const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);
-
-interface CommentItem {
+// TODO: Write documentation
+interface ICommentItem {
 	content: string;
 	ID: string;
 	likes: number;
@@ -34,12 +34,12 @@ interface CommentItem {
 	browserColor?: boolean;
 }
 
-interface CommentPreset {
+interface ICommentPreset {
 	mode: string;
 	compact: boolean
 }
 
-let { mode, compact }: CommentPreset = JSON.parse(localStorage.getItem('commentPreset') || '{"mode": "top", "compact": true}');
+let { mode, compact }: ICommentPreset = JSON.parse(localStorage.getItem('commentPreset') || '{"mode": "top", "compact": true}');
 let messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for posting a comment <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postComment.js">here</a>.';
 $('#message').html(messageText);
 $('#likeMessage').html(messageText.replace("posting", "liking").replace("postComment", "like"));
@@ -52,7 +52,7 @@ let like = true;
 let lastPage = 0;
 let auto = false;
 let interval: null | NodeJS.Timeout = null;
-let commentCache: Record<number, CommentItem[]> = {};
+let commentCache: Record<number, ICommentItem[]> = {};
 
 let target = `/api/level/${lvlID}`;
 if (+lvlID > 999999999 || +lvlID < -999999999) {
@@ -161,7 +161,7 @@ function appendComments(auto?: boolean, noCache?: boolean) {
 	 * Append comments to the display.
 	 * @param res A list of comments, or an error object.
 	 */
-	function addComments(res: ErrorObject | CommentItem[]) {
+	function addComments(res: ErrorObject | ICommentItem[]) {
 		if (("commentHistory" in lvl) && history && lvl.commentHistory != "all") $('#pageUp').hide();
 
 		if ("error" in res || (("commentHistory" in lvl) && history && lvl.commentHistory != "all")) {

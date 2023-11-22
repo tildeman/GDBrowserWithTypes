@@ -1,0 +1,64 @@
+<div class="searchResult leaderboardSlot"{{bgString}}>
+	<div class="center ranking">
+		{{#if accurateLeaderboards}}
+			<img class="spaced" src="./assets/trophies/{{alTrophyicon}}.png" height="150%" style="margin-bottom: 0%; transform:scale(1.1)">
+		{{else}}
+			<gdicon dontload="true" class="leaderboardIcon" iconID={{lbItem.icon.icon}} cacheID={{lbItem.playerID}} iconForm="{{lbItem.icon.form}}" col1="{{lbItem.icon.col1}}" col2="{{lbItem.icon.col2}}" glow="{{lbItem.icon.glow}}"></gdicon>
+		{{/if}}
+		<h2 class="slightlySmaller" style="transform: scale({{rankScale}})">{{lbItem.rank}}</h2>
+	</div>
+
+	<div class="leaderboardSide">
+		<div class="leaderboardStars">
+			{{#if lbItem.moderator}}<img title="{{#if elderMod}}Elder {{/if}}Moderator" src="/assets/mod{{#if elderMod}}-elder{{/if}}.png" style="width: 9%; cursor: help; padding-right: 1.6%; transform: translateY(0.7vh)">{{/if}}
+			<h2 class="leaderboardName small inline gdButton" style="margin-top: 1.5%{{properNameString}}"><a href="{{#if onePointNine}}/search/{{lbItem.playerID}}?user{{else}}/u/{{lbItem.accountID}}{{/if}}" accountID="{{lbItem.accountID}}">{{lbItem.username}}</a></h2>
+			{{#unless wk}}<h3 class="inline{{#if allTime.stars}} yellow{{/if}}" style="margin-left: 4%; margin-top: 2%; font-size: 4.5vh">{{lbItem.stars}}<img class="help valign" src="/assets/star.png"style="width: 4vh; transform: translate(-25%, -10%);" title="Stars"></h3>{{/unless}}
+		</div>
+
+		<h3 class="lessSpaced leaderboardStats">
+			{{#if wk}}
+				<span{{#if allTime.starGain}} class='yellow'{{/if}}>+{{lbItem.stars}}</span>
+				<img class="help valign" src="/assets/star.png" title="Star Gain">
+			{{/if}}
+
+			{{#unless wk19}}
+				<span{{#if allTime.diamonds}} class='blue'{{/if}}>{{lbItem.diamonds}}</span>
+				<img class="help valign" src="/assets/diamond.png" title="Diamonds">
+			{{/unless}}
+
+			{{#if wk}}&nbsp;{{else}}
+				<span{{#if allTime.coins}} class='yellow'{{/if}}>{{lbItem.coins}}</span>
+				<img class="help valign" src="/assets/coin.png" title="Secret Coins">
+			{{/if}}
+
+			{{#unless wk19}}
+				<span{{#if allTime.userCoins}} class='brightblue'{{/if}}>{{lbItem.userCoins}}</span>
+				<img class="help valign" src="/assets/silvercoin.png" title="User Coins">
+			{{/unless}}
+
+			{{#unless wk}}
+				<span{{#if allTime.demons}} class='brightred'{{/if}}>{{lbItem.demons}}</span>
+				<img class="help valign" src="/assets/demon.png" title="Demons">
+			{{/unless}}
+
+			{{#unless poor}}
+				<span{{#if allTime.cp}} class='yellow'{{/if}}>{{lbItem.cp}}</span>
+				<img class="help valign" src="/assets/cp.png" title="Creator Points">
+			{{/unless}}
+		</h3>
+
+		<h3 class="lessSpaced leaderboardStats weeklyStuff">
+			<span{{#if weekly.diamonds}} class='blue'{{/if}}>{{gained.diamonds}}</span>
+			<img class="help valign" src="/assets/diamond.png" title="Diamond Gain">
+
+			<span{{#if weekly.stars}} class='yellow'{{/if}}>{{gained.stars}}</span>
+			<img class="help valign" src="/assets/star.png" title="Star Gain">
+
+			<span{{#if weekly.userCoins}} class='brightblue'{{/if}}>{{gained.userCoins}}</span>
+			<img class="help valign" src="/assets/silvercoin.png" title="User Coin Gain">
+
+			<span{{#if weekly.demons}} class='brightred'{{/if}}>{{gained.demons}}</span>
+			<img class="help valign" src="/assets/demon.png" title="Demon Gain">
+		</h3>
+	</div>
+</div>
