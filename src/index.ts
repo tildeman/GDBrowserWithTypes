@@ -5,6 +5,7 @@ import packageValues from './middleware/packageValues.js';
 import { UserCache } from './classes/UserCache.js';
 import compression from 'compression';
 import appConfig from './settings.js';
+import { resolve } from 'node:path';
 import express from 'express';
 
 // ROUTE IMPORTS
@@ -21,7 +22,6 @@ import postRoutes from "./routes/posts.js";
 import iconRoutes from "./routes/icons.js";
 import listRoutes from "./routes/lists.js";
 import miscRoutes from "./routes/misc.js";
-import { resolve } from 'node:path';
 
 /**
  * The Express app that does all the stuff.

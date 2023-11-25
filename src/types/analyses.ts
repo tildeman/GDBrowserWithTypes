@@ -283,3 +283,27 @@ export interface IHeaderResponse {
 	 */
 	colors: IAnalysisColorObject[];
 }
+
+/**
+ * Information for Geometry Dash in-game portals.
+ */
+export interface IPortalInfo {
+	/**
+	 * The name of the portal.
+	 */
+	portalName: string;
+	/**
+	 * Extra HTML classes for the portal, mostly speed portals.
+	 */
+	extraClasses: string;
+	/**
+	 * The position of the portal as a formatted percentage.
+	 * 
+	 * @example "74%"
+	 */
+	portalPos: string;
+	/**
+	 * Whether to add the divider object.
+	 */
+	addDivider: boolean;
+}

@@ -214,7 +214,7 @@ As a JS/TS developer, sometimes you want some sort of pattern for the infinite a
 
 ## Roadmap
 
-- [ ] Complete all the TODOs (14).
+- [ ] Complete all the TODOs (8).
 - [ ] Implement 2.2 features once the release is out.
 - [ ] Write JSDoc for all the types and interfaces in code.
 - [ ] Fix glaring visual errors.

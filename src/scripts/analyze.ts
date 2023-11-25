@@ -2,7 +2,7 @@
  * @fileoverview Site-specific script for the level analysis page.
  */
 
-import { IAnalysisResult, IAnalysisColorObject } from "../types/analyses.js";
+import { IAnalysisResult, IAnalysisColorObject, IPortalInfo } from "../types/analyses.js";
 import { Color3B, ErrorObject } from "../types/miscellaneous.js";
 import { toggleEscape, clean } from "../misc/global.js";
 import { Handlebars } from "../vendor/index.js";
@@ -107,13 +107,6 @@ let portals = res.portals;
  */
 function commafy(num: string | number) {
 	return (+num || 0).toString().replace(/(\d)(?=(\d\d\d)+$)/g, "$1,");
-}
-
-interface IPortalInfo {
-	portalName: string;
-	extraClasses: string;
-	portalPos: string;
-	addDivider: boolean;
 }
 
 /**
@@ -331,8 +324,8 @@ $(".portalToggle").on("click", function() {
 	appendPortals();
 });
 
-let dataSize: [number, string] = [Number((res.dataLength / 1024 / 1024).toFixed(1)), "MB"];
-if (dataSize[0] < 1) dataSize = [Number((res.dataLength / 1024).toFixed(1)), "KB"];
+let dataSize: [number, string] = [Number((res.dataLength / 1024 / 1024).toFixed(1)), "MiB"];
+if (dataSize[0] < 1) dataSize = [Number((res.dataLength / 1024).toFixed(1)), "KiB"];
 
 $('#codeLength').html(`${commafy(res.dataLength)} characters (${dataSize.join(" ")})`);
 

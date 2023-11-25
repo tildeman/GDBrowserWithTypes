@@ -7,10 +7,10 @@ import { Icon, iconData, loadIconLayers, parseIconColor, parseIconForm, rgbToDec
 import { IAnimationObject, IIconConfiguration, IIconData, IIconKitAPIResponse } from "../types/icons.js";
 import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements.js";
 import { Color3B, ErrorObject } from "../types/miscellaneous.js";
-import { PIXI } from "../vendor/index.js";
 import { Player } from "../classes/Player.js";
+import { PIXI } from "../vendor/index.js";
 
-const mobile =  /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
 const shops = ["the Shop", "Scratch's Shop", "the Community Shop"];
 const yOffsets = { ball: -10, ufo: 30, spider: 7, swing: -15 };
 
@@ -43,7 +43,7 @@ let icon: Icon | null = null;
 
 const iconCanvas = document.getElementById('result') as HTMLCanvasElement;
 
-let app = new PIXI.Application({
+const app = new PIXI.Application({
 	view: iconCanvas,
 	width: 300,
 	height: 300,
@@ -52,7 +52,7 @@ let app = new PIXI.Application({
 
 if (mobile) $('#logo').attr('width', '80%');
 
-let iconSettings: string[] = (localStorage.iconkit || "").split(",");
+const iconSettings: string[] = (localStorage.iconkit || "").split(",");
 iconSettings.forEach(setting => {
 	$(`#box-${setting}`).prop('checked', true);
 });
@@ -140,7 +140,7 @@ function checkGlow() {
  * Check if white col tab should be visible.
  */
 function checkWhite() {
-	let hasWhite = icon!.layers[0].sections.some(color => color.colorType == "w");
+	const hasWhite = icon!.layers[0].sections.some(color => color.colorType == "w");
 	if (hasWhite) {
 		$('#colW').show();
 		$('#ccW').show();
@@ -156,7 +156,7 @@ function checkWhite() {
  * Check if the animation selector should be visible.
  */
 function checkAnimation() {
-	let animationData = iconData!.robotAnimations.animations[selectedForm];
+	const animationData = iconData!.robotAnimations.animations[selectedForm];
 	if (animationData && !$(`#robotAnimation[form="${selectedForm}"]`).is(":visible")) {
 		appendAnimations(selectedForm, animationData);
 	}
@@ -178,14 +178,14 @@ function animationSort(anim: Record<string, IAnimationObject>) {
  * @param animationData The animation data object.
  */
 function appendAnimations(form: string, animationData: Record<string, IAnimationObject>) {
-	let animationNames = animationSort(animationData);
+	const animationNames = animationSort(animationData);
 	$('#robotAnimation').html(animationNames.map(animationName => `<option form="${form}" value="${animationName}">${animationName.replace(/_/g, " ")}</option>`).join());
 	$('#robotAnimation').val("idle");
 	$('#robotAnimation').attr("form", selectedForm);
 
 	if (iconSettings.includes("cursed")) Object.keys(iconData!.robotAnimations.animations).forEach(altForm => {
 		if (altForm != form) {
-			let altNames = animationSort(iconData!.robotAnimations.animations[altForm]);
+			const altNames = animationSort(iconData!.robotAnimations.animations[altForm]);
 			$('#robotAnimation').append(altNames.map(altName => `<option form="${altForm}" value="${altName}">*${altName.replace(/_/g, " ")} (${altForm})</option>`).join(""));
 		}
 	});
@@ -247,7 +247,7 @@ iconStuff = Object.assign(iconData, iconKitData);
 const forms = Object.keys(iconStuff.forms);
 
 forms.forEach(form => {
-	let spoil = ["swing", "jetpack"].includes(form);
+	const spoil = ["swing", "jetpack"].includes(form);
 	$("#iconTabs").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""} title="${iconStuff.forms[form].name}" class="blankButton iconTabButton"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
 	$("#copyForms").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""}  title="${iconStuff.forms[form].name}" class="blankButton copyForm"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
 });
@@ -272,7 +272,7 @@ async function generateIcon(): Promise<void> {
 	const foundForm = parseIconForm(selectedForm);
 
 	const isNew = await loadIconLayers(foundForm, selectedIcon);
-	let iconArgs: IIconConfiguration = {
+	const iconArgs: IIconConfiguration = {
 		app,
 		form: foundForm,
 		id: selectedIcon,
@@ -342,12 +342,12 @@ function appendIcon(form: string[], formName: string) {
  * @param devmode Unused value.
  */
 function loadColors(devmode?: unknown) {
-	let colTypes = [1, 2, "G", "W", "U"];
+	const colTypes = [1, 2, "G", "W", "U"];
 	colTypes.forEach(colorType => $(`#col${colorType}`).html(""));
 	(iconStuff.colorOrder || []).forEach(function (colorID, n) {
 		if (iconSettings.includes("sort")) colorID = n;
 		colTypes.forEach(c => {
-			let colRGB = iconStuff.colors[colorID];
+			const colRGB = iconStuff.colors[colorID];
 			$(`#col${c}`).append(`<button col=${colorID} colType=color${c} class="blankButton color${c} iconColor" title="Color ${colorID} (#${toHexCode(rgbToDecimal(colRGB))})" id="col${c}-${colorID}"><div style="background-color: rgb(${colRGB.r}, ${colRGB.g}, ${colRGB.b})"></button>`);
 		});
 	});
@@ -355,9 +355,9 @@ function loadColors(devmode?: unknown) {
 }
 
 loadColors();
-let icons = filterIcon('icon');
+const icons = filterIcon('icon');
 
-let sample = JSON.parse(iconStuff.sample.join(""));
+const sample = JSON.parse(iconStuff.sample.join(""));
 enableGlow = sample[3] * 2;
 [selectedIcon, selectedCol1, selectedCol2] = sample;
 selectedColG = selectedCol2;
@@ -384,8 +384,8 @@ icon!.glow = false;
 enableGlow = 0; // disable glow after first generated
 
 $(document).on('click', '.iconTabButton', function() {
-	let form = $(this).attr('form');
-	let formElement = '#' + form + 's';
+	const form = $(this).attr('form');
+	const formElement = '#' + form + 's';
 
 	currentForm = form || "icon";
 
@@ -393,7 +393,7 @@ $(document).on('click', '.iconTabButton', function() {
 		$(this).children().first().attr('src', $(this).children().first().attr('src')!.replace('_on', '_off'));
 	});
 
-	let img = $(this).children().first();
+	const img = $(this).children().first();
 	img.attr('src', img.attr('src')!.replace('_off', '_on'));
 
 	$('#iconKitParent').each(function() {
@@ -408,11 +408,11 @@ $(document).on('click', '.iconTabButton', function() {
 $('#iconTabs').find('.iconTabButton').first().children().first().attr('src', $('.iconTabButton').first().children().first().attr('src')!.replace('_off', '_on'));
 
 $("#randomIcon").on("click", function() {
-	let iconPool = iconStuff.previewIcons.concat(enableSpoilers ? iconStuff.newPreviewIcons : []);
-	let pickedIcon = iconPool[Math.floor(Math.random() * iconPool.length)].split(".")[0].split("_");
-	let [randomForm, randomID] = pickedIcon;
+	const iconPool = iconStuff.previewIcons.concat(enableSpoilers ? iconStuff.newPreviewIcons : []);
+	const pickedIcon = iconPool[Math.floor(Math.random() * iconPool.length)].split(".")[0].split("_");
+	const [randomForm, randomID] = pickedIcon;
+	const colorCount = Object.keys(iconStuff.colors).length;
 
-	let colorCount = Object.keys(iconStuff.colors).length;
 	selectedForm = randomForm;
 	selectedIcon = +randomID;
 	selectedCol1 = randInt(0, colorCount - 1);
@@ -582,7 +582,7 @@ $('#copyToClipboard').on("click", function() {
 
 
 $('#robotAnimation').on('change', function() {
-	let prevForm = ("form" in currentAnimation) ? currentAnimation.form : "";
+	const prevForm = ("form" in currentAnimation) ? currentAnimation.form : "";
 	currentAnimation = {
 		name: $(this).val()!.toString(),
 		form: $('#robotAnimation').find(":selected").attr('form') || ""
@@ -598,8 +598,8 @@ $('#robotAnimation').on('change', function() {
 	else icon!.setAnimation(currentAnimation.name, currentAnimation.form);
 });
 
-let hoverText = $('#helpText').html();
-$(".help").hover(function() {
+const hoverText = $('#helpText').html();
+$(".help").on("hover", function() {
 	$(this).css('color', 'rgba(200, 255, 255)');
 	$('#helpText').html($(this).attr('help') || "");
 }, function() {
@@ -608,14 +608,19 @@ $(".help").hover(function() {
 });
 
 $(document).on('change', '.iconsetting', function(e) {
-	let checkedSettings: string[] = [];
+	const checkedSettings: string[] = [];
 	$('.iconsetting:checkbox:checked').each((i, setting) => {
 		checkedSettings.push(setting.id.split('-')[1]);
 	});
-	iconSettings = checkedSettings
+	iconSettings.splice(0, iconSettings.length);
+	iconSettings.push(...checkedSettings);
 	switch ($(this).attr('id')!.slice(4)) {
-		case "sort": loadColors(); break;
-		case "ufo": generateIcon(); break;
+		case "sort": 
+			loadColors();
+			break;
+		case "ufo": 
+			generateIcon();
+			break;
 		case "cursed":
 			$('#animationOptions').hide();
 			checkAnimation();
@@ -653,8 +658,8 @@ $('#unlockIcon').on("click", function() {
 $(document).on('mouseover', '.iconButton, .color1, .color2', function() {
 	if (unlockMode && achievements.length) {
 		$(this).addClass('iconHover');
-		let form = $(this).attr('form') || $(this).attr('colType');
-		let iconNumber = $(this).attr('num') || $(this).attr('col');
+		const form = $(this).attr('form') || $(this).attr('colType');
+		const iconNumber = $(this).attr('num') || $(this).attr('col');
 		$('#howto').html(getUnlockMethod(Number(iconNumber) || 0, form || "") || `<span style='color: #aaaaaa'>(no info available)</span>`);
 	}
 });
@@ -665,7 +670,7 @@ $(document).on('mouseleave', '.iconButton, .color1, .color2', function() {
 });
 
 $("#fetchUser").on("click", async function() {
-	let user = $("#playerName").val();
+	const user = $("#playerName").val();
 	if (!user || typeof(user) == "number" || !user.length) {
 		return $("#steal").hide();
 	}
@@ -675,7 +680,7 @@ $("#fetchUser").on("click", async function() {
 	$("#steal").hide();
 	enableGlow = 0;
 
-	let info: Player | ErrorObject = await fetch('/api/profile/' + user).then(res => res.json()).catch(e => {
+	const info: Player | ErrorObject = await fetch('/api/profile/' + user).then(res => res.json()).catch(e => {
 		console.error(e.message);
 	});
 	if ("error" in info) return;
@@ -700,9 +705,9 @@ function getUnlockMethod(iconNumber: number, form: string) {
 	else if (iconNumber == 0 && form == "icon") return "Legacy mini icon, enable in settings";
 	else if (iconNumber == 1 || ((form == "icon") && iconNumber <= 4) || ((form.startsWith('color')) && iconNumber <= 3)) return "Always unlocked";
 
-	let method = iconStuff.hardcodedUnlocks.find(unlockItem => unlockItem.form == form && unlockItem.id == iconNumber);
-	let foundAch = achievements.find(unlockItem => unlockItem.rewardType == form && unlockItem.rewardID == +iconNumber);
-	let foundMerch = shopIcons.find(unlockItem => unlockItem.type == form && unlockItem.icon == +iconNumber);
+	const method = iconStuff.hardcodedUnlocks.find(unlockItem => unlockItem.form == form && unlockItem.id == iconNumber);
+	const foundAch = achievements.find(unlockItem => unlockItem.rewardType == form && unlockItem.rewardID == +iconNumber);
+	const foundMerch = shopIcons.find(unlockItem => unlockItem.type == form && unlockItem.icon == +iconNumber);
 
 	if (method) {
 		switch (method.type) {

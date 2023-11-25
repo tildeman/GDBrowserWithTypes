@@ -39,8 +39,7 @@ function leaderboard() {
 		$('#meta-desc').attr('content', 'View the leaderboard for ' + lvl.name + ' by ' + lvl.author + '!');
 	});
 
-	// TODO: missing types!
-	fetch(`/api/leaderboardLevel/${lvlID}?count=200${weekly ? "&week" : ""}`).then(res => res.json()).then(res => {
+	fetch(`/api/leaderboardLevel/${lvlID}?count=200${weekly ? "&week" : ""}`).then(res => res.json()).then((res: ILevelLeaderboardEntry[] | ErrorObject) => {
 		if (!res || "error" in res) {
 			loading = false;
 			$('#loading').hide();
@@ -49,7 +48,7 @@ function leaderboard() {
 			return;
 		}
 
-		res.forEach((player: ILevelLeaderboardEntry) => {
+		res.forEach((player) => {
 			$("#searchBox").append(searchResultTemplate({
 				rankScale: 1 - (Math.max(0, String(player.rank).length - 1) * 0.2),
 				player,

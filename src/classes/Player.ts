@@ -1,6 +1,6 @@
 import colors_raw from '../iconkit/sacredtexts/colors.json' assert { type: "json" };
 import { Color3B } from '../types/miscellaneous.js';
-import { PlayerIcon } from '../types/icons.js';
+import { IPlayerIcon } from '../types/icons.js';
 
 /**
  * An object of colors.
@@ -64,7 +64,7 @@ export class Player {
 	/**
 	 * The default icon of the player.
 	 */
-	icon: number | PlayerIcon;
+	icon: number | IPlayerIcon;
 	/**
 	 * The primary color of the icon.
 	 */

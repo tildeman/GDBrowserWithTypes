@@ -340,13 +340,15 @@ export interface IExtraSettings {
 /**
  * Interface for a player icon.
  */
-export interface PlayerIcon {
+export interface IPlayerIcon {
 	/**
 	 * The gamemode of the default icon.
 	 */
 	form: string;
 	/**
-	 * The icon ID (e.g.: Ship `22` yields the ghost ship).
+	 * The icon ID 
+	 * 
+	 * @example 22 // Yields the ghost ship if the current form is a ship.
 	 */
 	icon: number;
 	/**

@@ -3,40 +3,30 @@
  */
 
 import { Fetch, toggleEscape, serverMetadata } from "../misc/global.js";
-import { Color3B, ErrorObject } from "../types/miscellaneous.js";
+import { ErrorObject } from "../types/miscellaneous.js";
 import { renderIcons } from "../iconkit/icon.js";
 import { Handlebars } from "../vendor/index.js";
-import { PlayerIcon } from "../types/icons.js";
 import { Player } from "../classes/Player.js";
 import { Level } from "../classes/Level.js";
+import { ICommentContent } from "../types/comments.js";
 
 const commentEntryTemplateString = await (await fetch("/templates/comments_commentEntry.hbs")).text();
 const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);
-// TODO: Write documentation
-interface ICommentItem {
-	content: string;
-	ID: string;
-	likes: number;
-	date: string;
-	username: string;
-	playerID: string;
-	accountID?: string;
-	icon: PlayerIcon;
-	col1RGB: Color3B;
-	col2RGB: Color3B;
-	levelID: string;
-	moderator?: number;
-	color?: string;
-	results?: number;
-	pages?: number;
-	range?: string;
-	percent?: number;
-	browserColor?: boolean;
-}
 
+/**
+ * Interface for a comment preset.
+ */
 interface ICommentPreset {
+	/**
+	 * The comment filtering mode.
+	 * 
+	 * @example "top"
+	 */
 	mode: string;
-	compact: boolean
+	/**
+	 * Whether compact mode is enabled.
+	 */
+	compact: boolean;
 }
 
 const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for posting a comment <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postComment.js">here</a>.';
@@ -44,26 +34,23 @@ let { mode, compact }: ICommentPreset = JSON.parse(localStorage.getItem('comment
 $('#message').html(messageText);
 $('#likeMessage').html(messageText.replace("posting", "liking").replace("postComment", "like"));
 
-let lvlID = window.location.pathname.split('/')[2];
-let history = false;
+
+const rawLvlID = window.location.pathname.split('/')[2];
+if (+rawLvlID > 999999999 || +rawLvlID < -999999999) {
+	window.location.href = window.location.href.replace("comments", "search");
+}
+const lvlID = Number.isInteger(+rawLvlID) ? Math.round(+rawLvlID).toString(): rawLvlID;
+
 let page = 0;
 let loadingComments = true;
 let like = true;
 let lastPage = 0;
 let auto = false;
 let interval: null | NodeJS.Timeout = null;
-let commentCache: Record<number, ICommentItem[]> = {};
 
-let target = `/api/level/${lvlID}`;
-if (+lvlID > 999999999 || +lvlID < -999999999) {
-	window.location.href = window.location.href.replace("comments", "search");
-}
-
-if (!Number.isInteger(+lvlID)) {
-	history = true;
-	target = `/api/profile/${lvlID}`;
-}
-else lvlID = Math.round(+lvlID).toString();
+const commentCache: Record<number, ICommentContent[]> = {};
+const history = !Number.isInteger(+lvlID);
+const target = Number.isInteger(+lvlID) ? `/api/level/${lvlID}` : `/api/profile/${lvlID}`;
 
 if (mode == "top") {
 	mode = "top";
@@ -161,7 +148,7 @@ function appendComments(auto?: boolean, noCache?: boolean) {
 	 * Append comments to the display.
 	 * @param res A list of comments, or an error object.
 	 */
-	function addComments(res: ErrorObject | ICommentItem[]) {
+	function addComments(res: ErrorObject | (ICommentContent | (ICommentContent & Player))[]) {
 		if (("commentHistory" in lvl) && history && lvl.commentHistory != "all") $('#pageUp').hide();
 
 		if ("error" in res || (("commentHistory" in lvl) && history && lvl.commentHistory != "all")) {
@@ -176,15 +163,18 @@ function appendComments(auto?: boolean, noCache?: boolean) {
 			$(`#date-${comment.ID}`).html(comment.date);
 			$(`#likes-${comment.ID}`).html(comment.likes.toString());
 			// TODO: Avoid these raw HTML manipulations
-			$(`#thumb-${comment.ID}`).attr('style', comment.likes < 0 ? `transform: translateY(${compact ? '15' : '25'}%); margin-right: 0.4%; height: 4vh;` : 'height: 4vh;').attr('src', `/assets/${comment.likes < 0 ? "dis" : ""}like.png`);
+			$(`#thumb-${comment.ID}`)
+				.attr('style', comment.likes < 0 ? `transform: translateY(${compact ? '15' : '25'}%); margin-right: 0.4%; height: 4vh;` : 'height: 4vh;')
+				.attr('src', `/assets/${comment.likes < 0 ? "dis" : ""}like.png`);
 			if ($(`.comment[commentID=${comment.ID}]`).length) return; // auto mode, ignore duplicates
 
 			const noAutoBgCol = index % 2 ? "evenComment" : "oddComment";
 			const autoBgCol = $('.commentBG').first().hasClass('oddComment') ? "evenComment" : "oddComment";
 			const bgCol = auto ? autoBgCol : noAutoBgCol;
 
-			const userName = !history ? comment.username : ("username" in lvl ? lvl.username : "");
-			const modNumber = comment.moderator || ("moderator" in lvl ? lvl.moderator : 0);
+			const userName = (!history && "username" in comment) ? comment.username : ("username" in lvl ? lvl.username : "");
+			const modNumber = ("moderator" in comment ? comment.moderator : 0) || ("moderator" in lvl ? lvl.moderator : 0);
+			const equivalentPlayerIDs = !history && "playerID" in comment && comment.playerID == lvl.playerID;
 
 			if (comment.pages) {
 				lastPage = comment.pages;
@@ -197,11 +187,11 @@ function appendComments(auto?: boolean, noCache?: boolean) {
 				compact,
 				bgCol,
 				comment,
-				notRegistered: !comment.accountID || comment.accountID == "0",
+				notRegistered: !("accountID" in comment) || !comment.accountID || comment.accountID == "0",
 				userName,
 				moderator: modNumber > 0,
 				moderatorRole: modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : "",
-				commentColor: !history && comment.playerID == lvl.playerID ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color,
+				commentColor: equivalentPlayerIDs ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color,
 				history,
 				disliked: comment.likes < 0
 			});
@@ -249,7 +239,9 @@ function resetSort() {
 	page = 0;
 	auto = false;
 	if (interval) clearInterval(interval);
-	commentCache = {};
+	Object.keys(commentCache).forEach(function(k) {
+		delete commentCache[k];
+	});
 	$('#liveText').hide();
 	$('#autoMode').attr('src', `/assets/playbutton.png`);
 }
@@ -402,8 +394,8 @@ $('#submitVote').on("click", function() {
 	const username = $('#like-username').val();
 	const password = $('#like-password').val();
 	const extraID = lvID || window.location.pathname.split('/')[2];
+	const likeType = like ? "1" : "0";
 	let accountID = 0;
-	let likeType = like ? "1" : "0";
 
 	if (!ID || !username || !password || loadingComments) {
 		return $('#postComment').hide();

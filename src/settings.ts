@@ -45,5 +45,5 @@ export default {
 	/**
 	 * Caches player icons to speed up loading. Changing your icon in-game may take time to update on the site.
 	 */
-	cachePlayerIcons: true,
+	cacheIPlayerIcons: true,
 }

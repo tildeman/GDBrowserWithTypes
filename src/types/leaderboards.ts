@@ -3,7 +3,7 @@
  */
 
 import { Color3B } from "./miscellaneous.js";
-import { PlayerIcon } from "./icons.js";
+import { IPlayerIcon } from "./icons.js";
 
 /**
  * An entry for the accurate leaderboard.
@@ -36,7 +36,7 @@ export interface IAccurateLeaderboardEntry {
 	/**
 	 * The current icon of the user.
 	 */
-	icon: PlayerIcon
+	icon: IPlayerIcon
 	/**
 	 * The amount of secret coins the user has.
 	 */
@@ -132,7 +132,7 @@ export interface ILevelLeaderboardEntry {
 	/**
 	 * The icon of the user
 	 */
-	icon: PlayerIcon & {
+	icon: IPlayerIcon & {
 		/**
 		 * The primary color of the icon in RGB format.
 		 */

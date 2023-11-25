@@ -32,7 +32,6 @@ Fetch('/api/gdps').then((servers: IServerInfo[]) => {
 		let serverPage = servers.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
 		$('#searchBox').html('<div style="height: 4.5%"></div>').scrollTop(0);
 
-		// TODO: This has a few glaring visual glitches
 		serverPage.forEach(serverInfo => {
 			$("#searchBox").append(searchResultTemplate({
 				serverColor: (serverMetadata.gdps || "") == serverInfo.id ? "#00DDFF" : "white",

@@ -2,12 +2,31 @@
  * @fileoverview Site-specific script for the achievements page.
  */
 
+import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements.js";
+import { Color3B } from "../types/miscellaneous.js";
+import { Handlebars } from "../vendor/index.js";
+
+/**
+ * Item toggle filtering in the settings menu.
+ */
 interface IDisabledFilters {
+	/**
+	 * A list of disabled (switched-off) reward options.
+	 */
 	reward: string[];
+	/**
+	 * A list of disabled (switched-off) type options.
+	 */
 	type: string[];
+	/**
+	 * A list of disabled (switched-off) game options.
+	 */
 	game: string[];
 }
 
+/**
+ * Template parameters for the achievements query result.
+ */
 interface ISearchResultEntryTemplateParams {
 	inForms: boolean;
 	isColor: boolean;
@@ -20,10 +39,6 @@ interface ISearchResultEntryTemplateParams {
 	completedColor: string;
 	completedDescription: string;
 }
-
-import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements.js";
-import { Color3B } from "../types/miscellaneous.js";
-import { Handlebars } from "../vendor/index.js";
 
 const searchResultTemplateString = await (await fetch("/templates/achievements_searchResult.hbs")).text();
 const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
@@ -71,6 +86,7 @@ forms.concat(["trail", "deathEffect", "color1", "color2", "misc"]).forEach((prop
 		iconSource: propertyIndex > 8 ? "achievements" : "iconkitbuttons"
 	}));
 });
+
 /**
  * Append achievement item entries.
  * @param reset Whether to reset the scroll to the top.
