@@ -9,6 +9,7 @@ import init from "../misc/analysis/initialProperties.json" assert { type: "json"
 import blocks from "../misc/analysis/blocks.json" assert { type: "json" };
 import ids from "../misc/analysis/objects.json" assert { type: "json" };
 import { DownloadedLevel } from "../classes/Level.js";
+import { ErrorCode } from "../types/servers.js";
 import { Request, Response } from "express";
 import zlib from "node:zlib";
 
@@ -22,7 +23,7 @@ import zlib from "node:zlib";
 export default async function(req: Request, res: Response, level?: DownloadedLevel) {
 	if (!level) {
 		return res.status(500).send({
-			error: 3,
+			error: ErrorCode.ILLEGAL_REQUEST,
 			message: "No level provided!"
 		});
 	}
@@ -40,7 +41,7 @@ export default async function(req: Request, res: Response, level?: DownloadedLev
 		zlib.unzip(levelString, (err, buffer) => {
 			if (err) {
 				return res.status(500).send({
-					error: 5,
+					error: ErrorCode.BROKEN_DATA,
 					message: "Can't decompress (inflate) the level data."
 				});
 			}

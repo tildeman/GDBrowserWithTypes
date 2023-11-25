@@ -1,6 +1,6 @@
 import { IGauntletCacheItem, IGauntletEntry } from "../types/gauntlets.js";
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import { parseResponse } from "../lib/parseResponse.js";
-import { ExportBundle } from "../types/servers.js";
 import { Request, Response } from "express";
 
 /**
@@ -28,7 +28,7 @@ const gauntletNames = [
 export default async function(req: Request, res: Response, cacheGauntlets: boolean, api: boolean = true) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
+	if (reqBundle.offline) return sendError(ErrorCode.SERVER_UNAVAILABLE, "The requested server is currently unavailable.");
 
 	const cached = cache[reqBundle.id];
 	if (cacheGauntlets && cached && cached.data && cached.indexed + 2000000 > Date.now()) {
@@ -54,6 +54,6 @@ export default async function(req: Request, res: Response, cacheGauntlets: boole
 		else res.render("gauntlets", { gauntlets: gauntletList });
 	}
 	catch (err) {
-		return sendError(2, "Failed to fetch gauntlets upstream.");
+		return sendError(ErrorCode.SERVER_ISSUE, "Failed to fetch gauntlets upstream.");
 	}
 }

@@ -4,7 +4,7 @@
 
 import credits from "../misc/credits.json" assert { type: "json" };
 import { fetchTemplate } from "../lib/templateHandle.js";
-import { ExportBundle } from "../types/servers.js";
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import express from "express";
 
 const router = express.Router();
@@ -71,7 +71,7 @@ router.get("/gdps", fetchTemplate("gdps"));
 router.get('*', function(req, res) {
 	if (req.path.startsWith('/api') || req.path.startsWith("/iconkit")) {
 		res.status(404).send({
-			error: 3,
+			error: ErrorCode.ILLEGAL_REQUEST,
 			message: "Cannot find the resource specified."
 		});
 	}

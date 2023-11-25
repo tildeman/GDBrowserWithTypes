@@ -148,12 +148,33 @@ export interface ExportBundle {
 	sendError: (errorCode?: ErrorCode, message?: string, responseCode?: number) => void;
 }
 
-export declare enum ErrorCode {
+/**
+ * Common error codes in GDBrowser
+ */
+export const enum ErrorCode {
+	/**
+	 * No error was meant to be produced. Only used for testing purposes.
+	 */
 	NO_ERROR_YOURE_JUST_STUPID,
+	/**
+	 * The upstream Geometry Dash server in question cannot be accessed.
+	 */
 	SERVER_UNAVAILABLE,
+	/**
+	 * The upstream Geometry Dash server in question denied the request.
+	 */
 	SERVER_ISSUE,
+	/**
+	 * The client's request is malformed (possibly from inherently nonexistent information).
+	 */
 	ILLEGAL_REQUEST,
+	/**
+	 * The upstream Geometry Dash server in question disabled downloading levels for this GDBrowser instance.
+	 */
 	DOWNLOADS_DISABLED,
+	/**
+	 * The level data is malformed and cannot be decoded for analysis.
+	 */
 	BROKEN_DATA
 }
 

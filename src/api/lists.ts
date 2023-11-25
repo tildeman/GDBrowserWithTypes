@@ -1,7 +1,7 @@
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import { parseResponse } from "../lib/parseResponse.js";
 import { SearchQueryLevel } from "../classes/Level.js";
 import { UserCache } from "../classes/UserCache.js";
-import { ExportBundle } from "../types/servers.js";
 import { LevelList } from "../types/lists.js";
 import { Request, Response } from "express";
 
@@ -31,13 +31,13 @@ export default async function (req: Request, res: Response, api: boolean, userCa
 	 * @param message The error message upon level rejection.
 	 * @param errorCode The error code that comes with the error.
 	 */
-	function rejectList(message: string = "Problem found with an unknown cause", errorCode = 2) {
+	function rejectList(message: string = "Problem found with an unknown cause", errorCode = ErrorCode.SERVER_ISSUE) {
 		console.error(message);
 		if (!api) return res.redirect('search/' + req.params.id);
 		else return sendError(errorCode, message);
 	}
 
-	if (reqBundle.offline) return rejectList("The requested server is currently unavailable.", 1);
+	if (reqBundle.offline) return rejectList("The requested server is currently unavailable.", ErrorCode.SERVER_UNAVAILABLE);
 
 	const listID = req.params.id.replace(/[^0-9]/g, "");
 

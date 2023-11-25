@@ -1,9 +1,9 @@
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import { parseResponse } from '../lib/parseResponse.js';
 import { SearchQueryLevel } from '../classes/Level.js';
 import { UserCache } from '../classes/UserCache.js';
 import downloadController from "./download.js";
 import { Request, Response } from "express";
-import { ExportBundle } from "../types/servers.js";
 import request from 'axios'; // I hope this doesn't cause too much trouble
 
 /**
@@ -23,18 +23,24 @@ export default async function(req: Request, res: Response, api: boolean, analyze
 	 * @param message The error message upon level rejection.
 	 * @param errorCode The error code that comes with the error.
 	 */
-	function rejectLevel(message: string = "Problem found with an unknown cause", errorCode = 2) {
+	function rejectLevel(message: string = "Problem found with an unknown cause", errorCode = ErrorCode.SERVER_ISSUE) {
 		if (!api) return res.redirect('search/' + req.params.id);
 		else return sendError(errorCode, message);
 	}
 
-	if (reqBundle.offline) return rejectLevel("The requested server is currently unavailable.", 1);
+	if (reqBundle.offline) return rejectLevel("The requested server is currently unavailable.", ErrorCode.SERVER_UNAVAILABLE);
 
 	const rawLevelID = req.params.id;
 	const levelID = rawLevelID.replace(/[^0-9]/g, "");
-	if (rawLevelID == "daily") return downloadController(req, res, api, 'daily', analyze, userCacheHandle);
-	else if (rawLevelID == "weekly") return downloadController(req, res, api, 'weekly', analyze, userCacheHandle);
-	else if (rawLevelID.match(/[^0-9]/)) return rejectLevel("The provided level ID has an invalid format.");
+	if (rawLevelID == "daily") {
+		return downloadController(req, res, api, 'daily', analyze, userCacheHandle);
+	}
+	else if (rawLevelID == "weekly") {
+		return downloadController(req, res, api, 'weekly', analyze, userCacheHandle);
+	}
+	else if (rawLevelID.match(/[^0-9]/)) {
+		return rejectLevel("The provided level ID has an invalid format.", ErrorCode.ILLEGAL_REQUEST);
+	}
 
 	if (analyze || req.query.hasOwnProperty("download")) return downloadController(req, res, api, levelID, analyze, userCacheHandle);
 

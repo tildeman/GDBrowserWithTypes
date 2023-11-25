@@ -1,5 +1,5 @@
 import { IBoomlingsUser } from "../../types/leaderboards.js";
-import { ExportBundle } from "../../types/servers.js";
+import { ErrorCode, ExportBundle } from "../../types/servers.js";
 import { Request, Response } from "express";
 import request from "axios";
 
@@ -18,7 +18,7 @@ export default async function(req: Request, res: Response, secret?: string) {
 
 	// Accurate leaderboard returns 418 because Private servers do not use.
 	if (reqBundle.isGDPS) return res.status(418).send({
-		error: 3,
+		error: ErrorCode.ILLEGAL_REQUEST,
 		message: "GDBrowser cannot look up Boomlings private servers."
 	});
 
@@ -28,7 +28,7 @@ export default async function(req: Request, res: Response, secret?: string) {
 	}).then(function(resp) {
 		const body = resp.data;
 		if (!body || body == 0) return res.status(500).send({
-			error: 2,
+			error: ErrorCode.SERVER_ISSUE,
 			message: "The response body is empty."
 		});
 		// let info = body.split(" ").filter(infoText => infoText.includes(";"));

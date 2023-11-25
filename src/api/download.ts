@@ -1,9 +1,9 @@
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import { parseResponse } from "../lib/parseResponse.js";
-import { ExportBundle } from "../types/servers.js";
 import { DownloadedLevel } from '../classes/Level.js';
-import { Request, Response } from "express";
 import { UserCache } from "../classes/UserCache.js";
 import analyzeController from "./analyze.js";
+import { Request, Response } from "express";
 import request from 'axios';
 
 /**
@@ -24,7 +24,7 @@ export default async function(req: Request, res: Response, api: boolean, id: str
 	 * @param message The error message upon level rejection.
 	 * @param errorCode The error code that comes with the error.
 	 */
-	function rejectLevel(message: string = "Problem found with an unknown cause", errorCode = 2) {
+	function rejectLevel(message: string = "Problem found with an unknown cause", errorCode = ErrorCode.SERVER_ISSUE) {
 		if (!api) return res.redirect('search/' + req.params.id);
 		else return sendError(errorCode, message);
 	}
@@ -34,7 +34,7 @@ export default async function(req: Request, res: Response, api: boolean, id: str
 
 	if (reqBundle.offline) {
 		if (!api && +levelIDCode < 0) return res.redirect('/');
-		return rejectLevel("The requested server is currently unavailable.", 1);
+		return rejectLevel("The requested server is currently unavailable.", ErrorCode.SERVER_UNAVAILABLE);
 	}
 	if (levelIDCode == "daily") levelID = -1;
 	else if (levelIDCode == "weekly") levelID = -2;
@@ -116,7 +116,7 @@ export default async function(req: Request, res: Response, api: boolean, id: str
 	catch (err) {
 		console.error(err.message);
 		if (analyze && api && reqBundle.server.downloadsDisabled) return res.status(403).send({
-			error: 4,
+			error: ErrorCode.DOWNLOADS_DISABLED,
 			message: "Downloads are disabled for this server."
 		});
 		else if (!api && levelID < 0) return res.redirect(`/?daily=${levelID * -1}`);

@@ -1,7 +1,7 @@
 import { IScoreParameters } from "../../types/leaderboards.js";
+import { ErrorCode, ExportBundle } from "../../types/servers.js";
 import { parseResponse } from "../../lib/parseResponse.js";
 import { UserCache } from "../../classes/UserCache.js";
-import { ExportBundle } from "../../types/servers.js";
 import { Player } from "../../classes/Player.js";
 import { Request, Response } from "express";
 /**
@@ -14,7 +14,7 @@ import { Request, Response } from "express";
 export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
+	if (reqBundle.offline) return sendError(ErrorCode.SERVER_UNAVAILABLE, "The requested server is currently unavailable.");
 
 	const count = req.query.count ? parseInt(req.query.count.toString() || "0") : null;
 	const amount = (count && count > 0) ? Math.min(count, 10000) : 100;
@@ -45,6 +45,6 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		return res.send(scores.slice(0, amount));
 	}
 	catch (err) {
-		return sendError(2, err.message);
+		return sendError(ErrorCode.SERVER_ISSUE, err.message);
 	}
 }

@@ -1,5 +1,5 @@
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import { Request, Response } from "express";
-import { ExportBundle } from "../types/servers.js";
 
 /**
  * Check if a song is allowed for use.
@@ -9,7 +9,7 @@ import { ExportBundle } from "../types/servers.js";
  */
 export default async function(req: Request, res: Response) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
-	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
+	if (reqBundle.offline) return sendError(ErrorCode.SERVER_UNAVAILABLE, "The requested server is currently unavailable.");
 
 	const songID = req.params.song;
 	try {
@@ -17,6 +17,6 @@ export default async function(req: Request, res: Response) {
 		return res.send(!body.startsWith("-") && body.length > 10);
 	}
 	catch (err) {
-		sendError(3, "Cannot search the requested song.",400);
+		sendError(ErrorCode.ILLEGAL_REQUEST, "Cannot search the requested song.", 400);
 	}
 }

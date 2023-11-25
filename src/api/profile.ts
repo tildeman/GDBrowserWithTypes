@@ -1,8 +1,8 @@
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import { parseResponse } from '../lib/parseResponse.js';
 import { UserCache } from '../classes/UserCache.js';
 import { Player } from '../classes/Player.js';
 import { Request, Response } from "express";
-import { ExportBundle } from "../types/servers.js";
 import searchController from "./search.js";
 
 /**
@@ -19,7 +19,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (reqBundle.offline) {
 		if (!api) return res.redirect('/search/' + req.params.id);
-		else return sendError(1, "The requested server is currently unavailable.");
+		else return sendError(ErrorCode.SERVER_UNAVAILABLE, "The requested server is currently unavailable.");
 	}
 
 	const rawUsername = getLevels || req.params.id;
@@ -73,6 +73,6 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		});
 	}
 	catch (err) {
-		return sendError(1, err.message);
+		return sendError(ErrorCode.SERVER_ISSUE, err.message);
 	}
 }

@@ -1,9 +1,9 @@
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import { IListEntryOverview } from '../types/demonlist.js';
 import { parseResponse } from '../lib/parseResponse.js';
 import { SearchQueryLevel } from '../classes/Level.js';
 import { ISearchFilters } from '../types/searches.js';
 import { UserCache } from '../classes/UserCache.js';
-import { ExportBundle } from "../types/servers.js";
 import profileController from "./profile.js";
 import { Request, Response } from "express";
 import request from 'axios';
@@ -40,7 +40,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (reqBundle.offline) {
 		if (req.query.hasOwnProperty("err")) res.status(500).send("err");
-		else sendError(1, "The requested server is currently unavailable.");
+		else sendError(ErrorCode.SERVER_UNAVAILABLE, "The requested server is currently unavailable.");
 	}
 
 	const demonMode = req.query.hasOwnProperty("demonlist") || req.query.hasOwnProperty("demonList") || req.query.type == "demonlist" || req.query.type == "demonList";
@@ -48,7 +48,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	const url1 = reqBundle.server.demonList + 'api/v2/demons/listed/?limit=100';
 	const url2 = reqBundle.server.demonList + 'api/v2/demons/listed/?limit=100&after=100';
 	if (demonMode) {
-		if (!reqBundle.server.demonList) return sendError(3, "Cannot search this server's demon list because it lacks one.", 400);
+		if (!reqBundle.server.demonList) return sendError(ErrorCode.ILLEGAL_REQUEST, "Cannot search this server's demon list because it lacks one.", 400);
 		const dList = demonList[reqBundle.id];
 		if (!dList || !dList.list.length || dList.lastUpdated + 600000 < Date.now()) {  // 10 minute cache
 			try {
@@ -62,7 +62,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			}
 			catch(err) {
 				console.error(err.message);
-				return sendError(2, "The server's demon list either is inaccessible or uses nonstandard REST endpoints.");
+				return sendError(ErrorCode.SERVER_ISSUE, "The server's demon list either is inaccessible or uses nonstandard REST endpoints.");
 			}
 		}
 	}
@@ -132,7 +132,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		listSize = filtersStrArr.length;
 		filtersStrArr = filtersStrArr.slice((filters.page || 0) * amount, (filters.page || 0) * amount + amount);
 		if (!filtersStrArr.length) return res.status(400).send({
-			error: 3,
+			error: ErrorCode.ILLEGAL_REQUEST,
 			message: "The requested array of levels is empty."
 		});
 		filters.str = filtersStrArr.map(levelData => String(Number(levelData) + +(req.query.len || 0))).join();
@@ -208,6 +208,6 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		return res.send(parsedLevels);
 	}
 	catch (err) {
-		return sendError(2, err.message);
+		return sendError(ErrorCode.SERVER_ISSUE, err.message);
 	}
 }

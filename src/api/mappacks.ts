@@ -1,6 +1,6 @@
 import { IMapPackCacheItem, IMapPackEntry } from "../types/mappacks.js";
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import { parseResponse } from "../lib/parseResponse.js";
-import { ExportBundle } from "../types/servers.js";
 import { Request, Response } from "express";
 
 /**
@@ -27,7 +27,7 @@ const cache: Record<string, IMapPackCacheItem> = {};
 export default async function(req: Request, res: Response, cacheMapPacks: boolean, api: boolean = true) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
+	if (reqBundle.offline) return sendError(ErrorCode.SERVER_UNAVAILABLE, "The requested server is currently unavailable.");
 
 	const cached = cache[reqBundle.id];
 	if (cacheMapPacks && cached && cached.data && cached.indexed + 5000000 > Date.now()) {
@@ -74,7 +74,7 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 			else return res.render("mappacks", { mappacks });
 		}
 		catch (err) {
-			return sendError(2, "Failed to fetch map packs upstream.");
+			return sendError(ErrorCode.SERVER_ISSUE, "Failed to fetch map packs upstream.");
 		}
 	}
 	await mapPackLoop();

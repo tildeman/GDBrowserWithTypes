@@ -1,7 +1,7 @@
 import secret_stuff from "../../misc/secretStuff.json" assert { type: "json" };
 import { IAccurateLeaderboardEntry } from "../../types/leaderboards.js";
+import { ErrorCode, ExportBundle } from "../../types/servers.js";
 import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { ExportBundle } from "../../types/servers.js";
 import { UserCache } from "../../classes/UserCache.js";
 import { Request, Response } from "express";
 
@@ -34,10 +34,10 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	// Annotation: 418 actually means "I'm a teapot" in the Hypertext Coffee Protocol, which is a 1998 April Fools RFC (?).
 	// Accurate leaderboard returns 418 because private servers do not use.
 	if (reqBundle.isGDPS) return res.status(418).send({
-		error: 3,
+		error: ErrorCode.ILLEGAL_REQUEST,
 		message: "The accurate leaderboard does not maintain scores for private servers."
 	});
-	if (!secret_stuff.sheetsKey) return sendError(2, "Can't fetch level leaderboards. Did you forget to include your authentication credentials?");
+	if (!secret_stuff.sheetsKey) return sendError(ErrorCode.SERVER_ISSUE, "Can't fetch level leaderboards. Did you forget to include your authentication credentials?");
 	const gdMode = post || req.query.hasOwnProperty("gd");
 	const modMode = !gdMode && req.query.hasOwnProperty("mod");
 	const cache = caches[gdMode ? 2 : modMode ? 1 : 0];
@@ -58,7 +58,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		if (!cell || typeof cell != "string" || cell.startsWith("GoogleSpreadsheetFormulaError")) {
 			console.log("Spreadsheet Error:");
 			console.log(cell);
-			return sendError(2, "Spreadsheet error in cell " + (cell || "").toString());
+			return sendError(ErrorCode.SERVER_ISSUE, "Spreadsheet error in cell " + (cell || "").toString());
 		}
 		const leaderboard: IAccurateLeaderboardEntry[] = JSON.parse(cell.replace(/~( |$)/g, ""));
 

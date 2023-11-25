@@ -3,8 +3,8 @@
  */
 
 import { appMainEndpoint, appServers } from "../lib/serverInfo.js";
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import { Request, Response, NextFunction } from "express";
-import { ExportBundle } from "../types/servers.js";
 import { convertUSP } from "../lib/uspconvert.js";
 import appConfig from '../settings.js';
 import request from 'axios'; // `request` is trash
@@ -26,7 +26,7 @@ export default function(req: Request, res: Response, next: NextFunction) {
 	}
 
 	// will expand this in the future :wink:
-	const resSendError = function(errorCode = 0, message = "The GD servers rejected the response for an unknown reason", responseCode = 500) {
+	const resSendError = function(errorCode = ErrorCode.NO_ERROR_YOURE_JUST_STUPID, message = "The GD servers rejected the response for an unknown reason", responseCode = 500) {
 		res.status(responseCode).send({
 			error: errorCode,
 			message

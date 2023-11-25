@@ -6,6 +6,7 @@ import { IAnalysisResult, IAnalysisColorObject } from "../types/analyses.js";
 import { Color3B, ErrorObject } from "../types/miscellaneous.js";
 import { toggleEscape, clean } from "../misc/global.js";
 import { Handlebars } from "../vendor/index.js";
+import { ErrorCode } from "../types/servers.js";
 
 const portalDivisionTemplateString = await (await fetch("/templates/analyze_portalDivision.hbs")).text();
 const portalDivisionTemplate = Handlebars.compile(portalDivisionTemplateString);
@@ -53,13 +54,13 @@ const apiResponse = await fetch(`/api${window.location.pathname}`);
 const res: (IAnalysisResult | ErrorObject) = await apiResponse.json();
 if ("error" in res) {
 	switch(res.error) {
-		case 2:
+		case ErrorCode.SERVER_ISSUE:
 			$('#errorMessage').html("This level could not be be <cr>downloaded</cr>. Either the servers rejected the request, or the level simply <co>doesn't exist at all</co>.");
 			break;
-		case 4:
+		case ErrorCode.DOWNLOADS_DISABLED:
 			$('#errorMessage').html("This level's data could not be obtained because <ca>RobTop</ca> has disabled <cg>level downloading</cg>.");
 			break;
-		case 5:
+		case ErrorCode.BROKEN_DATA:
 			$('#errorMessage').html("This level's data appears to be <cr>corrupt</cr> and cannot be <cy>parsed</cy>. It most likely won't load in GD.");
 			break;
 	}
@@ -174,7 +175,9 @@ function appendTriggerGroups() {
 	if ("error" in res) return;
 	$('#groups').html("");
 	let groupList = Object.keys(res.triggerGroups);
-	if (!altTriggerSort) groupList = groupList.sort((groupA, groupB) => Number(groupA.slice(6)) - Number(groupB.slice(6)));
+	if (!altTriggerSort) {
+		groupList = groupList.sort((groupA, groupB) => Number(groupA.slice(6)) - Number(groupB.slice(6)));
+	}
 	groupList.forEach(groupID => {
 		if (groupID == "total") $('#grouptext').text(`Trigger Groups (${commafy(res.triggerGroups[groupID])})`);
 		else $("#groups").append(groupDivisionTemplate({

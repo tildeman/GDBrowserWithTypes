@@ -1,7 +1,7 @@
 import { ICommentContent, ICommentParams } from "../types/comments.js";
 import { parseResponse } from "../lib/parseResponse.js";
+import { ErrorCode, ExportBundle } from "../types/servers.js";
 import { UserCache } from "../classes/UserCache.js";
-import { ExportBundle } from "../types/servers.js";
 import { Player } from "../classes/Player.js";
 import { Request, Response } from "express";
 
@@ -15,7 +15,7 @@ import { Request, Response } from "express";
 export default async function(req: Request, res: Response, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
-	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
+	if (reqBundle.offline) return sendError(ErrorCode.SERVER_UNAVAILABLE, "The requested server is currently unavailable.");
 
 	const count = Math.min(1000, +(req.query.count || 10));
 
@@ -69,7 +69,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 			}
 
 			if (req.query.type != "profile") {
-				let commentUser = new Player(accountInfo);
+				const commentUser = new Player(accountInfo);
 				comment = Object.assign(comment, commentUser);
 				// Quite redundant, but required for typechecking
 				if (!("username" in comment)) throw new Error("Can't append player data into comment object!");
@@ -95,6 +95,6 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		return res.send(commentArray);
 	}
 	catch (err) {
-		return sendError(2, err.message);
+		return sendError(ErrorCode.SERVER_ISSUE, err.message);
 	}
 }
