@@ -1,4 +1,7 @@
-@font-face {font-family: Pusab; src: url('../../assets/Pusab.ttf')}
+@font-face {
+	font-family: Pusab;
+	src: url('../../assets/Pusab.ttf');
+}
 
 body {
 	margin: 0;
@@ -1339,7 +1342,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 .gdpslogo {
-	margin-bottom: 0%;
+	margin-top: 15%;
 	border-radius: 10%;
 	filter: drop-shadow(0.5vh 0.5vh 0.15vh rgba(0, 0, 0, 0.6))
 }

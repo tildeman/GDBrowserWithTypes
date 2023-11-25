@@ -2,12 +2,12 @@
  * @fileoverview Site-specific script for the user profile page.
  */
 
-import { Fetch, clean, toggleEscape } from "../misc/global.js";
+import { Fetch, toggleEscape } from "../misc/global.js";
+import { ErrorObject } from "../types/miscellaneous.js";
 import { ICommentContent } from "../types/comments.js";
 import { renderIcons } from "../iconkit/icon.js";
-import { Player } from "../classes/Player.js";
-import { ErrorObject } from "../types/miscellaneous.js";
 import { Handlebars } from "../vendor/index.js";
+import { Player } from "../classes/Player.js";
 
 const commentEntryTemplateString = await (await fetch("/templates/profile_commentEntry.hbs")).text();
 const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);

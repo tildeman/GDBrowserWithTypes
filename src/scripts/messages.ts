@@ -17,16 +17,16 @@ let page = 0;
 let messageID: string = "0";
 let playerID: string = "0";
 let messages: IMessageObject[] = [];
+let loading = false;
 const messageStatus = {};
 const cache = {};
-let loading = false;
 
 const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>be stored</cg> <ca>locally</ca> in order to access RobTop\'s servers. For security, it will be <cy>forgotten</cy> when you exit this page.';
 $('#message').html(messageText);
 
 /**
- * Append messages into the HTML display box
- * @param dontCheckPages Whether to check for pagination
+ * Append messages into the HTML display box.
+ * @param dontCheckPages Whether to check for pagination.
  */
 function appendMessages(dontCheckPages?: boolean) {
 	if (!dontCheckPages) {

@@ -30,11 +30,11 @@ export default async function(req: Request, res: Response, api: boolean, analyze
 
 	if (reqBundle.offline) return rejectLevel("The requested server is currently unavailable.", 1);
 
-	let levelID = req.params.id;
-	if (levelID == "daily") return downloadController(req, res, api, 'daily', analyze, userCacheHandle);
-	else if (levelID == "weekly") return downloadController(req, res, api, 'weekly', analyze, userCacheHandle);
-	else if (levelID.match(/[^0-9]/)) return rejectLevel("The provided level ID has an invalid format.");
-	else levelID = levelID.replace(/[^0-9]/g, "");
+	const rawLevelID = req.params.id;
+	const levelID = rawLevelID.replace(/[^0-9]/g, "");
+	if (rawLevelID == "daily") return downloadController(req, res, api, 'daily', analyze, userCacheHandle);
+	else if (rawLevelID == "weekly") return downloadController(req, res, api, 'weekly', analyze, userCacheHandle);
+	else if (rawLevelID.match(/[^0-9]/)) return rejectLevel("The provided level ID has an invalid format.");
 
 	if (analyze || req.query.hasOwnProperty("download")) return downloadController(req, res, api, levelID, analyze, userCacheHandle);
 

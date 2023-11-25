@@ -29,13 +29,13 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 
 	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
-	let cached = cache[reqBundle.id];
+	const cached = cache[reqBundle.id];
 	if (cacheMapPacks && cached && cached.data && cached.indexed + 5000000 > Date.now()) {
 		if (api) return res.send(cached.data); // 1.5 hour cache
 		else return res.render("mappacks", { mappacks: cached.data });
 	}
 	const params = { count: 250, page: 0 };
-	let packs: Record<number, string>[] = [];
+	const packs: Record<number, string>[] = [];
 
 	/**
 	 * Loads map packs (possibly page-by-page), until all of them are collected.
@@ -45,7 +45,7 @@ export default async function(req: Request, res: Response, cacheMapPacks: boolea
 			const body = await reqBundle.gdRequest('getGJMapPacks21', params);
 			
 			const newPacks = body?.split('#')[0].split('|').map(mapPackResponse => parseResponse(mapPackResponse)).filter(mapPackResponse => mapPackResponse[2]) || [];
-			packs = packs.concat(newPacks);
+			packs.push(...newPacks);
 			
 			// not all GDPS'es support the count param, which means recursion time!!!
 			if (newPacks.length == 10) {

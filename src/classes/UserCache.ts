@@ -48,7 +48,7 @@ export class UserCache{
 	/**
 	 * Calculate the time difference from now.
 	 * @param id The ID of something (I'm not sure what).
-	 * @param time The Unix timestamp.
+	 * @param time The Unix timestamp of the time to calculate the difference from.
 	 * @returns A string-formatted date containing the amount of minutes and seconds passed.
 	 */
 	timeSince(id: string, time?: number) {
@@ -61,18 +61,18 @@ export class UserCache{
 
 	/**
 	 * Cache users.
-	 * @param id The ID of something (I'm not sure what).
+	 * @param id The ID of the Geometry Dash server.
 	 * @param accountID The associated account ID of the GD user.
 	 * @param playerID The player ID of the GD user.
 	 * @param name The user's name on the GD servers.
 	 * @returns A string array of cached data.
 	 */
-	userCache(id: string, accountID: string, playerID: string, name: string): [string, string, string] {
+	userCache(id: string, accountID: string, playerID?: string, name?: string): [string, string, string] | undefined {
 		// Never cache RobTop.
-		if (!accountID || accountID == "0" || (name && name.toLowerCase() == "robtop" && accountID != "71") || !this.cacheAccountIDs) return ["71", "16", "robtop"];
+		if (!accountID || accountID == "0" || !this.cacheAccountIDs) return;
 		if (!playerID) return this.accountCache[id][accountID.toLowerCase()];
-		const cacheStuff: [string, string, string] = [accountID, playerID, name];
-		this.accountCache[id][name.toLowerCase()] = cacheStuff;
+		const cacheStuff: [string, string, string] = [accountID, playerID, name || ""];
+		this.accountCache[id][name?.toLowerCase() || ""] = cacheStuff;
 		return cacheStuff;
 	}
 }

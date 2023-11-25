@@ -2,9 +2,9 @@
  * @fileoverview Site-specific script for the search results page.
  */
 
-import { Fetch, clean, serverMetadata } from "../misc/global.js";
-import { ErrorObject } from "../types/miscellaneous.js";
 import { Level, SearchQueryLevel } from "../classes/Level.js";
+import { Fetch, serverMetadata } from "../misc/global.js";
+import { ErrorObject } from "../types/miscellaneous.js";
 import { Handlebars } from "../vendor/index.js";
 
 const searchResultTemplateString = await (await fetch("/templates/search_searchResult.hbs")).text();
@@ -15,7 +15,8 @@ $('#pageUp').hide();
 
 let accID = "";
 let loading = false;
-let path = location.pathname.replace('/search/', "");
+
+const path = location.pathname.replace('/search/', "");
 const url = new URL(window.location.href);
 const gauntlet = url.searchParams.get('gauntlet');
 const userMode = url.searchParams.get('user');
@@ -30,17 +31,17 @@ const gauntlets = [
 	"Chaos", "Demon", "Time", "Crystal", "Magic", "Spike",
 	"Monster", "Doom", "Death"
 ];
+const pageCache: Record<number, SearchQueryLevel[]> = {};
 
 let currentPage = Math.max(1, Number(url.searchParams.get('page') || 0)) - 1;
 let pages = 0;
 let results = 0;
-let pageCache = {};
 
 let demonListLink = "https://pointercrate.com/";
 let searchFilters = `/api/search/${type == 'saved' ? JSON.parse(localStorage.getItem('saved') || '[]').reverse().toString() : accID || path}?page=[PAGE]${count ? "" : "&count=10"}${window.location.search.replace(/\?/g, "&").replace("currentPage", "nope")}`;
 
 if (type == "followed") {
-	let followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
+	const followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
 	searchFilters += ("&creators=" + followed.join());
 }
 
@@ -55,7 +56,7 @@ if (serverMetadata.gdps) { // gdps check
  * @param firstLoad `true` if this is the first time the results are loaded
  * @param noCache `true` to ignore cache
  */
-function Append(firstLoad?: boolean, noCache?: boolean) {
+function append(firstLoad?: boolean, noCache?: boolean) {
 	loading = true;
 	if (!firstLoad) $('#pagenum').text(`Page ${(currentPage + 1)}${pages ? ` of ${pages}` : ""}`);
 	$('#searchBox').html('<div style="height: 4.5%"></div>');
@@ -92,7 +93,7 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 			$('#pagenum').text(`Page ${currentPage + 1}${pages ? ` of ${pages}` : ""}`);
 		}
 
-		if ((pages && currentPage+1 >= pages) || (!pages && res.length < 9 && type != "recent")) {
+		if ((pages && currentPage + 1 >= pages) || (!pages && res.length < 9 && type != "recent")) {
 			$('#pageUp').hide();
 		}
 		else $('#pageUp').show();
@@ -106,18 +107,17 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 		console.log(res);
 
 		res.forEach((level, levelIndex) => {
-			let hasAuthor = (level.accountID != "0");
-			let userSearch = (type == "5" || typeof userMode == 'string');
+			const hasAuthor = (level.accountID != "0");
+			const userSearch = (type == "5" || typeof userMode == 'string');
 			if (levelIndex == 0 && userSearch) {
 				$('#header').text(((!level.author || level.author == "-" ? "Someone" : level.author)) + (level.author.toLowerCase().endsWith('s') ? "'" : "'s") + " levels");
 				document.title = $('#header').text();
 				accID = level.playerID;
 			}
 
-			let filteredSong = clean(level.songName.replace(/[^ -~]/g, ""));
-			if (!filteredSong) filteredSong = clean(level.songName);
-			let songColor = level.customSong == 0 ? "blue" : (level.songLink && !level.songLink.match(/^https?:\/\/\audio\.ngfiles\.com\//)) ? "nong" : "whatIfItWasPurple";
-			let noLink = songColor != "whatIfItWasPurple";
+			const filteredSong = level.songName.replace(/[^ -~]/g, "") || level.songName;
+			const songColor = level.customSong == 0 ? "blue" : (level.songLink && !level.songLink.match(/^https?:\/\/\audio\.ngfiles\.com\//)) ? "nong" : "whatIfItWasPurple";
+			const noLink = songColor != "whatIfItWasPurple";
 
 			$("#searchBox").append(searchResultTemplate({
 				level,
@@ -126,7 +126,7 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 				userSearch,
 				inGameAuthor: level.author || "-",
 				authorAndOnePointNine: hasAuthor && !serverMetadata.onePointNine,
-				original: !(level.copiedID == '0'),
+				original: !level.copiedID || level.copiedID == '0',
 				objectCountEstimate: `${level.objects}${level.objects == 65535 ? "+" : ""}`,
 				noLink,
 				songColor,
@@ -150,27 +150,27 @@ function Append(firstLoad?: boolean, noCache?: boolean) {
 	}
 }
 
-Append(true);
+append(true);
 
 $('#pageUp').on("click", function() {
 	currentPage += 1;
-	if (!loading) Append();
+	if (!loading) append();
 });
 $('#pageDown').on("click", function() {
 	currentPage -= 1;
-	if (!loading) Append();
+	if (!loading) append();
 });
 $('#lastPage').on("click", function() {
 	currentPage = (pages - 1);
-	if (!loading) Append();
+	if (!loading) append();
 });
 $('#pageJump').on("click", function() {
 	if (loading) return;
 	currentPage = parseInt($('#pageSelect').val()?.toString() || "1") - 1;
-	Append();
+	append();
 });
 $('#refreshPage').on("click", function() {
-	Append(false, true);
+	append(false, true);
 });
 
 if (rawHeader) {
@@ -183,7 +183,10 @@ else {
 	if (type == "2" || type == 'mostliked') $('#header').text("Most Liked");
 	if (type == "3" || type == 'trending') $('#header').text("Trending Levels");
 	if (type == "4" || type == 'recent') $('#header').text("Recent Levels");
-	if (type == "6" || type == 'featured') { $('#header').text("Featured"); $('#gdWorld').show() };
+	if (type == "6" || type == 'featured') {
+		$('#header').text("Featured");
+		$('#gdWorld').show();
+	}
 	if (type == "7" || type == 'magic') $('#header').text("Magic Levels");
 	if (type == "11" || type == 'awarded' || type == 'starred') $('#header').text("Awarded Levels");
 	if (type == "16" || type == 'halloffame' || type == 'hof') $('#header').text("Hall of Fame");
@@ -193,6 +196,7 @@ else {
 	}
 	if (path != "*" && (type == "10" || list != null)) $('#header').text("Custom List");
 	if (type == 'followed') $('#header').text("Followed Creators");
+
 	document.title = $('#header').text() || "Level Search";
 	$('#meta-title').attr('content', $('#header').text() || "Level Search");
 	if ($('#header').text()) {
@@ -264,7 +268,7 @@ $('#shuffle').on("click", function() {
 		$('#searchBox').html('<div style="height: 4.5%"></div>');
 		$('#loading').show();
 		fetch("/api/search/*page=0&type=recent").then(res => res.json()).then(recent => {
-			let mostRecent = recent[0].id;
+			const mostRecent = recent[0].id;
 			/**
 			 * Return a random level from the current selection.
 			 */
@@ -278,12 +282,10 @@ $('#shuffle').on("click", function() {
 		});
 	}
 	else if (pages) {
-		const random = {};
 		const pageCount = +(count || "0") || 10;
 		const randomResult = Math.floor(Math.random() * (results)) + 1;
 		const randomPage = Math.ceil(randomResult / pageCount);
-		let randomIndex = randomResult % pageCount;
-		if (randomIndex == 0) randomIndex = pageCount;
+		const randomIndex = (randomResult % pageCount) || pageCount;
 		$('#searchBox').html('<div style="height: 4.5%"></div>');
 		$('#loading').show();
 		fetch(searchFilters.replace('[PAGE]', (randomPage - 1).toString())).then(res => res.json()).then(res => {

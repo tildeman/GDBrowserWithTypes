@@ -14,10 +14,9 @@ const dialogue = [
 ];
 
 $("#glubfub").on("click", function() {
-	const msg = dialogue[line];
+	const msg = dialogue[line % dialogue.length];
 	$("#msg").text(msg);
 	line++;
-	if (line == dialogue.length) line = 0;
 });
 
 $("#glubfub").trigger("click");

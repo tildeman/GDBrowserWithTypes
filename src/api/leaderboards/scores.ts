@@ -16,14 +16,10 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
-	let amount = 100;
-	let count = req.query.count ? parseInt(req.query.count.toString() || "0") : null;
-	if (count && count > 0) {
-		if (count > 10000) amount = 10000;
-		else amount = count;
-	}
+	const count = req.query.count ? parseInt(req.query.count.toString() || "0") : null;
+	const amount = (count && count > 0) ? Math.min(count, 10000) : 100;
 
-	let params: IScoreParameters = {
+	const params: IScoreParameters = {
 		count: amount,
 		type: "top"
 	};

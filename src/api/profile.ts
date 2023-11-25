@@ -22,14 +22,13 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		else return sendError(1, "The requested server is currently unavailable.");
 	}
 
-	let username = getLevels || req.params.id;
-	let probablyID = 0;
-	if (username.endsWith(".") && reqBundle.isGDPS) {
-		username = username.slice(0, -1);
-		probablyID = Number(username);
-	}
+	const rawUsername = getLevels || req.params.id;
+	const gdpsForceUsername = rawUsername.endsWith(".") && reqBundle.isGDPS;
+	const username = gdpsForceUsername ? rawUsername.slice(0, -1) : rawUsername;
+	const probablyID = gdpsForceUsername ? Number(username) : 0;
+
 	const accountMode = !req.query.hasOwnProperty("player") && Number(req.params.id);
-	const foundID = userCacheHandle.userCache(reqBundle.id, username, "", "");
+	const foundID = userCacheHandle.userCache(reqBundle.id, username);
 	const skipRequest = accountMode || (foundID && +foundID[0]) || probablyID;
 	let searchResult = probablyID ? username : req.params.id;
 

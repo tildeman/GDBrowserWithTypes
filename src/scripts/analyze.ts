@@ -168,7 +168,7 @@ function appendPortals() {
 }
 
 /**
- * Append trigger groups into the result page
+ * Append trigger groups into the result page.
  */
 function appendTriggerGroups() {
 	if ("error" in res) return;

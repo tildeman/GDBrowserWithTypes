@@ -3,7 +3,7 @@
  */
 
 /**
- * Selected filter class
+ * Selected filter class.
  */
 const selFil = "selectedFilter";
 

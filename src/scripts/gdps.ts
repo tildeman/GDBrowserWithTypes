@@ -29,7 +29,7 @@ Fetch('/api/gdps').then((servers: IServerInfo[]) => {
 		if (page <= 1) $('#pageDown').hide();
 		else $('#pageDown').show();
 
-		let serverPage = servers.slice((page - 1)*pageSize, (page - 1)*pageSize + pageSize);
+		let serverPage = servers.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
 		$('#searchBox').html('<div style="height: 4.5%"></div>').scrollTop(0);
 
 		// TODO: This has a few glaring visual glitches

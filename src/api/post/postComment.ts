@@ -5,8 +5,11 @@ import { Request, Response } from "express";
 import { sha1 } from "../../lib/sha.js";
 import { XOR } from "../../lib/xor.js";
 
-let rateLimit: Record<string, number> = {};
-let cooldown = 15000;  // GD has a secret rate limit and doesn't return -1 when a comment is rejected, so this keeps track
+/**
+ * GD has a secret rate limit and doesn't return -1 when a comment is rejected, so this keeps track
+ */
+const cooldown = 15000;
+const rateLimit: Record<string, number> = {};
 
 /**
  * Get the second value of a timestamp using rudimentary algorithms
@@ -59,7 +62,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	try {
 		const body = await reqBundle.gdRequest('uploadGJComment21', params);
 
-		if (body?.startsWith("temp")) {
+		if (body.startsWith("temp")) {
 			const banStuff = body.split("_");
 			return res.status(400).send(`You have been banned from commenting for ${(parseInt(banStuff[1]) / 86400).toFixed(0)} days. Reason: ${banStuff[2] || "None"}`);
 		}

@@ -53,9 +53,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		const tab = sheet.sheetsById[1555821000];
 		await tab.loadCells('A2:H2');
 
-		let cellIndex = indices.findIndex(index => type == index);
-		if (modMode) cellIndex += indices.length;
-
+		const cellIndex = indices.findIndex(index => type == index) + (modMode ? indices.length : 0);
 		const cell = tab.getCell(1, cellIndex).value;
 		if (!cell || typeof cell != "string" || cell.startsWith("GoogleSpreadsheetFormulaError")) {
 			console.log("Spreadsheet Error:");
@@ -64,14 +62,14 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		}
 		const leaderboard: IAccurateLeaderboardEntry[] = JSON.parse(cell.replace(/~( |$)/g, ""));
 
-		let gdFormatting = "";
+		const gdFormatting: string[] = [];
 		leaderboard.forEach(entry => {
 			userCacheHandle.userCache(reqBundle.id, entry.accountID, entry.playerID, entry.username);
-			gdFormatting += `1:${entry.username}:2:${entry.playerID}:13:${entry.coins}:17:${entry.usercoins}:6:${entry.rank}:9:${entry.icon.icon}:10:${entry.icon.col1}:11:${entry.icon.col2}:14:${forms.indexOf(entry.icon.form)}:15:${entry.icon.glow ? 2 : 0}:16:${entry.accountID}:3:${entry.stars}:8:${entry.cp}:46:${entry.diamonds}:4:${entry.demons}|`;
+			gdFormatting.push(`1:${entry.username}:2:${entry.playerID}:13:${entry.coins}:17:${entry.usercoins}:6:${entry.rank}:9:${entry.icon.icon}:10:${entry.icon.col1}:11:${entry.icon.col2}:14:${forms.indexOf(entry.icon.form)}:15:${entry.icon.glow ? 2 : 0}:16:${entry.accountID}:3:${entry.stars}:8:${entry.cp}:46:${entry.diamonds}:4:${entry.demons}|`);
 		});
 		caches[modMode ? 1 : 0][type] = JSON.stringify(leaderboard);
-		caches[2][type] = gdFormatting;
+		caches[2][type] = gdFormatting.join("");
 		lastIndex[modMode ? 1 : 0][type] = Date.now();
-		return res.send(gdMode ? gdFormatting : leaderboard);
+		return res.send(gdMode ? gdFormatting.join("") : leaderboard);
 	});
 }

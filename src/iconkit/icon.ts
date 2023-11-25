@@ -575,9 +575,9 @@ export class Icon {
 			canvas: [this.app.renderer.width, this.app.renderer.height]
 		};
 
-		for (let i=3; i < pixels.length; i += 4) {
+		for (let i = 3; i < pixels.length; i += 4) {
 			const alpha = pixels[i];
-			const realIndex = (i-3) / 4;
+			const realIndex = (i - 3) / 4;
 			const pos = [realIndex % spriteSize[0], Math.floor(realIndex / spriteSize[0])];
 
 			if (alpha > 10) { // if pixel is not blank...

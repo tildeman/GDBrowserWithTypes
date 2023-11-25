@@ -83,12 +83,12 @@ export default async function (req: Request, res: Response, api: boolean, userCa
 
 			authors.forEach(authorResponse => {
 				if (authorResponse.startsWith('~')) throw new Error("Can't look up author data.");
-				let arr = authorResponse.split(':');
+				const arr = authorResponse.split(':');
 				authorList[arr[0]] = [arr[1], arr[2]];
 			});
 
 			const levelArray = preRes.map(levelResponse => parseResponse(levelResponse)).filter(levelResponse => levelResponse[1]);
-			let parsedLevels: SearchQueryLevel[] = [];
+			const parsedLevels: SearchQueryLevel[] = [];
 
 			levelArray.forEach((levelData, levelIndex) => {
 				const songSearch = songs.find(songItem => songItem['~1'] == levelData[35]) || [];

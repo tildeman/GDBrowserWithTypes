@@ -20,12 +20,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
-	let amount = 100;
 	const count = req.query.count ? parseInt(req.query.count.toString()) : null;
-	if (count && count > 0) {
-		if (count > 200) amount = 200;
-		else amount = count;
-	}
+	const amount = (count && count > 0) ? Math.min(count, 200) : 100;
 
 	const params = {
 		levelID: req.params.id,

@@ -11,12 +11,12 @@ import request from 'axios';
  * @param req The client request.
  * @param res The server response (to send the level details/error).
  * @param api Whether this is an API request.
- * @param ID The ID of the level.
+ * @param id The in-game level ID.
  * @param analyze Whether to analyze the level or look for metadata.
  * @param userCacheHandle The user cache passed in by reference.
  * @returns If this is an API request, return the raw data in JSON. Else display it in a webpage.
  */
-export default async function(req: Request, res: Response, api: boolean, ID: string, analyze: boolean, userCacheHandle: UserCache) {
+export default async function(req: Request, res: Response, api: boolean, id: string, analyze: boolean, userCacheHandle: UserCache) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 
 	/**
@@ -29,7 +29,8 @@ export default async function(req: Request, res: Response, api: boolean, ID: str
 		else return sendError(errorCode, message);
 	}
 
-	let levelIDCode = ID || req.params.id, levelID: number;
+	const levelIDCode = id || req.params.id;
+	let levelID: number;
 
 	if (reqBundle.offline) {
 		if (!api && +levelIDCode < 0) return res.redirect('/');

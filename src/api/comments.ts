@@ -17,8 +17,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
-	let count = +(req.query.count || 10);
-	if (count > 1000) count = 1000;
+	const count = Math.min(1000, +(req.query.count || 10));
 
 	const params: ICommentParams = {
 		userID : req.params.id,
@@ -81,7 +80,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 				comment.color = (comment.playerID == "16") ? "50,255,255" : (commentInfo[12] || "255,255,255");
 				if (+commentInfo[10] > 0) comment.percent = +commentInfo[10];
 				comment.moderator = +commentInfo[11] || 0;
-				userCacheHandle.userCache(reqBundle.id, comment.accountID || "", comment.playerID || "", comment.username || "");
+				userCacheHandle.userCache(reqBundle.id, comment.accountID, comment.playerID, comment.username);
 			}
 
 			if (commentIndex == 0 && req.query.type != "commentHistory") {

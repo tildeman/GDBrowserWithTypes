@@ -65,7 +65,7 @@ export function clean(text: string | number | undefined) {
 export const serverMetadata: ServerMetadata = {
 	gdps: null,
 	onePointNine: false
-}
+};
 
 /**
  * Wrapper function for the Fetch API to check for 1.9 features.
@@ -99,11 +99,11 @@ export function toggleEscape(state: boolean, popup?: boolean) {
 }
 
 $(document).on("keydown", function(k) {
-	if (k.which == 27) { //esc
-		if (!allowEsc) return
-		k.preventDefault()
+	if (k.which == 27) { // esc
+		if (!allowEsc) return;
+		k.preventDefault();
 		if (popupEsc && $('.popup').is(":visible")) $('.popup').hide();
-		else $('#backButton').trigger('click')
+		else $('#backButton').trigger('click');
 	}
 });
 

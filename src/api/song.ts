@@ -11,7 +11,7 @@ export default async function(req: Request, res: Response) {
 	const { req: reqBundle, sendError }: ExportBundle = res.locals.stuff;
 	if (reqBundle.offline) return sendError(1, "The requested server is currently unavailable.");
 
-	let songID = req.params.song;
+	const songID = req.params.song;
 	try {
 		const body = await reqBundle.gdRequest('getGJSongInfo', {songID: songID});
 		return res.send(!body.startsWith("-") && body.length > 10);

@@ -2,13 +2,13 @@
  * @fileoverview Site-specific script for the level comments page.
  */
 
-import { Fetch, clean, toggleEscape, serverMetadata } from "../misc/global.js";
+import { Fetch, toggleEscape, serverMetadata } from "../misc/global.js";
 import { Color3B, ErrorObject } from "../types/miscellaneous.js";
 import { renderIcons } from "../iconkit/icon.js";
+import { Handlebars } from "../vendor/index.js";
 import { PlayerIcon } from "../types/icons.js";
 import { Player } from "../classes/Player.js";
 import { Level } from "../classes/Level.js";
-import { Handlebars } from "../vendor/index.js";
 
 const commentEntryTemplateString = await (await fetch("/templates/comments_commentEntry.hbs")).text();
 const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);
@@ -39,8 +39,8 @@ interface ICommentPreset {
 	compact: boolean
 }
 
+const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for posting a comment <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postComment.js">here</a>.';
 let { mode, compact }: ICommentPreset = JSON.parse(localStorage.getItem('commentPreset') || '{"mode": "top", "compact": true}');
-let messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for posting a comment <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postComment.js">here</a>.';
 $('#message').html(messageText);
 $('#likeMessage').html(messageText.replace("posting", "liking").replace("postComment", "like"));
 
@@ -179,9 +179,9 @@ function appendComments(auto?: boolean, noCache?: boolean) {
 			$(`#thumb-${comment.ID}`).attr('style', comment.likes < 0 ? `transform: translateY(${compact ? '15' : '25'}%); margin-right: 0.4%; height: 4vh;` : 'height: 4vh;').attr('src', `/assets/${comment.likes < 0 ? "dis" : ""}like.png`);
 			if ($(`.comment[commentID=${comment.ID}]`).length) return; // auto mode, ignore duplicates
 
-			let bgCol = index % 2 ? "evenComment" : "oddComment";
-
-			if (auto) bgCol = $('.commentBG').first().hasClass('oddComment') ? "evenComment" : "oddComment";
+			const noAutoBgCol = index % 2 ? "evenComment" : "oddComment";
+			const autoBgCol = $('.commentBG').first().hasClass('oddComment') ? "evenComment" : "oddComment";
+			const bgCol = auto ? autoBgCol : noAutoBgCol;
 
 			const userName = !history ? comment.username : ("username" in lvl ? lvl.username : "");
 			const modNumber = comment.moderator || ("moderator" in lvl ? lvl.moderator : 0);
@@ -242,6 +242,9 @@ $('#lastPage').on("click", function() {
 	appendComments();
 });
 
+/**
+ * Reset all sorting options (live mode, compact mode, etc.).
+ */
 function resetSort() {
 	page = 0;
 	auto = false;

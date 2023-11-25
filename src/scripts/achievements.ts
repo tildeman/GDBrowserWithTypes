@@ -2,6 +2,25 @@
  * @fileoverview Site-specific script for the achievements page.
  */
 
+interface IDisabledFilters {
+	reward: string[];
+	type: string[];
+	game: string[];
+}
+
+interface ISearchResultEntryTemplateParams {
+	inForms: boolean;
+	isColor: boolean;
+	title?: string;
+	iconPath: string;
+	col?: Color3B;
+	achGameColor: string;
+	achItem: IAchievementItem;
+	completed: boolean;
+	completedColor: string;
+	completedDescription: string;
+}
+
 import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements.js";
 import { Color3B } from "../types/miscellaneous.js";
 import { Handlebars } from "../vendor/index.js";
@@ -14,12 +33,6 @@ const rewardFilterTemplate = Handlebars.compile(rewardFilterTemplateString);
 
 const typeFilterTemplateString = await (await fetch("/templates/achievements_typeFilter.hbs")).text();
 const typeFilterTemplate = Handlebars.compile(typeFilterTemplateString);
-
-interface IDisabledFilters {
-	reward: string[];
-	type: string[];
-	game: string[];
-}
 
 const disabledFilters: IDisabledFilters = {
 	reward: [],
@@ -38,8 +51,17 @@ const formStr = [
 	"Death Effect", "Primary Color", "Secondary Color", "Misc"
 ];
 
-let achievements: IAchievementItem[] = [];
-let colors: Record<number, Color3B> = {};
+const ach: IAchievementAPIResponse = await fetch('/api/achievements').then(res => res.json());
+
+Object.keys(ach.types).forEach(achType => {
+	$('#types').append(typeFilterTemplate({
+		achType,
+		filter: ach.types[achType][1].join(" "),
+		achTitle: ach.types[achType][0]
+	}));
+});
+
+let achievements = ach.achievements;
 let completed = false;
 
 forms.concat(["trail", "deathEffect", "color1", "color2", "misc"]).forEach((property, propertyIndex) => {
@@ -49,20 +71,10 @@ forms.concat(["trail", "deathEffect", "color1", "color2", "misc"]).forEach((prop
 		iconSource: propertyIndex > 8 ? "achievements" : "iconkitbuttons"
 	}));
 });
-
-interface ISearchResultEntryTemplateParams {
-	inForms: boolean;
-	isColor: boolean;
-	title?: string;
-	iconPath: string;
-	col?: Color3B;
-	achGameColor: string;
-	achItem: IAchievementItem;
-	completed: boolean;
-	completedColor: string;
-	completedDescription: string;
-}
-
+/**
+ * Append achievement item entries.
+ * @param reset Whether to reset the scroll to the top.
+ */
 function append(reset: boolean = true) {
 	$('#searchBox').html(`<div style="height: 4.5%"></div>`);
 	achievements.forEach(achItem => {
@@ -82,7 +94,7 @@ function append(reset: boolean = true) {
 			appendTemplateData.title = `${achItem.rewardType}_${achItem.rewardID < 10 ? "0" : ""}${achItem.rewardID}`;
 		}
 		else if (achItem.rewardType.startsWith("color")) {
-			const col = colors[achItem.rewardID];
+			const col = ach.colors[achItem.rewardID];
 			const colType = achItem.rewardType.slice(5);
 			appendTemplateData.isColor = true;
 			appendTemplateData.title = `${colType == "1" ? "Primary" : "Secondary"} Color ${achItem.rewardID}`;
@@ -107,97 +119,85 @@ function append(reset: boolean = true) {
 	if (reset) $('#searchBox').scrollTop(0);
 }
 
-fetch('/api/achievements').then(res => res.json()).then((ach: IAchievementAPIResponse) => {
-	Object.keys(ach.types).forEach(achType => {
-		$('#types').append(typeFilterTemplate({
-			achType,
-			filter: ach.types[achType][1].join(" "),
-			achTitle: ach.types[achType][0]
-		}));
+append();
+
+function label(labelName: string) {
+	const labelFilter = `.${labelName}Filter`;
+	const labelID = `#${labelName}Label h1`;
+	const labelButtons = `#${labelName}Label img`;
+	$(labelFilter).hover(function() {
+		$(labelButtons).addClass('hidey');
+		$(labelID)
+			.attr('text', $(labelID).text())
+			.text($(this).attr('title')!.toString())
+			.addClass("labelHover");
+	}, function() {
+		$(labelButtons).removeClass('hidey');
+		$(labelID).text($(labelID).attr('text') || "").removeClass("labelHover");
 	});
 
-	achievements = ach.achievements;
-	colors = ach.colors;
-	append();
-
-	function label(labelName: string) {
-		const labelFilter = `.${labelName}Filter`;
-		const labelID = `#${labelName}Label h1`;
-		const labelButtons = `#${labelName}Label img`;
-		$(labelFilter).hover(function() {
-			$(labelButtons).addClass('hidey');
-			$(labelID)
-				.attr('text', $(labelID).text())
-				.text($(this).attr('title')!.toString())
-				.addClass("labelHover");
-		}, function() {
-			$(labelButtons).removeClass('hidey');
-			$(labelID).text($(labelID).attr('text') || "").removeClass("labelHover");
-		});
-
-		$(labelFilter).on("click", function() {
-			let filters = $(this).attr('filter')!.split(" ")
-			if (!$(this).hasClass('achDeselected')) {
-				$(this).addClass('achDeselected');
-				filters.forEach(filter => disabledFilters[labelName].push(filter));
-				if (labelName == "reward") {
-					$(this).attr('src', $(this).attr('src')!.replace("_on", "_off"));
-				}
+	$(labelFilter).on("click", function() {
+		let filters = $(this).attr('filter')!.split(" ")
+		if (!$(this).hasClass('achDeselected')) {
+			$(this).addClass('achDeselected');
+			filters.forEach(filter => disabledFilters[labelName].push(filter));
+			if (labelName == "reward") {
+				$(this).attr('src', $(this).attr('src')!.replace("_on", "_off"));
 			}
-			else {
-				$(this).removeClass('achDeselected')
-				filters.forEach(filter => {
-					disabledFilters[labelName] = disabledFilters[labelName]
-						.filter((innerFilter: string) => innerFilter != filter);
-				});
-				if (labelName == "reward") {
-					$(this).attr('src', $(this).attr('src')!.replace("_off", "_on"));
-				}
+		}
+		else {
+			$(this).removeClass('achDeselected')
+			filters.forEach(filter => {
+				disabledFilters[labelName] = disabledFilters[labelName]
+					.filter((innerFilter: string) => innerFilter != filter);
+			});
+			if (labelName == "reward") {
+				$(this).attr('src', $(this).attr('src')!.replace("_off", "_on"));
 			}
-		});
+		}
+	});
+}
+
+label("reward");
+label("type");
+label("game");
+
+$(document).on('click', '.selectNone', function() {
+	$(`.${$(this).attr('filter')}:not(.achDeselected)`).trigger('click');
+	$('#selectNone').hide();
+	$('#selectAll').show();
+});
+$(document).on('click', '.selectAll', function() {
+	$(`.${$(this).attr('filter')}.achDeselected`).trigger('click');
+	$('#selectNone').show();
+	$('#selectAll').hide();
+});
+
+$('#submitFilters').on("click", function() {
+	$('.popup').hide();
+
+	if (!$('.rewardFilter:not(.achDeselected)').length) {
+		$('#rewardLabel .selectAll').trigger('click');
+	}
+	if (!$('.typeFilter:not(.achDeselected)').length) {
+		$('#typeLabel .selectAll').trigger('click');
+	}
+	if (!$('.gameFilter:not(.achDeselected)').length) {
+		$('#gameLabel .selectAll').trigger('click');
 	}
 
-	label("reward");
-	label("type");
-	label("game");
+	achievements = ach.achievements
+		.filter(achievementItem => !disabledFilters.reward.includes(achievementItem.rewardType))
+		.filter(achievementItem => !disabledFilters.type.some(filter => achievementItem.id.startsWith(filter)))
+		.filter(achievementItem => !disabledFilters.game.includes(achievementItem.game));
+	append();
+});
 
-	$(document).on('click', '.selectNone', function() {
-		$(`.${$(this).attr('filter')}:not(.achDeselected)`).trigger('click');
-		$('#selectNone').hide();
-		$('#selectAll').show();
-	});
-	$(document).on('click', '.selectAll', function() {
-		$(`.${$(this).attr('filter')}.achDeselected`).trigger('click');
-		$('#selectNone').show();
-		$('#selectAll').hide();
-	});
-
-	$('#submitFilters').on("click", function() {
-		$('.popup').hide();
-
-		if (!$('.rewardFilter:not(.achDeselected)').length) {
-			$('#rewardLabel .selectAll').trigger('click');
-		}
-		if (!$('.typeFilter:not(.achDeselected)').length) {
-			$('#typeLabel .selectAll').trigger('click');
-		}
-		if (!$('.gameFilter:not(.achDeselected)').length) {
-			$('#gameLabel .selectAll').trigger('click');
-		}
-
-		achievements = ach.achievements
-			.filter(achievementItem => !disabledFilters.reward.includes(achievementItem.rewardType))
-			.filter(achievementItem => !disabledFilters.type.some(filter => achievementItem.id.startsWith(filter)))
-			.filter(achievementItem => !disabledFilters.game.includes(achievementItem.game));
-		append();
-	});
-
-	$('#check').on("click", function() {
-		completed = !completed;
-		if (completed) $('#check').attr('src', '/assets/check-on.png');
-		else $('#check').attr('src', '/assets/check-off.png');
-		append(false);
-	});
+$('#check').on("click", function() {
+	completed = !completed;
+	if (completed) $('#check').attr('src', '/assets/check-on.png');
+	else $('#check').attr('src', '/assets/check-off.png');
+	append(false);
 });
 
 export {};

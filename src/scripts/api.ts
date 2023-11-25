@@ -34,9 +34,9 @@ for(let i = 0; i < headerLink.length; i++) {
 
 // revealing
 function revealSection(element: HTMLElement | JQuery<HTMLElement>) {
-	let el = $(element);
+	const el = $(element);
 	el.slideToggle(100);
-	let foundFetch = el.find('.fetch:not(.fetched)');
+	const foundFetch = el.find('.fetch:not(.fetched)');
 	if (foundFetch.length) {
 		foundFetch.addClass('fetched');
 		fetch(`..${foundFetch.attr('link')}`).then(res => res.json()).then(res => {

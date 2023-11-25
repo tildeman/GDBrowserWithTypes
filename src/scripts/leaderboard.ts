@@ -33,6 +33,7 @@ let type: string;
 let sort = "stars";
 let modMode = false;
 let weekly = false;
+let didGDPSStuff = false;
 let showWeek = localStorage.weeklyStats == "1";
 const trophies = [1, 3, 10, 25, 50, 75, 100];
 const boomColors = ["red", "orange", "yellow", "green", "teal", "blue", "pink"];
@@ -72,8 +73,6 @@ function infoText(text: string, altDiscord?: boolean) {
 }
 
 infoText(top250Text);
-
-let didGDPSStuff = false;
 
 /**
  * Load the selected leaderboard.

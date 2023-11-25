@@ -43,13 +43,13 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		else sendError(1, "The requested server is currently unavailable.");
 	}
 
-	let demonMode = req.query.hasOwnProperty("demonlist") || req.query.hasOwnProperty("demonList") || req.query.type == "demonlist" || req.query.type == "demonList";
+	const demonMode = req.query.hasOwnProperty("demonlist") || req.query.hasOwnProperty("demonList") || req.query.type == "demonlist" || req.query.type == "demonList";
 	// TODO: this is quite dependent on the structure of the demonlist.
-	let url1 = reqBundle.server.demonList + 'api/v2/demons/listed/?limit=100';
-	let url2 = reqBundle.server.demonList + 'api/v2/demons/listed/?limit=100&after=100';
+	const url1 = reqBundle.server.demonList + 'api/v2/demons/listed/?limit=100';
+	const url2 = reqBundle.server.demonList + 'api/v2/demons/listed/?limit=100&after=100';
 	if (demonMode) {
 		if (!reqBundle.server.demonList) return sendError(3, "Cannot search this server's demon list because it lacks one.", 400);
-		let dList = demonList[reqBundle.id];
+		const dList = demonList[reqBundle.id];
 		if (!dList || !dList.list.length || dList.lastUpdated + 600000 < Date.now()) {  // 10 minute cache
 			try {
 				const list1: IListEntryOverview[] = (await request.get(url1)).data;
@@ -67,14 +67,10 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		}
 	}
 
-	let amount = 10;
-	let count = reqBundle.isGDPS ? 10 : +(req.query.count || 0);
-	if (count && count > 0) {
-		if (count > 500) amount = 500;
-		else amount = count;
-	}
+	const count = reqBundle.isGDPS ? 10 : +(req.query.count || 0);
+	const amount = (count && count > 0) ? Math.min(count, 500) : 10;
 
-	let filters: ISearchFilters = {
+	const filters: ISearchFilters = {
 		str: req.params.text,
 
 		page: +(req.query.page || 0),
@@ -100,7 +96,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 
 	if (req.query.type) {
-		let filterCheck = req.query.type.toString().toLowerCase();
+		const filterCheck = req.query.type.toString().toLowerCase();
 		switch(filterCheck) {
 			case 'mostdownloaded': filters.type = 1; break;
 			case 'mostliked': filters.type = 2; break;
@@ -118,7 +114,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	}
 
 	if (req.query.hasOwnProperty("user")) {
-		let accountCheck = userCacheHandle.userCache(reqBundle.id, filters.str || "", "", "");
+		const accountCheck = userCacheHandle.userCache(reqBundle.id, filters.str || "");
 		filters.type = 5;
 		if (accountCheck) filters.str = accountCheck[1];
 		else if (!filters.str?.match(/^[0-9]*$/)) {

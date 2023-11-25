@@ -138,7 +138,7 @@ function analyze_level(level: DownloadedLevel, rawData: string) {
 	let obj: ILevelObject;
 
 	const obj_length = data.length;
-	for (let i = 0; i < obj_length; ++i) {
+	for (let i = 0; i < obj_length; i++) {
 		const raw_obj = parse_obj(data[i], ",", properties);
 		obj = {
 			id: raw_obj.id || "",

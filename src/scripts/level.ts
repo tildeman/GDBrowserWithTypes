@@ -2,13 +2,18 @@
  * @fileoverview Site-specific script for the level info page.
  */
 
+import { ErrorObject } from "../types/miscellaneous.js";
+
 const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for liking a level <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/like.js">here</a>.';
 $('#message').html(messageText);
 const levelID: string = $('#dataBlock').data('id');
-const levelDailyNumber: string = $('#dataBlock').data('dailynumber');
 const levelNextDaily: string = $('#dataBlock').data('nextdaily');
 const levelSongID: string = $('#dataBlock').data('songid');
 let levelSaved = false;
+let copies = 0;
+let animated = false;
+let freeze = false;
+let dailyTime = Number(levelNextDaily) || 0;
 
 /**
  * Format a duration in Colon's favorite format.
@@ -21,7 +26,7 @@ function colonize(secs: number, timeUp: boolean) {
 		if (timeUp) return "Time's up!";
 		else secs = 0;
 	}
-	let days = Math.floor(secs / 86400);
+	const days = Math.floor(secs / 86400);
 	if (days) secs -= days * 86400;
 	return `${days ? `${days}d + ` : ""}${[Math.floor(+secs / 3600), Math.floor(+secs / 60) % 60, +secs % 60].map(v => v < 10 ? "0" + v : v).filter((v,i) => v !== "00" || i > 0).join(":")}`;
 }
@@ -40,11 +45,6 @@ const copyMessages = [
 	"Copied++", "C O P I E D", "help me please", "Open GD to play the level!",
 	"pretend you're playing it", "Anotha one!"
 ];
-
-let copies = 0;
-let animated = false;
-let freeze = false;
-let dailyTime = Number(levelNextDaily) || 0;
 
 $('#playButton').on("click", function () {
 	if (!($('#copied').is(':animated')) && !animated) {
@@ -143,18 +143,18 @@ $('#checkSong').on("click", function() {
 	$('#checkSong').hide();
 	$('#songLoading').show();
 	// TODO: missing types!
-	fetch(`/api/song/${ levelSongID }`).then(res => res.json()).then(info => {
+	fetch(`/api/song/${ levelSongID }`).then(res => res.json()).then((info: boolean | ErrorObject) => {
 		$('#songLoading').hide();
-		$(info && info != -1 ? '#songAllowed' : '#songNotAllowed').show().addClass('songStatus');
+		$(info && !(typeof(info) == "object") ? '#songAllowed' : '#songNotAllowed').show().addClass('songStatus');
 	});
 });
 
 $('.artistIcon').hover(function() {
-	let title = $(this).attr('title');
+	const title = $(this).attr('title') || "";
 	$('#artistInfo').css('color', title?.includes("NOT") ? "red" : "lime");
 	$('.songStatus').hide();
 	$('#artistInfo').show();
-	$('#artistInfo').text(title || "");
+	$('#artistInfo').text(title);
 }, function() {
 	$('#artistInfo').hide();
 	$('.songStatus').show();

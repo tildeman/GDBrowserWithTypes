@@ -11,7 +11,7 @@ html(lang="en")
 		meta(id="meta-image", name="og:image", content="/assets/difficulties/" + level.difficultyFace + ".png", itemprop="image")
 		meta(name="twitter:card", content="summary")
 	body.levelBG
-		#dataBlock(data-id=level.id, data-dailynumber=(level.dailyNumber || 0), data-nextdaily=(level.nextDaily || 0), data-songid=level.songID)
+		#dataBlock(data-id=level.id, data-nextdaily=(level.nextDaily || 0), data-songid=level.songID)
 		#everything
 			#infoDiv.popup
 				.fancybox.bounce.center.supercenter
