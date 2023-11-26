@@ -2,6 +2,8 @@
  * @fileoverview Types and interfaces for one-off data structures that can't be combined into a separate category.
  */
 
+import { ErrorCode } from "./servers.js";
+
 /**
  * A color with 3 values (bytes).
  * 
@@ -90,8 +92,22 @@ export interface IBrowserCredits {
 	specialThanks: string[];
 }
 
+/**
+ * Object for GDBrowser's error messages.
+ */
 export interface ErrorObject {
-	error: number;
+	/**
+	 * The error code. Details are described in `ErrorCode`.
+	 */
+	error: ErrorCode;
+	/**
+	 * The human-readable error message.
+	 * 
+	 * @example "A dog urinated on GDBrowser such that it can no longer work."
+	 */
 	message: string;
+	/**
+	 * A human-readable timestamp indicating the last time the request worked.
+	 */
 	lastWorked?: string;
 }

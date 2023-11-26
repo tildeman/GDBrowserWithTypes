@@ -7,54 +7,10 @@ import { Fetch, serverMetadata } from "../misc/global.js";
 import { ErrorObject } from "../types/miscellaneous.js";
 import { Handlebars } from "../vendor/index.js";
 
-const searchResultTemplateString = await (await fetch("/templates/search_searchResult.hbs")).text();
-const searchResultTemplate = Handlebars.compile(searchResultTemplateString, {strict: true});
-
-$('#pageDown').hide();
-$('#pageUp').hide();
-
-let accID = "";
-let loading = false;
-
-const path = location.pathname.replace('/search/', "");
-const url = new URL(window.location.href);
-const gauntlet = url.searchParams.get('gauntlet');
-const userMode = url.searchParams.get('user');
-const type = url.searchParams.get('type') || "";
-const list = url.searchParams.get('list');
-const count = url.searchParams.get('count');
-const rawHeader = url.searchParams.get('header');
-const superSearch = ['*', '*?type=mostliked', '*?type=mostdownloaded', '*?type=recent'].includes(window.location.href.split('/')[4].toLowerCase());
-const demonList = ["demonList", "demonlist"].some(linkName => typeof url.searchParams.get(linkName) == "string" || type == linkName);
-const gauntlets = [
-	"Fire", "Ice", "Poison", "Shadow", "Lava", "Bonus",
-	"Chaos", "Demon", "Time", "Crystal", "Magic", "Spike",
-	"Monster", "Doom", "Death"
-];
-const pageCache: Record<number, SearchQueryLevel[]> = {};
-
-let currentPage = Math.max(1, Number(url.searchParams.get('page') || 0)) - 1;
-let pages = 0;
-let results = 0;
-
-let demonListLink = "https://pointercrate.com/";
-let searchFilters = `/api/search/${type == 'saved' ? JSON.parse(localStorage.getItem('saved') || '[]').reverse().toString() : accID || path}?page=[PAGE]${count ? "" : "&count=10"}${window.location.search.replace(/\?/g, "&").replace("currentPage", "nope")}`;
-
-if (type == "followed") {
-	const followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
-	searchFilters += ("&creators=" + followed.join());
-}
-
-if (serverMetadata.gdps) { // gdps check
-	$('#gdWorld').remove();
-	$('#normalGD').remove();
-}
-
-
 /**
- * Append results to the selection box
- * @param firstLoad `true` if this is the first time the results are loaded
- * @param noCache `true` to ignore cache
+ * Append results to the selection box.
+ * @param firstLoad `true` if this is the first time the results are loaded.
+ * @param noCache `true` to ignore cache.
  */
 function append(firstLoad?: boolean, noCache?: boolean) {
 	loading = true;
@@ -72,11 +28,16 @@ function append(firstLoad?: boolean, noCache?: boolean) {
 	if (!noCache && pageCache[currentPage]) appendLevels(pageCache[currentPage]);
 	else Fetch(searchFilters.replace("[PAGE]", currentPage.toString())).then(appendLevels).catch(e => $('#loading').hide());
 
+	/**
+	 * Inner function that appends the matching levels into the selection box.
+	 * @param res A list of levels returned by the internal API, or an error object.
+	 */
 	function appendLevels(res: SearchQueryLevel[] | ErrorObject) {
 		if ("error" in res || !res.length) {
 			$('#loading').hide();
 			$('#pageUp').hide();
-			return loading = false;
+			loading = false;
+			return;
 		}
 		pageCache[currentPage] = res;
 
@@ -148,6 +109,60 @@ function append(firstLoad?: boolean, noCache?: boolean) {
 		$('#loading').hide();
 		loading = false;
 	}
+}
+
+/**
+ * Move the pagination by an amount.
+ * @param increment The amount of page to move
+ */
+function movePageBy(increment: number) {
+	$('#pageSelect').val((parseInt(String($('#pageSelect').val() || "0")) || 0) + increment);
+	$('#pageSelect').trigger('input');
+}
+
+const searchResultTemplateString = await (await fetch("/templates/search_searchResult.hbs")).text();
+const searchResultTemplate = Handlebars.compile(searchResultTemplateString, {strict: true});
+const path = location.pathname.replace('/search/', "");
+const url = new URL(window.location.href);
+const gauntlet = url.searchParams.get('gauntlet');
+const userMode = url.searchParams.get('user');
+const type = url.searchParams.get('type') || "";
+const list = url.searchParams.get('list');
+const count = url.searchParams.get('count');
+const rawHeader = url.searchParams.get('header');
+const superSearch = ['*', '*?type=mostliked', '*?type=mostdownloaded', '*?type=recent'].includes(window.location.href.split('/')[4].toLowerCase());
+const pageCache: Record<number, SearchQueryLevel[]> = {};
+const demonList = ["demonList", "demonlist"].some(linkName => typeof url.searchParams.get(linkName) == "string" || type == linkName);
+const gauntlets = [
+	"Fire", "Ice", "Poison", "Shadow", "Lava", "Bonus",
+	"Chaos", "Demon", "Time", "Crystal", "Magic", "Spike",
+	"Monster", "Doom", "Death"
+];
+
+const max = 9999;
+const min = 1;
+
+let accID = "";
+let loading = false;
+
+let currentPage = Math.max(1, Number(url.searchParams.get('page') || 0)) - 1;
+let pages = 0;
+let results = 0;
+
+let demonListLink = "https://pointercrate.com/";
+let searchFilters = `/api/search/${type == 'saved' ? JSON.parse(localStorage.getItem('saved') || '[]').reverse().toString() : accID || path}?page=[PAGE]${count ? "" : "&count=10"}${window.location.search.replace(/\?/g, "&").replace("currentPage", "nope")}`;
+
+$('#pageDown').hide();
+$('#pageUp').hide();
+
+if (type == "followed") {
+	const followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
+	searchFilters += ("&creators=" + followed.join());
+}
+
+if (serverMetadata.gdps) { // gdps check
+	$('#gdWorld').remove();
+	$('#normalGD').remove();
 }
 
 append(true);
@@ -246,9 +261,6 @@ $('#purgeSaved').on("click", function() {
 	location.reload();
 });
 
-const max = 9999;
-const min = 1;
-
 $('#pageSelect').on('input', function () {
 	const value = $(this).val();
 	if ($(this).val() != "") {
@@ -299,22 +311,13 @@ $(document).on("keydown", function(k) {
 	if (loading) return;
 
 	if ($('#pageDiv').is(':visible')) {
-		if (k.which == 13) $('#pageJump').trigger('click'); //enter
+		if (k.which == 13) $('#pageJump').trigger('click'); // enter
 		else return;
 	}
 
 	if (k.which == 37 && $('#pageDown').is(":visible")) $('#pageDown').trigger('click');   // left
 	if (k.which == 39 && $('#pageUp').is(":visible")) $('#pageUp').trigger('click');       // right
 });
-
-/**
- * Move the pagination by an amount.
- * @param increment The amount of page to move
- */
-function movePageBy(increment: number) {
-	$('#pageSelect').val((parseInt(String($('#pageSelect').val() || "0")) || 0) + increment);
-	$('#pageSelect').trigger('input');
-}
 
 $("#prevResult").on("click", function() {
 	movePageBy(-1);

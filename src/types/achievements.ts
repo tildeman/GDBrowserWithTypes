@@ -4,7 +4,7 @@
 
 import { Color3B } from "./miscellaneous.js";
 
-declare enum Shops {
+export enum Shops {
 	RegularShop,
 	SecretShop,
 	CommunityShop
@@ -93,4 +93,50 @@ export interface IAchievementAPIResponse {
 	 * A mapping of color IDs and their RGB values.
 	 */
 	colors: Record<number, Color3B>;
+}
+
+/**
+ * Template parameters for the achievements query result.
+ */
+export interface ISearchResultEntryTemplateParams {
+	/**
+	 * Whether the achievement unlocks a form (gamemode) icon.
+	 */
+	inForms: boolean;
+	/**
+	 * Whether the achievement unlocks a color.
+	 */
+	isColor: boolean;
+	/**
+	 * The name of the achievement.
+	 */
+	title?: string;
+	/**
+	 * The path to the icon of the achievement.
+	 */
+	iconPath: string;
+	/**
+	 * The color the achievement unlocks, if present.
+	 */
+	col?: Color3B;
+	/**
+	 * The "game" color of the achievement.
+	 */
+	achGameColor: string;
+	/**
+	 * The achievement object.
+	 */
+	achItem: IAchievementItem;
+	/**
+	 * Whether the title indicates that the achievement has been completed.
+	 */
+	completed: boolean;
+	/**
+	 * The color for the achievement upon completion.
+	 */
+	completedColor: string;
+	/**
+	 * The description of the achievement upon completion.
+	 */
+	completedDescription: string;
 }

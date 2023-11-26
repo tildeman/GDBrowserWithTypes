@@ -2,8 +2,7 @@
  * @fileoverview Site-specific script for the achievements page.
  */
 
-import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements.js";
-import { Color3B } from "../types/miscellaneous.js";
+import { IAchievementAPIResponse, ISearchResultEntryTemplateParams } from "../types/achievements.js";
 import { Handlebars } from "../vendor/index.js";
 
 /**
@@ -23,69 +22,6 @@ interface IDisabledFilters {
 	 */
 	game: string[];
 }
-
-/**
- * Template parameters for the achievements query result.
- */
-interface ISearchResultEntryTemplateParams {
-	inForms: boolean;
-	isColor: boolean;
-	title?: string;
-	iconPath: string;
-	col?: Color3B;
-	achGameColor: string;
-	achItem: IAchievementItem;
-	completed: boolean;
-	completedColor: string;
-	completedDescription: string;
-}
-
-const searchResultTemplateString = await (await fetch("/templates/achievements_searchResult.hbs")).text();
-const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
-
-const rewardFilterTemplateString = await (await fetch("/templates/achievements_rewardFilter.hbs")).text();
-const rewardFilterTemplate = Handlebars.compile(rewardFilterTemplateString);
-
-const typeFilterTemplateString = await (await fetch("/templates/achievements_typeFilter.hbs")).text();
-const typeFilterTemplate = Handlebars.compile(typeFilterTemplateString);
-
-const disabledFilters: IDisabledFilters = {
-	reward: [],
-	type: [],
-	game: []
-};
-const forms = ["icon", "ship", "ball", "ufo", "wave", "robot", "spider"];
-const gameColors = {
-	gd: "255,200,0",
-	meltdown: "255, 100, 0",
-	world: "100,220,0",
-	subzero: "0,255,255"
-};
-const formStr = [
-	"Icon", "Ship", "Ball", "UFO", "Wave", "Robot", "Spider", "Trail",
-	"Death Effect", "Primary Color", "Secondary Color", "Misc"
-];
-
-const ach: IAchievementAPIResponse = await fetch('/api/achievements').then(res => res.json());
-
-Object.keys(ach.types).forEach(achType => {
-	$('#types').append(typeFilterTemplate({
-		achType,
-		filter: ach.types[achType][1].join(" "),
-		achTitle: ach.types[achType][0]
-	}));
-});
-
-let achievements = ach.achievements;
-let completed = false;
-
-forms.concat(["trail", "deathEffect", "color1", "color2", "misc"]).forEach((property, propertyIndex) => {
-	$('#forms').append(rewardFilterTemplate({
-		property,
-		propertyForm: formStr[propertyIndex],
-		iconSource: propertyIndex > 8 ? "achievements" : "iconkitbuttons"
-	}));
-});
 
 /**
  * Append achievement item entries.
@@ -135,8 +71,10 @@ function append(reset: boolean = true) {
 	if (reset) $('#searchBox').scrollTop(0);
 }
 
-append();
-
+/**
+ * Toggle filters from labels.
+ * @param labelName The name of the filter label.
+ */
 function label(labelName: string) {
 	const labelFilter = `.${labelName}Filter`;
 	const labelID = `#${labelName}Label h1`;
@@ -174,6 +112,54 @@ function label(labelName: string) {
 	});
 }
 
+const searchResultTemplateString = await (await fetch("/templates/achievements_searchResult.hbs")).text();
+const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
+
+const rewardFilterTemplateString = await (await fetch("/templates/achievements_rewardFilter.hbs")).text();
+const rewardFilterTemplate = Handlebars.compile(rewardFilterTemplateString);
+
+const typeFilterTemplateString = await (await fetch("/templates/achievements_typeFilter.hbs")).text();
+const typeFilterTemplate = Handlebars.compile(typeFilterTemplateString);
+
+const forms = ["icon", "ship", "ball", "ufo", "wave", "robot", "spider"];
+const disabledFilters: IDisabledFilters = {
+	reward: [],
+	type: [],
+	game: []
+};
+const gameColors = {
+	gd: "255,200,0",
+	meltdown: "255, 100, 0",
+	world: "100,220,0",
+	subzero: "0,255,255"
+};
+const formStr = [
+	"Icon", "Ship", "Ball", "UFO", "Wave", "Robot", "Spider", "Trail",
+	"Death Effect", "Primary Color", "Secondary Color", "Misc"
+];
+
+const ach: IAchievementAPIResponse = await fetch('/api/achievements').then(res => res.json());
+
+Object.keys(ach.types).forEach(achType => {
+	$('#types').append(typeFilterTemplate({
+		achType,
+		filter: ach.types[achType][1].join(" "),
+		achTitle: ach.types[achType][0]
+	}));
+});
+
+let achievements = ach.achievements;
+let completed = false;
+
+forms.concat(["trail", "deathEffect", "color1", "color2", "misc"]).forEach((property, propertyIndex) => {
+	$('#forms').append(rewardFilterTemplate({
+		property,
+		propertyForm: formStr[propertyIndex],
+		iconSource: propertyIndex > 8 ? "achievements" : "iconkitbuttons"
+	}));
+});
+
+append();
 label("reward");
 label("type");
 label("game");

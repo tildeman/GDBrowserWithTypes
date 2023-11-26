@@ -9,52 +9,6 @@ import { renderIcons } from "../iconkit/icon.js";
 import { Handlebars } from "../vendor/index.js";
 import { Player } from "../classes/Player.js";
 
-const commentEntryTemplateString = await (await fetch("/templates/profile_commentEntry.hbs")).text();
-const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);
-
-const accountID: string = $('#dataBlock').data('accountid').toString();
-const accountUsername: string = $('#dataBlock').data('username');
-const accountModerator: string = $('#dataBlock').data('moderator');
-
-// TODO: Use URI paramters instead
-// remove ID from URL
-if (window.location.pathname.endsWith(".")) {
-	window.history.pushState({}, "", window.location.origin + `/u/${accountUsername}`);
-}
-
-// icons! (god this code sucks)
-renderIcons();
-
-// set favicon
-$('#mainIcon').on('DOMNodeInserted', 'img', function () {
-	$("link[rel='icon']").attr("href", $(this).attr("src") || "");
-});
-
-const messageTextA = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for profile posts <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postProfileComment.js">here</a>.';
-$('#message').html(messageTextA);
-$('#likeMessage').html(messageTextA.replace("profile posts", "liking posts").replace("postProfileComment", "like"));
-
-let followed: string[] = localStorage.followed ? JSON.parse(localStorage.followed) : []
-if (followed.includes(accountID)) {
-	$('#followOff').hide();
-	$('#followOn').show();
-}
-
-$('#followOff').on("click", function() {
-	followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
-	followed.push(accountID);
-	localStorage.followed = JSON.stringify(followed);
-	$('#followOff').hide();
-	$('#followOn').show();
-});
-
-$('#followOn').on("click", function() {
-	followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
-	localStorage.followed = JSON.stringify(followed.filter(followedID => followedID != accountID));
-	$('#followOff').show();
-	$('#followOn').hide();
-});
-
 /**
  * Add comment items to the container box.
  */
@@ -96,9 +50,61 @@ function appendComments() {
 	loadingComments = false;
 }
 
+const commentEntryTemplateString = await (await fetch("/templates/profile_commentEntry.hbs")).text();
+const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);
+
+const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for profile posts <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postProfileComment.js">here</a>.';
+const accountID: string = $('#dataBlock').data('accountid').toString();
+const accountUsername: string = $('#dataBlock').data('username');
+const accountModerator: string = $('#dataBlock').data('moderator');
+
+let followed: string[] = localStorage.followed ? JSON.parse(localStorage.followed) : [];
 let profilePage = 0;
 let loadingComments = false;
+
+let commentID = "0", lvID: number;
+let likeCount: JQuery<HTMLElement>, likeImg: JQuery<HTMLImageElement>;
+let likedComments: string[];
+let like = true;
+
+// TODO: Use URI paramters instead
+// remove ID from URL
+if (window.location.pathname.endsWith(".")) {
+	window.history.pushState({}, "", window.location.origin + `/u/${accountUsername}`);
+}
+
+// icons! (god this code sucks)
+renderIcons();
+
+// set favicon
+$('#mainIcon').on('DOMNodeInserted', 'img', function () {
+	$("link[rel='icon']").attr("href", $(this).attr("src") || "");
+});
+
+$('#message').html(messageText);
+$('#likeMessage').html(messageText.replace("profile posts", "liking posts").replace("postProfileComment", "like"));
+
+if (followed.includes(accountID)) {
+	$('#followOff').hide();
+	$('#followOn').show();
+}
+
 appendComments();
+
+$('#followOff').on("click", function() {
+	followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
+	followed.push(accountID);
+	localStorage.followed = JSON.stringify(followed);
+	$('#followOff').hide();
+	$('#followOn').show();
+});
+
+$('#followOn').on("click", function() {
+	followed = localStorage.followed ? JSON.parse(localStorage.followed) : [];
+	localStorage.followed = JSON.stringify(followed.filter(followedID => followedID != accountID));
+	$('#followOff').show();
+	$('#followOn').hide();
+});
 
 $('#content').on('input', function() {
 	const contentValue = $('#content').val();
@@ -126,7 +132,7 @@ $('#submitComment').on("click", function () {
 			$('#content').val("");
 			$('#leavePost').hide();
 			$('.postbutton').show();
-			$('#message').html(messageTextA);
+			$('#message').html(messageText);
 			toggleEscape(true);
 			profilePage = 0;
 			appendComments();
@@ -137,11 +143,6 @@ $('#submitComment').on("click", function () {
 			$('#message').text(e.responseText.includes("DOCTYPE") ? "Something went wrong..." : e.responseText);
 		});
 });
-
-let commentID = "0", lvID: number;
-let likeCount: JQuery<HTMLElement>, likeImg: JQuery<HTMLImageElement>;
-let likedComments: string[];
-let like = true;
 
 $('#likebtn').on("click", function() {
 	$('#likebtn').removeClass('youAreNotTheOne');
@@ -204,7 +205,7 @@ $('#submitVote').on("click", function() {
 				$('#likeComment').hide();
 				$('#likebtn').trigger('click');
 				$('.postbutton').show();
-				$('#likeMessage').html(messageTextA.replace("profile posts", "liking posts").replace("postProfileComment", "like"));
+				$('#likeMessage').html(messageText.replace("profile posts", "liking posts").replace("postProfileComment", "like"));
 				toggleEscape(true);
 				likedComments.push(commentID);
 				localStorage.setItem('likedComments', JSON.stringify(likedComments));

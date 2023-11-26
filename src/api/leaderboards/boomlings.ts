@@ -39,6 +39,8 @@ export default async function(req: Request, res: Response, secret?: string) {
 			const userRaw = item.split(";");
 			const scores = userRaw[2];
 			const visuals = userRaw[3];
+			const powerups = [+visuals.slice(7, 9), +visuals.slice(9, 11), +visuals.slice(11, 13)]
+				.map(item  => (item > 8 || item < 1) ? 0 : item) as [number, number, number];
 			const user: IBoomlingsUser = {
 				rank: index + 1,
 				name: userRaw[0],
@@ -47,8 +49,7 @@ export default async function(req: Request, res: Response, secret?: string) {
 				score: +scores.slice(3, 10),
 				boomling: +visuals.slice(5, 7),
 				boomlingLevel: +visuals.slice(2, 4),
-				powerups: [+visuals.slice(7, 9), +visuals.slice(9, 11), +visuals.slice(11, 13)].map(item  => (item > 8 || item < 1) ? 0 : item),
-
+				powerups,
 				unknownVisual: +visuals.slice(0, 2),
 				unknownScore: +scores.slice(0, 1),
 				raw: item

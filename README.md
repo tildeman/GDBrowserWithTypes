@@ -145,20 +145,32 @@ The original repository didn't have this folder; the routes were all packaged in
 
 This does seem a lot like ravioli code, but it may aid in readability.
 
-### Templates + Views
+### Views
 
-This is the "views" part in the MVC model if you're familiar with that. I will call all them templates to help make it easier to understand.
-
-These are the "new" templates that are made to replace the contents in `/html`, notably those about levels and profiles.
+These are the "new" views that are made to replace the contents in `/html`, notably those about levels and profiles.
 
 The original version of GDBrowser uses raw HTML files for webpages. While the resulting code does work (kinda), it is very prone to errors and bugs that may affect quality of usage. Some of their limitations are:
 - Most of these HTML files did not include a `<!DOCTYPE html>`, which meant browsers interpreted those pages in a special mode called "Quirks mode". This was how webpages were displayed back in ancient browsers (Netscape Navigator 4 & Internet Explorer 5, as some examples). When these pages are displayed under "No-quirks mode" (or "Standards mode", as this is how browsers display standards-compliant HTML5/CSS3), some of the HTML/CSS properties (like `height`) work differently, breaking the page.
 - They didn't conform to the HTML standard. Images still used the `height` property incorrectly, and `<script>` tags included the unnecessary `type` attribute `text/javascript` for non-ES scripts.
 - Some of them could not retrieve values on their own and require server-side processing. This meant taking the raw HTML, filling out all of the placeholder values, and then putting it on display. This resulted in awful glitches when those properties are nonexistent (See the info tab in [GDBrowser's page on Project J](https://gdbrowser.com/1908735)).
 
-These templates (written in [Pug](https://pugjs.org)) are designed to address those limitations by doing the following:
+These views (written in [Pug](https://pugjs.org)) are designed to address those limitations by doing the following:
 - Conform as much as possible to the HTML standards and Pug styling guidelines.
 - Use conditions and mix-ins that replace the preprocessing functions that manually replace placeholder values server-side. Instead of embedding unknown stuff into HTML files and hope it doesn't break, the preprocessing is now handled entirely by the template engine.
+
+### Templates
+
+Alongside the Pug views there are also code fragments written in [Handlebars](https://handlebarsjs.com/). These are used for dynamically-loaded items, such as search results and pagination. I chose Handlebars for these reasons:
+- They are intuitive to read for regular HTML users, unlike Pug.
+- Handlebars barely contains any logic, which makes the code overall more readable.
+- Handlebars is *isometric*. This means it can run in Node and (more importantly) in browsers.
+- The HTML code is no longer embedded in the scripts, making the process less error-prone.
+
+There are also some considerable downsides when it comes to Handlebars:
+- Since it does no calculations, I have to handle a lot of that in the scripts themselves, which can be cumbersome.
+- Loading those files takes a few more requests back and forth, which may hurt website performance.
+- Handlebars does not remove whitespace by default, meaning I have to use some methods to manually clean up whitespace.
+- This choice creates two different templating languages. While each of them have their own benefits, this creates maintenance issues as it may be harder for a potential contributor to adapt to both.
 
 ### Types
 
@@ -216,8 +228,8 @@ As a JS/TS developer, sometimes you want some sort of pattern for the infinite a
 
 - [ ] Complete all the TODOs (8).
 - [ ] Implement 2.2 features once the release is out.
-- [ ] Write JSDoc for all the types and interfaces in code.
-- [ ] Fix glaring visual errors.
+- [x] Write JSDoc for all the types and interfaces in code.
+- [x] Fix glaring visual errors.
 
 ---
 

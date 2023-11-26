@@ -28,6 +28,119 @@ interface ICommentPreset {
 	 */
 	compact: boolean;
 }
+/**
+ * Append comments to the display.
+ * @param res A list of comments, or an error object.
+ */
+function addComments(res: ErrorObject | (ICommentContent | (ICommentContent & Player))[]) {
+   if (("commentHistory" in lvl) && history && lvl.commentHistory != "all") $('#pageUp').hide();
+
+   if ("error" in res || (("commentHistory" in lvl) && history && lvl.commentHistory != "all")) {
+	   loadingComments = false;
+	   $('#loading').hide();
+	   return;
+   }
+
+   commentCache[page] = res;
+
+   res.forEach((comment, index) => {
+	   $(`#date-${comment.ID}`).html(comment.date);
+	   $(`#likes-${comment.ID}`).html(comment.likes.toString());
+	   // TODO: Avoid these raw HTML manipulations
+	   $(`#thumb-${comment.ID}`)
+		   .attr('style', comment.likes < 0 ? `transform: translateY(${compact ? '15' : '25'}%); margin-right: 0.4%; height: 4vh;` : 'height: 4vh;')
+		   .attr('src', `/assets/${comment.likes < 0 ? "dis" : ""}like.png`);
+	   if ($(`.comment[commentID=${comment.ID}]`).length) return; // auto mode, ignore duplicates
+
+	   const noAutoBgCol = index % 2 ? "evenComment" : "oddComment";
+	   const autoBgCol = $('.commentBG').first().hasClass('oddComment') ? "evenComment" : "oddComment";
+	   const bgCol = auto ? autoBgCol : noAutoBgCol;
+
+	   const userName = (!history && "username" in comment) ? comment.username : ("username" in lvl ? lvl.username : "");
+	   const modNumber = ("moderator" in comment ? comment.moderator : 0) || ("moderator" in lvl ? lvl.moderator : 0);
+	   const equivalentPlayerIDs = !history && "playerID" in comment && comment.playerID == lvl.playerID;
+
+	   if (comment.pages) {
+		   lastPage = comment.pages;
+		   $('#pagenum').html(`Page ${page + 1} of ${comment.pages}`);
+		   if (page + 1 >= comment.pages) $('#pageUp').hide();
+		   else $('#pageUp').show();
+	   }
+
+	   const commentHTML = commentEntryTemplate({
+		   compact,
+		   bgCol,
+		   comment,
+		   notRegistered: !("accountID" in comment) || !comment.accountID || comment.accountID == "0",
+		   userName,
+		   moderator: modNumber > 0,
+		   moderatorRole: modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : "",
+		   commentColor: equivalentPlayerIDs ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color,
+		   history,
+		   disliked: comment.likes < 0
+	   });
+
+	   if (auto) $('#commentBox').prepend(commentHTML);
+	   else $('#commentBox').append(commentHTML);
+   });
+
+   $('.commentText').each(function() {
+	   if ($(this).text().length > 100) {
+		   let overflow = ($(this).text().length - 100) * 0.01;
+		   $(this).css('font-size', (3.5 - (overflow)) + 'vh');
+	   }
+   });
+
+   renderIcons();
+   $('#loading').hide();
+   loadingComments = false;
+}
+
+/**
+ * Wrapper function for inserting comments/profile posts.
+ * @param auto Whether to auto-load comments.
+ * @param noCache Whether to cache comment data.
+ */
+function appendComments(auto?: boolean, noCache?: boolean) {
+	if (loadingComments) return;
+	else loadingComments = true;
+
+	if (!auto) {
+		$('#commentBox').html(`<div class="supercenter" id="loading" style="height: 12%;"><img class="spin noSelect" src="/assets/loading.png" style="height: 105%;"></div>`);
+	}
+
+	if (page == 0) {
+		$('#pageDown').hide();
+		$('#firstPage').hide();
+		$('#refreshButton').show();
+	}
+	else {
+		$('#pageDown').show();
+		if (!history) {
+			$('#firstPage').show();
+			$('#refreshButton').hide();
+		}
+	}
+
+	if (!noCache && commentCache[page]) addComments(commentCache[page]);
+	fetch(`/api${!history ? window.location.pathname : "/comments/" + lvl.playerID}?count=${compact && !auto ? 20 : 10}&page=${page}${history ? "&type=commentHistory" : ""}&${mode}`)
+		.then((res) => res.json())
+		.then(addComments);
+}
+
+/**
+ * Reset all sorting options (live mode, compact mode, etc.).
+ */
+function resetSort() {
+	page = 0;
+	auto = false;
+	if (interval) clearInterval(interval);
+	Object.keys(commentCache).forEach(function(k) {
+		delete commentCache[k];
+	});
+	$('#liveText').hide();
+	$('#autoMode').attr('src', `/assets/playbutton.png`);
+}
 
 const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for posting a comment <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postComment.js">here</a>.';
 let { mode, compact }: ICommentPreset = JSON.parse(localStorage.getItem('commentPreset') || '{"mode": "top", "compact": true}');
@@ -113,106 +226,6 @@ else {
 	}
 }
 
-/**
- * Wrapper function for inserting comments/profile posts.
- * @param auto Whether to auto-load comments.
- * @param noCache Whether to cache comment data.
- */
-function appendComments(auto?: boolean, noCache?: boolean) {
-	if (loadingComments) return;
-	else loadingComments = true;
-
-	if (!auto) {
-		$('#commentBox').html(`<div class="supercenter" id="loading" style="height: 12%;"><img class="spin noSelect" src="/assets/loading.png" style="height: 105%;"></div>`);
-	}
-
-	if (page == 0) {
-		$('#pageDown').hide();
-		$('#firstPage').hide();
-		$('#refreshButton').show();
-	}
-	else {
-		$('#pageDown').show();
-		if (!history) {
-			$('#firstPage').show();
-			$('#refreshButton').hide();
-		}
-	}
-
-	if (!noCache && commentCache[page]) addComments(commentCache[page]);
-	fetch(`/api${!history ? window.location.pathname : "/comments/" + lvl.playerID}?count=${compact && !auto ? 20 : 10}&page=${page}${history ? "&type=commentHistory" : ""}&${mode}`)
-		.then((res) => res.json())
-		.then(addComments);
-
-	/**
-	 * Append comments to the display.
-	 * @param res A list of comments, or an error object.
-	 */
-	function addComments(res: ErrorObject | (ICommentContent | (ICommentContent & Player))[]) {
-		if (("commentHistory" in lvl) && history && lvl.commentHistory != "all") $('#pageUp').hide();
-
-		if ("error" in res || (("commentHistory" in lvl) && history && lvl.commentHistory != "all")) {
-			loadingComments = false;
-			$('#loading').hide();
-			return;
-		}
-
-		commentCache[page] = res;
-
-		res.forEach((comment, index) => {
-			$(`#date-${comment.ID}`).html(comment.date);
-			$(`#likes-${comment.ID}`).html(comment.likes.toString());
-			// TODO: Avoid these raw HTML manipulations
-			$(`#thumb-${comment.ID}`)
-				.attr('style', comment.likes < 0 ? `transform: translateY(${compact ? '15' : '25'}%); margin-right: 0.4%; height: 4vh;` : 'height: 4vh;')
-				.attr('src', `/assets/${comment.likes < 0 ? "dis" : ""}like.png`);
-			if ($(`.comment[commentID=${comment.ID}]`).length) return; // auto mode, ignore duplicates
-
-			const noAutoBgCol = index % 2 ? "evenComment" : "oddComment";
-			const autoBgCol = $('.commentBG').first().hasClass('oddComment') ? "evenComment" : "oddComment";
-			const bgCol = auto ? autoBgCol : noAutoBgCol;
-
-			const userName = (!history && "username" in comment) ? comment.username : ("username" in lvl ? lvl.username : "");
-			const modNumber = ("moderator" in comment ? comment.moderator : 0) || ("moderator" in lvl ? lvl.moderator : 0);
-			const equivalentPlayerIDs = !history && "playerID" in comment && comment.playerID == lvl.playerID;
-
-			if (comment.pages) {
-				lastPage = comment.pages;
-				$('#pagenum').html(`Page ${page + 1} of ${comment.pages}`);
-				if (page + 1 >= comment.pages) $('#pageUp').hide();
-				else $('#pageUp').show();
-			}
-
-			const commentHTML = commentEntryTemplate({
-				compact,
-				bgCol,
-				comment,
-				notRegistered: !("accountID" in comment) || !comment.accountID || comment.accountID == "0",
-				userName,
-				moderator: modNumber > 0,
-				moderatorRole: modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : "",
-				commentColor: equivalentPlayerIDs ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color,
-				history,
-				disliked: comment.likes < 0
-			});
-
-			if (auto) $('#commentBox').prepend(commentHTML);
-			else $('#commentBox').append(commentHTML);
-		});
-
-		$('.commentText').each(function() {
-			if ($(this).text().length > 100) {
-				let overflow = ($(this).text().length - 100) * 0.01;
-				$(this).css('font-size', (3.5 - (overflow)) + 'vh');
-			}
-		});
-
-		renderIcons();
-		$('#loading').hide();
-		loadingComments = false;
-	}
-}
-
 loadingComments = false;
 appendComments();
 
@@ -231,20 +244,6 @@ $('#lastPage').on("click", function() {
 	page = lastPage - 1;
 	appendComments();
 });
-
-/**
- * Reset all sorting options (live mode, compact mode, etc.).
- */
-function resetSort() {
-	page = 0;
-	auto = false;
-	if (interval) clearInterval(interval);
-	Object.keys(commentCache).forEach(function(k) {
-		delete commentCache[k];
-	});
-	$('#liveText').hide();
-	$('#autoMode').attr('src', `/assets/playbutton.png`);
-}
 
 $('#topSort').on("click", function() {
 	if (mode == "top" || loadingComments) return;

@@ -21,6 +21,36 @@ function undupe<T>(array: T[]): T[] {
   else return array.filter((value, index) => array.indexOf(value) == index);
 }
 
+/**
+ * Get selected difficulty filters.
+ * @returns The requested difficulty filter.
+ */
+function getDiffFilters() {
+	return $('.diffDiv.selectedFilter').map(function() {
+		return $(this).attr('diff');
+	}).toArray();
+}
+
+/**
+ * Show the demon sub-difficulties selection panel,
+ * and hides the non-demon difficulties.
+ */
+function showDemonDiffs() {
+	$('#difficulties').hide();
+	$('#demons').show();
+	demonMode = true;
+}
+
+/**
+ * Show the non-demon difficulties selection panel,
+ * and hides the demon sub-difficulties.
+ */
+function hideDemonDiffs() {
+	$('#difficulties').show();
+	$('#demons').hide();
+	demonMode = false;
+}
+
 $('#userSearch').on("click", function() {
 	const query = encodeURIComponent(($('#levelName').val() || "").toString()).replace(/%2F/gi, "");
 	if (query) window.location.href = "./u/" + query;
@@ -73,36 +103,6 @@ $('.levelSearch').on("click", function() {
 	if (url.endsWith('?type=0')) url = url.slice(0, -7);
 	window.location.href = url.replace(/\?type=0&/, "?");
 });
-
-/**
- * Get selected difficulty filters.
- * @returns The requested difficulty filter.
- */
-function getDiffFilters() {
-	return $('.diffDiv.selectedFilter').map(function() {
-		return $(this).attr('diff');
-	}).toArray();
-}
-
-/**
- * Show the demon sub-difficulties selection panel,
- * and hides the non-demon difficulties.
- */
-function showDemonDiffs() {
-	$('#difficulties').hide();
-	$('#demons').show();
-	demonMode = true;
-}
-
-/**
- * Show the non-demon difficulties selection panel,
- * and hides the demon sub-difficulties.
- */
-function hideDemonDiffs() {
-	$('#difficulties').show();
-	$('#demons').hide();
-	demonMode = false;
-}
 
 $('.diffDiv').on("click", function() {
 	if ($(this).hasClass('goBack')) {

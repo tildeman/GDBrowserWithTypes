@@ -251,14 +251,8 @@ miscList.forEach(itemType => {
 });
 
 
-let bgCol: Color3B | undefined = res.colors.find(color => color.channel == "BG");
-let grCol: Color3B | undefined = res.colors.find(color => color.channel == "G");
-
-if (!bgCol) bgCol = {r: 40, g: 125, b: 255};
-// else if (+bgCol.r < 35 && bgCol.g < 35 && bgCol.b < 35) bgCol = {r: 75, g: 75, b: 75}; // If the colors are almost black, pitch them up.
-
-if (!grCol) grCol = {r: 0, g: 102, b: 255};
-// else if (grCol.r < 35 && grCol.g < 35 && grCol.b < 35) grCol = {r: 75, g: 75, b: 75}; // If the colors are almost black, pitch them up.
+const bgCol: Color3B = res.colors.find(color => color.channel == "BG") || {r: 40, g: 125, b: 255};
+const grCol: Color3B = res.colors.find(color => color.channel == "G") || {r: 0, g: 102, b: 255};
 
 $("#style").append(styleDivisionTemplate({
 	styleName: `bg-${res.settings.background}`,
@@ -324,8 +318,10 @@ $(".portalToggle").on("click", function() {
 	appendPortals();
 });
 
-let dataSize: [number, string] = [Number((res.dataLength / 1024 / 1024).toFixed(1)), "MiB"];
-if (dataSize[0] < 1) dataSize = [Number((res.dataLength / 1024).toFixed(1)), "KiB"];
+const dataInMebibytes: [number, string] = [Number((res.dataLength / 1048576).toFixed(1)), "MiB"];
+const dataSize: [number, string] = (dataInMebibytes[0] < 1)
+	? [Number((res.dataLength / 1024).toFixed(1)), "KiB"]
+	: dataInMebibytes;
 
 $('#codeLength').html(`${commafy(res.dataLength)} characters (${dataSize.join(" ")})`);
 

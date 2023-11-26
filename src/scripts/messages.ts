@@ -8,22 +8,6 @@ import { toggleEscape } from "../misc/global.js";
 import { Player } from "../classes/Player.js";
 import { Handlebars } from "../vendor/index.js";
 
-const itemOverviewTemplateString = await (await fetch("/templates/messages_itemOverview.hbs")).text();
-const itemOverviewTemplate = Handlebars.compile(itemOverviewTemplateString);
-
-let accountID: string;
-let password: string;
-let page = 0;
-let messageID: string = "0";
-let playerID: string = "0";
-let messages: IMessageObject[] = [];
-let loading = false;
-const messageStatus = {};
-const cache = {};
-
-const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>be stored</cg> <ca>locally</ca> in order to access RobTop\'s servers. For security, it will be <cy>forgotten</cy> when you exit this page.';
-$('#message').html(messageText);
-
 /**
  * Append messages into the HTML display box.
  * @param dontCheckPages Whether to check for pagination.
@@ -51,6 +35,40 @@ function appendMessages(dontCheckPages?: boolean) {
 
 	loading = false;
 }
+
+/**
+ * Auxiliary function to retrieve messages from the GD servers.
+ */
+function getMessages() {
+	loading = true
+	$('#selectCount').hide();
+	$('#selectAll').show();
+	$('#selectNone').hide();
+	$('#msgList').html('<img src="/assets/loading.png" class="spin noSelect" style="margin-top: 20%; height: 20%;">');
+	$.post("/messages", { password, accountID, page }).done((msgs: IMessageObject[]) => {
+			messages = msgs;
+			appendMessages();
+	}).fail(e => {
+		$('#msgList').html("");
+	});
+}
+
+const itemOverviewTemplateString = await (await fetch("/templates/messages_itemOverview.hbs")).text();
+const itemOverviewTemplate = Handlebars.compile(itemOverviewTemplateString);
+
+const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>be stored</cg> <ca>locally</ca> in order to access RobTop\'s servers. For security, it will be <cy>forgotten</cy> when you exit this page.';
+const messageStatus: Record<string, [string ,string]> = {};
+const cache: Record<string, [string, boolean]> = {};
+
+let accountID: string;
+let password: string;
+let page = 0;
+let messageID: string = "0";
+let playerID: string = "0";
+let messages: IMessageObject[] = [];
+let loading = false;
+
+$('#message').html(messageText);
 
 $('#logIn').on("click", function() {
 	const username = $('#username').val()?.toString() || "";
@@ -104,23 +122,6 @@ $('#logIn').on("click", function() {
 	});
 });
 
-/**
- * Auxiliary function to retrieve messages from the GD servers.
- */
-function getMessages() {
-	loading = true
-	$('#selectCount').hide();
-	$('#selectAll').show();
-	$('#selectNone').hide();
-	$('#msgList').html('<img src="/assets/loading.png" class="spin noSelect" style="margin-top: 20%; height: 20%;">');
-	$.post("/messages", { password, accountID, page }).done((msgs: IMessageObject[]) => {
-			messages = msgs;
-			appendMessages();
-	}).fail(e => {
-		$('#msgList').html("");
-	});
-}
-
 $(document).on('click', '.hitbox', function (event) {
 	event.stopImmediatePropagation();
 });
@@ -166,8 +167,11 @@ $(document).on('click', '.gdMessage', function () {
 	}
 
 	else $.post("/messages/" + messageID, { password, accountID }).done((msg: IMessageObject) => {
-		cache[messageID] = [msg.content, msg.browserColor];
+		cache[messageID] = [msg.content || "", msg.browserColor];
 
+		/**
+		 * Once message loading is completed, hide the loading bar and display the main menu.
+		 */
 		function loadMsg() {
 			$('#messageBody').attr('style', `color: ${msg.browserColor ? 'rgb(255, 140, 255)' : "white"}`).text(msg.content || "").show();
 			$('#messageLoad').hide();

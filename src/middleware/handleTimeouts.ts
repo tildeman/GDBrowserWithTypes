@@ -2,6 +2,7 @@
  * @fileoverview Middleware to handle response timeouts (in order to prevent hanging).
  */
 
+import { ErrorCode } from "../types/servers.js";
 import { Request, Response } from "express";
 
 /**
@@ -13,7 +14,7 @@ import { Request, Response } from "express";
 export default function (err: Error | undefined, req: Request, res: Response) {
 	if (err && err.message == "Response timeout") {
 		res.status(504).send({
-			error: 1,
+			error: ErrorCode.SERVER_UNAVAILABLE,
 			message: 'Internal server error! (Timed out)'
 		});
 	}

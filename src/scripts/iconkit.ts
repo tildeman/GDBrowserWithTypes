@@ -10,53 +10,6 @@ import { Color3B, ErrorObject } from "../types/miscellaneous.js";
 import { Player } from "../classes/Player.js";
 import { PIXI } from "../vendor/index.js";
 
-const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
-const shops = ["the Shop", "Scratch's Shop", "the Community Shop"];
-const yOffsets = { ball: -10, ufo: 30, spider: 7, swing: -15 };
-
-let currentForm = 'icon';
-let selectedForm = 'icon';
-let selectedIcon = 1;
-
-let selectedCol1 = 0;
-let selectedCol2 = 3;
-let selectedColG = 3;
-let selectedColW: number | null = null;
-let selectedColU: number | null = null;
-let enableGlow = 0;
-
-let enableSpoilers = false;
-let clickedSpoilerWarning = false;
-
-let achievements: IAchievementItem[] = [];
-let shopIcons: { icon: number; type: string; price: number; shop: number; }[] = [];
-let iconStuff: IIconData & IIconKitAPIResponse;
-let unlockMode = false;
-let currentAnimation: {} | {
-	name: string;
-	form: string;
-} = {};
-let animationMultiplier = 1;
-let formCopy: string;
-
-let icon: Icon | null = null;
-
-const iconCanvas = document.getElementById('result') as HTMLCanvasElement;
-
-const app = new PIXI.Application({
-	view: iconCanvas,
-	width: 300,
-	height: 300,
-	backgroundAlpha: 0
-});
-
-if (mobile) $('#logo').attr('width', '80%');
-
-const iconSettings: string[] = (localStorage.iconkit || "").split(",");
-iconSettings.forEach(setting => {
-	$(`#box-${setting}`).prop('checked', true);
-});
-
 /**
  * Convert the first character in a string to uppercase.
  * @param str The string to convert.
@@ -239,36 +192,11 @@ function toHexCode(decimal: number) {
 	return "#" + decimal.toString(16).padStart(6, "0");
 }
 
-const rawIconKitData = await fetch("/api/iconkit");
-const iconKitData: IIconKitAPIResponse = await rawIconKitData.json();
-
-iconStuff = Object.assign(iconData, iconKitData);
-
-const forms = Object.keys(iconStuff.forms);
-
-forms.forEach(form => {
-	const spoil = ["swing", "jetpack"].includes(form);
-	$("#iconTabs").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""} title="${iconStuff.forms[form].name}" class="blankButton iconTabButton"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
-	$("#copyForms").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""}  title="${iconStuff.forms[form].name}" class="blankButton copyForm"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
-});
-$("#iconTabs").append(`<button title="Glow" class="blankButton glowToggle" id="glowbtn"><img id="glow" src="/assets/iconkitbuttons/streak_off.png" style="width: 50px"></button>`)
-
-forms.forEach(form => {
-	$("#iconKitParent").append(`<div id="${form}s" class="iconContainer"></div>`);
-});
-
-if (iconStuff.noCopy) $('#getUserIcon').remove();
-else if (iconStuff.server) {
-	$('#copyFrom').html(`Copying from the <cy>${iconStuff.server}</cy> servers`);
-	$('#stealBox').css('height', '385px');
-}
-
 /**
  * Generate the current icon.
  * @param cb The optional callback after the icon is generated.
  */
 async function generateIcon(): Promise<void> {
-	const noDome = selectedForm == "ufo" && iconSettings.includes("ufo");
 	const foundForm = parseIconForm(selectedForm);
 
 	const isNew = await loadIconLayers(foundForm, selectedIcon);
@@ -354,6 +282,121 @@ function loadColors(devmode?: unknown) {
 	$('#col1').append("<span style='min-width: 10px'></span>");
 }
 
+/**
+ * Retrieve the unlock method of an icon.
+ * @param iconNumber The numeric ID of the icon.
+ * @param form The form (gamemode) of the icon.
+ * @returns A human-readable string indicating the unlock method.
+ */
+function getUnlockMethod(iconNumber: number, form: string) {
+	if (form == "swing" || form == "jetpack") return "Coming soon™";
+	else if (iconNumber == 0 && form == "icon") return "Legacy mini icon, enable in settings";
+	else if (iconNumber == 1 || ((form == "icon") && iconNumber <= 4) || ((form.startsWith('color')) && iconNumber <= 3)) return "Always unlocked";
+
+	const method = iconStuff.hardcodedUnlocks.find(unlockItem => unlockItem.form == form && unlockItem.id == iconNumber);
+	const foundAch = achievements.find(unlockItem => unlockItem.rewardType == form && unlockItem.rewardID == +iconNumber);
+	const foundMerch = shopIcons.find(unlockItem => unlockItem.type == form && unlockItem.icon == +iconNumber);
+
+	if (method) {
+		switch (method.type) {
+			// Update 2.2 will feature a lot more chests. This will update accordingly.
+			case "treasureRoom": return `Found in a ${method.keys == 5 ? "large" : "small"} chest in the Treasure Room`;
+			case "treasureRoomMilestone": return `Open ${method.chests} chests in the Treasure Room`;
+			case "gauntlet": return `Complete the ${method.gauntlet} gauntlet`;
+			default: return method.unlock || "Unknown";
+		}
+	}
+
+	if (foundAch) return foundAch.description.replace("Demon difficulty", "Demon");
+	else if (foundMerch) return `Purchase in ${shops[foundMerch.shop]} for <ca>${foundMerch.price}</ca> orbs`;
+
+	return "Unknown";
+}
+
+/**
+ * Switch the state that determines whether to include 2.2 icons.
+ */
+function toggleSpoilers() {
+	if (enableSpoilers) {
+		$("#newIconBtn").attr('src', $("#newIconBtn").attr('src')!.replace('_on', ''));
+		enableSpoilers = false;
+	}
+
+	else {
+		$("#newIconBtn").attr('src', $("#newIconBtn").attr('src')!.replace('.png', '_on.png'));
+		enableSpoilers = true;
+	}
+
+	if (enableSpoilers) $('button[isNew]').show();
+	else $('button[isNew]').hide();
+}
+
+const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
+const shops = ["the Shop", "Scratch's Shop", "the Community Shop"];
+const yOffsets = { ball: -10, ufo: 30, spider: 7, swing: -15 };
+const iconCanvas = document.getElementById('result') as HTMLCanvasElement;
+const app = new PIXI.Application({
+	view: iconCanvas,
+	width: 300,
+	height: 300,
+	backgroundAlpha: 0
+});
+const iconSettings: string[] = (localStorage.iconkit || "").split(",");
+const rawIconKitData = await fetch("/api/iconkit");
+const iconKitData: IIconKitAPIResponse = await rawIconKitData.json();
+const iconStuff = Object.assign(iconData, iconKitData);
+const forms = Object.keys(iconStuff.forms);
+const hoverText = $('#helpText').html();
+
+let currentForm = 'icon';
+let selectedForm = 'icon';
+let selectedIcon = 1;
+
+let selectedCol1 = 0;
+let selectedCol2 = 3;
+let selectedColG = 3;
+let selectedColW: number | null = null;
+let selectedColU: number | null = null;
+
+let enableGlow = 0;
+let enableSpoilers = false;
+let clickedSpoilerWarning = false;
+
+let achievements: IAchievementItem[] = [];
+let shopIcons: { icon: number; type: string; price: number; shop: number; }[] = [];
+let unlockMode = false;
+let currentAnimation: {} | {
+	name: string;
+	form: string;
+} = {};
+let animationMultiplier = 1;
+let formCopy: string;
+
+let icon: Icon | null = null;
+
+if (mobile) $('#logo').attr('width', '80%');
+iconSettings.forEach(setting => {
+	$(`#box-${setting}`).prop('checked', true);
+});
+
+
+forms.forEach(form => {
+	const spoil = ["swing", "jetpack"].includes(form);
+	$("#iconTabs").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""} title="${iconStuff.forms[form].name}" class="blankButton iconTabButton"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
+	$("#copyForms").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""}  title="${iconStuff.forms[form].name}" class="blankButton copyForm"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
+});
+$("#iconTabs").append(`<button title="Glow" class="blankButton glowToggle" id="glowbtn"><img id="glow" src="/assets/iconkitbuttons/streak_off.png" style="width: 50px"></button>`)
+
+forms.forEach(form => {
+	$("#iconKitParent").append(`<div id="${form}s" class="iconContainer"></div>`);
+});
+
+if (iconStuff.noCopy) $('#getUserIcon').remove();
+else if (iconStuff.server) {
+	$('#copyFrom').html(`Copying from the <cy>${iconStuff.server}</cy> servers`);
+	$('#stealBox').css('height', '385px');
+}
+
 loadColors();
 const icons = filterIcon('icon');
 
@@ -380,8 +423,9 @@ colorBG("G", iconStuff.colors[sample[2]]);
 $('.colorLabel img').show();
 
 await generateIcon();
-icon!.glow = false;
-enableGlow = 0; // disable glow after first generated
+if (icon!.glow) {
+	$("#glow").attr('src', $("#glow").attr('src')!.replace('_off', '_on'));
+}
 
 $(document).on('click', '.iconTabButton', function() {
 	const form = $(this).attr('form');
@@ -571,7 +615,7 @@ $("#getUserIcon").on("click", function() {
 $('#copyToClipboard').on("click", function() {
 	if ($(this).hasClass('greyedOut')) return;
 	icon!.copyToClipboard();
-	let copyIcon = $(this).find('img');
+	const copyIcon = $(this).find('img');
 	$(this).addClass('greyedOut');
 	copyIcon.attr('src', '/assets/iconkitbuttons/copied.png');
 	setTimeout(() => {
@@ -598,7 +642,6 @@ $('#robotAnimation').on('change', function() {
 	else icon!.setAnimation(currentAnimation.name, currentAnimation.form);
 });
 
-const hoverText = $('#helpText').html();
 $(".help").on("hover", function() {
 	$(this).css('color', 'rgba(200, 255, 255)');
 	$('#helpText').html($(this).attr('help') || "");
@@ -607,9 +650,9 @@ $(".help").on("hover", function() {
 	$('#helpText').html(hoverText);
 });
 
-$(document).on('change', '.iconsetting', function(e) {
+$(document).on('change', '.iconsetting', function() {
 	const checkedSettings: string[] = [];
-	$('.iconsetting:checkbox:checked').each((i, setting) => {
+	$('.iconsetting:checkbox:checked').each((settingIndex, setting) => {
 		checkedSettings.push(setting.id.split('-')[1]);
 	});
 	iconSettings.splice(0, iconSettings.length);
@@ -693,55 +736,6 @@ $("#fetchUser").on("click", async function() {
 	$(`#colU-12`).trigger('click');
 	if (info.glow) $('#glowbtn').trigger('click');
 });
-
-/**
- * Retrieve the unlock method of an icon.
- * @param iconNumber The numeric ID of the icon.
- * @param form The form (gamemode) of the icon.
- * @returns A human-readable string indicating the unlock method.
- */
-function getUnlockMethod(iconNumber: number, form: string) {
-	if (form == "swing" || form == "jetpack") return "Coming soon™";
-	else if (iconNumber == 0 && form == "icon") return "Legacy mini icon, enable in settings";
-	else if (iconNumber == 1 || ((form == "icon") && iconNumber <= 4) || ((form.startsWith('color')) && iconNumber <= 3)) return "Always unlocked";
-
-	const method = iconStuff.hardcodedUnlocks.find(unlockItem => unlockItem.form == form && unlockItem.id == iconNumber);
-	const foundAch = achievements.find(unlockItem => unlockItem.rewardType == form && unlockItem.rewardID == +iconNumber);
-	const foundMerch = shopIcons.find(unlockItem => unlockItem.type == form && unlockItem.icon == +iconNumber);
-
-	if (method) {
-		switch (method.type) {
-			// Update 2.2 will feature a lot more chests. This will update accordingly.
-			case "treasureRoom": return `Found in a ${method.keys == 5 ? "large" : "small"} chest in the Treasure Room`;
-			case "treasureRoomMilestone": return `Open ${method.chests} chests in the Treasure Room`;
-			case "gauntlet": return `Complete the ${method.gauntlet} gauntlet`;
-			default: return method.unlock || "Unknown";
-		}
-	}
-
-	if (foundAch) return foundAch.description.replace("Demon difficulty", "Demon");
-	else if (foundMerch) return `Purchase in ${shops[foundMerch.shop]} for <ca>${foundMerch.price}</ca> orbs`;
-
-	return "Unknown";
-}
-
-/**
- * Switch the state that determines whether to include 2.2 icons.
- */
-function toggleSpoilers() {
-	if (enableSpoilers) {
-		$("#newIconBtn").attr('src', $("#newIconBtn").attr('src')!.replace('_on', ''));
-		enableSpoilers = false;
-	}
-
-	else {
-		$("#newIconBtn").attr('src', $("#newIconBtn").attr('src')!.replace('.png', '_on.png'));
-		enableSpoilers = true;
-	}
-
-	if (enableSpoilers) $('button[isNew]').show();
-	else $('button[isNew]').hide();
-}
 
 $('#animationSpeed').on('input', function() {
 	animationMultiplier = Number($(this).val());

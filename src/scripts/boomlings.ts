@@ -2,6 +2,7 @@
  * @fileoverview Site-specific script for the Boomlings leaderboard page.
  */
 
+import { IBoomlingsUser } from "../types/leaderboards.js";
 import { ErrorObject } from "../types/miscellaneous.js";
 import { Handlebars } from "../vendor/index.js";
 
@@ -11,20 +12,7 @@ const leaderboardEntryTemplate = Handlebars.compile(leaderboardEntryTemplateStri
 $('#boomerbox').html('');
 $('#loading').show();
 
-/**
- * Entry for the leaderboard in Boomlings (RobTop's discontinued game).
- */
-interface BoomlingsLeaderboardEntry {
-	boomling: string;
-	name: string;
-	level: number;
-	score: number;
-	powerups: [number, number, number];
-	boomlingLevel: number;
-	rank: number;
-}
-
-fetch(`/api/boomlings`).then(res => res.json()).then((res: ErrorObject | BoomlingsLeaderboardEntry[]) => {
+fetch(`/api/boomlings`).then(res => res.json()).then((res: ErrorObject | IBoomlingsUser[]) => {
 	if ("error" in res) res = [];
 	$('#boomerbox').html('');
 	$('.ranking').remove();

@@ -15,45 +15,38 @@ const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
  * Weekly progress data (for 1.9 servers that use the weekly leaderboard).
  */
 interface WeeklyProgressItem {
+	/**
+	 * The number of stars gained in the week.
+	 */
 	stars: number;
+	/**
+	 * The number of diamonds gained in the week.
+	 */
 	diamonds: number;
+	/**
+	 * The number of user coins gained in the week.
+	 */
 	userCoins: number;
+	/**
+	 * The number of demons gained in the week.
+	 */
 	demons: number;
 }
 
 /**
  * Cosmetics data (for 1.9 servers).
+ * Currently sits unused.
  */
 interface CosmeticsData {
+	/**
+	 * The background color of the entry.
+	 */
 	bgColor: number[];
+	/**
+	 * The name color of the entry.
+	 */
 	nameColor: number[];
 }
-
-let type: string;
-let sort = "stars";
-let modMode = false;
-let weekly = false;
-let didGDPSStuff = false;
-let showWeek = localStorage.weeklyStats == "1";
-const trophies = [1, 3, 10, 25, 50, 75, 100];
-const boomColors = ["red", "orange", "yellow", "green", "teal", "blue", "pink"];
-
-let top250Text =
-`The <cg>Stars</cg> leaderboard contains the <cg>top 100 players</cg>, sorted by <cy>star</cy> value. It was formerly <co>inaccurate</co> but should be much more <cb>reliable</cb> now.`;
-
-const topGDPSText =
-`The <cg>Stars</cg> leaderboard contains the <cg>top players</cg>, sorted by <cy>star</cy> value.`;
-
-const weeklyText =
-`The <cg>Weekly</cg> leaderboard displays the players who have gained the most <cy>stars</cy> in the <cb>past week</cb>. It was officially <co>removed</co> in update 2.0, but lives on in some GDPS'es.`;
-
-const accurateText =
-`The <cg>Accurate Leaderboard</cg> is an <cy>externally managed</cy> leaderboard which aims to provide <ca>detailed</ca> and hacker-proof stats on top players. It also once provided a way to view an <cg>accurate</cg> list of players with the most <cy>stars</cy> when the official leaderboards were <ca>frozen</ca>. It is managed by <cb>XShadowWizardX, Pepper360, Octeract</cb>, and many many other helpers.`;
-
-const creatorText =
-`The <cg>Creators Leaderboard</cg> is sorted by <cg>creator points</cg>, rather than stars. A player's <cg>creator points</cg> (CP) is calculated by counting their number of <cy>star rated</cy> levels, plus an extra point for every level that has been <cb>featured</cb>, plus an additional point for <co>epic rated</co> levels.`;
-
-if (showWeek) $('#weeklyStats').attr('src', '/assets/sorting/week-on.png');
 
 /**
  * Change the information text.
@@ -72,8 +65,6 @@ function infoText(text: string, altDiscord?: boolean) {
 	}
 }
 
-infoText(top250Text);
-
 /**
  * Load the selected leaderboard.
  * @param val The leaderboard type.
@@ -88,7 +79,6 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 	Fetch("/api/leaderboard?" + (leaderboardParams || `count=250&${val}&type=${sort}${modMode ? "&mod=1" : ""}`)).then((res: Player[] | ErrorObject) => {
 		if (serverMetadata.gdps && !didGDPSStuff) {
 			didGDPSStuff = true;
-			top250Text = topGDPSText;
 			$('#accurateTabOn').remove();
 			$('#accurateTabOff').remove();
 
@@ -207,6 +197,47 @@ function leaderboard(val?: string | null, leaderboardParams?: string, scrollTo?:
 	});
 }
 
+/**
+ * Get rid of the `dontload` attribute on icons that have it and load them anyway.
+ */
+function lazyLoadIcons() {
+	$('gdicon[dontload]').each(function() {
+		if (isInViewport($(this))) {
+			$(this).removeAttr('dontload');
+			buildIcon($(this));
+		}
+	});
+}
+
+/**
+ * Adjust the browser CSS to include the weekly tab.
+ */
+function weeklyAdjust() {
+	const weekEnabled = showWeek && type == "accurate";
+	$('.leaderboardSlot').css('height', weekEnabled ? '33%' : '25%');
+	$('.weeklyStuff').css('display', weekEnabled ? 'block' : 'none');
+}
+
+const trophies = [1, 3, 10, 25, 50, 75, 100];
+const boomColors = ["red", "orange", "yellow", "green", "teal", "blue", "pink"];
+const gdTop250Text = `The <cg>Stars</cg> leaderboard contains the <cg>top 100 players</cg>, sorted by <cy>star</cy> value. It was formerly <co>inaccurate</co> but should be much more <cb>reliable</cb> now.`;
+const topGDPSText = `The <cg>Stars</cg> leaderboard contains the <cg>top players</cg>, sorted by <cy>star</cy> value.`;
+const top250Text = serverMetadata.gdps ? topGDPSText : gdTop250Text;
+const weeklyText = `The <cg>Weekly</cg> leaderboard displays the players who have gained the most <cy>stars</cy> in the <cb>past week</cb>. It was officially <co>removed</co> in update 2.0, but lives on in some GDPS'es.`;
+const accurateText = `The <cg>Accurate Leaderboard</cg> is an <cy>externally managed</cy> leaderboard which aims to provide <ca>detailed</ca> and hacker-proof stats on top players. It also once provided a way to view an <cg>accurate</cg> list of players with the most <cy>stars</cy> when the official leaderboards were <ca>frozen</ca>. It is managed by <cb>XShadowWizardX, Pepper360, Octeract</cb>, and many many other helpers.`;
+const creatorText = `The <cg>Creators Leaderboard</cg> is sorted by <cg>creator points</cg>, rather than stars. A player's <cg>creator points</cg> (CP) is calculated by counting their number of <cy>star rated</cy> levels, plus an extra point for every level that has been <cb>featured</cb>, plus an additional point for <co>epic rated</co> levels.`;
+
+let type: string;
+let sort = "stars";
+let modMode = false;
+let weekly = false;
+let didGDPSStuff = false;
+let showWeek = localStorage.weeklyStats == "1";
+
+if (showWeek) $('#weeklyStats').attr('src', '/assets/sorting/week-on.png');
+
+infoText(top250Text);
+
 // $('#boomling').attr('src', `/assets/boomlings/${boomColors[Math.floor(Math.random() * boomColors.length)]}.png`);
 
 $(document).on('click', '.sortButton', function () {
@@ -283,15 +314,6 @@ $('#modSort').on("click", function() {
 	leaderboard(type);
 });
 
-/**
- * Adjust the browser CSS to include the weekly tab.
- */
-function weeklyAdjust() {
-	const weekEnabled = showWeek && type == "accurate";
-	$('.leaderboardSlot').css('height', weekEnabled ? '33%' : '25%');
-	$('.weeklyStuff').css('display', weekEnabled ? 'block' : 'none');
-}
-
 $('#weeklyStats').on("click", function() {
 	showWeek = !showWeek;
 	localStorage.weeklyStats = +showWeek;
@@ -337,19 +359,6 @@ $(document).on("keydown", function(k) {
 });
 
 $("#topTabOff").trigger('click');
-
-/**
- * Get rid of the `dontload` attribute on icons that have it and load them anyway.
- */
-function lazyLoadIcons() {
-	$('gdicon[dontload]').each(function() {
-		if (isInViewport($(this))) {
-			$(this).removeAttr('dontload');
-			buildIcon($(this));
-		}
-	});
-}
-
 $('#searchBox').on("scroll", lazyLoadIcons);
 
 export {};

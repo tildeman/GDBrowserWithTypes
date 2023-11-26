@@ -83,12 +83,36 @@ export interface ISearchFilters {
 	count?: number;
 }
 
+/**
+ * Search filters that are saved in GDBrowser's local storage.
+ */
 export interface IClientSavedFilters {
+	/**
+	 * An array of difficulty IDs to search for.
+	 */
 	diff: number[];
+	/**
+	 * An array of level lengths to search for.
+	 */
 	len: string[];
+	/**
+	 * Extra properties (2-player, original, etc.).
+	 */
 	checked: string[];
+	/**
+	 * Whether the search applies to demons.
+	 */
 	demonDiff?: boolean;
+	/**
+	 * Whether the level is star-rated.
+	 */
 	starred?: boolean;
+	/**
+	 * Whether the level uses official songs.
+	 */
 	defaultSong?: boolean;
+	/**
+	 * The song ID to look for.
+	 */
 	song?: number;
 }

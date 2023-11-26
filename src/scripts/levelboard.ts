@@ -9,16 +9,6 @@ import { buildIcon } from "../iconkit/icon.js";
 import { Level } from "../classes/Level.js";
 import { Handlebars } from "../vendor/index.js";
 
-const searchResultTemplateString = await (await fetch("/templates/levelboard_searchResult.hbs")).text();
-const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
-
-let loading = false;
-const lvlID = Math.round(+window.location.pathname.split('/')[2]);
-
-if (!lvlID || lvlID > 99999999 || lvlID < -99999999) {
-	window.location.href = window.location.href.replace("leaderboard", "search");
-}
-
 /**
  * Fetch the leaderboard status for a level, and fill in the entries into the main box.
  */
@@ -63,7 +53,30 @@ function leaderboard() {
 	});
 }
 
+/**
+ * Get rid of the `dontload` attribute on icons that have it and load them anyway.
+ */
+function lazyLoadIcons() {
+	$('gdicon[dontload]').each(function() {
+		if (isInViewport($(this))) {
+			$(this).removeAttr('dontload');
+			buildIcon($(this));
+		}
+	});
+}
+
+const searchResultTemplateString = await (await fetch("/templates/levelboard_searchResult.hbs")).text();
+const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
+
+const lvlID = Math.round(+window.location.pathname.split('/')[2]);
+
+let loading = false;
 let weekly = false;
+
+if (!lvlID || lvlID > 99999999 || lvlID < -99999999) {
+	window.location.href = window.location.href.replace("leaderboard", "search");
+}
+
 leaderboard();
 
 $('#topMode').on("click", function() {
@@ -81,18 +94,6 @@ $('#weekMode').on("click", function() {
 	$('#topMode').removeClass('darken');
 	$('#weekMode').addClass('darken');
 });
-
-/**
- * Get rid of the `dontload` attribute on icons that have it and load them anyway.
- */
-function lazyLoadIcons() {
-	$('gdicon[dontload]').each(function() {
-		if (isInViewport($(this))) {
-			$(this).removeAttr('dontload');
-			buildIcon($(this));
-		}
-	});
-}
 
 $('#searchBox').on("scroll", lazyLoadIcons);
 

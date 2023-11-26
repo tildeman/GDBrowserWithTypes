@@ -4,6 +4,7 @@ import { parseResponse } from "../../lib/parseResponse.js";
 import { UserCache } from "../../classes/UserCache.js";
 import { Player } from "../../classes/Player.js";
 import { Request, Response } from "express";
+
 /**
  * Fetch data for the in-game leaderboard.
  * @param req The client request.

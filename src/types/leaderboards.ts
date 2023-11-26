@@ -90,7 +90,7 @@ export interface IBoomlingsUser {
 	/**
 	 * Active powerups of the Boomlings player.
 	 */
-	powerups: number[];
+	powerups: [number, number, number];
 	/**
 	 * Unknown.
 	 */
