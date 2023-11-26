@@ -4,8 +4,8 @@
 // hi there hello! this code is really old, so it's shit. i should rewrite it some time omg
 
 import { Icon, iconData, loadIconLayers, parseIconColor, parseIconForm, rgbToDecimal } from "../iconkit/icon.js";
-import { IAnimationObject, IIconConfiguration, IIconData, IIconKitAPIResponse } from "../types/icons.js";
-import { IAchievementAPIResponse, IAchievementItem } from "../types/achievements.js";
+import { IAnimationObject, IIconConfiguration, IIconKitAPIResponse } from "../types/icons.js";
+import { IAchievementAPIResponse } from "../types/achievements.js";
 import { Color3B, ErrorObject } from "../types/miscellaneous.js";
 import { Player } from "../classes/Player.js";
 import { PIXI } from "../vendor/index.js";
@@ -341,12 +341,18 @@ const app = new PIXI.Application({
 	height: 300,
 	backgroundAlpha: 0
 });
+const iconKitData: IIconKitAPIResponse = await fetch("/api/iconkit").then(res => res.json());
 const iconSettings: string[] = (localStorage.iconkit || "").split(",");
-const rawIconKitData = await fetch("/api/iconkit");
-const iconKitData: IIconKitAPIResponse = await rawIconKitData.json();
 const iconStuff = Object.assign(iconData, iconKitData);
 const forms = Object.keys(iconStuff.forms);
 const hoverText = $('#helpText').html();
+
+const achievementsItem: IAchievementAPIResponse = await fetch('/api/achievements').then(res => res.json());
+const achievements = achievementsItem.achievements;
+const shopIcons = iconStuff.shops;
+
+const sample = JSON.parse(iconStuff.sample.join(""));
+const icons = filterIcon('icon');
 
 let currentForm = 'icon';
 let selectedForm = 'icon';
@@ -362,8 +368,6 @@ let enableGlow = 0;
 let enableSpoilers = false;
 let clickedSpoilerWarning = false;
 
-let achievements: IAchievementItem[] = [];
-let shopIcons: { icon: number; type: string; price: number; shop: number; }[] = [];
 let unlockMode = false;
 let currentAnimation: {} | {
 	name: string;
@@ -398,9 +402,7 @@ else if (iconStuff.server) {
 }
 
 loadColors();
-const icons = filterIcon('icon');
 
-const sample = JSON.parse(iconStuff.sample.join(""));
 enableGlow = sample[3] * 2;
 [selectedIcon, selectedCol1, selectedCol2] = sample;
 selectedColG = selectedCol2;
@@ -674,27 +676,14 @@ $(document).on('change', '.iconsetting', function() {
 });
 
 $('#unlockIcon').on("click", function() {
-	if (!achievements.length) {
-		fetch('/api/achievements').then(res => {
-			res.json().then((achievementsItem: IAchievementAPIResponse) => {
-				achievements = achievementsItem.achievements;
-				shopIcons = iconStuff.shops;
-				unlockMode = true;
-				$('#lock').attr('src', $('#lock').attr('src')!.replace('.png', '_on.png'));
-				$('#howto').show();
-			});
-		});
+	unlockMode = !unlockMode;
+	if (unlockMode) {
+		$('#lock').attr('src', $('#lock').attr('src')!.replace('.png', '_on.png'));
+		$('#howto').show();
 	}
 	else {
-		unlockMode = !unlockMode;
-		if (unlockMode) {
-			$('#lock').attr('src', $('#lock').attr('src')!.replace('.png', '_on.png'));
-			$('#howto').show();
-		}
-		else {
-			$('#lock').attr('src', $('#lock').attr('src')!.replace('_on.png', '.png'));
-			$('#howto').hide();
-		}
+		$('#lock').attr('src', $('#lock').attr('src')!.replace('_on.png', '.png'));
+		$('#howto').hide();
 	}
 });
 

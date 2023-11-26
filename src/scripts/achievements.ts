@@ -79,7 +79,7 @@ function label(labelName: string) {
 	const labelFilter = `.${labelName}Filter`;
 	const labelID = `#${labelName}Label h1`;
 	const labelButtons = `#${labelName}Label img`;
-	$(labelFilter).hover(function() {
+	$(labelFilter).on("hover", function() {
 		$(labelButtons).addClass('hidey');
 		$(labelID)
 			.attr('text', $(labelID).text())

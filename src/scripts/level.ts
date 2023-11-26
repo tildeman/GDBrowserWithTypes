@@ -61,7 +61,7 @@ $('#playButton').on("click", function () {
 			}
 		});
 	}
-	var temp = $("<input>");
+	const temp = $("<input>");
 	$("body").append(temp);
 	temp.val(levelID).select();
 	document.execCommand("copy");
@@ -105,7 +105,6 @@ $(window).on('load', function() {
 });
 
 let savedLevels: string[] = JSON.parse(localStorage.getItem('saved') || '[]');
-let deleteMode = false;
 if (savedLevels.includes(levelID)) {
 	$('#saveButton').attr('src', '/assets/delete.png');
 	levelSaved = true
@@ -150,7 +149,7 @@ $('#checkSong').on("click", function() {
 	});
 });
 
-$('.artistIcon').hover(function() {
+$('.artistIcon').on("hover", function() {
 	const title = $(this).attr('title') || "";
 	$('#artistInfo').css('color', title?.includes("NOT") ? "red" : "lime");
 	$('.songStatus').hide();
