@@ -6,7 +6,7 @@ import { IBoomlingsUser } from "../types/leaderboards.js";
 import { ErrorObject } from "../types/miscellaneous.js";
 import { Handlebars } from "../vendor/index.js";
 
-const leaderboardEntryTemplateString = await (await fetch("/templates/boomlings_leaderboardEntry.hbs")).text();
+const leaderboardEntryTemplateString = await fetch("/templates/boomlings_leaderboardEntry.hbs").then(res => res.text());
 const leaderboardEntryTemplate = Handlebars.compile(leaderboardEntryTemplateString);
 
 $('#boomerbox').html('');

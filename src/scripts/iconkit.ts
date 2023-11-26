@@ -7,6 +7,7 @@ import { Icon, iconData, loadIconLayers, parseIconColor, parseIconForm, rgbToDec
 import { IAnimationObject, IIconConfiguration, IIconKitAPIResponse } from "../types/icons.js";
 import { IAchievementAPIResponse } from "../types/achievements.js";
 import { Color3B, ErrorObject } from "../types/miscellaneous.js";
+import { Handlebars } from "../vendor/index.js";
 import { Player } from "../classes/Player.js";
 import { PIXI } from "../vendor/index.js";
 
@@ -194,7 +195,6 @@ function toHexCode(decimal: number) {
 
 /**
  * Generate the current icon.
- * @param cb The optional callback after the icon is generated.
  */
 async function generateIcon(): Promise<void> {
 	const foundForm = parseIconForm(selectedForm);
@@ -270,13 +270,18 @@ function appendIcon(form: string[], formName: string) {
  * @param devmode Unused value.
  */
 function loadColors(devmode?: unknown) {
-	const colTypes = [1, 2, "G", "W", "U"];
+	const colTypes = ["1", "2", "G", "W", "U"];
 	colTypes.forEach(colorType => $(`#col${colorType}`).html(""));
 	(iconStuff.colorOrder || []).forEach(function (colorID, n) {
 		if (iconSettings.includes("sort")) colorID = n;
-		colTypes.forEach(c => {
+		colTypes.forEach(channel => {
 			const colRGB = iconStuff.colors[colorID];
-			$(`#col${c}`).append(`<button col=${colorID} colType=color${c} class="blankButton color${c} iconColor" title="Color ${colorID} (#${toHexCode(rgbToDecimal(colRGB))})" id="col${c}-${colorID}"><div style="background-color: rgb(${colRGB.r}, ${colRGB.g}, ${colRGB.b})"></button>`);
+			$(`#col${channel}`).append(colorButtonTemplate({
+				colorID,
+				channel,
+				colorHex: toHexCode(rgbToDecimal(colRGB)),
+				colRGB
+			}));
 		});
 	});
 	$('#col1').append("<span style='min-width: 10px'></span>");
@@ -330,6 +335,9 @@ function toggleSpoilers() {
 	if (enableSpoilers) $('button[isNew]').show();
 	else $('button[isNew]').hide();
 }
+
+const colorButtonTemplateString = await fetch("/templates/iconkit_colorButton.hbs").then(res => res.text());
+const colorButtonTemplate = Handlebars.compile(colorButtonTemplateString);
 
 const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
 const shops = ["the Shop", "Scratch's Shop", "the Community Shop"];

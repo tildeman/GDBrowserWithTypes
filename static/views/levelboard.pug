@@ -11,11 +11,11 @@ html(lang="en")
 		meta(name="twitter:card", content="summary")
 	body.levelBG
 		#everything(style={ overflow: "auto" })
-			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
-				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh" })
+			.bottomLeftCornerBox.cornerBox
+				img.cornerPiece(src="/assets/corner.png")
 
-			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
-				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh", transform: "scaleX(-1)" })
+			.bottomRightCornerBox.cornerBox
+				img.cornerPiece(src="/assets/corner.png")
 
 			#searchBox.supercenter.dragscroll(style={ width: "124vh" })
 				div(style={ height: "4.5%" })
@@ -25,8 +25,8 @@ html(lang="en")
 			.center(style={ position: "absolute", top: "8%", left: "0", right: "0" })
 				h1#header.pre
 
-			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
-				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
+			.backButtonContainer
+				img#backButton.gdButton(src="/assets/back.png")
 
 			#loading.supercenter(style={ height: "10%", top: "47%" })
 				img.spin.noSelect(src="/assets/loading.png", style={ height: "105%" })

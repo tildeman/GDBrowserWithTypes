@@ -53,7 +53,7 @@ function getMessages() {
 	});
 }
 
-const itemOverviewTemplateString = await (await fetch("/templates/messages_itemOverview.hbs")).text();
+const itemOverviewTemplateString = await fetch("/templates/messages_itemOverview.hbs").then(res => res.text());
 const itemOverviewTemplate = Handlebars.compile(itemOverviewTemplateString);
 
 const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>be stored</cg> <ca>locally</ca> in order to access RobTop\'s servers. For security, it will be <cy>forgotten</cy> when you exit this page.';

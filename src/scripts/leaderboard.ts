@@ -8,7 +8,7 @@ import { buildIcon } from "../iconkit/icon.js";
 import { Player } from "../classes/Player.js";
 import { Handlebars } from "../vendor/index.js";
 
-const searchResultTemplateString = await (await fetch("/templates/leaderboard_searchResult.hbs")).text();
+const searchResultTemplateString = await fetch("/templates/leaderboard_searchResult.hbs").then(res => res.text());
 const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
 
 /**

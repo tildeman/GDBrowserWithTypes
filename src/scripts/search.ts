@@ -120,8 +120,9 @@ function movePageBy(increment: number) {
 	$('#pageSelect').trigger('input');
 }
 
-const searchResultTemplateString = await (await fetch("/templates/search_searchResult.hbs")).text();
+const searchResultTemplateString = await fetch("/templates/search_searchResult.hbs").then(res => res.text());
 const searchResultTemplate = Handlebars.compile(searchResultTemplateString, {strict: true});
+
 const path = location.pathname.replace('/search/', "");
 const url = new URL(window.location.href);
 const gauntlet = url.searchParams.get('gauntlet');

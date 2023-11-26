@@ -10,7 +10,7 @@ import { Player } from "../classes/Player.js";
 import { Level } from "../classes/Level.js";
 import { ICommentContent } from "../types/comments.js";
 
-const commentEntryTemplateString = await (await fetch("/templates/comments_commentEntry.hbs")).text();
+const commentEntryTemplateString = await fetch("/templates/comments_commentEntry.hbs").then(res => res.text());
 const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);
 
 /**

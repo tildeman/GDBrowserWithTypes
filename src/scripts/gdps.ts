@@ -29,7 +29,7 @@ function listServers() {
 	$('#searchBox').append('<div style="height: 4.5%"></div>');
 }
 
-const searchResultTemplateString = await (await fetch("/templates/gdps_searchResult.hbs")).text();
+const searchResultTemplateString = await fetch("/templates/gdps_searchResult.hbs").then(res => res.text());
 const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
 
 // There's simply no good way to identify subdomains for both local and production environments.

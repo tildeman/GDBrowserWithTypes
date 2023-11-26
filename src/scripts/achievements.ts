@@ -112,13 +112,13 @@ function label(labelName: string) {
 	});
 }
 
-const searchResultTemplateString = await (await fetch("/templates/achievements_searchResult.hbs")).text();
+const searchResultTemplateString = await fetch("/templates/achievements_searchResult.hbs").then(res => res.text());
 const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
 
-const rewardFilterTemplateString = await (await fetch("/templates/achievements_rewardFilter.hbs")).text();
+const rewardFilterTemplateString = await fetch("/templates/achievements_rewardFilter.hbs").then(res => res.text());
 const rewardFilterTemplate = Handlebars.compile(rewardFilterTemplateString);
 
-const typeFilterTemplateString = await (await fetch("/templates/achievements_typeFilter.hbs")).text();
+const typeFilterTemplateString = await fetch("/templates/achievements_typeFilter.hbs").then(res => res.text());
 const typeFilterTemplate = Handlebars.compile(typeFilterTemplateString);
 
 const forms = ["icon", "ship", "ball", "ufo", "wave", "robot", "spider"];

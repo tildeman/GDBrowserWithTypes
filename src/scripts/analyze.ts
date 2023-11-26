@@ -8,22 +8,22 @@ import { toggleEscape, clean } from "../misc/global.js";
 import { Handlebars } from "../vendor/index.js";
 import { ErrorCode } from "../types/servers.js";
 
-const portalDivisionTemplateString = await (await fetch("/templates/analyze_portalDivision.hbs")).text();
+const portalDivisionTemplateString = await fetch("/templates/analyze_portalDivision.hbs").then(res => res.text());
 const portalDivisionTemplate = Handlebars.compile(portalDivisionTemplateString);
 
-const objectDivisionTemplateString = await (await fetch("/templates/analyze_objectDivision.hbs")).text();
+const objectDivisionTemplateString = await fetch("/templates/analyze_objectDivision.hbs").then(res => res.text());
 const objectDivisionTemplate = Handlebars.compile(objectDivisionTemplateString);
 
-const groupDivisionTemplateString = await (await fetch("/templates/analyze_groupDivision.hbs")).text();
+const groupDivisionTemplateString = await fetch("/templates/analyze_groupDivision.hbs").then(res => res.text());
 const groupDivisionTemplate = Handlebars.compile(groupDivisionTemplateString);
 
-const styleDivisionTemplateString = await (await fetch("/templates/analyze_styleDivision.hbs")).text();
+const styleDivisionTemplateString = await fetch("/templates/analyze_styleDivision.hbs").then(res => res.text());
 const styleDivisionTemplate = Handlebars.compile(styleDivisionTemplateString);
 
-const colorInfoTemplateString = await (await fetch("/templates/analyze_colorInfo.hbs")).text();
+const colorInfoTemplateString = await fetch("/templates/analyze_colorInfo.hbs").then(res => res.text());
 const colorInfoTemplate = Handlebars.compile(colorInfoTemplateString);
 
-const colorPropertiesTemplateString = await (await fetch("/templates/analyze_colorProperties.hbs")).text();
+const colorPropertiesTemplateString = await fetch("/templates/analyze_colorProperties.hbs").then(res => res.text());
 const colorPropertiesTemplate = Handlebars.compile(colorPropertiesTemplateString);
 
 
@@ -256,11 +256,13 @@ const grCol: Color3B = res.colors.find(color => color.channel == "G") || {r: 0, 
 
 $("#style").append(styleDivisionTemplate({
 	styleName: `bg-${res.settings.background}`,
-	col: bgCol
+	col: bgCol,
+	imgTitle: `Background ${res.settings.background}`
 }));
 $("#style").append(styleDivisionTemplate({
 	styleName: `gr-${res.settings.ground}`,
-	col: grCol
+	col: grCol,
+	imgTitle: `Ground ${res.settings.ground}`
 }));
 $("#style").append(styleDivisionTemplate({
 	styleName: `font-${res.settings.font}`,

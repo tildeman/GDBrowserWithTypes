@@ -36,11 +36,11 @@ html(lang="en")
 						+gameSpinoff("subzero", "s", " Subzero")
 					img#submitFilters.gdButton(style={ margin: "2.5% 0.7%", height: "10%" }, src="/assets/textbuttons/submit.png")
 
-			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
-				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh" })
+			.bottomLeftCornerBox.cornerBox
+				img.cornerPiece(src="/assets/corner.png")
 
-			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
-				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh", transform: "scaleX(-1)" })
+			.bottomRightCornerBox.cornerBox
+				img.cornerPiece(src="/assets/corner.png")
 
 			#searchBox.supercenter.dragscroll(style={ width: "128vh" })
 				div(style={ height: "4.5%" })
@@ -50,8 +50,8 @@ html(lang="en")
 			.center(style={ position: "absolute", top: "8%", left: "0", right: "0" })
 				h1#header.pre Achievements
 
-			.noClick(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%" })
-				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
+			.backButtonContainer
+				img#backButton.gdButton(src="/assets/back.png")
 
 			div(style={ position: "absolute", top: "2%", right: "1.5%", width: "9%", "text-align": "right" })
 				img.gdButton(style={ "margin-bottom": "15%", width: "12vh" }, src="/assets/plus.png", onclick="$('#filters').show()")

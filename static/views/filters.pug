@@ -80,11 +80,11 @@ html(lang="en")
 					a#listLink
 						img#createList.disabled.gdButton(src="/assets/textbuttons/submit.png", type="submit", style={ height: "12.5%", "margin-left": "1%" })
 
-			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%" })
-				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh" })
+			.bottomLeftCornerBox.cornerBox
+				img.cornerPiece(src="/assets/corner.png")
 
-			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right" })
-				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh", transform: "scaleX(-1)", "pointer-events": "none" })
+			.bottomRightCornerBox.cornerBox
+				img.noClick.cornerPiece(src="/assets/corner.png")
 
 			.transparentBox.center(style={ width: "115vh", height: "9%", margin: "1.5% auto 1% auto", "padding-bottom": "0.2%" })
 				input#levelName(type="text", placeholder="Enter a level, user, or ID", maxlength="20")
@@ -178,8 +178,8 @@ html(lang="en")
 				#starCheck.lengthDiv(style={ height: "90%" })
 					img.gdButton(src="/assets/star.png", style={ height: "90%", "vertical-align": "bottom" })
 
-			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
-				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
+			.backButtonContainer
+				img#backButton.gdButton(src="/assets/back.png")
 
 			div(style={ position: "absolute", top: "2%", right: "1.5%", width: "10%", "text-align": "right" })
 				img#clearFilters.gdButton(src="/assets/close.png", style={ width: "60%", "margin-bottom": "12%" })

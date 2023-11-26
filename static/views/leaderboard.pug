@@ -30,13 +30,13 @@ html(lang="en")
 					p#infoText.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh" })
 					img.gdButton.center(src="/assets/ok.png", style={ width: "20%" }, onclick="$('.popup').hide()")
 
-			div(style={ position: "absolute", bottom: "0%", left: "0%", width: "100%" })
-				img.cornerPiece.noClick(src="/assets/corner.png", style={ height: "14vh" })
+			.bottomLeftCornerBox.cornerBox
+				img.cornerPiece.noClick(src="/assets/corner.png")
 
-			div(style={ position: "absolute", bottom: "0%", right: "0%", width: "100%", "text-align": "right" })
+			.bottomRightCornerBox.cornerBox
 				a(title="Boomlings Leaderboard?????", href="/boomlings")
 					img#boomling(style={ position: "absolute", width: "6%", top: "2%", right: "1%", display: "none" })
-				img.cornerPiece.noClick(src="/assets/corner.png", style={ height: "14vh", transform: "scaleX(-1)" })
+				img.cornerPiece.noClick(src="/assets/corner.png")
 
 			#searchBox.supercenter.dragscroll
 				div(style={ height: "4.5%" })
@@ -57,8 +57,8 @@ html(lang="en")
 					+sortFilter("demons", "demons", null, "demons", false)
 					+sortFilter("creator points", "cps", "cpSort", "cps", true)
 
-			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
-				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
+			.backButtonContainer
+				img#backButton.gdButton(src="/assets/back.png")
 
 			div(style={ position: "absolute", top: "2.5%", right: "2%", width: "10%", "text-align": "right" })
 				img.gdButton(src="/assets/smallinfo.png", style={ width: "32%" }, onclick="$('#infoDiv').show()")

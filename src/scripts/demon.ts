@@ -7,7 +7,7 @@ import { IServerInfo } from "../types/servers.js";
 import { Fetch } from "../misc/global.js";
 import { Handlebars } from "../vendor/index.js";
 
-const searchResultTemplateString = await (await fetch("/templates/demon_searchResult.hbs")).text();
+const searchResultTemplateString = await fetch("/templates/demon_searchResult.hbs").then(res => res.text());
 const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
 
 const max = 250;

@@ -147,14 +147,14 @@ html(lang="en")
 						p.bigger(style={ "margin-bottom": "0" }) Something went wrong!
 						p(style={ "font-size": "2.4vh", "margin-top": "1%" }) Does the recipient have messages enabled?
 
-			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "pointer-events": "none" })
-				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh" })
+			.noClick.bottomLeftCornerBox.cornerBox
+				img.cornerPiece(src="/assets/corner.png")
 
-			div(style={ position: "absolute", bottom: "0", left: "0", width: "100%", "text-align": "right", "pointer-events": "none" })
-				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh", transform: "scaleX(-1)" })
+			.noClick.bottomRightCornerBox.cornerBox
+				img.cornerPiece(src="/assets/corner.png")
 
-			div(style={ position: "absolute", top: "2%", left: "1.5%", width: "10%", height: "25%", "pointer-events": "none" })
-				img#backButton.gdButton.yesClick(src="/assets/back.png", style={ height: "30%" })
+			.backButtonContainer
+				img#backButton.gdButton(src="/assets/back.png")
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
 		script(type="module", src="/vendor/index.js")

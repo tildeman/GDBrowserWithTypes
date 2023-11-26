@@ -127,8 +127,8 @@ html(lang="en")
 				|
 				a(href="http://robtopgames.com", target="_blank") RobTop Games
 
-			.hideIfSmall(style={ position: "absolute", top: "20px", left: "20px", width: "64px", height: "64px", "pointer-events": "none" })
-				img#backButton.gdButton(style={ "pointer-events": "all", height: "100%" }, src="/assets/back.png")
+			.hideIfSmall.noClick(style={ position: "absolute", top: "20px", left: "20px", width: "64px", height: "64px" })
+				img#backButton.gdButton(src="/assets/back.png", style={ height: "100%" })
 
 			#extraInfo.hideIfSmall(style={ position: "absolute", top: "20px", right: "15px" })
 

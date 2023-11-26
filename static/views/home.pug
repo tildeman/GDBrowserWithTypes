@@ -63,11 +63,11 @@ html(lang="en")
 				#closeCredits.center.supercenter(style={ "z-index": 10, width: "80vh", height: "43%", "pointer-events": "none" })
 					img.closeWindow.gdButton(src="/assets/close.png", style={ position: "absolute", top: "-24%", left: "-7vh", width: "14%", "pointer-events": "all" }, tabindex="0", title="Close")
 
-			div(style={ position: "absolute", bottom: "0%", left: "0%", width: "100%", "pointer-events": "none"})
-				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh" })
+			.bottomLeftCornerBox.cornerBox
+				img.cornerPiece(src="/assets/corner.png")
 
-			div(style={ position: "absolute", top: "0%", left: "0%", width: "100%", "pointer-events": "none"})
-				img.cornerPiece(src="/assets/corner.png", style={ height: "14vh", transform: "scaleY(-1)" })
+			.topLeftCornerBox.cornerBox
+				img.cornerPiece(src="/assets/corner.png", style={ height: "24vh", transform: "scaleY(-1)" })
 
 			div(style={ position: "absolute", top: "1.7%", right: "2%", width: "10%", "text-align": "right"})
 				img#creditsButton.gdButton(src="/assets/credits.png", style={ width: "60%" })

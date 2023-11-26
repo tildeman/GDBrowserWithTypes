@@ -43,8 +43,53 @@ img, .noSelect {
 	pointer-events: all;
 }
 
+.cornerBox {
+	position: absolute;
+	width: 100%;
+}
+
+.bottomLeftCornerBox {
+	bottom: 0;
+	left: 0;
+}
+
+.bottomRightCornerBox {
+	bottom: 0;
+	right: 0;
+}
+
+.topLeftCornerBox {
+	top: 0;
+	left: 0;
+}
+
 .cornerPiece {
 	position: sticky;
+	display: block;
+	height: 24vh;
+}
+
+.bottomRightCornerBox .cornerPiece {
+	float: right;
+	transform: scaleX(-1);
+}
+
+.topLeftCornerBox .cornerPiece {
+	transform: scaleY(-1);
+}
+
+.backButtonContainer {
+	position: absolute;
+	top: 2%;
+	left: 1.5%;
+	width: 10%;
+	height: 25%;
+	pointer-events: none;
+}
+
+#backButton {
+	height: 30%;
+	pointer-events: all;
 }
 
 .center {
@@ -752,7 +797,6 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 	transform: scale(0.8) translate(-13%, -12.5%)
 }
 
-
 .comment h2, .smallGold {
 	background: -webkit-linear-gradient(#e28000, #ffee44);
 	background-clip: text;
@@ -1292,6 +1336,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 	background-position: 2vh;
 	outline: 0.4vh solid black;
 	outline-offset: -0.4vh;
+	height: 12vh;
 }
 
 .flex {
@@ -1303,7 +1348,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 .colorCircle {
-	border: 3.75px solid black;
+	border: .5vh solid black;
 	border-radius: 420px;
 }
 

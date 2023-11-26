@@ -50,7 +50,7 @@ function appendComments() {
 	loadingComments = false;
 }
 
-const commentEntryTemplateString = await (await fetch("/templates/profile_commentEntry.hbs")).text();
+const commentEntryTemplateString = await fetch("/templates/profile_commentEntry.hbs").then(res => res.text());
 const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);
 
 const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for profile posts <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/postProfileComment.js">here</a>.';
