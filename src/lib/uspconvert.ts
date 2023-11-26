@@ -2,7 +2,7 @@
  * @fileoverview Convert JS objects to URLSearchParams.
  */
 
-import { URLSearchParams } from "url";
+import { URLSearchParams } from "node:url";
 
 /**
  * Convert a regular object to URLSearchParams.

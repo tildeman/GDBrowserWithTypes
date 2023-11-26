@@ -1,5 +1,5 @@
-import { IBoomlingsUser } from "../../types/leaderboards.js";
 import { ErrorCode, ExportBundle } from "../../types/servers.js";
+import { IBoomlingsUser } from "../../types/leaderboards.js";
 import { Request, Response } from "express";
 import request from "axios";
 

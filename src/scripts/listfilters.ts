@@ -39,3 +39,5 @@ $("#starCheck").on("click", function() {
 	if ($(this).hasClass(selFil)) $(this).removeClass(selFil);
 	else $(this).addClass(selFil);
 });
+
+export {};

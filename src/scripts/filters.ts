@@ -2,8 +2,8 @@
  * @fileoverview Site-specific script for the search page.
  */
 
-import { Fetch, serverMetadata } from "../misc/global.js";
 import { IClientSavedFilters } from "../types/searches.js";
+import { Fetch, serverMetadata } from "../misc/global.js";
 import { ISafeServers } from "../types/servers.js";
 
 let filters: string[] = [];

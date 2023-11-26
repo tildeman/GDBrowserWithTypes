@@ -339,6 +339,9 @@ function toggleSpoilers() {
 const colorButtonTemplateString = await fetch("/templates/iconkit_colorButton.hbs").then(res => res.text());
 const colorButtonTemplate = Handlebars.compile(colorButtonTemplateString);
 
+const toggleButtonTemplateString = await fetch("/templates/iconkit_toggleButton.hbs").then(res => res.text());
+const toggleButtonTemplate = Handlebars.compile(toggleButtonTemplateString);
+
 const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry/i.test(navigator.userAgent);
 const shops = ["the Shop", "Scratch's Shop", "the Community Shop"];
 const yOffsets = { ball: -10, ufo: 30, spider: 7, swing: -15 };
@@ -394,10 +397,27 @@ iconSettings.forEach(setting => {
 
 forms.forEach(form => {
 	const spoil = ["swing", "jetpack"].includes(form);
-	$("#iconTabs").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""} title="${iconStuff.forms[form].name}" class="blankButton iconTabButton"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
-	$("#copyForms").append(`<button form="${form}"${spoil ? `isnew="true" style="display: none"` : ""}  title="${iconStuff.forms[form].name}" class="blankButton copyForm"><img src="/assets/iconkitbuttons/${form}_off.png" style="width: 50px"></button>`);
+	$("#iconTabs").append(toggleButtonTemplate({
+		form,
+		spoil,
+		formTitle: iconStuff.forms[form].name,
+		extraClass: "iconTabButton"
+	}));
+	$("#copyForms").append(toggleButtonTemplate({
+		form,
+		spoil,
+		formTitle: iconStuff.forms[form].name,
+		extraClass: "copyForm"
+	}));
 });
-$("#iconTabs").append(`<button title="Glow" class="blankButton glowToggle" id="glowbtn"><img id="glow" src="/assets/iconkitbuttons/streak_off.png" style="width: 50px"></button>`)
+$("#iconTabs").append(toggleButtonTemplate({
+	form: "streak",
+	btnNoForm: true,
+	spoil: false,
+	formTitle: "Glow",
+	extraClass: "glowToggle",
+	id: "glow"
+}));
 
 forms.forEach(form => {
 	$("#iconKitParent").append(`<div id="${form}s" class="iconContainer"></div>`);
@@ -459,7 +479,9 @@ $(document).on('click', '.iconTabButton', function() {
 	$(formElement).show();
 });
 
-$('#iconTabs').find('.iconTabButton').first().children().first().attr('src', $('.iconTabButton').first().children().first().attr('src')!.replace('_off', '_on'));
+$('#iconTabs')
+	.find('.iconTabButton').first().children().first()
+	.attr('src', $('.iconTabButton').first().children().first().attr('src')!.replace('_off', '_on'));
 
 $("#randomIcon").on("click", function() {
 	const iconPool = iconStuff.previewIcons.concat(enableSpoilers ? iconStuff.newPreviewIcons : []);
@@ -473,7 +495,7 @@ $("#randomIcon").on("click", function() {
 	selectedCol2 = randInt(0, colorCount - 1);
 	selectedColW = null;
 	selectedColU = null;
-	enableGlow = randInt(0, 2) == 1 ? 1 : 0;   // 1 in 3 chance of glow
+	enableGlow = Math.max(1, randInt(0, 2)); // 1 in 3 chance of glow
 	generateIcon();
 
 	$('#glow').attr('src', '/assets/iconkitbuttons/streak_off.png');
@@ -764,10 +786,6 @@ $(document).on("keydown", function(k) {
 $(document).on('click', '.brownbox', function (e) {
 	e.stopPropagation();
 });
-
-// $(document).on('click', '.popup', function () {
-// 	$('.popup').hide();
-// });
 
 $("#newIconBtn").on("click", function() {
 	clickedSpoilerWarning ? toggleSpoilers() : $('#spoilerWarning').show();

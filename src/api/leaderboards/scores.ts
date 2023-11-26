@@ -1,5 +1,5 @@
-import { IScoreParameters } from "../../types/leaderboards.js";
 import { ErrorCode, ExportBundle } from "../../types/servers.js";
+import { IScoreParameters } from "../../types/leaderboards.js";
 import { parseResponse } from "../../lib/parseResponse.js";
 import { UserCache } from "../../classes/UserCache.js";
 import { Player } from "../../classes/Player.js";

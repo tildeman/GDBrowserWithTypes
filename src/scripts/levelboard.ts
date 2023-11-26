@@ -5,9 +5,9 @@
 import { ILevelLeaderboardEntry } from "../types/leaderboards.js";
 import { ErrorObject } from "../types/miscellaneous.js";
 import { isInViewport } from "../misc/global.js";
+import { Handlebars } from "../vendor/index.js";
 import { buildIcon } from "../iconkit/icon.js";
 import { Level } from "../classes/Level.js";
-import { Handlebars } from "../vendor/index.js";
 
 /**
  * Fetch the leaderboard status for a level, and fill in the entries into the main box.

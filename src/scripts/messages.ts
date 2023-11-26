@@ -5,8 +5,8 @@
 import { ErrorObject } from "../types/miscellaneous.js";
 import { IMessageObject } from "../types/messages.js";
 import { toggleEscape } from "../misc/global.js";
-import { Player } from "../classes/Player.js";
 import { Handlebars } from "../vendor/index.js";
+import { Player } from "../classes/Player.js";
 
 /**
  * Append messages into the HTML display box.

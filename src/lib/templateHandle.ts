@@ -2,8 +2,8 @@
  * @fileoverview Handle GDBrowser's (no longer) specialized templates.
  */
 import { Request, Response } from "express";
-import { dirname } from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
 
 /**
  * The directory name, used by `express.Response.sendFile()`.

@@ -1,9 +1,9 @@
+import { IProfileCommentParams } from "../../types/comments.js";
 import { UserCache } from "../../classes/UserCache.js";
 import { ExportBundle } from "../../types/servers.js";
 import { Request, Response } from "express";
 import { sha1 } from "../../lib/sha.js";
 import { XOR } from "../../lib/xor.js";
-import { IProfileCommentParams } from "../../types/comments.js";
 
 /**
  * Post a comment on a user's profile.

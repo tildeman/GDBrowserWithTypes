@@ -4,9 +4,9 @@
 
 import { Fetch, isInViewport, serverMetadata } from "../misc/global.js";
 import { ErrorObject } from "../types/miscellaneous.js";
+import { Handlebars } from "../vendor/index.js";
 import { buildIcon } from "../iconkit/icon.js";
 import { Player } from "../classes/Player.js";
-import { Handlebars } from "../vendor/index.js";
 
 const searchResultTemplateString = await fetch("/templates/leaderboard_searchResult.hbs").then(res => res.text());
 const searchResultTemplate = Handlebars.compile(searchResultTemplateString);

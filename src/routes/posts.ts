@@ -2,14 +2,14 @@
  * @fileoverview Routing page for comments, profile posts and voting.
  */
 
-import { UserCache } from "../classes/UserCache.js";
-import getCommentsController from "../api/comments.js";
-import likeController from "../api/post/like.js";
-import postCommentController from "../api/post/postComment.js";
 import postProfileCommentController from "../api/post/postProfileComment.js";
+import postCommentController from "../api/post/postComment.js"; 
+import { fetchTemplate } from "../lib/templateHandle.js";
+import getCommentsController from "../api/comments.js";
+import { UserCache } from "../classes/UserCache.js";
+import likeController from "../api/post/like.js";
 import { RL, RL2 } from "../lib/ratelimits.js";
 import express from "express";
-import { fetchTemplate } from "../lib/templateHandle.js";
 
 export default function(userCacheHandle: UserCache) {
 	const router = express.Router();

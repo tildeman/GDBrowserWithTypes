@@ -8,92 +8,6 @@ import { toggleEscape, clean } from "../misc/global.js";
 import { Handlebars } from "../vendor/index.js";
 import { ErrorCode } from "../types/servers.js";
 
-const portalDivisionTemplateString = await fetch("/templates/analyze_portalDivision.hbs").then(res => res.text());
-const portalDivisionTemplate = Handlebars.compile(portalDivisionTemplateString);
-
-const objectDivisionTemplateString = await fetch("/templates/analyze_objectDivision.hbs").then(res => res.text());
-const objectDivisionTemplate = Handlebars.compile(objectDivisionTemplateString);
-
-const groupDivisionTemplateString = await fetch("/templates/analyze_groupDivision.hbs").then(res => res.text());
-const groupDivisionTemplate = Handlebars.compile(groupDivisionTemplateString);
-
-const styleDivisionTemplateString = await fetch("/templates/analyze_styleDivision.hbs").then(res => res.text());
-const styleDivisionTemplate = Handlebars.compile(styleDivisionTemplateString);
-
-const colorInfoTemplateString = await fetch("/templates/analyze_colorInfo.hbs").then(res => res.text());
-const colorInfoTemplate = Handlebars.compile(colorInfoTemplateString);
-
-const colorPropertiesTemplateString = await fetch("/templates/analyze_colorProperties.hbs").then(res => res.text());
-const colorPropertiesTemplate = Handlebars.compile(colorPropertiesTemplateString);
-
-
-let disabledPortals: string[] = [];
-let altTriggerSort = false;
-/**
- * A list of available form (gamemode) portals
- */
-const formPortals = ['cube', 'ship', 'ball', 'ufo', 'wave', 'robot', 'spider'];
-/**
- * A list of available speed portals
- */
-const speedPortals = ['-1x', '1x', '2x', '3x', '4x'];
-/**
- * A list of available size portals
- */
-const sizePortals = ['mini', 'big'];
-/**
- * A list of available dual portals
- */
-const dualPortals = ['dual', 'single'];
-/**
- * A list of available mirror portals
- */
-const mirrorPortals = ['mirrorOn', 'mirrorOff'];
-
-const apiResponse = await fetch(`/api${window.location.pathname}`);
-const res: (IAnalysisResult | ErrorObject) = await apiResponse.json();
-if ("error" in res) {
-	switch(res.error) {
-		case ErrorCode.SERVER_ISSUE:
-			$('#errorMessage').html("This level could not be be <cr>downloaded</cr>. Either the servers rejected the request, or the level simply <co>doesn't exist at all</co>.");
-			break;
-		case ErrorCode.DOWNLOADS_DISABLED:
-			$('#errorMessage').html("This level's data could not be obtained because <ca>RobTop</ca> has disabled <cg>level downloading</cg>.");
-			break;
-		case ErrorCode.BROKEN_DATA:
-			$('#errorMessage').html("This level's data appears to be <cr>corrupt</cr> and cannot be <cy>parsed</cy>. It most likely won't load in GD.");
-			break;
-	}
-	toggleEscape(false, true);
-	$('#analyzeError').show();
-	$('#loadingDiv').hide();
-	throw new Error("Can't parse the requested level.");
-}
-
-$('#levelName').text(res.level.name);
-$('#objectCount').text(commafy(res.objects) + " objects");
-document.title = "Analysis of " + res.level.name;
-
-$('#meta-title').attr('content', "Analysis of " + res.level.name);
-$('#meta-desc').attr('content', `${res.portals.length}x portals, ${res.orbs.total || 0}x orbs, ${res.triggers.total || 0}x triggers, ${res.misc.glow || 0}x glow...`);
-
-
-const hdPercent = (res.highDetail / res.objects) * 100;
-if (res.highDetail == 0 || hdPercent == 0) $('#highDetailDiv').hide();
-else {
-	const offset = Math.min(Math.floor(hdPercent / 20) + 1, 5);
-	$('#highdetail').append(`<div class="inline" style="width:${hdPercent + offset}%; height: 100%; background-color: lime; margin-left: -2.25%"></div>`);
-	$('#hdText').text(`${commafy(res.highDetail)}/${commafy(res.objects)} marked high detail • ${+hdPercent.toFixed(1)}% optimized`);
-}
-
-const triggerList = Object.keys(res.triggers);
-const orbList = Object.keys(res.orbs);
-const miscList = Object.keys(res.misc);
-const blockList = Object.keys(res.blocks);
-const colorList = Object.keys(res.colors);
-
-let portals = res.portals;
-
 /**
  * Select every three digits of a string or number, then separate them using commas.
  * @param num The string or a number to split into commas
@@ -179,6 +93,90 @@ function appendTriggerGroups() {
 		}));
 	});
 }
+
+const portalDivisionTemplateString = await fetch("/templates/analyze_portalDivision.hbs").then(res => res.text());
+const portalDivisionTemplate = Handlebars.compile(portalDivisionTemplateString);
+
+const objectDivisionTemplateString = await fetch("/templates/analyze_objectDivision.hbs").then(res => res.text());
+const objectDivisionTemplate = Handlebars.compile(objectDivisionTemplateString);
+
+const groupDivisionTemplateString = await fetch("/templates/analyze_groupDivision.hbs").then(res => res.text());
+const groupDivisionTemplate = Handlebars.compile(groupDivisionTemplateString);
+
+const styleDivisionTemplateString = await fetch("/templates/analyze_styleDivision.hbs").then(res => res.text());
+const styleDivisionTemplate = Handlebars.compile(styleDivisionTemplateString);
+
+const colorInfoTemplateString = await fetch("/templates/analyze_colorInfo.hbs").then(res => res.text());
+const colorInfoTemplate = Handlebars.compile(colorInfoTemplateString);
+
+const colorPropertiesTemplateString = await fetch("/templates/analyze_colorProperties.hbs").then(res => res.text());
+const colorPropertiesTemplate = Handlebars.compile(colorPropertiesTemplateString);
+/**
+ * A list of available form (gamemode) portals
+ */
+const formPortals = ['cube', 'ship', 'ball', 'ufo', 'wave', 'robot', 'spider'];
+/**
+ * A list of available speed portals
+ */
+const speedPortals = ['-1x', '1x', '2x', '3x', '4x'];
+/**
+ * A list of available size portals
+ */
+const sizePortals = ['mini', 'big'];
+/**
+ * A list of available dual portals
+ */
+const dualPortals = ['dual', 'single'];
+/**
+ * A list of available mirror portals
+ */
+const mirrorPortals = ['mirrorOn', 'mirrorOff'];
+
+const apiResponse = await fetch(`/api${window.location.pathname}`);
+const res: (IAnalysisResult | ErrorObject) = await apiResponse.json();
+if ("error" in res) {
+	switch(res.error) {
+		case ErrorCode.SERVER_ISSUE:
+			$('#errorMessage').html("This level could not be be <cr>downloaded</cr>. Either the servers rejected the request, or the level simply <co>doesn't exist at all</co>.");
+			break;
+		case ErrorCode.DOWNLOADS_DISABLED:
+			$('#errorMessage').html("This level's data could not be obtained because <ca>RobTop</ca> has disabled <cg>level downloading</cg>.");
+			break;
+		case ErrorCode.BROKEN_DATA:
+			$('#errorMessage').html("This level's data appears to be <cr>corrupt</cr> and cannot be <cy>parsed</cy>. It most likely won't load in GD.");
+			break;
+	}
+	toggleEscape(false, true);
+	$('#analyzeError').show();
+	$('#loadingDiv').hide();
+	throw new Error("Can't parse the requested level.");
+}
+
+$('#levelName').text(res.level.name);
+$('#objectCount').text(commafy(res.objects) + " objects");
+document.title = "Analysis of " + res.level.name;
+
+$('#meta-title').attr('content', "Analysis of " + res.level.name);
+$('#meta-desc').attr('content', `${res.portals.length}x portals, ${res.orbs.total || 0}x orbs, ${res.triggers.total || 0}x triggers, ${res.misc.glow || 0}x glow...`);
+
+
+const hdPercent = (res.highDetail / res.objects) * 100;
+if (res.highDetail == 0 || hdPercent == 0) $('#highDetailDiv').hide();
+else {
+	const offset = Math.min(Math.floor(hdPercent / 20) + 1, 5);
+	$('#highdetail').append(`<div class="inline" style="width:${hdPercent + offset}%; height: 100%; background-color: lime; margin-left: -2.25%"></div>`);
+	$('#hdText').text(`${commafy(res.highDetail)}/${commafy(res.objects)} marked high detail • ${+hdPercent.toFixed(1)}% optimized`);
+}
+
+const triggerList = Object.keys(res.triggers);
+const orbList = Object.keys(res.orbs);
+const miscList = Object.keys(res.misc);
+const blockList = Object.keys(res.blocks);
+const colorList = Object.keys(res.colors);
+
+let portals = res.portals;
+let disabledPortals: string[] = [];
+let altTriggerSort = false;
 
 appendPortals();
 appendTriggerGroups();

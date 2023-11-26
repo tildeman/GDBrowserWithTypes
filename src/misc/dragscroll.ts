@@ -38,3 +38,5 @@ function dragscroll(el: HTMLElement): void {
 }
 
 Array.prototype.forEach.call(document.getElementsByClassName('dragscroll'), dragscroll);
+
+export {};

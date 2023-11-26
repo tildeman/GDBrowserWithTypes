@@ -1,30 +1,7 @@
 interface ServerMetadata {
-    gdps: string | null;
-    onePointNine: boolean;
+	gdps: string | null;
+	onePointNine: boolean;
 }
-
-// Warning to be displayed when the viewport is vertical
-$('body').append(`
-	<div data-nosnippet id="tooSmall" class="brownBox center supercenter" style="display: none; width: 80%">
-	<h1>Yikes!</h1>
-	<p>Your <cg>screen</cg> isn't <ca>wide</ca> enough to <cy>display</cy> this <cg>page</cg>.<br>
-	Please <cy>rotate</cy> your <cg>device</cg> <ca>horizontally</ca> or <cy>resize</cy> your <cg>window</cg> to be <ca>longer</ca>.
-	</p>
-	<p style="font-size: 1.8vh">Did I color too many words? I think I colored too many words.</p>
-	</div>
-`);
-
-$(window).on("resize", function () {
-	if (window.innerHeight > window.innerWidth - 75) {
-		$('#everything').hide();
-		$('#tooSmall').show();
-	}
-
-	else {
-		$('#everything').show();
-		$('#tooSmall').hide()
-	}
-});
 
 /**
  * Save the previous URL into the session storage.
@@ -85,8 +62,19 @@ export async function Fetch(link: RequestInfo | URL) {
 	return returnValue;
 }
 
-let allowEsc = true;
-let popupEsc = true;
+// stolen from stackoverflow
+/**
+ * Check if an element is within the (vertical) viewport.
+ * @param that The jQuery selection.
+ * @returns A boolean indicating the visibility of the element in the viewport.
+ */
+export function isInViewport(that: JQuery<HTMLElement>) {
+	const elementTop = $(that).offset()?.top || 0;
+	const elementBottom = (elementTop || 0) + ($(that).outerHeight() || 0);
+	const viewportTop = $(window).scrollTop() || 0;
+	const viewportBottom = viewportTop + ($(window).height() || 0);
+	return elementBottom > viewportTop && elementTop < viewportBottom;
+}
 
 /**
  * Toggle the `Esc` keyboard functionality.
@@ -97,6 +85,37 @@ export function toggleEscape(state: boolean, popup?: boolean) {
 	if (popup) popupEsc = state;
 	else allowEsc = state;
 }
+
+/**
+ * Adds all necessary elements into the tab index (all buttons and links that aren't natively focusable).
+ */
+const inaccessibleLinkSelector = "*:not(a) > img.gdButton, .leaderboardTab, .gdcheckbox, .diffDiv, .lengthDiv";
+
+let allowEsc = true;
+let popupEsc = true;
+
+$(window).on("resize", function () {
+	if (window.innerHeight > window.innerWidth - 75) {
+		$('#everything').hide();
+		$('#tooSmall').show();
+	}
+
+	else {
+		$('#everything').show();
+		$('#tooSmall').hide()
+	}
+});
+
+// Warning to be displayed because the HTML is so bad that I cannot fix it so that it works with vertical displays
+$('body').append(`
+	<div data-nosnippet id="tooSmall" class="brownBox center supercenter" style="display: none; width: 80%">
+	<h1>Yikes!</h1>
+	<p>Your <cg>screen</cg> isn't <ca>wide</ca> enough to <cy>display</cy> this <cg>page</cg>.<br>
+	Please <cy>rotate</cy> your <cg>device</cg> <ca>horizontally</ca> or <cy>resize</cy> your <cg>window</cg> to be <ca>longer</ca>.
+	</p>
+	<p style="font-size: 1.8vh">Did I color too many words? I think I colored too many words.</p>
+	</div>
+`);
 
 $(document).on("keydown", function(k) {
 	if (k.which == 27) { // esc
@@ -116,40 +135,21 @@ $(document).on("ready", function() {
 	$(window).trigger('resize');
 });
 
-/**
- * Adds all necessary elements into the tab index (all buttons and links that aren't natively focusable)
- */
-const inaccessibleLinkSelector = "*:not(a) > img.gdButton, .leaderboardTab, .gdcheckbox, .diffDiv, .lengthDiv";
-
 document.querySelectorAll(inaccessibleLinkSelector).forEach(elem => {
-  elem.setAttribute('tabindex', "0");
+	elem.setAttribute('tabindex', "0");
 });
 
 document.getElementById('backButton')?.setAttribute('tabindex', "1"); // Prioritize back button, first element to be focused
 
 // Event listener to run a .click() function if
 window.addEventListener("keydown", e => {
-  if(e.key !== 'Enter') return;
+	if(e.key !== 'Enter') return;
 
-  const active = document.activeElement;
-  if (!active) return;
-  const isUnsupportedLink = active.hasAttribute('tabindex'); // Only click on links that aren't already natively supported to prevent double clicking
-  if (isUnsupportedLink) (active as HTMLAnchorElement).click();
+	const active = document.activeElement;
+	if (!active) return;
+	const isUnsupportedLink = active.hasAttribute('tabindex'); // Only click on links that aren't already natively supported to prevent double clicking
+	if (isUnsupportedLink) (active as HTMLAnchorElement).click();
 });
-
-// stolen from stackoverflow
-/**
- * Check if an element is within the (vertical) viewport.
- * @param that The jQuery selection.
- * @returns A boolean indicating the visibility of the element in the viewport.
- */
-export function isInViewport(that: JQuery<HTMLElement>) {
-	let elementTop = $(that).offset()?.top || 0;
-	let elementBottom = (elementTop || 0) + ($(that).outerHeight() || 0);
-	let viewportTop = $(window).scrollTop() || 0;
-	let viewportBottom = viewportTop + ($(window).height() || 0);
-	return elementBottom > viewportTop && elementTop < viewportBottom;
-};
 
 $("body").on("beforeunload", saveUrl);
 $("#backButton").on("click", backButton);

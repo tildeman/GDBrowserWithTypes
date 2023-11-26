@@ -4,8 +4,8 @@
 
 import { IListEntry, IListEntryOverview } from "../types/demonlist.js";
 import { IServerInfo } from "../types/servers.js";
-import { Fetch } from "../misc/global.js";
 import { Handlebars } from "../vendor/index.js";
+import { Fetch } from "../misc/global.js";
 
 const searchResultTemplateString = await fetch("/templates/demon_searchResult.hbs").then(res => res.text());
 const searchResultTemplate = Handlebars.compile(searchResultTemplateString);

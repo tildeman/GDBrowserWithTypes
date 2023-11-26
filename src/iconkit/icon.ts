@@ -2,9 +2,9 @@
  * @fileoverview Handle icons & renderings
  */
 
+import { IAnimationObject, IExtraSettings, IIconConfiguration, IIconData, IPartForSpecialIcons, IIconColor } from "../types/icons.js";
 import { PIXI, agPsd, Ease } from "../vendor/index.js";
 import { Color3B } from "../types/miscellaneous.js";
-import { IAnimationObject, IExtraSettings, IIconConfiguration, IIconData, IPartForSpecialIcons, IIconColor } from "../types/icons.js";
 import { Fetch } from "../misc/global.js";
 
 /**

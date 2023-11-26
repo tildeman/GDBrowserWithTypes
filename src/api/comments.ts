@@ -1,6 +1,6 @@
 import { ICommentContent, ICommentParams } from "../types/comments.js";
-import { parseResponse } from "../lib/parseResponse.js";
 import { ErrorCode, ExportBundle } from "../types/servers.js";
+import { parseResponse } from "../lib/parseResponse.js";
 import { UserCache } from "../classes/UserCache.js";
 import { Player } from "../classes/Player.js";
 import { Request, Response } from "express";

@@ -4,11 +4,11 @@
 
 import { Fetch, toggleEscape, serverMetadata } from "../misc/global.js";
 import { ErrorObject } from "../types/miscellaneous.js";
+import { ICommentContent } from "../types/comments.js";
 import { renderIcons } from "../iconkit/icon.js";
 import { Handlebars } from "../vendor/index.js";
 import { Player } from "../classes/Player.js";
 import { Level } from "../classes/Level.js";
-import { ICommentContent } from "../types/comments.js";
 
 const commentEntryTemplateString = await fetch("/templates/comments_commentEntry.hbs").then(res => res.text());
 const commentEntryTemplate = Handlebars.compile(commentEntryTemplateString);

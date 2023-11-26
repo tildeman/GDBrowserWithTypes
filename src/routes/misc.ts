@@ -3,8 +3,8 @@
  */
 
 import credits from "../misc/credits.json" assert { type: "json" };
-import { fetchTemplate } from "../lib/templateHandle.js";
 import { ErrorCode, ExportBundle } from "../types/servers.js";
+import { fetchTemplate } from "../lib/templateHandle.js";
 import express from "express";
 
 const router = express.Router();
