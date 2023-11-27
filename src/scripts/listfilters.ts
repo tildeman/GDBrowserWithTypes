@@ -26,7 +26,7 @@ $(".levelSearch").on("click", function() {
 	});
 
 	// Pay attention to the plural. `list` for viewing a single list, `lists` for viewing multiple lists
-	const url = "/lists/"
+	const url = "/listsearch/"
 		+ (encodeURIComponent(($('#levelName').val() || "").toString()) || "*")
 		+ ($(this).attr("search") == "0" ? "?" : "?type=" + $(this).attr('search') + "&")
 		+ (difficulties.length ? "diff=" + difficulties[0] : "")

@@ -3,6 +3,7 @@
  */
 
 import { fetchTemplate } from "../lib/templateHandle.js";
+import listSearchController from "../api/listsearch.js";
 import { UserCache } from "../classes/UserCache.js";
 import searchController from "../api/search.js";
 import { RL2 } from "../lib/ratelimits.js";
@@ -15,15 +16,15 @@ export default function(userCacheHandle: UserCache) {
 		searchController(req, res, userCacheHandle);
 	});
 
+	router.get("/api/listsearch/:text", RL2, function(req, res) {
+		listSearchController(req, res, userCacheHandle);
+	});
+
 	router.get("/search", fetchTemplate("filters"));
 	router.get("/search/:text", fetchTemplate("search"));
 
-	// router.get("/api/lists/:text", RL2, function(req, res) {
-	// 	listSearchController(req, res, userCacheHandle);
-	// })
-
 	router.get("/listsearch", fetchTemplate("listfilters"));
-	// router.get("/search/:text", fetchTemplate("lists"));
+	router.get("/listsearch/:text", fetchTemplate("listsearch"));
 
 	return router;
 }

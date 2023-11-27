@@ -27,7 +27,7 @@ html(lang="en")
 						a(style={ "margin-right": "0.66vh" }, href="/u/" + list.accountID + ".")= list.username || "-"
 					else
 						a(href="/search/" + list.playerID + "?user")= list.username || "-"
-			.listBox.supercenter.gs(style={ width: "100vh", height: "64%", "overflow-y": "auto" })
+			#listContainer.supercenter.gs.dragscroll
 				each level, index in levels
 					- let songColor = level.customSong == 0 ? "blue" : (level.songLink && !level.songLink.match(/^https?:\/\/\audio\.ngfiles\.com\//)) ? "nong" : "whatIfItWasPurple";
 					- let coinColor = level.verifiedCoins ? "silvercoin" : "browncoin";
@@ -83,6 +83,8 @@ html(lang="en")
 								img.valign.gdButton(style={ "margin-bottom": "4.5%", height: "8vh" }, src="/assets/view.png")
 							p(title="Level ID", style={ "text-align": "right", color: "rgba(0, 0, 0, 0.4)", "font-size": "2.2vh", transform: "translate(1vh, -1vh)", "margin-bottom": "0" })= "#" + level.id
 
+			.listBox.supercenter.gs.noClick(style={ width: "100vh", height: "64%" })
+
 			div(style={ "text-align": "center", width: "6%", "margin-top": "20px" })
 				img(src="/assets/download.png", style={ height: "5vh" })
 				h1.smallerer.verticalMargin= list.downloads
@@ -137,4 +139,5 @@ html(lang="en")
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
 		script(type="module", src="/vendor/index.js")
 		script(type="module", src="/misc/global.js")
+		script(type="module", src="/dragscroll.js")
 		script(type="module", src="/scripts/lists.js")

@@ -436,8 +436,16 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 	border-width: 5vh;
 	border-style: solid;
 	border-image: url('../../assets/listbox.png') 10% stretch;
-	background-color: rgb(173, 115, 76);
 	border-image-slice: 54;
+}
+
+
+#listContainer {
+	background-color: rgb(173, 115, 76);
+	width: 100vh;
+	height: 64%;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .bounce {
@@ -445,7 +453,6 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 .epicbox {
-
 	border-width: 3.5vh;
 	border-style: solid;
 	border-image: url('../../assets/epicbox.png') 20% stretch;
@@ -719,7 +726,7 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 	overflow-x: hidden;
 }
 
-#searchBox::-webkit-scrollbar, #statusDiv::-webkit-scrollbar, #commentBox::-webkit-scrollbar {
+#searchBox::-webkit-scrollbar, #statusDiv::-webkit-scrollbar, #commentBox::-webkit-scrollbar, #listContainer::-webkit-scrollbar {
 	display: none;
 }
 
@@ -738,6 +745,11 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 .condensedSearchResult {
 	width: auto;
 	height: 24%;
+}
+
+.extraCondensedSearchResult {
+	width: auto;
+	height: 15%;
 }
 
 .condensedIndex {

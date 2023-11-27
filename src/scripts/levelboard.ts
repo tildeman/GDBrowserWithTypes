@@ -73,7 +73,7 @@ const lvlID = Math.round(+window.location.pathname.split('/')[2]);
 let loading = false;
 let weekly = false;
 
-if (!lvlID || lvlID > 99999999 || lvlID < -99999999) {
+if (!lvlID || lvlID > 999999999 || lvlID < -999999999) {
 	window.location.href = window.location.href.replace("leaderboard", "search");
 }
 

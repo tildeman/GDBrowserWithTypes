@@ -140,6 +140,14 @@ export class Player {
 	*/
 	spider: number;
 	/**
+	 * The swing ID of the player.
+	*/
+	swing: number;
+	/**
+	 * The jetpack ID of the player.
+	*/
+	jetpack: number;
+	/**
 	 * The death effect of the player.
 	*/
 	deathEffect: number;
@@ -191,6 +199,8 @@ export class Player {
 			this.wave = +account[25];
 			this.robot = +account[26];
 			this.spider = +account[43];
+			this.swing = +account[53];
+			this.jetpack = +account[54];
 			this.col1 = +account[10];
 			this.col2 = +account[11];
 			this.deathEffect = +account[48] || 1;

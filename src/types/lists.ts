@@ -115,3 +115,18 @@ export interface LevelList {
 	 */
 	updated: number;
 }
+
+export interface SearchQueryLevelList extends LevelList {
+	/**
+	 * The number of lists in the search result.
+	 */
+	results?: number;
+	/**
+	 * The number of pages in the search result.
+	 */
+	pages?: number;
+	/**
+	 * The player ID the list publisher.
+	 */
+	playerID: string;
+}

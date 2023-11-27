@@ -1,12 +1,12 @@
 doctype html
 html(lang="en")
 	head
-		title#tabTitle Level Search
+		title#tabTitle List Search
 		meta(charset="UTF-8")
 		link(href="/assets/css/browser.css?v=1", type="text/css", rel="stylesheet")
 		link(rel="icon", href="/assets/coin.png")
-		meta(id="meta-title", property="og:title", content="Level Search")
-		meta(id="meta-desc", property="og:description", content="Search for Geometry Dash levels, and filter by length, difficulty, song + more!")
+		meta(id="meta-title", property="og:title", content="List Search")
+		meta(id="meta-desc", property="og:description", content="Search for Geometry Dash lists, and filter by category, difficulty + more!")
 		meta(id="meta-image", name="og:image", content="/coin.png", itemprop="image")
 		meta(name="twitter:card", content="summary")
 	body.levelBG
@@ -24,21 +24,11 @@ html(lang="en")
 					.supercenter(style={ left: "75%", top: "43%", height: "10%" })
 						img#nextResult.gdButton(src="/assets/whitearrow-right.png" style={ height: "160%" })
 
-			#purgeDiv.popup
-				.fancybox.bounce.center.supercenter(style={ width: "35%", height: "28%" })
-					h2.smaller.center(style={ "font-size": "5.5vh" }) Delete All
-					p.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh" })
-						| Delete all saved online levels?
-						br
-						cy Levels will be cleared from your browser
-					img.gdButton.center.closeWindow(src="/assets/textbuttons/cancel-green.png", style={ height: "25%" })
-					img#purgeSaved.gdButton.center.sideSpaceB(src="/assets/textbuttons/delete.png", style={ height: "25%" })
-
 			#shuffleDiv.popup
 				.fancybox.bounce.center.supercenter(style={ width: "35%", height: "40%" })
 					h2.smaller.center(style={ "font-size": "5.5vh" }) Random Level
 					p.bigger.center(style={ "line-height": "5vh", "margin-top": "1.5vh" })
-						| A random level cannot be picked with your current
+						| A random list cannot be picked with your current
 						|
 						cy search filters!
 						|
@@ -57,7 +47,7 @@ html(lang="en")
 			#searchBox.supercenter.dragscroll
 				div(style={ height: "4.5%" })
 
-			.epicbox.supercenter.gs(style={ width: "120vh", height: "80%", "pointer-events": "none" })
+			.epicbox.supercenter.gs.noClick(style={ width: "120vh", height: "80%" })
 
 			.center(style={ position: "absolute", top: "8%", left: "0", right: "0" })
 				h1#header
@@ -77,20 +67,8 @@ html(lang="en")
 			.backButtonContainer
 				img#backButton.gdButton(src="/assets/back.png")
 
-			//- Find a way to get rid of these styling hellholes
-			#purge(style={ position: "absolute", bottom: "20%", right: "-3%", width: "10%", display: "none" })
-				img.gdButton(src="/assets/delete.png", style={ width: "60%" }, onclick="$('#purgeDiv').show()")
-
 			div(style={ position: "absolute", bottom: "2%", right: "1%", width: "15%", "text-align": "right" })
 				img#refreshPage.gdButton(src="/assets/refresh.png", style={ width: "40%" })
-
-			#gdWorld(style={ position: "absolute", bottom: "2%", right: "8.5%", width: "15%", "text-align": "right", display: "none" })
-				a(title="Geometry Dash World", href="/search/*?type=gdw")
-					img.gdButton(src="/assets/gdw_circle.png", style={ width: "40%" })
-
-			#normalGD(style={ position: "absolute", bottom: "2%", right: "8.5%", width: "15%", "text-align": "right", display: "none" })
-				a(title="Back to Geometry Dash", href="/search/*?type=featured")
-					img.gdButton(src="/assets/gd_circle.png", style={ width: "40%" })
 
 			div(style={ position: "absolute", left: "7%", top: "45%", height: "10%" })
 				img#pageDown.gdButton(src="/assets/arrow-left.png", style={ display: "none", height: "90%" })
@@ -105,4 +83,4 @@ html(lang="en")
 		script(type="module", src="/vendor/index.js")
 		script(type="module", src="/misc/global.js")
 		script(type="module", src="/dragscroll.js")
-		script(type="module", src="/scripts/search.js")
+		script(type="module", src="/scripts/listsearch.js")

@@ -84,6 +84,44 @@ export interface ISearchFilters {
 }
 
 /**
+ * List search filters.
+ */
+export interface IListSearchFilters {
+	/**
+	 * The text query for the search.
+	 */
+	str?: string;
+	/**
+	 * A comma-separated list of difficulty IDs to search for.
+	 */
+	diff?: string;
+	/**
+	 * The page of the search.
+	 */
+	page?: number;
+	/**
+	 * The creator's name (for searching followed levels).
+	 */
+	followed?: string;
+	/**
+	 * Only search for featured levels.
+	 */
+	featured?: number;
+	/**
+	 * Only return lists with a star rating.
+	 */
+	star?: number;
+	/**
+	 * The type ID of the search.
+	 */
+	type?: number;
+	/**
+	 * The amount of lists per page. Usually 10.
+	 */
+	count?: number;
+}
+
+/**
  * Search filters that are saved in GDBrowser's local storage.
  */
 export interface IClientSavedFilters {

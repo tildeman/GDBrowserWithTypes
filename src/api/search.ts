@@ -146,8 +146,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 		const body = await reqBundle.gdRequest('getGJLevels21', reqBundle.gdParams(filters as any));
 		const splitBody = body?.split('#') || [];
 		const preRes = splitBody[0].split('|');
-		const authorList = {};
-		const songList = {};
+		const authorList: Record<string, [string ,string]> = {};
+		const songList: Record<string, string> = {};
 		const authors = splitBody[1].split('|');
 		const songString = splitBody[2];
 		const songs = songString.split('~:~').map(songResponse => parseResponse(`~${songResponse}~`, '~|~'));
@@ -170,7 +170,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 			const level = new SearchQueryLevel(levelData, reqBundle.server, null, {});
 			level.getSongInfo(songSearch);
-			if (!level.id) throw new Error("The search query included levels without an ID.")
+			if (!level.id) throw new Error("The search query included levels without an ID.");
 			level.author = authorList[levelData[6]] ? authorList[levelData[6]][0] : "-";
 			level.accountID = authorList[levelData[6]] ? authorList[levelData[6]][1] : "0";
 

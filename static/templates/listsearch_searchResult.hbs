@@ -1,0 +1,18 @@
+<div class="extraCondensedSearchResult searchResult" title="{{list.desc}}">
+	<h1 class="lessspaced pre inline smaller" title="{{list.name}} by {{list.username}}" style="width: fit-content; padding-right: 1%">{{list.name}}</h1>
+	<h2 class="pre smaller inline gdButton help smallerer sideSpaceC" title="Account ID: {{list.accountID}}&#x10;Player ID: {{list.playerID}}">{{!--
+	--}}<a href="/u/{{list.accountID}}.">{{list.username}}</a>{{!--
+--}}</h2>
+	<h3 class="lessSpaced" style="width: fit-content;">
+		<img class="help valign rightSpace" src="/assets/download.png" title="Downloads" style="height: 3.5vh">{{list.downloads}}
+		<img class="help valign rightSpace" src="/assets/{{#if disliked}}dis{{/if}}like.png" title="Likes" style="height: 3.5vh">{{list.likes}}
+	</h3>
+	<div class="center" style="position: absolute; margin-top: -11vh; left: 3%; transform: scale(0.66); height: 10%; width: 12.5%">
+		<img id="dFace" class="help spaced" title="{{difficultyText}}" src="/assets/difficulties/{{list.difficultyFace}}.png" style="height: 12vh; margin-bottom: 0; transform: scale({{ratingScale}})">
+		<h3>{{shortenedDifficulty}}</h3>
+	</div>
+	<div class="center" style="position: absolute; right: 4%; margin-top: -9vh">{{!--
+	--}}<a href="/list/{{list.id}}" title="View list"><img class="valign gdButton" style="height: 6vh" src="/assets/view.png"></a>{{!--
+	--}}<p title="List ID" style="text-align: right; color: rgba(0, 0, 0, 0.4); font-size: 2.2vh; transform: translateY(-1vh); margin-bottom: 0">#{{list.id}}</p>
+	</div>
+</div>
