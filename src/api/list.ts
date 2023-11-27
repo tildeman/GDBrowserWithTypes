@@ -104,7 +104,7 @@ export default async function (req: Request, res: Response, api: boolean, userCa
 				parsedLevels[levelIndex] = level;
 			});
 
-			res.render("lists", {
+			res.render("list", {
 				levels: parsedLevels,
 				list: listResponse
 			});

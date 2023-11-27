@@ -5,7 +5,7 @@
 import gauntletController from "../api/gauntlets.js";
 import { UserCache } from "../classes/UserCache.js";
 import mapPackController from "../api/mappacks.js";
-import listController from "../api/lists.js";
+import listController from "../api/list.js";
 import express from "express";
 
 export default function(cacheGauntlets: boolean, cacheMapPacks: boolean, userCacheHandle: UserCache) {
