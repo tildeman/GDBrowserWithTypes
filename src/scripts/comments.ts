@@ -33,67 +33,67 @@ interface ICommentPreset {
  * @param res A list of comments, or an error object.
  */
 function addComments(res: ErrorObject | (ICommentContent | (ICommentContent & Player))[]) {
-   if (("commentHistory" in lvl) && history && lvl.commentHistory != "all") $('#pageUp').hide();
+	if (("commentHistory" in lvl) && history && lvl.commentHistory != "all") $('#pageUp').hide();
 
-   if ("error" in res || (("commentHistory" in lvl) && history && lvl.commentHistory != "all")) {
-	   loadingComments = false;
-	   $('#loading').hide();
-	   return;
-   }
+	if ("error" in res || (("commentHistory" in lvl) && history && lvl.commentHistory != "all")) {
+		loadingComments = false;
+		$('#loading').hide();
+		return;
+	}
 
-   commentCache[page] = res;
+	commentCache[page] = res;
 
-   res.forEach((comment, index) => {
-	   $(`#date-${comment.ID}`).html(comment.date);
-	   $(`#likes-${comment.ID}`).html(comment.likes.toString());
-	   // TODO: Avoid these raw HTML manipulations
-	   $(`#thumb-${comment.ID}`)
-		   .attr('style', comment.likes < 0 ? `transform: translateY(${compact ? '15' : '25'}%); margin-right: 0.4%; height: 4vh;` : 'height: 4vh;')
-		   .attr('src', `/assets/${comment.likes < 0 ? "dis" : ""}like.png`);
-	   if ($(`.comment[commentID=${comment.ID}]`).length) return; // auto mode, ignore duplicates
+	res.forEach((comment, index) => {
+		$(`#date-${comment.ID}`).html(comment.date);
+		$(`#likes-${comment.ID}`).html(comment.likes.toString());
+		// TODO: Avoid these raw HTML manipulations
+		$(`#thumb-${comment.ID}`)
+			.attr('style', comment.likes < 0 ? `transform: translateY(${compact ? '15' : '25'}%); margin-right: 0.4%; height: 4vh;` : 'height: 4vh;')
+			.attr('src', `/assets/${comment.likes < 0 ? "dis" : ""}like.png`);
+		if ($(`.comment[commentID=${comment.ID}]`).length) return; // auto mode, ignore duplicates
 
-	   const noAutoBgCol = index % 2 ? "evenComment" : "oddComment";
-	   const autoBgCol = $('.commentBG').first().hasClass('oddComment') ? "evenComment" : "oddComment";
-	   const bgCol = auto ? autoBgCol : noAutoBgCol;
+		const noAutoBgCol = index % 2 ? "evenComment" : "oddComment";
+		const autoBgCol = $('.commentBG').first().hasClass('oddComment') ? "evenComment" : "oddComment";
+		const bgCol = auto ? autoBgCol : noAutoBgCol;
 
-	   const userName = (!history && "username" in comment) ? comment.username : ("username" in lvl ? lvl.username : "");
-	   const modNumber = ("moderator" in comment ? comment.moderator : 0) || ("moderator" in lvl ? lvl.moderator : 0);
-	   const equivalentPlayerIDs = !history && "playerID" in comment && comment.playerID == lvl.playerID;
+		const userName = (!history && "username" in comment) ? comment.username : ("username" in lvl ? lvl.username : "");
+		const modNumber = ("moderator" in comment ? comment.moderator : 0) || ("moderator" in lvl ? lvl.moderator : 0);
+		const equivalentPlayerIDs = !history && "playerID" in comment && comment.playerID == lvl.playerID;
 
-	   if (comment.pages) {
-		   lastPage = comment.pages;
-		   $('#pagenum').html(`Page ${page + 1} of ${comment.pages}`);
-		   if (page + 1 >= comment.pages) $('#pageUp').hide();
-		   else $('#pageUp').show();
-	   }
+		if (comment.pages) {
+			lastPage = comment.pages;
+			$('#pagenum').html(`Page ${page + 1} of ${comment.pages}`);
+			if (page + 1 >= comment.pages) $('#pageUp').hide();
+			else $('#pageUp').show();
+		}
 
-	   const commentHTML = commentEntryTemplate({
-		   compact,
-		   bgCol,
-		   comment,
-		   notRegistered: !("accountID" in comment) || !comment.accountID || comment.accountID == "0",
-		   userName,
-		   moderator: modNumber > 0,
-		   moderatorRole: modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : "",
-		   commentColor: equivalentPlayerIDs ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color,
-		   history,
-		   disliked: comment.likes < 0
-	   });
+		const commentHTML = commentEntryTemplate({
+			compact,
+			bgCol,
+			comment,
+			notRegistered: !("accountID" in comment) || !comment.accountID || comment.accountID == "0",
+			userName,
+			moderator: modNumber > 0,
+			moderatorRole: modNumber > 2 ? "-extra" : modNumber == 2 ? "-elder" : "",
+			commentColor: equivalentPlayerIDs ? "255,255,75" : comment.browserColor ? "255,180,255" : comment.color,
+			history,
+			disliked: comment.likes < 0
+		});
 
-	   if (auto) $('#commentBox').prepend(commentHTML);
-	   else $('#commentBox').append(commentHTML);
-   });
+		if (auto) $('#commentBox').prepend(commentHTML);
+		else $('#commentBox').append(commentHTML);
+	});
 
-   $('.commentText').each(function() {
-	   if ($(this).text().length > 100) {
-		   let overflow = ($(this).text().length - 100) * 0.01;
-		   $(this).css('font-size', (3.5 - (overflow)) + 'vh');
-	   }
-   });
+	$('.commentText').each(function() {
+		if ($(this).text().length > 100) {
+			let overflow = ($(this).text().length - 100) * 0.01;
+			$(this).css('font-size', (3.5 - (overflow)) + 'vh');
+		}
+	});
 
-   renderIcons();
-   $('#loading').hide();
-   loadingComments = false;
+	renderIcons();
+	$('#loading').hide();
+	loadingComments = false;
 }
 
 /**

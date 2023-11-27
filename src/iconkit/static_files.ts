@@ -36,19 +36,19 @@ newIcons.forEach(iconFileName => {
 });
 
 export const sacredTexts: IIconData = {
-    forms,
-    robotAnimations,
-    colors,
-    gameSheet,
-    newIconCounts,
-    newIcons
+	forms,
+	robotAnimations,
+	colors,
+	gameSheet,
+	newIconCounts,
+	newIcons
 }
 
 export const extraData: IExtraData = {
-    colorOrder,
-    hardcodedUnlocks,
-    iconCredits,
-    shops,
-    previewIcons,
-    newPreviewIcons
+	colorOrder,
+	hardcodedUnlocks,
+	iconCredits,
+	shops,
+	previewIcons,
+	newPreviewIcons
 }

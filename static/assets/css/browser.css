@@ -607,12 +607,12 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 .menuButton {
-  width: 24vh;
-  cursor: pointer;
+	width: 24vh;
+	cursor: pointer;
 }
 
 .menuButton:active, .menuButton:focus-visible, a:focus-visible .menuButton {
-  animation: bounceButton 0.25s ease-in-out forwards;
+	animation: bounceButton 0.25s ease-in-out forwards;
 }
 
 .menuLink {
@@ -704,11 +704,11 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
 }
 
 #scoreTabs {
-   position: absolute;
-   text-align: center;
-   top: 2.45%;
-   width: 100%;
-   margin-left: -13.5vh
+	position: absolute;
+	text-align: center;
+	top: 2.45%;
+	width: 100%;
+	margin-left: -13.5vh
 }
 
 #searchBox {
@@ -1530,11 +1530,11 @@ cp { color: #ff00ff }
  * Also disabled on devices that may be slow to render new frames for performance optimization
  */
 @media screen and
-  (prefers-reduced-motion: reduce),
-  (update: slow) {
-  *, *::before, *::after {
+	(prefers-reduced-motion: reduce),
+	(update: slow) {
+	*, *::before, *::after {
 	animation-duration: 0.001ms !important;
 	animation-iteration-count: 1 !important;
 	transition-duration: 0.001ms !important;
-  }
+	}
 }

@@ -4,18 +4,37 @@
 
 import { ErrorObject } from "../types/miscellaneous.js";
 
-const levelID: string = $('#dataBlock').data('id');
-const levelNextDaily: string = $('#dataBlock').data('nextdaily');
-const levelSongID: string = $('#dataBlock').data('songid');
+/**
+ * Push this level into the saved levels list.
+ */
+function saveLevel() {
+	savedLevels.push(levelID);
+	localStorage.setItem('saved', JSON.stringify(savedLevels));
+}
 
-const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for liking a level <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/like.js">here</a>.';
-$('#message').html(messageText);
+/**
+ * If the level is saved, modify the button to delete the level from the saved list instead.
+ */
+function savedLevel() {
+	$('#saveButton').attr('src', '/assets/delete.png');
+	$('.popup').hide();
+	levelSaved = true;
+}
 
-let levelSaved = false;
-let copies = 0;
-let animated = false;
-let freeze = false;
-let dailyTime = Number(levelNextDaily) || 0;
+/**
+ * Delete this level from the saved levels list.
+ */
+function deleteLevel() {
+	// savedLevels = savedLevels.filter(function(el) {
+	// 	return el != levelID;
+	// });
+	const levelToSearch = savedLevels.indexOf(levelID);
+	if (levelToSearch) savedLevels.splice(levelToSearch, 1);
+	localStorage.setItem('saved', JSON.stringify(savedLevels));
+	$('#saveButton').attr('src', '/assets/plus.png');
+	$('.popup').hide();
+	levelSaved = false;
+}
 
 /**
  * Format a duration in Colon's favorite format.
@@ -30,12 +49,19 @@ function colonize(secs: number, timeUp: boolean) {
 	}
 	const days = Math.floor(secs / 86400);
 	if (days) secs -= days * 86400;
-	return `${days ? `${days}d + ` : ""}${[Math.floor(+secs / 3600), Math.floor(+secs / 60) % 60, +secs % 60].map(v => v < 10 ? "0" + v : v).filter((v,i) => v !== "00" || i > 0).join(":")}`;
+	const time = [Math.floor(+secs / 3600), Math.floor(+secs / 60) % 60, +secs % 60]
+		.map(v => v < 10 ? "0" + v : v)
+		.filter((v,i) => v !== "00" || i > 0)
+		.join(":");
+	return `${days ? `${days}d + ` : ""}${time}`;
 }
 
-if (window.location.href.endsWith('?download')) {
-	$('#infoDiv').show();
-}
+const levelID: string = $('#dataBlock').data('id');
+const levelNextDaily: string = $('#dataBlock').data('nextdaily');
+const levelSongID: string = $('#dataBlock').data('songid');
+const savedLevels: string[] = JSON.parse(localStorage.getItem('saved') || '[]');
+
+const messageText = 'Your <cy>Geometry Dash password</cy> will <cg>not be stored</cg> anywhere on the site, both <ca>locally and server-side.</ca> You can view the code used for liking a level <a class="menuLink" target="_blank" href="https://github.com/GDColon/GDBrowser/blob/master/api/post/like.js">here</a>.';
 
 const copyMessages = [
 	"ID copied to clipboard", "ID copied x[C]!", "ID copied again!",
@@ -47,6 +73,18 @@ const copyMessages = [
 	"Copied++", "C O P I E D", "help me please", "Open GD to play the level!",
 	"pretend you're playing it", "Anotha one!"
 ];
+
+let levelSaved = false;
+let copies = 0;
+let animated = false;
+let freeze = false;
+let dailyTime = Number(levelNextDaily) || 0;
+
+$('#message').html(messageText);
+
+if (window.location.href.endsWith('?download')) {
+	$('#infoDiv').show();
+}
 
 $('#playButton').on("click", function () {
 	if (!($('#copied').is(':animated')) && !animated) {
@@ -63,8 +101,8 @@ $('#playButton').on("click", function () {
 	}
 	const temp = $("<input>");
 	$("body").append(temp);
-	temp.val(levelID).select();
-	document.execCommand("copy");
+	temp.val(levelID).trigger("select");
+	navigator.clipboard.writeText(levelID);
 	temp.remove();
 });
 
@@ -104,40 +142,9 @@ $(window).on('load', function() {
 	}
 });
 
-let savedLevels: string[] = JSON.parse(localStorage.getItem('saved') || '[]');
 if (savedLevels.includes(levelID)) {
 	$('#saveButton').attr('src', '/assets/delete.png');
-	levelSaved = true
-}
-
-/**
- * Push this level into the saved levels list.
- */
-function saveLevel() {
-  savedLevels.push(levelID);
-  localStorage.setItem('saved', JSON.stringify(savedLevels));
-}
-
-/**
- * If the level is saved, modify the button to delete the level from the saved list instead.
- */
-function savedLevel() {
-	$('#saveButton').attr('src', '/assets/delete.png');
-	$('.popup').hide();
 	levelSaved = true;
-}
-
-/**
- * Delete this level from the saved levels list.
- */
-function deleteLevel() {
-	savedLevels = savedLevels.filter(function(el) {
-		return el != levelID;
-	});
-	localStorage.setItem('saved', JSON.stringify(savedLevels));
-	$('#saveButton').attr('src', '/assets/plus.png');
-	$('.popup').hide();
-	levelSaved = false;
 }
 
 $('#checkSong').on("click", function() {

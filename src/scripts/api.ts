@@ -32,21 +32,16 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 	});
 });
 
-const menuButton = document.getElementById('menu-btn') as HTMLButtonElement;
-const headerLink = document.getElementsByClassName('header-link') as HTMLCollectionOf<HTMLButtonElement>;
-
 // menu button
-menuButton.onclick = function() {
-	document.getElementsByClassName('header-links')[0].classList.toggle('hid');
-	menuButton.classList.toggle('active');
-}
+$("#menu-btn").on("click", function() {
+	$('.header-links').first().toggleClass('hid');
+	$(this).toggleClass('active');
+});
 
-for(let i = 0; i < headerLink.length; i++) {
-	headerLink[i].onclick = function() {
-		document.getElementsByClassName('header-links')[0].classList.toggle('hid');
-		menuButton.classList.toggle('active');
-	}
-}
+$(".header-link").on("click", function() {
+	$('.header-links').first().toggleClass('hid');
+	$("menu-btn").toggleClass('active');
+});
 
 $('.reveal').on('click', function() {
 	revealSection($(this).next());

@@ -19,9 +19,6 @@ export default function(userCacheHandle: UserCache, safeServers: ISafeServers[])
 	router.get("/credits", function(req, res) {
 		res.status(200).send(credits);
 	});
-	router.get("/userCache", function(req, res) {
-		res.status(200).send(userCacheHandle.accountCache);
-	});
 	router.get("/achievements", function(req, res) {
 		res.status(200).send({ achievements, types: achievementTypes, shopIcons: iconKitFiles.shops, colors: sacredTexts.colors });
 	});
@@ -31,6 +28,13 @@ export default function(userCacheHandle: UserCache, safeServers: ISafeServers[])
 	router.get("/gdps", function(req, res) {
 		res.status(200).send(req.query.hasOwnProperty("current") ? safeServers.find(serverItem => res.locals.stuff.req.server.id == serverItem.id) : safeServers);
 	});
+
+	// Quite resource-intensive for the server.
+	// Uncomment to allow retrieval of the user cache through the API.
+
+	// router.get("/userCache", function(req, res) {
+	// 	res.status(200).send(userCacheHandle.accountCache);
+	// });
 
 	return router;
 }

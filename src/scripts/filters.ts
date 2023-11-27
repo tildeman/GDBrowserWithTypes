@@ -17,8 +17,8 @@ let officialSong = 1;
  * @returns The array with all duplicates removed.
  */
 function undupe<T>(array: T[]): T[] {
-  if (!Array.isArray(array)) return [];
-  else return array.filter((value, index) => array.indexOf(value) == index);
+	if (!Array.isArray(array)) return [];
+	return array.filter((value, index) => array.indexOf(value) == index);
 }
 
 /**

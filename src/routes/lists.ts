@@ -11,12 +11,14 @@ import express from "express";
 export default function(cacheGauntlets: boolean, cacheMapPacks: boolean, userCacheHandle: UserCache) {
 	const router = express.Router();
 
+	// These routes can be turned off. I kept them on for backwards compatibility.
 	router.get("/api/gauntlets", function(req, res) {
 		gauntletController(req, res, cacheGauntlets);
 	});
 	router.get("/api/mappacks", function(req, res) {
 		mapPackController(req, res, cacheMapPacks);
 	});
+
 	router.get("/api/list/:id", function(req, res) {
 		listController(req, res, true, userCacheHandle);
 	});
