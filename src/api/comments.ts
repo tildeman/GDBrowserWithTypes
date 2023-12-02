@@ -36,7 +36,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 	else if (req.query.type == "profile") path = "getGJAccountComments20";
 
 	try {
-		const body = await reqBundle.gdRequest(path, reqBundle.gdParams(params as any));
+		const body = await reqBundle.gdRequest(path, reqBundle.gdParams({ ...params }));
 
 		const split_bars = body?.split('|') || [];
 		const split_colons = split_bars.map(commentInfo => commentInfo.split(':'));

@@ -63,6 +63,21 @@ export interface IAnimationObject {
 	frames: IPartForSpecialIcons[][];
 }
 
+export interface IGameSheetPositions {
+	/**
+	 * The offset x and y values for the icon part.
+	 */
+	spriteOffset: number[];
+	/**
+	 * The size of the icon part.
+	 */
+	spriteSize: number[];
+	/**
+	 * Whether the icon part is rotated 90 degrees clockwise. Unused.
+	 */
+	textureRotated?: boolean;
+}
+
 /**
  * Data for all the icons and their properties.
  */
@@ -128,16 +143,7 @@ export interface IIconData {
 	/**
 	 * The position of icon parts in the game sheet.
 	 */
-	gameSheet: Record<string, {
-		/**
-		 * The offset x and y values for the icon part.
-		 */
-		spriteOffset: number[];
-		/**
-		 * The size of the icon part.
-		 */
-		spriteSize: number[];
-	}>;
+	gameSheet: Record<string, IGameSheetPositions>;
 	/**
 	 * A list of all the new icons.
 	 */

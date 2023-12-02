@@ -464,7 +464,7 @@ function parse_header(header: string) {
 	if (!response.settings.background || +response.settings.background > 20) response.settings.background = 1;
 	if (!response.settings.font) response.settings.font = 1;
 
-	if ((response.settings.alternateLine as any) == 2) response.settings.alternateLine = true;
+	if (Number(response.settings.alternateLine) == 2) response.settings.alternateLine = true;
 	else response.settings.alternateLine = false;
 
 	Object.keys(response.settings).filter(k => {

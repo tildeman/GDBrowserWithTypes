@@ -15,12 +15,14 @@ function loadCredits() {
 	$('#credits').show();
 	if (page == lastPage) $('#closeCredits').css('height', '52%');
 	else $('#closeCredits').css('height', '43%');
-	$('.creditsIcon:not(".creditLoaded"):visible').each(async function(this: HTMLElement) { // only load icons when necessary
+	$('.creditsIcon:not(".creditLoaded"):visible').each(function(this: HTMLElement) { // only load icons when necessary
 		$(this).addClass('creditLoaded');
-		let profile: Player = await Fetch(`/api/profile/${$(this).attr('ign')}?forceGD=1`).catch(e => {}) || {};
-		$(this).append(`<gdicon cacheID=${profile.playerID} iconID=${profile.icon} col1="${profile.col1}" col2="${profile.col2}" glow="${profile.glow}"></gdicon>`);
-		buildIcon($(`gdicon[cacheID=${profile.playerID}]`));
-	} as any);
+		// The in-game name of the player must be provided in the credits
+		Fetch(`/api/profile/${$(this).attr('ign')}?forceGD=1`).then(function(profile: Player) {
+			$(this).append(`<gdicon cacheID=${profile.playerID} iconID=${profile.icon} col1="${profile.col1}" col2="${profile.col2}" glow="${profile.glow}"></gdicon>`);
+			buildIcon($(`gdicon[cacheID=${profile.playerID}]`));
+		}).catch(e => {});
+	});
 }
 
 let page = 1;

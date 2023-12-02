@@ -2,7 +2,7 @@
  * @fileoverview Handle icons & renderings
  */
 
-import { IAnimationObject, IExtraSettings, IIconConfiguration, IIconData, IPartForSpecialIcons, IIconColor } from "../types/icons.js";
+import { IAnimationObject, IExtraSettings, IIconConfiguration, IIconData, IPartForSpecialIcons, IIconColor, IGameSheetPositions } from "../types/icons.js";
 import { PIXI, agPsd, Ease } from "../vendor/index.js";
 import { Color3B } from "../types/miscellaneous.js";
 import { Fetch } from "../misc/global.js";
@@ -33,6 +33,12 @@ interface IIconPartSection {
 	white?: IconLayer;
 }
 
+type IconLayerInfo = {
+	sprite: { alpha?: number };
+	colorName?: string;
+	colorType?: string;
+}
+
 export const iconData: IIconData = await Fetch("/api/icons");
 const iconCanvas: HTMLCanvasElement = document.createElement('canvas');
 const iconRenderer: PIXI.Application = new PIXI.Application({
@@ -61,7 +67,7 @@ const colorNames = {
 	g: "Glow",
 	w: "White",
 	u: "UFO Dome"
-};
+} as const;
 /**
  * The former names of some gamemodes.
  */
@@ -70,7 +76,7 @@ const formNames = {
 	player_ball: "ball",
 	bird: "ufo",
 	dart: "wave"
-};
+} as const;
 
 const loadedNewIcons: Record<string, PIXI.Texture> = {};
 let loadedOldIcons: Record<string, PIXI.Texture> = {};
@@ -171,7 +177,9 @@ export function parseIconForm(form: string) {
  */
 export async function loadIconLayers(form: string, id: number): Promise<boolean> {
 	const iconStr = `${form}_${padZero(validateIconID(id, form))}`;
-	const pendingTexturesToLoad = Object.keys(iconData.gameSheet).filter(gameSheetKeyItem => gameSheetKeyItem.startsWith(iconStr + "_"));
+	const pendingTexturesToLoad = Object
+		.keys(iconData.gameSheet)
+		.filter(gameSheetKeyItem => gameSheetKeyItem.startsWith(iconStr + "_"));
 
 	if (loadedNewIcons[pendingTexturesToLoad[0]]) return true;
 
@@ -351,20 +359,67 @@ function finishIcon(currentIcon: JQuery<HTMLElement>, name: string, data: string
  * Class for an icon in render.
  */
 export class Icon {
+	/**
+	 * The PIXI application used to generate icons.
+	 */
 	app: PIXI.Application;
+	/**
+	 * The PIXI container object for all the layers of an icon.
+	 */
 	sprite: PIXI.Container;
+	/**
+	 * The form (gamemode) of the icon.
+	 * 
+	 * @example "ship"
+	 */
 	form: string;
+	/**
+	 * The identifier of the icon.
+	 */
 	id: number;
+	/**
+	 * Whether the icon is in update 2.2.
+	 */
 	new: boolean;
+	/**
+	 * Color channels for an icon.
+	 */
 	colors: IIconColor;
+	/**
+	 * Whether the icon glow is enabled.
+	 */
 	glow: boolean;
+	/**
+	 * A list of layers for the icon.
+	 */
 	layers: IconPart[];
-	glowLayers: IconPart[];
+	/**
+	 * A list of glow layers for the icon.
+	 */
+	glowLayers: (IconPart | IconLayer)[];
+	/**
+	 * Whether the icon is a robot or a spider.
+	 */
 	complex: boolean;
+	/**
+	 * PIXI's ease plugin.
+	 */
 	ease: Ease.Ease;
+	/**
+	 * The current speed of the animation (for robots and spiders).
+	 */
 	animationSpeed: number;
+	/**
+	 * The current frame of the animation (for robots and spiders).
+	 */
 	animationFrame: number;
+	/**
+	 * The name of the current animation (for robots and spiders).
+	 */
 	animationName: string;
+	/**
+	 * Data for sprite cropping (?).
+	 */
 	preCrop: {
 		pos: [number, number],
 		canvas: [number, number]
@@ -399,9 +454,10 @@ export class Icon {
 			};
 			if (data.noUFODome) extraSettings.noDome = true;
 			const basicIcon = new IconPart(this.form, this.id, this.colors, this.glow, extraSettings);
+			const glowLayer = basicIcon.sections.find(layer => layer.colorType == "g") as IconLayer;
 			this.sprite.addChild(basicIcon.sprite);
 			this.layers.push(basicIcon);
-			this.glowLayers.push(basicIcon.sections.find(layer => layer.colorType == "g") as any);
+			this.glowLayers.push(glowLayer);
 		}
 
 		// spider + robot
@@ -441,7 +497,9 @@ export class Icon {
 	 */
 	getAllLayers() {
 		const allLayers: IconLayer[] = [];
-		(this.complex ? this.glowLayers : []).concat(this.layers).forEach((part: IconPart) => part.sections.forEach(layer => allLayers.push(layer)));
+		(this.complex ? this.glowLayers : [])
+			.concat(this.layers)
+			.forEach((part: IconPart) => part.sections.forEach(layer => allLayers.push(layer)));
 		return allLayers;
 	}
 
@@ -670,7 +728,7 @@ export class Icon {
 		const renderer = this.app.renderer;
 		const complex = this.complex;
 
-		function addPSDLayer(layer: IconLayer, parent: IconPart, sprite: PIXI.Container) {
+		function addPSDLayer(layer: IconLayerInfo, parent: IconPart | IconLayer, sprite: PIXI.Container) {
 			allLayers.forEach(currentLayer => currentLayer.sprite.alpha = 0);
 			layer.sprite.alpha = 255;
 
@@ -679,7 +737,7 @@ export class Icon {
 				canvas: renderer.extract.canvas(sprite) as HTMLCanvasElement
 			};
 			if (layer.colorType == "g") {
-				if (parent.part) layerChild.name = parent.part.name + " glow";
+				if ("part" in parent && parent.part) layerChild.name = parent.part.name + " glow";
 				else layerChild.blendMode = "linear dodge";
 				if (!complex && !glowing) layerChild.hidden = true;
 			}
@@ -723,8 +781,17 @@ export class Icon {
  * Class for a part of the icon.
  */
 class IconPart {
+	/**
+	 * The PIXI container object for the part.
+	 */
 	sprite: PIXI.Container;
+	/**
+	 * A list of individual layers that form the icon.
+	 */
 	sections: IconLayer[];
+	/**
+	 * For robots and spiders, this determines the position of the icon parts.
+	 */
 	part: IPartForSpecialIcons;
 
 	/**
@@ -778,13 +845,39 @@ class IconPart {
 /**
  * Class for a single layer of an icon.
  */
-class IconLayer {
-	offsets: { spriteOffset: number[] };
+class IconLayer implements IconLayerInfo {
+	/**
+	 * A list of offsets for the layer.
+	 */
+	offsets: IGameSheetPositions;
+	/**
+	 * The PIXI sprite object for the layer.
+	 */
 	sprite: PIXI.Sprite;
+	/**
+	 * The color type of the layer.
+	 */
 	colorType: string;
+	/**
+	 * The color names, used in annotation
+	 */
 	colorName: string;
+	/**
+	 * The rotation of the layer.
+	 */
 	angleOffset: number;
+	/**
+	 * The color of the layer in decimal format.
+	 * 
+	 * @example 16777215 // White
+	 */
 	color: number;
+	// Dummy information so that it is somewhat compatible with IconPart
+	// TODO: Implement a common interface for both IconLayer and IconPart
+	/**
+	 * A list of individual layers that form the icon.
+	 */
+	sections: IconLayerInfo[] = [{ sprite: {} }];
 
 	/**
 	 * @param path The path of the icon layer.
@@ -792,9 +885,9 @@ class IconLayer {
 	 * @param colorType The color type of the icon layer.
 	 * @param isNew If the icon is released in 2.2.
 	 */
-	constructor(path: string, color: string | number, colorType: string, isNew: boolean) {
+	constructor(path: string, color: string | number, colorType: "1" | "2" | "g" | "w" | "u", isNew: boolean) {
 		const loadedTexture = isNew ? loadedNewIcons[path] : loadedOldIcons[path];
-		this.offsets = iconData.gameSheet[path] || { spriteOffset: [0, 0] };
+		this.offsets = iconData.gameSheet[path] || { spriteOffset: [0, 0], spriteSize: [] };
 		this.sprite = new PIXI.Sprite(loadedTexture || PIXI.Texture.EMPTY);
 
 		this.colorType = colorType;
@@ -805,7 +898,7 @@ class IconLayer {
 		this.sprite.position.y -= this.offsets.spriteOffset[1];
 
 
-		if ("textureRotated" in this.offsets && this.offsets.textureRotated) {
+		if (this.offsets.textureRotated) {
 			this.sprite.angle = -90;
 		}
 		this.angleOffset = this.sprite.angle;

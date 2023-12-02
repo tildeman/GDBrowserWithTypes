@@ -258,6 +258,7 @@ function appendIcon(form: string[], formName: string) {
 		formContainer.append(`<button num="0" form="${formName}" class="blankButton iconButton" id="${formName}-0"><img src="./premade/${formName}_0.png" title="Mini ${formName}"></button>`);
 	}
 
+	// TODO: missing types!
 	(formContainer as any).imagesLoaded(function() {}).progress(function() {
 		imagesLoaded += 1;
 		totalLoaded = imagesLoaded / formContainer.find('img').length * 100;

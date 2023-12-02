@@ -143,7 +143,7 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 
 	if (filters.str == "*") delete filters.str;
 	try {
-		const body = await reqBundle.gdRequest('getGJLevels21', reqBundle.gdParams(filters as any));
+		const body = await reqBundle.gdRequest('getGJLevels21', reqBundle.gdParams({ ...filters }));
 		const splitBody = body?.split('#') || [];
 		const preRes = splitBody[0].split('|');
 		const authorList: Record<string, [string ,string]> = {};
