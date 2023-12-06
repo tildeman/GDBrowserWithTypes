@@ -1,4 +1,5 @@
 import { ErrorCode, ExportBundle } from "../types/servers.js";
+import { IListEntryOverview } from "../types/demonlist.js";
 import { parseResponse } from "../lib/parseResponse.js";
 import { DownloadedLevel } from '../classes/Level.js';
 import { UserCache } from "../classes/UserCache.js";
@@ -100,14 +101,13 @@ export default async function(req: Request, res: Response, api: boolean, id: str
 		if (levelID < 0) { // Level is a weekly or a daily
 			const dailyInfo = await reqBundle.gdRequest('getGJDailyLevel', { weekly: levelID == -2 ? "1" : "0" });
 			if (dailyInfo == "-1") return sendLevel();
-			let dailyTime = dailyInfo?.split("|")[1] || "0";
+			const dailyTime = dailyInfo?.split("|")[1] || "0";
 			level.nextDaily = +dailyTime;
 			level.nextDailyTimestamp = Math.round((Date.now() + (+dailyTime * 1000)) / 100000) * 100000;
 		}
 		else if (reqBundle.server.demonList && level.difficulty == "Extreme Demon") {
 			const resp = await request.get(reqBundle.server.demonList + 'api/v2/demons/?name=' + level.name.trim())
-			let demonList: string = resp.data.toString();
-			let demon: any[] = JSON.parse(demonList);
+			const demon: IListEntryOverview[] = resp.data;
 			if (demon[0] && demon[0].position) level.demonList = demon[0].position;
 		}
 
