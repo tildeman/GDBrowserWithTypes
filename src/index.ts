@@ -3,6 +3,7 @@ import { appSafeServers, appServers } from './lib/serverInfo.js';
 import handleTimeouts from './middleware/handleTimeouts.js';
 import packageValues from './middleware/packageValues.js';
 import { UserCache } from './classes/UserCache.js';
+import cookieParser from "cookie-parser";
 import compression from 'compression';
 import appConfig from './settings.js';
 import { resolve } from 'node:path';
@@ -34,6 +35,9 @@ const app = express();
 const userCacheHandle = new UserCache(appConfig.cacheAccountIDs, appServers);
 
 // CONFIGURATION
+
+// Cookie parsing & utilities
+app.use(cookieParser());
 
 app.set('json spaces', "\t");
 app.use(compression());

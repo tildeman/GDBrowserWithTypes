@@ -17,13 +17,8 @@ import request from 'axios'; // `request` is trash
  */
 export default function(req: Request, res: Response, next: NextFunction) {
 	// There's simply no good way to identify subdomains for both local and production environments.
-	const subdomainLevel = 1;
-	let subdomains = req.subdomains.map(subdomain => subdomain.toLowerCase());
-	if (subdomains.length < subdomainLevel) subdomains = [""];
-	const reqServer = appServers.find(serverItem => subdomains.includes(serverItem.id.toLowerCase()));
-	if (subdomains.length > subdomainLevel || !reqServer) {
-		return res.redirect("http://" + req.get('host')!.split(".").slice(subdomains.length).join(".") + req.originalUrl);
-	}
+	const serverCookieID: string = req.cookies.browse_gdps || "";
+	const reqServer = appServers.find(serverItem => serverItem.id.toLowerCase() == serverCookieID.toLowerCase()) || appServers[0];
 
 	// will expand this in the future :wink:
 	const resSendError = function(errorCode = ErrorCode.NO_ERROR_YOURE_JUST_STUPID, message = "The GD servers rejected the response for an unknown reason", responseCode = 500) {

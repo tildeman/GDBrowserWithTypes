@@ -1,3 +1,9 @@
+## The `no-subdomains` branch
+
+This branch is mostly similar to the default branch (`typescript`), but with minor adjustments made to better fit GDBrowser mirrors under a subdomain where deeper-level subdomains can't operate properly, either because of missing SANs in the website's X.509 certificates or hosting providers not allowing subdomains beyond 1 level.
+
+This is achieved by using a server ID cookie as a substitute for subdomains. Instead of checking the request host, now the website looks for cookies and process GDPSes based on that. Otherwise, most things operate the same. Builds of this release have the metadata `flat` for a "flat server structure".
+
 # GDBrowser with types
 
 ![Repo size](https://img.shields.io/github/repo-size/tildeman/GDBrowserWithTypes)

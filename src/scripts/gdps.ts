@@ -4,7 +4,7 @@
 
 import { Fetch, serverMetadata } from "../misc/global.js";
 import { IServerInfo } from "../types/servers.js";
-import { Handlebars } from "../vendor/index.js";
+import { Handlebars, Cookies } from "../vendor/index.js";
 
 /**
  * List the available servers in `servers.json`.
@@ -22,8 +22,7 @@ function listServers() {
 		$("#searchBox").append(searchResultTemplate({
 			serverColor: (serverMetadata.gdps || "") == serverInfo.id ? "#00DDFF" : "white",
 			serverInfo,
-			serverIcon: serverInfo.id || "gd",
-			serverLink: `http://${serverInfo.id || ""}${serverInfo.id && localhost ? ".serverInfo" : ""}${serverInfo.id ? "." : ""}${host}`
+			serverIcon: serverInfo.id || "gd"
 		}));
 	});
 	$('#searchBox').append('<div style="height: 4.5%"></div>');
@@ -31,10 +30,6 @@ function listServers() {
 
 const searchResultTemplateString = await fetch("/templates/gdps_searchResult.hbs").then(res => res.text());
 const searchResultTemplate = Handlebars.compile(searchResultTemplateString);
-
-// There's simply no good way to identify subdomains for both local and production environments.
-const localhost = window.location.hostname == "localhost";
-const host = window.location.host.split(".").slice(-2).join(".");
 
 const pageSize = 20;
 const rawServers: IServerInfo[] = await Fetch('/api/gdps');
@@ -45,7 +40,14 @@ const servers = [currentServer]
 const pageCount = Math.floor((servers.length - 1) / pageSize) + 1;
 
 let page = 1;
+
 listServers();
+
+$(".gdServer").on("click", function() {
+	const data: string = $(this).data("serverid");
+	Cookies.set("browse_gdps", data);
+	window.location.href = "http://" + window.location.host;
+});
 
 $('#pageUp').on("click", function() {
 	page++;
