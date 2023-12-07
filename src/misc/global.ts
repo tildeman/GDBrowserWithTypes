@@ -1,3 +1,5 @@
+import { Cookies } from "../vendor/index.js";
+
 interface ServerMetadata {
 	gdps: string | null;
 	onePointNine: boolean;
@@ -52,7 +54,7 @@ export const serverMetadata: ServerMetadata = {
 export async function Fetch(link: RequestInfo | URL) {
 	const resp = await fetch(link);
 	if (!resp.ok) throw new Error("Malformed response");
-	serverMetadata.gdps = resp.headers.get('gdps');
+	serverMetadata.gdps = Cookies.get("browse_gdps") || null;
 	// TODO: Use a better check method for 1.9 servers
 	if (serverMetadata.gdps && serverMetadata.gdps.startsWith('1.9/')) {
 		serverMetadata.onePointNine = true;

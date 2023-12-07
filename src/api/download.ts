@@ -114,12 +114,11 @@ export default async function(req: Request, res: Response, api: boolean, id: str
 		return sendLevel();
 	}
 	catch (err) {
-		console.error(err.message);
 		if (analyze && api && reqBundle.server.downloadsDisabled) return res.status(403).send({
 			error: ErrorCode.DOWNLOADS_DISABLED,
 			message: "Downloads are disabled for this server."
 		});
 		else if (!api && levelID < 0) return res.redirect(`/?daily=${levelID * -1}`);
-		else return rejectLevel("The level could not be found.");
+		else return rejectLevel(err.message || "The level could not be found.");
 	}
 }

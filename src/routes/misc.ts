@@ -13,7 +13,7 @@ const router = express.Router();
  * Entries that are disabled for 1.9 servers.
  * 2.0 servers don't have customized settings, but it should be similar enough.
  */
-const onePointNineDisabled = ['daily', 'weekly', 'gauntlets', 'messages'];
+const onePointNineDisabled = ['daily', 'weekly', 'gauntlets', 'messages', 'lists'];
 /**
  * Entries that are disabled for servers that block level downloads.
  *
@@ -75,7 +75,7 @@ router.get('*', function(req, res) {
 			message: "Cannot find the resource specified."
 		});
 	}
-	else res.redirect('/level/14471563');
+	else res.redirect('/');
 });
 
 export default router;
