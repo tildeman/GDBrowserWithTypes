@@ -59,7 +59,7 @@ export default async function (req: Request, res: Response, api: boolean, userCa
 			username: currentList[50],
 			downloads: +currentList[10],
 			difficulty: +currentList[7],
-			difficultyFace: difficulties[+currentList[7]],
+			difficultyFace: `${(difficulties[+currentList[7]] || "unrated").toLowerCase().split(' ')[0]}${(+currentList[19]) ? '-featured' : ''}`,
 			likes: +currentList[14],
 			featured: +currentList[19] || 0,
 			levels: levelList,

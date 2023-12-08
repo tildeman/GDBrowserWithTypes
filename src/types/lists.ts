@@ -129,4 +129,8 @@ export interface SearchQueryLevelList extends LevelList {
 	 * The player ID the list publisher.
 	 */
 	playerID: string;
+	/**
+	 * The displayed difficulty text of the list.
+	 */
+	difficultyName: string;
 }
