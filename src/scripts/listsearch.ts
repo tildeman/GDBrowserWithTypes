@@ -63,7 +63,7 @@ function append(firstLoad?: boolean, noCache?: boolean) {
 			try {
 				$("#searchBox").append(searchResultTemplate({
 					list,
-					disliked: list.likes,
+					disliked: list.likes < 0,
 					difficultyText: `${list.difficultyFace}${list.featured ? " (Featured)" : ""}`,
 					ratingScale: list.featured ? 1.1 : 1, // TODO: Produce human-readable difficulty values
 					shortenedDifficulty: list.difficultyName.includes('Demon') ? "Demon" : list.difficultyName
