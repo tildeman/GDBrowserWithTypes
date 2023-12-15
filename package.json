@@ -1,6 +1,6 @@
 {
   "name": "gdservers",
-  "version": "2.1.5+flat",
+  "version": "2.1.6+flat",
   "main": "index.js",
   "license": "MIT",
   "private": true,
