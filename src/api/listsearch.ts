@@ -14,6 +14,12 @@ const difficulties = [
 	"demon-insane", "demon-extreme"
 ];
 
+const difficultyNames = [
+	"Auto", "Easy", "Normal", "Hard", "Harder",
+	"Insane", "Hard Demon", "Easy Demon", "Medium Demon",
+	"Insane Demon", "Extreme Demon"
+];
+
 /**
  * Search for lists from given filters.
  * @param req The client request.
@@ -90,7 +96,8 @@ export default async function(req: Request, res: Response, userCacheHandle: User
 				username: listData[50],
 				downloads: +listData[10],
 				difficulty: +listData[7],
-				difficultyFace: difficulties[+listData[7]] || "unrated",
+				difficultyFace: `${(difficulties[+listData[7]] || "unrated").toLowerCase().split(' ')[0]}${(+listData[19]) ? '-featured' : ''}`,
+				difficultyName: difficultyNames[+listData[7]] || "Unrated",
 				likes: +listData[14],
 				featured: +listData[19] || 0,
 				levels: listData[51].split(","),

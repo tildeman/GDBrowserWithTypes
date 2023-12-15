@@ -66,7 +66,7 @@ function append(firstLoad?: boolean, noCache?: boolean) {
 					disliked: list.likes,
 					difficultyText: `${list.difficultyFace}${list.featured ? " (Featured)" : ""}`,
 					ratingScale: list.featured ? 1.1 : 1, // TODO: Produce human-readable difficulty values
-					shortenedDifficulty: list.difficultyFace.includes('demon') ? "demon" : list.difficultyFace
+					shortenedDifficulty: list.difficultyName.includes('Demon') ? "Demon" : list.difficultyName
 				}));
 			}
 			catch (e) {
