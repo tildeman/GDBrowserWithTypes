@@ -15,7 +15,7 @@ function listServers() {
 	if (page <= 1) $('#pageDown').hide();
 	else $('#pageDown').show();
 
-	let serverPage = servers.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize);
+	const serverPage = servers.slice((page - 1) * pageSize, page * pageSize);
 	$('#searchBox').html('<div style="height: 4.5%"></div>').scrollTop(0);
 
 	serverPage.forEach(serverInfo => {
